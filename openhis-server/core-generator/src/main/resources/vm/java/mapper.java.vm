@@ -1,0 +1,17 @@
+package ${packageName}.mapper;
+
+import org.springframework.stereotype.Repository;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import ${packageName}.domain.${ClassName};
+
+/**
+ * ${functionName}Mapper接口
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Repository
+public interface ${ClassName}Mapper extends BaseMapper<${ClassName}> {
+
+}
