@@ -5,18 +5,19 @@ package com.openhis.web.InventoryManage.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.core.common.utils.MessageUtils;
-import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.web.InventoryManage.dto.SupplySaveRequestDto;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
+import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.ChargeItem;
 import com.openhis.administration.service.IChargeItemService;
+import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.web.InventoryManage.dto.SupplyRequestDto;
+import com.openhis.web.InventoryManage.dto.SupplySaveRequestDto;
 import com.openhis.web.inventoryManage.dto.SupplySearchParam;
 import com.openhis.workflow.domain.SupplyRequest;
 import com.openhis.workflow.service.ISupplyRequestService;
@@ -41,9 +42,9 @@ public class PurchaseInventoryController {
     private final IChargeItemService chargeItemService;
 
     @GetMapping(value = "/test")
-    public R<?> test(){
-        //return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002,new Object[] {"12345"})) ;
-        return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00002,new Object[] {"12345"})) ;
+    public R<?> test() {
+        // return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002,new Object[] {"12345"})) ;
+        return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"12345"}));
     }
 
     /**
@@ -119,6 +120,28 @@ public class PurchaseInventoryController {
         BeanUtils.copyProperties(supplySaveRequestDto, chargeItem);
         chargeItem.setId(supplySaveRequestDto.getChargeItemId());
         return chargeItemService.updateChargeItem(chargeItem) ? R.ok() : R.fail();
+    }
+
+    /**
+     * 删除方法
+     *
+     * @param supplyRequestId 主表id
+     */
+    @DeleteMapping("/delete-supply-request")
+    public R<?> deleteSupplyRequest(@RequestParam Long supplyRequestId) {
+        // 全都是逻辑删除
+        // 通过id将supply_request表的delFlag更新为1
+        boolean deleteSuccess = supplyRequestService.update(new LambdaUpdateWrapper<SupplyRequest>()
+            .eq(SupplyRequest::getId, supplyRequestId).set(SupplyRequest::getDeleteFlag, 1));
+
+        if (!deleteSuccess) {
+            return R.fail();
+        }
+
+        boolean deleteChargeItemSuccess = chargeItemService.update(new LambdaUpdateWrapper<ChargeItem>()
+            .eq(ChargeItem::getServiceId, supplyRequestId).set(ChargeItem::getDeleteFlag, 1));
+
+        return deleteChargeItemSuccess ? R.ok() : R.fail();
     }
 
     /**
