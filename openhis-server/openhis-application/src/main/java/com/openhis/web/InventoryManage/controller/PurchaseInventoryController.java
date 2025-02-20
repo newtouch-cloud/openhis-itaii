@@ -3,17 +3,27 @@
  */
 package com.openhis.web.inventoryManage.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 
-import com.openhis.workflow.service.ISupplyRequestService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.core.domain.R;
+import com.core.common.utils.bean.BeanUtils;
+import com.openhis.administration.domain.Patient;
+import com.openhis.administration.service.IPatientService;
+import com.openhis.medication.domain.Medication;
+import com.openhis.medication.service.IMedicationService;
+import com.openhis.web.inventoryManage.assembler.PurchaseInventoryAssembler;
 import com.openhis.web.inventoryManage.dto.SupplySearchParam;
 import com.openhis.workflow.domain.SupplyRequest;
+import com.openhis.workflow.service.ISupplyRequestService;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -23,12 +33,15 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025-02-18
  */
 @RestController
-@RequestMapping("/purchase-inventory")
+@RequestMapping("/inventory-manage-purchase")
 @Slf4j
-@AllArgsConstructor
 public class PurchaseInventoryController {
-
-    private final ISupplyRequestService supplyRequestService;
+    @Autowired
+    private ISupplyRequestService supplyRequestService;
+    @Autowired
+    private IMedicationService medicationService;
+    @Autowired
+    private IPatientService patientService;
 
     /**
      * 入库单据分页列表
@@ -83,9 +96,53 @@ public class PurchaseInventoryController {
      *
      * @param supplyRequest 供应请求信息
      */
+    @PutMapping("/submit-examine")
     public void submitExamine(SupplyRequest supplyRequest) {
 
         // 更改供应请求单据状态
         // 生成供应分发supply_delivery
+    }
+
+    /**
+     * 入库单据详情列表
+     *
+     * @param supplySearchParam 查询条件
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @param request 请求数据
+     * @return 入库单据分页列表
+     */
+    @GetMapping(value = "/inventory-receipt-page")
+    public R<?> getDetailPage(SupplySearchParam supplySearchParam,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
+
+        // 数据初始化
+        Medication medication = new Medication();
+        BeanUtils.copyProperties(supplySearchParam, medication);
+
+        SupplyRequest supplyRequest = new SupplyRequest();
+        BeanUtils.copyProperties(supplySearchParam, supplyRequest);
+
+        // 获取供应请求信息
+
+        // ====================================================================================
+
+        // 查询【供应申请管理】分页列表
+        Page<SupplyRequest> supplyRequestPage = supplyRequestService.getPage(supplyRequest, pageNo, pageSize);
+
+        // 根据【发放id】查询【药品基本信息管理】列表
+        List<Medication> medicationList = medicationService.listByIds(
+            supplyRequestPage.getRecords().stream().map(SupplyRequest::getDispenseId).collect(Collectors.toList()));
+
+        // 根据【患者id】查询【患者管理】列表
+        List<Patient> patientList = patientService.listByIds(
+            supplyRequestPage.getRecords().stream().map(SupplyRequest::getPatientId).collect(Collectors.toList()));
+
+        // 装配并返回【入库单据分页列表DTO】分页
+        return R.ok(
+            PurchaseInventoryAssembler.assembleInventoryReceiptDto(supplyRequestPage, medicationList, patientList),
+            "查询成功");
+
     }
 }
