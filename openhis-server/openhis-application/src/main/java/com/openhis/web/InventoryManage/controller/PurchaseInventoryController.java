@@ -5,6 +5,7 @@ package com.openhis.web.InventoryManage.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.openhis.web.InventoryManage.dto.SupplySaveRequestDto;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -95,12 +96,21 @@ public class PurchaseInventoryController {
     /**
      * 编辑入库单据
      *
-     * @param supplyRequest 供应请求信息
+     * @param supplySaveRequestDto 供应请求信息
      */
     @PutMapping("/edit-supply-request")
-    public void editSupplyRequest(@Validated @RequestBody SupplyRequest supplyRequest) {
+    public R<?> editSupplyRequest(@Validated @RequestBody SupplySaveRequestDto supplySaveRequestDto) {
         // 更新supply_request信息
+        SupplyRequest saveRequest = new SupplyRequest();
+        BeanUtils.copyProperties(supplySaveRequestDto, saveRequest);
+        if (!supplyRequestService.updateById(saveRequest)) {
+            return R.fail();
+        }
         // 更新收费项目charge_item
+        ChargeItem chargeItem = new ChargeItem();
+        BeanUtils.copyProperties(supplySaveRequestDto, chargeItem);
+        chargeItem.setId(supplySaveRequestDto.getChargeItemId());
+        return chargeItemService.updateChargeItem(chargeItem) ? R.ok() : R.fail();
     }
 
     /**

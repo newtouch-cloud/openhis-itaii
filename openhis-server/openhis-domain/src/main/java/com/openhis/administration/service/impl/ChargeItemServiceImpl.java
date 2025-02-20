@@ -36,4 +36,25 @@ public class ChargeItemServiceImpl extends ServiceImpl<ChargeItemMapper, ChargeI
         }
         return chargeItemMapper.insert(chargeItem) > 0;
     }
+
+    /**
+     * 更新收费项目
+     *
+     * @param chargeItem 更新内容
+     * @return 更新结果
+     */
+    @Override
+    public boolean updateChargeItem(ChargeItem chargeItem) {
+        //更新样例 一切以实际为主
+        if (chargeItem.getId() != null) {
+            //获取更新前收费项目，避免更新导致数据库崩溃
+            if(chargeItemMapper.selectById(chargeItem.getId()) == null){
+                return false;
+            } else {
+                return chargeItemMapper.updateById(chargeItem)>0;
+            }
+        } else {
+            return false;
+        }
+    }
 }
