@@ -1,7 +1,7 @@
 /*
  * Copyright ©2023 CJB-CNIT Team. All rights reserved
  */
-package com.openhis.web.inventoryManage.dto;
+package com.openhis.web.inventorymanage.dto;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.openhis.administration.domain.Patient;
 import com.openhis.medication.domain.Medication;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 

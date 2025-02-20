@@ -1,7 +1,7 @@
 /*
  * Copyright ©2023 CJB-CNIT Team. All rights reserved
  */
-package com.openhis.web.inventoryManage.dto;
+package com.openhis.web.inventorymanage.dto;
 
 import java.io.Serializable;
 

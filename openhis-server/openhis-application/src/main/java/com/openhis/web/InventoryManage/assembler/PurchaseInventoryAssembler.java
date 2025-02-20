@@ -1,7 +1,7 @@
 /*
  * Copyright ©2023 CJB-CNIT Team. All rights reserved
  */
-package com.openhis.web.inventoryManage.assembler;
+package com.openhis.web.inventorymanage.assembler;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.administration.domain.Patient;
 import com.openhis.medication.domain.Medication;
-import com.openhis.web.inventoryManage.dto.InventoryReceiptDto;
+import com.openhis.web.inventorymanage.dto.InventoryReceiptDto;
 import com.openhis.workflow.domain.SupplyRequest;
 
 /**

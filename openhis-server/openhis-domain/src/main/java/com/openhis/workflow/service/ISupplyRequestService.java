@@ -19,4 +19,6 @@ public interface ISupplyRequestService extends IService<SupplyRequest> {
      * @return 供应申请列表
      */
     Page<SupplyRequest> getPage(SupplyRequest supplyRequest, Integer pageNo, Integer pageSize);
+
+
 }
