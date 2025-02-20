@@ -1,17 +1,22 @@
 /*
  * Copyright ©2023 CJB-CNIT Team. All rights reserved
  */
-package com.openhis.web.inventoryManage.controller;
+package com.openhis.web.InventoryManage.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.openhis.workflow.service.ISupplyRequestService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.core.domain.R;
+import com.core.common.utils.bean.BeanUtils;
+import com.openhis.administration.domain.ChargeItem;
+import com.openhis.administration.service.IChargeItemService;
+import com.openhis.web.InventoryManage.dto.SupplyRequestDto;
 import com.openhis.web.inventoryManage.dto.SupplySearchParam;
 import com.openhis.workflow.domain.SupplyRequest;
+import com.openhis.workflow.service.ISupplyRequestService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +35,8 @@ public class PurchaseInventoryController {
 
     private final ISupplyRequestService supplyRequestService;
 
+    private final IChargeItemService chargeItemService;
+
     /**
      * 入库单据分页列表
      *
@@ -45,7 +52,7 @@ public class PurchaseInventoryController {
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
         // 查询supply_request相关信息并返回分页列表
 
-        return supplyRequestService.page(new Page<>(pageNo,pageSize));
+        return supplyRequestService.page(new Page<>(pageNo, pageSize));
     }
 
     // 添加入库单据之前需要
@@ -57,14 +64,32 @@ public class PurchaseInventoryController {
     /**
      * 添加入库单据（生成供应请求）
      *
-     * @param supplyRequest 供应请求信息
+     * @param supplyRequestDto 供应请求信息
      */
     @PostMapping("/add-supply-request")
-    public void addSupplyRequest(@Validated @RequestBody SupplyRequest supplyRequest) {
+    public R<?> addSupplyRequest(@Validated @RequestBody SupplyRequestDto supplyRequestDto) {
         // 生成待发送的入库单据supply_request
-        // 生成收费项目charge_item
+        SupplyRequest supplyRequest = new SupplyRequest();
+        BeanUtils.copyProperties(supplyRequestDto, supplyRequest);
+        // 如果业务上不需要其它处理 直接调用service的保存方法
+        boolean saveSupplyRequestSuccess = supplyRequestService.save(supplyRequest);
 
-        // 如果采购单价被修改了，需要根据批次号更新采购单价子表价格
+        if (!saveSupplyRequestSuccess) {
+            return R.fail();
+        }
+        // 生成收费项目charge_item
+        ChargeItem chargeItem = new ChargeItem();
+        // 如果字段很少建议手动set赋值
+        chargeItem.setUnitPrice(supplyRequestDto.getUnitPrice());
+        boolean saveChargeItemSuccess = chargeItemService.saveChargeItem(chargeItem);
+        // 如果采购单价被修改了，需要根据批次号更新采购单价子表价格、
+
+        // if (saveChargeItemSuccess) {
+        // return R.ok();
+        // } else {
+        // return R.fail();
+        // }
+        return saveChargeItemSuccess ? R.ok() : R.fail();
     }
 
     /**
