@@ -259,7 +259,7 @@ public class GenController extends BaseController {
 
                 // 从第一行读取表名表注释
                 Row row0 = st.getRow(0);// 表名
-                String tableName = row0.getCell(3).toString();// 表名
+                String tableName = row0.getCell(4).toString();// 表名
                 String tableComment = row0.getCell(1).toString();// 表注释
 
                 // 【开头】CREATE TABLE "public".表名 (
