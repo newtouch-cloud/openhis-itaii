@@ -1,17 +1,16 @@
 /*
  * Copyright ©2023 CJB-CNIT Team. All rights reserved
  */
-package com.openhis.web.InventoryManage.controller;
+package com.openhis.web.inventoryManage.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.openhis.workflow.service.ISupplyRequestService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.openhis.web.InventoryManage.dto.SupplySearchParam;
+import com.openhis.web.inventoryManage.dto.SupplySearchParam;
 import com.openhis.workflow.domain.SupplyRequest;
 
 import lombok.AllArgsConstructor;
