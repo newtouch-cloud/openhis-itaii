@@ -5,6 +5,8 @@ package com.openhis.web.InventoryManage.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.core.common.utils.MessageUtils;
+import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.web.InventoryManage.dto.SupplySaveRequestDto;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,12 @@ public class PurchaseInventoryController {
     private final ISupplyRequestService supplyRequestService;
 
     private final IChargeItemService chargeItemService;
+
+    @GetMapping(value = "/test")
+    public R<?> test(){
+        //return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002,new Object[] {"12345"})) ;
+        return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00002,new Object[] {"12345"})) ;
+    }
 
     /**
      * 入库单据分页列表
