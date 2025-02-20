@@ -12,22 +12,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.ChargeItem;
+import com.openhis.administration.domain.Location;
 import com.openhis.administration.domain.Patient;
 import com.openhis.administration.service.IChargeItemService;
+import com.openhis.administration.service.ILocationService;
 import com.openhis.administration.service.IPatientService;
+import com.openhis.administration.service.ISupplierService;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.medication.domain.Medication;
 import com.openhis.medication.service.IMedicationService;
 import com.openhis.web.inventorymanage.assembler.PurchaseInventoryAssembler;
-import com.openhis.web.inventorymanage.dto.SupplyRequestDto;
-import com.openhis.web.inventorymanage.dto.SupplySaveRequestDto;
-import com.openhis.web.inventorymanage.dto.SupplySearchParam;
+import com.openhis.web.inventorymanage.dto.InventoryDto;
+import com.openhis.web.inventorymanage.dto.InventoryReceiptInitDto;
+import com.openhis.web.inventorymanage.dto.InventorySearchParam;
+import com.openhis.web.inventorymanage.dto.SaveInventoryReceiptDto;
 import com.openhis.workflow.domain.SupplyRequest;
 import com.openhis.workflow.service.ISupplyRequestService;
 
@@ -51,11 +56,22 @@ public class PurchaseInventoryController {
     private IPatientService patientService;
     @Autowired
     private IChargeItemService chargeItemService;
+    @Autowired
+    private ISupplierService supplierService;
+    @Autowired
+    private ILocationService locationService;
 
-    @GetMapping(value = "/test")
-    public R<?> test() {
-        // return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002,new Object[] {"12345"})) ;
-        return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"12345"}));
+    @GetMapping(value = "/init")
+    public R<?> init() {
+
+        InventoryReceiptInitDto initDto = new InventoryReceiptInitDto();
+        // 设置供应商列表
+        initDto.setSupplier(supplierService.list())
+            // 设置药房列表
+            .setLocation(locationService.list(new LambdaQueryWrapper<Location>().in(Location::getFormEnum, 1)))
+            // 药品详细
+            .setMedicationDetail(medicationService.getDetailList());
+        return R.ok(initDto);
     }
 
     // 添加入库单据之前需要
@@ -67,13 +83,13 @@ public class PurchaseInventoryController {
     /**
      * 添加入库单据（生成供应请求）
      *
-     * @param supplyRequestDto 供应请求信息
+     * @param inventoryDto 供应请求信息
      */
     @PostMapping("/add-inventory-receipt")
-    public R<?> addSupplyRequest(@Validated @RequestBody SupplyRequestDto supplyRequestDto) {
+    public R<?> addSupplyRequest(@Validated @RequestBody InventoryDto inventoryDto) {
         // 生成待发送的入库单据supply_request
         SupplyRequest supplyRequest = new SupplyRequest();
-        BeanUtils.copyProperties(supplyRequestDto, supplyRequest);
+        BeanUtils.copyProperties(inventoryDto, supplyRequest);
         // 如果业务上不需要其它处理 直接调用service的保存方法
         boolean saveSupplyRequestSuccess = supplyRequestService.save(supplyRequest);
 
@@ -83,7 +99,7 @@ public class PurchaseInventoryController {
         // 生成收费项目charge_item
         ChargeItem chargeItem = new ChargeItem();
         // 如果字段很少建议手动set赋值
-        chargeItem.setUnitPrice(supplyRequestDto.getUnitPrice());
+        chargeItem.setUnitPrice(inventoryDto.getUnitPrice());
         boolean saveChargeItemSuccess = chargeItemService.saveChargeItem(chargeItem);
         // 如果采购单价被修改了，需要根据批次号更新采购单价子表价格、
 
@@ -100,20 +116,20 @@ public class PurchaseInventoryController {
     /**
      * 编辑入库单据
      *
-     * @param supplySaveRequestDto 供应请求信息
+     * @param saveInventoryReceiptDto 供应请求信息
      */
     @PutMapping("/edit-inventory-receipt")
-    public R<?> editSupplyRequest(@Validated @RequestBody SupplySaveRequestDto supplySaveRequestDto) {
+    public R<?> editSupplyRequest(@Validated @RequestBody SaveInventoryReceiptDto saveInventoryReceiptDto) {
         // 更新supply_request信息
         SupplyRequest saveRequest = new SupplyRequest();
-        BeanUtils.copyProperties(supplySaveRequestDto, saveRequest);
+        BeanUtils.copyProperties(saveInventoryReceiptDto, saveRequest);
         if (!supplyRequestService.updateById(saveRequest)) {
             return R.fail();
         }
         // 更新收费项目charge_item
         ChargeItem chargeItem = new ChargeItem();
-        BeanUtils.copyProperties(supplySaveRequestDto, chargeItem);
-        chargeItem.setId(supplySaveRequestDto.getChargeItemId());
+        BeanUtils.copyProperties(saveInventoryReceiptDto, chargeItem);
+        chargeItem.setId(saveInventoryReceiptDto.getChargeItemId());
         return chargeItemService.updateChargeItem(chargeItem) ? R.ok() : R.fail();
     }
 
@@ -125,55 +141,40 @@ public class PurchaseInventoryController {
     @DeleteMapping("/delete-inventory-receipt")
     public R<?> deleteSupplyRequest(@RequestParam Long supplyRequestId) {
         // 全都是逻辑删除
-        // 通过id将supply_request表的delFlag更新为1
+        // todo:拓展mybatisplus ：删除就是软删除 ，查询默认加上delFlag条件，通过传参实现查看被删除的项目
 
-
-        supplyRequestService.deletebyId(SupplyRequest::getId);
-        boolean deleteSuccess = supplyRequestService.update(new LambdaUpdateWrapper<SupplyRequest>()
-            .eq(SupplyRequest::getId, supplyRequestId).set(SupplyRequest::getDeleteFlag, 1));
+        boolean deleteSuccess = supplyRequestService.removeById(supplyRequestId);
 
         if (!deleteSuccess) {
             return R.fail();
         }
 
-        boolean deleteChargeItemSuccess = chargeItemService.update(new LambdaUpdateWrapper<ChargeItem>()
-            .eq(ChargeItem::getServiceId, supplyRequestId).set(ChargeItem::getDeleteFlag, 1));
+        boolean deleteChargeItemSuccess = chargeItemService
+            .remove(new LambdaUpdateWrapper<ChargeItem>().eq(ChargeItem::getServiceId, supplyRequestId));
 
         return deleteChargeItemSuccess ? R.ok() : R.fail();
     }
 
     /**
-     * 单据提交申请
-     *
-     * @param supplyRequest 供应请求信息
-     */
-    @PutMapping("/submit-examine")
-    public void submitExamine(SupplyRequest supplyRequest) {
-
-        // 更改供应请求单据状态
-        // 生成供应分发supply_delivery
-    }
-
-    /**
      * 入库单据详情列表
      *
-     * @param supplySearchParam 查询条件
+     * @param inventorySearchParam 查询条件
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @param request 请求数据
      * @return 入库单据分页列表
      */
     @GetMapping(value = "/inventory-receipt-page")
-    public R<?> getDetailPage(SupplySearchParam supplySearchParam,
+    public R<?> getDetailPage(InventorySearchParam inventorySearchParam,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
         // 查询条件初始化
         Medication medication = new Medication();
-        BeanUtils.copyProperties(supplySearchParam, medication);
+        BeanUtils.copyProperties(inventorySearchParam, medication);
 
         SupplyRequest supplyRequest = new SupplyRequest();
-        BeanUtils.copyProperties(supplySearchParam, supplyRequest);
+        BeanUtils.copyProperties(inventorySearchParam, supplyRequest);
 
         // 获取供应请求信息
 
@@ -194,5 +195,17 @@ public class PurchaseInventoryController {
         return R
             .ok(PurchaseInventoryAssembler.assembleInventoryReceiptDto(supplyRequestPage, medicationList, patientList));
 
+    }
+
+    /**
+     * 单据提交申请
+     *
+     * @param supplyRequest 供应请求信息
+     */
+    @PutMapping("/submit-examine")
+    public void submitExamine(SupplyRequest supplyRequest) {
+
+        // 更改供应请求单据状态
+        // 生成供应分发supply_delivery
     }
 }

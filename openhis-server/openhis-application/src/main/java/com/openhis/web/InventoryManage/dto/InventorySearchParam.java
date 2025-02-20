@@ -16,6 +16,6 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class SupplySearchParam implements Serializable {
+public class InventorySearchParam implements Serializable {
 
 }

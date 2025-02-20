@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class SupplyRequestDto {
+public class InventoryDto {
 
     /** 项目 */
     private String itemTable;

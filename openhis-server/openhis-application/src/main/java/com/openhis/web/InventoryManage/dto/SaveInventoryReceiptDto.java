@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class SupplySaveRequestDto {
+public class SaveInventoryReceiptDto {
     /** ID */
     private Long id;
 

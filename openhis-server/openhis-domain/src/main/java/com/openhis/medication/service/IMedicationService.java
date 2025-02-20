@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.openhis.medication.domain.Medication;
+import com.openhis.medication.domain.MedicationDetail;
 
 /**
  * 药品基本信息管理Service接口
@@ -20,4 +21,11 @@ public interface IMedicationService extends IService<Medication> {
      * @return 药品信息列表
      */
     List<Medication> getList(List<Long> medicationIdList);
+
+    /**
+     * 查询药品详细信息列表
+     *
+     * @return 药品详细信息列表
+     */
+    List<MedicationDetail> getDetailList();
 }
