@@ -1,0 +1,92 @@
+/*
+ * Copyright ©2023 CJB-CNIT Team. All rights reserved
+ */
+package com.openhis.web.InventoryManage.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.openhis.workflow.service.ISupplyRequestService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.openhis.web.InventoryManage.dto.SupplySearchParam;
+import com.openhis.workflow.domain.SupplyRequest;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 采购入库 controller
+ *
+ * @author zwh
+ * @date 2025-02-18
+ */
+@RestController
+@RequestMapping("/purchase-inventory")
+@Slf4j
+@AllArgsConstructor
+public class PurchaseInventoryController {
+
+    private final ISupplyRequestService supplyRequestService;
+
+    /**
+     * 入库单据分页列表
+     *
+     * @param supplySearchParam 查询条件
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @param request 请求数据
+     * @return 入库单据分页列表
+     */
+    @GetMapping(value = "/inventory-receipt-page")
+    public Page<SupplyRequest> getPage(SupplySearchParam supplySearchParam,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
+        // 查询supply_request相关信息并返回分页列表
+
+        return supplyRequestService.page(new Page<>(pageNo,pageSize));
+    }
+
+    // 添加入库单据之前需要
+    // 1.supplier供应商信息列表
+    // 2.location信息列表包括（药房，药库，材料柜，护理站）
+    // 3.practitioner_role与practitioner联查获取对应location的管理员列表
+    // 4.查询选定对应药品类型的药品信息列表
+
+    /**
+     * 添加入库单据（生成供应请求）
+     *
+     * @param supplyRequest 供应请求信息
+     */
+    @PostMapping("/add-supply-request")
+    public void addSupplyRequest(@Validated @RequestBody SupplyRequest supplyRequest) {
+        // 生成待发送的入库单据supply_request
+        // 生成收费项目charge_item
+
+        // 如果采购单价被修改了，需要根据批次号更新采购单价子表价格
+    }
+
+    /**
+     * 编辑入库单据
+     *
+     * @param supplyRequest 供应请求信息
+     */
+    @PutMapping("/edit-supply-request")
+    public void editSupplyRequest(@Validated @RequestBody SupplyRequest supplyRequest) {
+        // 更新supply_request信息
+        // 更新收费项目charge_item
+    }
+
+    /**
+     * 单据提交申请
+     *
+     * @param supplyRequest 供应请求信息
+     */
+    public void submitExamine(SupplyRequest supplyRequest) {
+
+        // 更改供应请求单据状态
+        // 生成供应分发supply_delivery
+    }
+}

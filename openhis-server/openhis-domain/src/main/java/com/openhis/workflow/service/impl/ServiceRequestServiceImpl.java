@@ -14,6 +14,7 @@ import com.openhis.workflow.service.IServiceRequestService;
  * @date 2025-02-20
  */
 @Service
-public class ServiceRequestServiceImpl extends ServiceImpl<ServiceRequestMapper, ServiceRequest> implements IServiceRequestService {
+public class ServiceRequestServiceImpl extends ServiceImpl<ServiceRequestMapper, ServiceRequest>
+    implements IServiceRequestService {
 
 }
