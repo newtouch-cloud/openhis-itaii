@@ -6,8 +6,8 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -75,8 +75,5 @@ public class Medication extends HisBaseEntity {
 
     /** 药品定义 */
     private String definition;
-
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

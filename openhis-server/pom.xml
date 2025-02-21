@@ -36,7 +36,7 @@
         <spring-security.version>5.7.12</spring-security.version>
         <spring-framework.version>5.3.39</spring-framework.version>
         <lombok.version>1.18.26</lombok.version>
-        <mybatis-plus.version>3.4.2</mybatis-plus.version>
+        <mybatis-plus.version>3.5.3</mybatis-plus.version>
         <flowable.version>6.8.0</flowable.version>
     </properties>
 

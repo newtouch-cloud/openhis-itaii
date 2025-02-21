@@ -53,7 +53,7 @@ public class Invoice extends HisBaseEntity {
     private String paymentTerms;
 
     /** 账单批次号 */
-    private BigDecimal batchCode;
+    private String batchCode;
 
     /** 结算批次号 */
     private String qrCode;
@@ -64,7 +64,5 @@ public class Invoice extends HisBaseEntity {
     /** 图片路径 */
     private String pictureUrl;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

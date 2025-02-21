@@ -106,7 +106,5 @@ public class DeviceDefinition extends HisBaseEntity {
     /** 过敏标记 */
     private Integer allergenFlag;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

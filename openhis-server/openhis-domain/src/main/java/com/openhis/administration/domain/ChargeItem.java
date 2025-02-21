@@ -112,7 +112,5 @@ public class ChargeItem extends HisBaseEntity {
     /** 机构 */
     private String orgCode;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

@@ -97,7 +97,5 @@ public class InventoryItem extends HisBaseEntity {
     /** 追溯码包装层级 */
     private Integer packagingLevels;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

@@ -106,7 +106,5 @@ public class MedicationDispense extends HisBaseEntity {
     /** 单次最大剂量 */
     private BigDecimal maxUnit;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

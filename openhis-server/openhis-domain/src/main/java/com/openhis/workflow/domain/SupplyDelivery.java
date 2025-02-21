@@ -106,7 +106,5 @@ public class SupplyDelivery extends HisBaseEntity {
     /** 接收时间 */
     private Date receiveDateTime;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

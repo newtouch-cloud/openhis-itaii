@@ -11,4 +11,18 @@ import com.openhis.administration.domain.ChargeItem;
  */
 public interface IChargeItemService extends IService<ChargeItem> {
 
+    /**
+     * 保存chargeItem相关信息
+     * 
+     * @return 保存结果
+     */
+    boolean saveChargeItem(ChargeItem chargeItem);
+
+    /**
+     * 更新收费项目
+     * 
+     * @param chargeItem 更新内容
+     * @return 更新结果
+     */
+    boolean updateChargeItem(ChargeItem chargeItem);
 }

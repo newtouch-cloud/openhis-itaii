@@ -38,7 +38,7 @@ public class Encounter extends HisBaseEntity {
     private String code;
 
     /** 状态编码 */
-    private Integer statusCode;
+    private String statusCode;
 
     /** 类别编码 */
     private Integer classEnum;
@@ -72,8 +72,5 @@ public class Encounter extends HisBaseEntity {
 
     /** 就诊序号 */
     private Integer displayOrder;
-
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

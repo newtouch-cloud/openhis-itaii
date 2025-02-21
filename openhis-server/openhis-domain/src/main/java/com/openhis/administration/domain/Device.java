@@ -29,7 +29,7 @@ public class Device extends HisBaseEntity {
     private Long id;
 
     /** 器材编码 */
-    private Long deviceCode;
+    private String deviceCode;
 
     /** 器材定义编号 */
     private Long defId;
@@ -91,7 +91,5 @@ public class Device extends HisBaseEntity {
     /** 器材安全 */
     private Integer safetyEnum;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

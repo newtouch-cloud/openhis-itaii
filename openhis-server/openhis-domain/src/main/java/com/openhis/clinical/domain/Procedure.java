@@ -97,7 +97,5 @@ public class Procedure extends HisBaseEntity {
     /** 跟进指南 */
     private String followUpJson;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

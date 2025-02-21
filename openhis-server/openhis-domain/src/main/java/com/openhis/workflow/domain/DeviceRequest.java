@@ -130,7 +130,5 @@ public class DeviceRequest extends HisBaseEntity {
     /** 发放编号 */
     private Long dispenseId;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

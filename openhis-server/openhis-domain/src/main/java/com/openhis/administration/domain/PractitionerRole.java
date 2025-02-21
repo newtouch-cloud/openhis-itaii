@@ -58,7 +58,5 @@ public class PractitionerRole extends HisBaseEntity {
     /** 有效时间 */
     private String availabilityJson;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

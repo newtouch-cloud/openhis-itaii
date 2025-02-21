@@ -9,16 +9,18 @@ public enum DelFlag {
     /**
      * 未删除
      */
-    NO("0", "未删除"),
+    NO(0, "0", "未删除"),
     /**
      * 已删除
      */
-    YES("1", "已删除");
+    YES(1, "1", "已删除");
 
+    private final Integer value;
     private final String code;
     private final String info;
 
-    DelFlag(String code, String info) {
+    DelFlag(Integer value, String code, String info) {
+        this.value = value;
         this.code = code;
         this.info = info;
     }
@@ -29,5 +31,9 @@ public enum DelFlag {
 
     public String getInfo() {
         return info;
+    }
+
+    public Integer getValue() {
+        return value;
     }
 }

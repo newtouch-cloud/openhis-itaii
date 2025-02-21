@@ -32,7 +32,7 @@ public class EncounterParticipant extends HisBaseEntity {
     private Long encounterId;
 
     /** 参与者类型 */
-    private Integer typeCode;
+    private String typeCode;
 
     /** 开始时间 */
     private Date startTiem;
@@ -43,7 +43,5 @@ public class EncounterParticipant extends HisBaseEntity {
     /** 参与者ID */
     private Long practitionerId;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

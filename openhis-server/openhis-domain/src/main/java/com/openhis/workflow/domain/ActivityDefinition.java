@@ -73,7 +73,5 @@ public class ActivityDefinition extends HisBaseEntity {
     /** 规则id */
     private String ruleId;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

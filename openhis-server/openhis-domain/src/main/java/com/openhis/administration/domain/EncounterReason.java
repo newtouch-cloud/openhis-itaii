@@ -32,7 +32,7 @@ public class EncounterReason extends HisBaseEntity {
     private Long encounterId;
 
     /** 原因编码 */
-    private Integer useCode;
+    private String useCode;
 
     /** 具体原因类型 */
     private String valueTable;
@@ -43,7 +43,5 @@ public class EncounterReason extends HisBaseEntity {
     /** 原因描述 */
     private String note;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

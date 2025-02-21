@@ -50,7 +50,7 @@ public class MedicationDefinition extends HisBaseEntity {
     private String wbCode;
 
     /** 药品分类 */
-    private Integer categoryCode;
+    private String categoryCode;
 
     /** 商品名称 */
     private String merchandiseName;
@@ -114,11 +114,5 @@ public class MedicationDefinition extends HisBaseEntity {
 
     /** 儿童用药标志 */
     private Integer childrenFlag;
-
-    /** 产品特性 */
-    private Integer characteristic;
-
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

@@ -29,7 +29,7 @@ public class PatientIdentifier extends HisBaseEntity {
     private Long id;
 
     /** 标识类型编码 */
-    private Integer typeCode;
+    private String typeCode;
 
     /** 标识号 */
     private String identifierNo;
@@ -43,7 +43,5 @@ public class PatientIdentifier extends HisBaseEntity {
     /** 有效时间end */
     private Date endTime;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

@@ -121,7 +121,5 @@ public class Patient extends HisBaseEntity {
     /** 机构Id */
     private Long organizationId;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

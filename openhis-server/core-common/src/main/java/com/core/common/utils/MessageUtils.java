@@ -4,6 +4,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import com.core.common.utils.spring.SpringUtils;
+import org.springframework.lang.Nullable;
+
+import java.util.Locale;
 
 /**
  * 获取i18n资源文件
@@ -21,5 +24,11 @@ public class MessageUtils {
     public static String message(String code, Object... args) {
         MessageSource messageSource = SpringUtils.getBean(MessageSource.class);
         return messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+    }
+
+    public static String createMessage(String id, @Nullable Object[] params) {
+        MessageSource messageSource = (MessageSource) SpringContextUtils.getApplicationContext().getBean(MessageSource.class);
+        String messageConvert = messageSource.getMessage(id, params, Locale.getDefault());
+        return messageConvert;
     }
 }

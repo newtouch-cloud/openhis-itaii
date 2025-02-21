@@ -118,7 +118,5 @@ public class SupplyRequest extends HisBaseEntity {
     /** 申请时间 */
     private Date applyTime;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

@@ -67,7 +67,5 @@ public class ChargeItemDefinition extends HisBaseEntity {
     /** 基础价格 */
     private BigDecimal price;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

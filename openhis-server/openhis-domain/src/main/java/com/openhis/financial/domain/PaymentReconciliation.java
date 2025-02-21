@@ -88,7 +88,5 @@ public class PaymentReconciliation extends HisBaseEntity {
     /** 就诊ID */
     private Long encoutnerId;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

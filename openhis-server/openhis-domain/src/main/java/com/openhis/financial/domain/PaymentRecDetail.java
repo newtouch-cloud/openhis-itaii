@@ -73,7 +73,5 @@ public class PaymentRecDetail extends HisBaseEntity {
     /** 单笔交易结果 */
     private Integer resultEnum;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

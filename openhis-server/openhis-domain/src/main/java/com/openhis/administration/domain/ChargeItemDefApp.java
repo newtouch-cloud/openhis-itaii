@@ -55,7 +55,5 @@ public class ChargeItemDefApp extends HisBaseEntity {
     /** 价格 */
     private BigDecimal amount;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }
