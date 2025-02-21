@@ -88,7 +88,5 @@ public class DeviceDispense extends HisBaseEntity {
     /** 使用说明 */
     private String usageInstruction;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

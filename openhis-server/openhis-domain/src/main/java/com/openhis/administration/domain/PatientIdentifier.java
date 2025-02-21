@@ -43,7 +43,5 @@ public class PatientIdentifier extends HisBaseEntity {
     /** 有效时间end */
     private Date endTime;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

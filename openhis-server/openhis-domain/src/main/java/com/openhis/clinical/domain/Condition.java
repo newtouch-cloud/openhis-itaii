@@ -88,7 +88,5 @@ public class Condition extends HisBaseEntity {
     /** 医保编码 */
     private String ybCode;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

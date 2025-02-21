@@ -61,7 +61,5 @@ public class Claim extends HisBaseEntity {
     /** 索赔涵盖时间 */
     private Date billablePeriodEnd;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

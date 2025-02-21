@@ -77,6 +77,4 @@ public class MedicationDetail extends HisBaseEntity {
     /** 药品定义 */
     private String definition;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 }

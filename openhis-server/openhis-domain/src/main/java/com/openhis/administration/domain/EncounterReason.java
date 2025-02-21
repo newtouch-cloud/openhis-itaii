@@ -43,7 +43,5 @@ public class EncounterReason extends HisBaseEntity {
     /** 原因描述 */
     private String note;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

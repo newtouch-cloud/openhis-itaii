@@ -61,7 +61,5 @@ public class ConditionDefinition extends HisBaseEntity {
     /** 状态 */
     private Integer statusEnum;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

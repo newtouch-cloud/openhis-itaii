@@ -73,7 +73,4 @@ public class Encounter extends HisBaseEntity {
     /** 就诊序号 */
     private Integer displayOrder;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
-
 }

@@ -91,7 +91,5 @@ public class Device extends HisBaseEntity {
     /** 器材安全 */
     private Integer safetyEnum;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

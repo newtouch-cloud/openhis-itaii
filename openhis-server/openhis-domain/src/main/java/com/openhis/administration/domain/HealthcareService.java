@@ -61,7 +61,5 @@ public class HealthcareService extends HisBaseEntity {
     /** 预约要求 */
     private Integer appointmentRequiredFlag;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

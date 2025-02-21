@@ -46,7 +46,5 @@ public class EncounterLocation extends HisBaseEntity {
     /** 结束时间 */
     private Date endTime;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

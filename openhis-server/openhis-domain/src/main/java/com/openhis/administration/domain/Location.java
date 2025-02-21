@@ -61,7 +61,5 @@ public class Location extends HisBaseEntity {
     /** 显示顺序 */
     private Integer displayOrder;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

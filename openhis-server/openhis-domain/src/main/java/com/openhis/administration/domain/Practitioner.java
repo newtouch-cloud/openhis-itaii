@@ -82,7 +82,5 @@ public class Practitioner extends HisBaseEntity {
     /** 系统用户id */
     private Long userId;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

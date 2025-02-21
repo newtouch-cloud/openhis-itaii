@@ -169,7 +169,5 @@ public class MedicationRequest extends HisBaseEntity {
     /** 发药人 */
     private Long dispenser;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

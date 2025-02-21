@@ -44,7 +44,7 @@ public class HisBaseEntity implements Serializable {
     private Integer tenantId;
 
     /** 删除标识 */
-    private Integer delFlag;
+    private Integer deleteFlag;
 
     /** 测试标识 */
     private Integer testFlag;

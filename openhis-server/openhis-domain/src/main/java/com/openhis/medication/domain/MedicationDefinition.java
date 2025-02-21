@@ -118,7 +118,5 @@ public class MedicationDefinition extends HisBaseEntity {
     /** 产品特性 */
     private Integer characteristic;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

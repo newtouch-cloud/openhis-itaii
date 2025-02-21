@@ -40,7 +40,5 @@ public class ServiceRequestDetail extends HisBaseEntity {
     /** 订单详情 */
     private String detailJson;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

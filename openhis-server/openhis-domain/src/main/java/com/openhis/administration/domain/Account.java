@@ -58,7 +58,5 @@ public class Account extends HisBaseEntity {
     /** 欠费限制额度 */
     private BigDecimal limitAccount;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

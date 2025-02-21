@@ -58,7 +58,5 @@ public class ClaimResponse extends HisBaseEntity {
     /** 索赔金额 */
     private BigDecimal total;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

@@ -58,7 +58,5 @@ public class Supplier extends HisBaseEntity {
     /** 机构编号 */
     private Long orgId;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

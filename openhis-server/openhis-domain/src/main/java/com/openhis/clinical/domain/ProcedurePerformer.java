@@ -46,7 +46,5 @@ public class ProcedurePerformer extends HisBaseEntity {
     /** 飞刀机构 */
     private String orgFromId;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

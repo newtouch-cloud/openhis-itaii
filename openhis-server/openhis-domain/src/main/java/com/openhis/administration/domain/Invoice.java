@@ -64,7 +64,5 @@ public class Invoice extends HisBaseEntity {
     /** 图片路径 */
     private String pictureUrl;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

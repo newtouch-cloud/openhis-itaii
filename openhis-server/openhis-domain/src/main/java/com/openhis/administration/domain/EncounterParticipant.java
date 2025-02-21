@@ -43,7 +43,5 @@ public class EncounterParticipant extends HisBaseEntity {
     /** 参与者ID */
     private Long practitionerId;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

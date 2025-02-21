@@ -43,7 +43,5 @@ public class Contract extends HisBaseEntity {
     /** 机构 */
     private Long orgId;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

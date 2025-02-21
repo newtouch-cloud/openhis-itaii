@@ -55,7 +55,5 @@ public class EncounterDiagnosis extends HisBaseEntity {
     /** 最高诊断依据标记 */
     private Integer highDiseEvidFlag;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }

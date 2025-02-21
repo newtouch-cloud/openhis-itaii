@@ -100,7 +100,5 @@ public class ServiceRequest extends HisBaseEntity {
     /** 历史请求 */
     private Long relevantHistory;
 
-    /** 删除状态 */
-    private Integer deleteFlag;
 
 }
