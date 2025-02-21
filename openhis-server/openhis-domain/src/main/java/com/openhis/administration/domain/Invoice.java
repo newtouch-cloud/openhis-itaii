@@ -53,7 +53,7 @@ public class Invoice extends HisBaseEntity {
     private String paymentTerms;
 
     /** 账单批次号 */
-    private BigDecimal batchCode;
+    private String batchCode;
 
     /** 结算批次号 */
     private String qrCode;

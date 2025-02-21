@@ -50,7 +50,7 @@ public class MedicationDefinition extends HisBaseEntity {
     private String wbCode;
 
     /** 药品分类 */
-    private Integer categoryCode;
+    private String categoryCode;
 
     /** 商品名称 */
     private String merchandiseName;

@@ -29,7 +29,7 @@ public class PatientIdentifier extends HisBaseEntity {
     private Long id;
 
     /** 标识类型编码 */
-    private Integer typeCode;
+    private String typeCode;
 
     /** 标识号 */
     private String identifierNo;
