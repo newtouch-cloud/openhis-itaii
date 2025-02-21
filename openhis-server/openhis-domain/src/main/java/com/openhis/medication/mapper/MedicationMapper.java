@@ -1,5 +1,7 @@
 package com.openhis.medication.mapper;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.core.common.biz.HisBaseMapper;
 import com.openhis.medication.domain.MedicationDetail;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +16,9 @@ import java.util.List;
  * @author system
  * @date 2025-02-20
  */
+@TableName("med_medication")
 @Repository
-public interface MedicationMapper extends BaseMapper<Medication> {
+public interface MedicationMapper extends HisBaseMapper<Medication> {
 
     /**
      * 查询药品详细信息列表

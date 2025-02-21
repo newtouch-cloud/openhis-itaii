@@ -1,7 +1,7 @@
 package com.core.common.biz;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.annotations.Param;
@@ -31,7 +31,7 @@ public interface HisBaseMapper<T> extends BaseMapper<T> {
     /**
      * 根据 UpdateWrapper 逻辑删除记录
      */
-    default int logicalDelByWrapper(UpdateWrapper<T> updateWrapper) {
+    default int logicalDelByWrapper(LambdaUpdateWrapper<T> updateWrapper) {
         String tableName = getTableName();
         return logicalDelByWrapper(updateWrapper, tableName);
     }
@@ -50,7 +50,7 @@ public interface HisBaseMapper<T> extends BaseMapper<T> {
     int logicalDelByIds(@Param("tableName") String tableName, @Param("ids") List<Long> ids);
 
     @Update("UPDATE ${tableName} SET delete_flag = 1 ${ew.customSqlSegment}")
-    int logicalDelByWrapper(@Param(Constants.WRAPPER) UpdateWrapper<T> updateWrapper, @Param("tableName") String tableName);
+    int logicalDelByWrapper(@Param(Constants.WRAPPER) LambdaUpdateWrapper<T> updateWrapper, @Param("tableName") String tableName);
 
     /**
      * 获取表名

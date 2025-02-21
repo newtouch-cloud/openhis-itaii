@@ -2,6 +2,7 @@ package com.openhis.medication.service.impl;
 
 import java.util.List;
 
+import com.core.common.biz.HisBaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class MedicationServiceImpl extends ServiceImpl<MedicationMapper, Medication> implements IMedicationService {
+public class MedicationServiceImpl extends HisBaseServiceImpl<MedicationMapper, Medication> implements IMedicationService {
 
     @Autowired
     private MedicationMapper medicationMapper;
