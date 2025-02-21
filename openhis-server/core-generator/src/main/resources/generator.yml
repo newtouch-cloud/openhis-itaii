@@ -7,4 +7,4 @@ gen:
   # 自动去除表前缀，默认是false
   autoRemovePre: true
   # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
-  tablePrefix: cod_,adm_,cli_,dia_,med_,wor_,fin_,def_
+  tablePrefix: cod_,adm_,cli_,dia_,med_,wor_,fin_,def_,doc_

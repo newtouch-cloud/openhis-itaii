@@ -62,4 +62,5 @@ public interface HisBaseMapper<T> extends BaseMapper<T> {
         }
         return tableNameAnnotation.value();
     }
+
 }
