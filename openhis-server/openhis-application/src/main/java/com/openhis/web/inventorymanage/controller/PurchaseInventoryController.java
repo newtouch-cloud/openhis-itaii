@@ -85,7 +85,7 @@ public class PurchaseInventoryController {
      *
      * @param inventoryDto 供应请求信息
      */
-    @PostMapping("/add-inventory-receipt")
+    @PostMapping("/inventory-receipt")
     public R<?> addSupplyRequest(@Validated @RequestBody InventoryDto inventoryDto) {
         // 生成待发送的入库单据supply_request
         SupplyRequest supplyRequest = new SupplyRequest();
@@ -118,7 +118,7 @@ public class PurchaseInventoryController {
      *
      * @param saveInventoryReceiptDto 供应请求信息
      */
-    @PutMapping("/edit-inventory-receipt")
+    @PutMapping("/inventory-receipt")
     public R<?> editSupplyRequest(@Validated @RequestBody SaveInventoryReceiptDto saveInventoryReceiptDto) {
         // 更新supply_request信息
         SupplyRequest saveRequest = new SupplyRequest();
@@ -138,10 +138,9 @@ public class PurchaseInventoryController {
      *
      * @param supplyRequestId 主表id
      */
-    @DeleteMapping("/delete-inventory-receipt")
+    @DeleteMapping("/inventory-receipt")
     public R<?> deleteSupplyRequest(@RequestParam Long supplyRequestId) {
         // 全都是逻辑删除
-        // todo:拓展mybatisplus ：删除就是软删除 ，查询默认加上delFlag条件，通过传参实现查看被删除的项目
 
         boolean deleteSuccess = supplyRequestService.removeById(supplyRequestId);
 
