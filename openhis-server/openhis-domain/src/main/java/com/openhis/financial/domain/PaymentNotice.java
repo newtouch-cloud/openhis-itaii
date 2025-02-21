@@ -41,7 +41,7 @@ public class PaymentNotice extends HisBaseEntity {
     private Long payee;
 
     /** 通知方式 */
-    private Integer wayCode;
+    private String wayCode;
 
     /** 通知内容 */
     private String content;

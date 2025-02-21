@@ -35,7 +35,7 @@ public class Account extends HisBaseEntity {
     private Integer billingStatusEnum;
 
     /** 账户类型编码 */
-    private Integer typeCode;
+    private String typeCode;
 
     /** 名称 */
     private String name;

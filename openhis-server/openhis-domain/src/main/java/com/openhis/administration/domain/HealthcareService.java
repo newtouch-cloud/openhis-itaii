@@ -35,7 +35,7 @@ public class HealthcareService extends HisBaseEntity {
     private Long offeredOrgId;
 
     /** 服务分类 */
-    private Integer categoryCode;
+    private String categoryCode;
 
     /** 服务类型 */
     private String typeCode;
