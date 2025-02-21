@@ -6,6 +6,7 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -41,6 +42,7 @@ public class HisBaseEntity implements Serializable {
     private Integer tenantId;
 
     /** 删除标识 */
-    private Integer deleteFlag;
+    @TableLogic(value = "0", delval = "1") // 0 为未删除，1 为删除
+    private String deleteFlag;
 
 }
