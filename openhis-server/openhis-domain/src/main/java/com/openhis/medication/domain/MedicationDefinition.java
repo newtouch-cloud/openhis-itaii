@@ -115,8 +115,4 @@ public class MedicationDefinition extends HisBaseEntity {
     /** 儿童用药标志 */
     private Integer childrenFlag;
 
-    /** 产品特性 */
-    private Integer characteristic;
-
-
 }

@@ -37,16 +37,10 @@ public class HisBaseEntity implements Serializable {
     @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
-    /** 备注 */
-    private String remark;
-
     /** 租户ID */
     private Integer tenantId;
 
     /** 删除标识 */
     private Integer deleteFlag;
-
-    /** 测试标识 */
-    private Integer testFlag;
 
 }
