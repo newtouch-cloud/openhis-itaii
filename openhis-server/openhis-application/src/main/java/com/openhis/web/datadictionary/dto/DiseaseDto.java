@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class DiseaseInDto {
+public class DiseaseDto {
     /** 所属分类 */
     private Integer sourceEnum;
 
