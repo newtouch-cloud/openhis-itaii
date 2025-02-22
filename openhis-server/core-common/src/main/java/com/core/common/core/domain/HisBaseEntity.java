@@ -39,6 +39,7 @@ public class HisBaseEntity implements Serializable {
     private Date updateTime;
 
     /** 租户ID */
+    @TableField(fill = FieldFill.INSERT)
     private Integer tenantId;
 
     /** 删除标识 */
