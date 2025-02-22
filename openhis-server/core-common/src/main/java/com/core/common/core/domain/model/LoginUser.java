@@ -3,6 +3,7 @@ package com.core.common.core.domain.model;
 import java.util.Collection;
 import java.util.Set;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,6 +15,7 @@ import com.core.common.core.domain.entity.SysUser;
  * 
  * @author system
  */
+@Data
 public class LoginUser implements UserDetails {
     private static final long serialVersionUID = 1L;
 
@@ -66,6 +68,9 @@ public class LoginUser implements UserDetails {
      * 权限列表
      */
     private Set<String> permissions;
+
+    /** 租户ID */
+    private Integer tenantId;
 
     /**
      * 用户信息

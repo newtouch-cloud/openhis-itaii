@@ -25,6 +25,7 @@ public class MybastisColumnsHandler implements MetaObjectHandler {
         } catch (Exception ignored) {
         }
         this.strictInsertFill(metaObject, "createBy", String.class, username);
+        this.strictInsertFill(metaObject, "tenantId", Integer.class, getCurrentTenantId());
     }
 
     // 设置数据修改update时候的，字段自动赋值规则
@@ -40,5 +41,16 @@ public class MybastisColumnsHandler implements MetaObjectHandler {
         } catch (Exception ignored) {
         }
         this.strictUpdateFill(metaObject, "updateBy", String.class, username);
+    }
+
+    /**
+     * 获取当前租户 ID
+     */
+    private Integer getCurrentTenantId() {
+        // 获取当前登录用户的租户 ID
+        if (SecurityUtils.getAuthentication() != null) {
+            return SecurityUtils.getLoginUser().getTenantId();
+        }
+        return 0;
     }
 }
