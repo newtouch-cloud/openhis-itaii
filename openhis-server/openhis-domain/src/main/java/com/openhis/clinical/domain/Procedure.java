@@ -43,8 +43,8 @@ public class Procedure extends HisBaseEntity {
     /** 分类 */
     private Integer categoryEnum;
 
-    /** 编码 */
-    private String code;
+    /** 手术编码 */
+    private String procedureCode;
 
     /** 患者Id */
     private Long patientId;
@@ -65,7 +65,7 @@ public class Procedure extends HisBaseEntity {
     private Date recordedTime;
 
     /** 记录人 */
-    private Long recorder;
+    private Long recorderId;
 
     /** 是否有报告 */
     private Integer reportFlag;

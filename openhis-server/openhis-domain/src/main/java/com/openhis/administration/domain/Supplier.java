@@ -29,7 +29,7 @@ public class Supplier extends HisBaseEntity {
     private Long id;
 
     /** 编号 */
-    private String code;
+    private String busNo;
 
     /** 名称 */
     private String name;
@@ -41,10 +41,10 @@ public class Supplier extends HisBaseEntity {
     private String address;
 
     /** 拼音码 */
-    private String pyCode;
+    private String pyStr;
 
     /** 五笔码 */
-    private String wbCode;
+    private String wbStr;
 
     /** 联系人电话 */
     private String phone;

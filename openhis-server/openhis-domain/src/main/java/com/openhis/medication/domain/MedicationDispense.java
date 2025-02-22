@@ -29,7 +29,7 @@ public class MedicationDispense extends HisBaseEntity {
     private Long id;
 
     /** 药品发放id */
-    private String code;
+    private String busNo;
 
     /** 药品发放状态 */
     private Integer statusEnum;
@@ -41,7 +41,7 @@ public class MedicationDispense extends HisBaseEntity {
     private Date statusChangedTime;
 
     /** 发药类型 */
-    private Integer dispenseCategory;
+    private Integer dispenseEnum;
 
     /** 药品编码 */
     private Long medicationId;

@@ -35,13 +35,13 @@ public class SupplyDelivery extends HisBaseEntity {
     private Long summaryId;
 
     /** 状态 */
-    private Integer status;
+    private Integer statusEnum;
 
     /** 患者id */
     private Long patientId;
 
     /** 类型 */
-    private Integer type;
+    private Integer typeEnum;
 
     /** 发放项目所属表 */
     private String itemTable;
@@ -62,7 +62,7 @@ public class SupplyDelivery extends HisBaseEntity {
     private String lotNumber;
 
     /** 追溯码 */
-    private String traceCode;
+    private String traceNo;
 
     /** 供应商 */
     private Long supplierId;
@@ -81,24 +81,6 @@ public class SupplyDelivery extends HisBaseEntity {
 
     /** 发放周期时间 */
     private String occurrenceTiming;
-
-    /** 源仓库类型 */
-    private Integer sourceType;
-
-    /** 源仓库 */
-    private Long sourceLocationId;
-
-    /** 源仓位 */
-    private Long sourceLocationStoreId;
-
-    /** 目的仓库类型 */
-    private Integer purposeType;
-
-    /** 目的仓库 */
-    private Long purposeLocationId;
-
-    /** 目的仓位 */
-    private Long purposeLocationStoreId;
 
     /** 接收人 */
     private Long receiverId;

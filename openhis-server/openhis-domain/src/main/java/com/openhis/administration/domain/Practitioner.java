@@ -68,16 +68,16 @@ public class Practitioner extends HisBaseEntity {
     private String addressJson;
 
     /** 拼音码 */
-    private String spellCode;
+    private String pyStr;
 
     /** 五笔码 */
-    private String wbCode;
+    private String wbStr;
 
     /** 患者院内编码/病历号 */
-    private String code;
+    private String busNo;
 
     /** 医保码 */
-    private String ybCode;
+    private String ybNo;
 
     /** 系统用户id */
     private Long userId;

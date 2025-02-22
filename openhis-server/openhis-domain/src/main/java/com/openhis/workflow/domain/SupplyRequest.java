@@ -65,7 +65,7 @@ public class SupplyRequest extends HisBaseEntity {
     private Integer itemQuantity;
 
     /** 物品编码 */
-    private Long code;
+    private Long itemId;
 
     /** 物品计量单位 */
     private String unitIdCode;
@@ -89,7 +89,7 @@ public class SupplyRequest extends HisBaseEntity {
     private String reason;
 
     /** 源仓库类型 */
-    private Integer sourceType;
+    private Integer sourceTypeEnum;
 
     /** 源仓库 */
     private Long sourceLocationId;
@@ -98,7 +98,7 @@ public class SupplyRequest extends HisBaseEntity {
     private Long sourceLocationStoreId;
 
     /** 目的类型 */
-    private Integer purposeType;
+    private Integer purposeTypeEnum;
 
     /** 目的仓库 */
     private Long purposeLocationId;

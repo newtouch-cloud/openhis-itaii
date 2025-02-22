@@ -35,7 +35,7 @@ public class Encounter extends HisBaseEntity {
     private Long groupId;
 
     /** 就诊编码 */
-    private String code;
+    private String busNo;
 
     /** 状态编码 */
     private String statusCode;

@@ -32,13 +32,13 @@ public class ChargeItem extends HisBaseEntity {
     private Integer statusEnum;
 
     /** 层级 */
-    private String code;
+    private String busNo;
 
     /** 患者ID */
     private Long patientId;
 
     /** 类别 */
-    private Integer context;
+    private Integer contextEnum;
 
     /** 就诊ID */
     private Long encounterId;
@@ -47,7 +47,7 @@ public class ChargeItem extends HisBaseEntity {
     private Date occurrenceTime;
 
     /** 执行人Id */
-    private Long performer;
+    private Long performerId;
 
     /** 执行科室 */
     private Long performingOrgId;
@@ -110,7 +110,7 @@ public class ChargeItem extends HisBaseEntity {
     private Long accountId;
 
     /** 机构 */
-    private String orgCode;
+    private Integer orgId;
 
 
 }

@@ -44,7 +44,7 @@ public class Claim extends HisBaseEntity {
     private Integer useEnum;
 
     /** 索赔指向 */
-    private Integer insurer;
+    private Integer insurerEnum;
 
     /** condition_dis */
     private String conditionDis;

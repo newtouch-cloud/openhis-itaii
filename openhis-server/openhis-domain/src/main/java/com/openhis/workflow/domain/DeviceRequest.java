@@ -29,13 +29,13 @@ public class DeviceRequest extends HisBaseEntity {
     private Long id;
 
     /** 器材请求编码 */
-    private String code;
+    private String busNo;
 
     /** 处方号 */
-    private String prescriptionCode;
+    private String prescriptionNo;
 
     /** 相关诊疗项目 */
-    private String activityId;
+    private Integer activityId;
 
     /** 组套id */
     private Long packageId;

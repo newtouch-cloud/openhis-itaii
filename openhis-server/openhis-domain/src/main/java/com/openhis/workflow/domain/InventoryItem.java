@@ -32,19 +32,19 @@ public class InventoryItem extends HisBaseEntity {
     private Integer categoryEnum;
 
     /** 编码 */
-    private String code;
+    private String busNo;
 
     /** 名称 */
     private String name;
 
     /** 拼音码 */
-    private String pyCode;
+    private String pyStr;
 
     /** 五笔码 */
-    private String wbCode;
+    private String wbStr;
 
     /** 库存状态 */
-    private Integer inventoryStatus;
+    private Integer inventoryStatusEnum;
 
     /** 供应商id */
     private Long supplierId;
@@ -92,7 +92,7 @@ public class InventoryItem extends HisBaseEntity {
     private Long locationId;
 
     /** 追溯码 */
-    private String traceCode;
+    private String traceNo;
 
     /** 追溯码包装层级 */
     private Integer packagingLevels;

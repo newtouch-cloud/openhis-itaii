@@ -29,7 +29,7 @@ public class Location extends HisBaseEntity {
     private Long id;
 
     /** 编码 */
-    private String code;
+    private String busNo;
 
     /** 名称 */
     private String name;
@@ -47,10 +47,10 @@ public class Location extends HisBaseEntity {
     private String typeJson;
 
     /** 拼音码 */
-    private String spellCode;
+    private String pyStr;
 
     /** 五笔码 */
-    private String wbCode;
+    private String wbStr;
 
     /** 物理形式枚举 */
     private String formEnum;

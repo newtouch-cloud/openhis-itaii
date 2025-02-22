@@ -29,10 +29,10 @@ public class MedicationRequest extends HisBaseEntity {
     private Long id;
 
     /** 药品请求编码 */
-    private String code;
+    private String bus_no;
 
     /** 处方号 */
-    private String prescriptionCode;
+    private String prescriptionNo;
 
     /** 分组id */
     private Long groupId;
@@ -116,7 +116,7 @@ public class MedicationRequest extends HisBaseEntity {
     private String reasonJson;
 
     /** 治疗类型 */
-    private Integer therapyType;
+    private Integer therapyEnum;
 
     /** 服药时间(开始) */
     private Date effectiveDoseStart;
@@ -128,7 +128,7 @@ public class MedicationRequest extends HisBaseEntity {
     private Integer skinTestFlag;
 
     /** 合同Id */
-    private String contractCode;
+    private String contractNo;
 
     /** 输液标志 */
     private Integer infusionFlag;
@@ -167,7 +167,7 @@ public class MedicationRequest extends HisBaseEntity {
     private Integer dispensePerDuration;
 
     /** 发药人 */
-    private Long dispenser;
+    private Long dispenserId;
 
 
 }

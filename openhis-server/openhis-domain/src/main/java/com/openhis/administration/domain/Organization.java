@@ -29,7 +29,7 @@ public class Organization extends HisBaseEntity {
     private Long id;
 
     /** 编码 */
-    private String code;
+    private String bus_no;
 
     /** 名称 */
     private String name;
@@ -44,13 +44,13 @@ public class Organization extends HisBaseEntity {
     private Integer classEnum;
 
     /** 拼音码 */
-    private String spellCode;
+    private String pyStr;
 
     /** 五笔码 */
-    private String wbCode;
+    private String wbStr;
 
     /** 医保码 */
-    private String ybCode;
+    private String ybNo;
 
     /** 医保名称 */
     private String ybName;

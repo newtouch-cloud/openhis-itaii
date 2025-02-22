@@ -29,19 +29,19 @@ public class DeviceDefinition extends HisBaseEntity {
     private Long id;
 
     /** 编码 */
-    private String code;
+    private String busNo;
 
     /** 器材名称 */
     private String name;
 
     /** 器材名称拼音 */
-    private String pyCode;
+    private String pyStr;
 
     /** 器材五笔拼音 */
-    private String wbCode;
+    private String wbStr;
 
     /** 器材分类 */
-    private String deviceClass;
+    private String deviceCode;
 
     /** 器材种类 */
     private String deviceTypeCode;
@@ -74,13 +74,13 @@ public class DeviceDefinition extends HisBaseEntity {
     private Integer ybFlag;
 
     /** 医保编码 */
-    private String ybCode;
+    private String ybNo;
 
     /** 医保对码标记 */
     private Integer ybMatchFlag;
 
     /** 状态 */
-    private Integer status;
+    private Integer statusEnum;
 
     /** 生产厂家 */
     private Long manufacturerId;
@@ -92,7 +92,7 @@ public class DeviceDefinition extends HisBaseEntity {
     private String description;
 
     /** 适用范围 */
-    private Long jurisdiction;
+    private String jurisdiction;
 
     /** 执行科室 */
     private Long ruleId;

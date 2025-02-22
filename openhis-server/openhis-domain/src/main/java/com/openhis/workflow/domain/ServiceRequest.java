@@ -29,7 +29,7 @@ public class ServiceRequest extends HisBaseEntity {
     private Long id;
 
     /** 处方号 */
-    private String prescriptionCode;
+    private String prescriptionNo;
 
     /** 请求基于什么 */
     private String basedOnTable;
@@ -56,7 +56,7 @@ public class ServiceRequest extends HisBaseEntity {
     private Integer performFlag;
 
     /** 请求code */
-    private Long code;
+    private Long activityId;
 
     /** 数量 */
     private BigDecimal quantity;
@@ -77,7 +77,7 @@ public class ServiceRequest extends HisBaseEntity {
     private Long requesterId;
 
     /** 执行者类型 */
-    private String performerType;
+    private String performerTypeCode;
 
     /** 执行人 */
     private Long performerId;
@@ -98,7 +98,7 @@ public class ServiceRequest extends HisBaseEntity {
     private Date occurrenceEndTime;
 
     /** 历史请求 */
-    private Long relevantHistory;
+    private Long relevantHistoryId;
 
 
 }

@@ -29,16 +29,16 @@ public class Device extends HisBaseEntity {
     private Long id;
 
     /** 器材编码 */
-    private String deviceCode;
+    private String busNo;
 
     /** 器材定义编号 */
-    private Long defId;
+    private Long deviceDefId;
 
     /** 器材状态 */
     private Integer statusEnum;
 
     /** 器材可用状态 */
-    private Integer availabilityStatus;
+    private Integer availabilityEnum;
 
     /** 厂家 */
     private String manufacturer;

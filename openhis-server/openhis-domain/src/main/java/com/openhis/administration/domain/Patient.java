@@ -41,7 +41,7 @@ public class Patient extends HisBaseEntity {
     private String nameJson;
 
     /** 患者院内编码/病历号 */
-    private String code;
+    private String busNo;
 
     /** 性别编码 */
     private Integer genderEnum;
@@ -80,16 +80,16 @@ public class Patient extends HisBaseEntity {
     private String addressJson;
 
     /** 民族 */
-    private String nationality;
+    private String nationalityCode;
 
     /** 身份证号 */
     private String idCard;
 
     /** 拼音码 */
-    private String spellCode;
+    private String pyStr;
 
     /** 五笔码 */
-    private String wbCode;
+    private String wbStr;
 
     /** 血型ABO */
     private String bloodAbo;
