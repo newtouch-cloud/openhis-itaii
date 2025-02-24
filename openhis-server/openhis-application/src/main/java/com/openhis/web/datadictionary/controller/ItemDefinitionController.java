@@ -4,10 +4,14 @@
 package com.openhis.web.datadictionary.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.core.common.enums.AssignSeqEnum;
+import com.core.common.utils.AssignSeqUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +57,8 @@ public class ItemDefinitionController {
 //    private IDeviceDefinitionService deviceDefinitionService;
 //    @Autowired(required = false)
 //    private IActivityDefinitionService activityDefinitionService;
+    @Autowired(required = false)
+    private AssignSeqUtil assignSeqUtil;
 
     /**
      * 项目定价列表
@@ -127,8 +133,10 @@ public class ItemDefinitionController {
         }
         // 通过 DefinitionType 区分药品定价/器具定价/手术定价
         if (DefinitionTypeEnum.MEDICATION.getCode().equals(itemDefSearchParam.getDefinitionType())) {
+            //获取定价列表
             chargeItemDefinitionList =
                 chargeItemDefSearchMapper.getMedList(itemDefSearchParam, pageNo, pageSize, skipCount);
+            //设置分页条件
             chargeItemDefinitionPage.setSize(pageSize);
             chargeItemDefinitionPage.setCurrent(pageNo);
             if (chargeItemDefinitionList.size() > 0) {
@@ -141,8 +149,10 @@ public class ItemDefinitionController {
             return R.ok(chargeItemDefinitionPage,
                 MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
         } else if (DefinitionTypeEnum.DEVICE.getCode().equals(itemDefSearchParam.getDefinitionType())) {
+            //获取定价列表
             chargeItemDefinitionList =
                 chargeItemDefSearchMapper.getDevList(itemDefSearchParam, pageNo, pageSize, skipCount);
+            //设置分页条件
             chargeItemDefinitionPage.setSize(pageSize);
             chargeItemDefinitionPage.setCurrent(pageNo);
             if (chargeItemDefinitionList.size() > 0) {
@@ -155,8 +165,10 @@ public class ItemDefinitionController {
             return R.ok(chargeItemDefinitionPage,
                 MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
         } else if (DefinitionTypeEnum.ACTIVITY.getCode().equals(itemDefSearchParam.getDefinitionType())) {
+            //获取定价列表
             chargeItemDefinitionList =
                 chargeItemDefSearchMapper.getActList(itemDefSearchParam, pageNo, pageSize, skipCount);
+            //设置分页条件
             chargeItemDefinitionPage.setSize(pageSize);
             chargeItemDefinitionPage.setCurrent(pageNo);
             if (chargeItemDefinitionList.size() > 0) {
@@ -196,5 +208,46 @@ public class ItemDefinitionController {
         return chargeItemDefAppService.updateChargeItemDefApp(chargeItemDefApp)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"费用定价"}))
             : R.fail(PromptMsgConstant.Common.M00007, null);
+    }
+
+    /**
+     * 采番测试（例子，非常规代码，请勿调用）
+     *
+     * @return 采番测试结果
+     */
+    @GetMapping(value = "/test-assign")
+    public R<?> getTestAssign() {
+        // 基础采番
+        String code = assignSeqUtil.getSeq(AssignSeqEnum.TEST.getPrefix());
+        // 控制长度采番(seqLength: 总长度)
+        String code1 = assignSeqUtil.getSeq(AssignSeqEnum.TEST.getPrefix(),8);
+        // 控制长度批量采番
+        List<String> code2 = assignSeqUtil.getSeq(AssignSeqEnum.TEST.getPrefix(),8,3);
+        // 获取编号
+        Integer code3 = assignSeqUtil.getSeqNo(AssignSeqEnum.TEST.getPrefix());
+        // 批量获取编号
+        List<Integer> code4 = assignSeqUtil.getSeqNo(AssignSeqEnum.TEST.getPrefix(),3);
+        // 每日采番
+        String code5 = assignSeqUtil.getSeqByDay(AssignSeqEnum.TEST.getPrefix());
+        // 每日按长度采番(seqLength: 日期后的数字位数)
+        String code6 = assignSeqUtil.getSeqByDay(AssignSeqEnum.TEST.getPrefix(),8);
+        // 每日批量采番
+        List<String> code7 = assignSeqUtil.getSeqByDay(AssignSeqEnum.TEST.getPrefix(),8,3);
+        // 每日获取编号
+        Integer code8 = assignSeqUtil.getSeqNoByDay(AssignSeqEnum.TEST.getPrefix());
+        // 每日批量获取编号
+        List<Integer> code9 = assignSeqUtil.getSeqNoByDay(AssignSeqEnum.TEST.getPrefix(),3);
+        Map<String, Object> map = new HashMap<>();
+        map.put("code",code);
+        map.put("code1",code1);
+        map.put("code2",code2);
+        map.put("code3",code3);
+        map.put("code4",code4);
+        map.put("code5",code5);
+        map.put("code6",code6);
+        map.put("code7",code7);
+        map.put("code8",code8);
+        map.put("code9",code9);
+        return R.ok(map);
     }
 }

@@ -3,6 +3,7 @@ package com.core.common.core.redis;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import com.core.common.exception.UtilException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.HashOperations;
@@ -239,5 +240,20 @@ public class RedisCache {
      */
     public Collection<String> keys(final String pattern) {
         return redisTemplate.keys(pattern);
+    }
+
+    /**
+     * 递增
+     *
+     * @param key 缓存Key
+     * @param delta 要增加的幅度(大于0)
+     * @return 递增后的值
+     */
+    public long incr(String key, long delta) {
+        if (delta < 0L) {
+            throw new UtilException("递增因子必须大于0");
+        } else {
+            return this.redisTemplate.opsForValue().increment(key, delta);
+        }
     }
 }

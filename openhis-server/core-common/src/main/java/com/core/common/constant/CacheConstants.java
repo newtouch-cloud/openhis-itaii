@@ -40,4 +40,9 @@ public class CacheConstants {
      * 登录账户密码错误次数 redis key
      */
     public static final String PWD_ERR_CNT_KEY = "pwd_err_cnt:";
+
+    /**
+     * 超出上限，排番失败（时间：{}，KEY：{}
+     */
+    public static final String ASSIGN_SEQ_FAILED = "排番失败（时间：{}，KEY：{}，异常信息：{超出上限}）";
 }
