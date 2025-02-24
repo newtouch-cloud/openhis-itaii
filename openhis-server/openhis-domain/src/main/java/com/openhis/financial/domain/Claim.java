@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.ClaimUse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -41,7 +42,7 @@ public class Claim extends HisBaseEntity {
     private String subtypeCode;
 
     /** 用途 */
-    private Integer useEnum;
+    private ClaimUse useEnum;
 
     /** 索赔指向 */
     private Integer insurerEnum;

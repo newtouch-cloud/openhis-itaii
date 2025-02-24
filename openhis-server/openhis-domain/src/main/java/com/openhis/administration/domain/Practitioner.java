@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.AdministrativeGender;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -38,7 +39,7 @@ public class Practitioner extends HisBaseEntity {
     private String nameJson;
 
     /** 性别编码 */
-    private Integer genderEnum;
+    private AdministrativeGender genderEnum;
 
     /** 生日 */
     private Date birthDate;
