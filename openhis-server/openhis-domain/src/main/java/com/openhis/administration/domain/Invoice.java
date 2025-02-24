@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.InvoiceStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -32,7 +33,7 @@ public class Invoice extends HisBaseEntity {
     private Long patientId;
 
     /** 状态 */
-    private Integer statusEnum;
+    private InvoiceStatus statusEnum;
 
     /** 类别 */
     private String typeCode;

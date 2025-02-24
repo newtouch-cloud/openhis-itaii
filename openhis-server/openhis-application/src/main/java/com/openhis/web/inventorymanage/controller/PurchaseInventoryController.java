@@ -48,6 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/inventory-manage-purchase")
 @Slf4j
 public class PurchaseInventoryController {
+
     @Autowired
     private ISupplyRequestService supplyRequestService;
     @Autowired

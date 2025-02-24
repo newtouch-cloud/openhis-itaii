@@ -8,6 +8,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.ConditionCategory;
+import com.openhis.common.enums.ConditionClinicalStatus;
+import com.openhis.common.enums.ConditionSeverity;
+import com.openhis.common.enums.ConditionVerificationStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,16 +33,16 @@ public class Condition extends HisBaseEntity {
     private Long id;
 
     /** 验证状态 */
-    private Integer verificationStatusEnum;
+    private ConditionVerificationStatus verificationStatusEnum;
 
     /** 临床特征 */
-    private Integer clinicalStatusEnum;
+    private ConditionClinicalStatus clinicalStatusEnum;
 
     /** 分类 */
-    private Integer categoryEnum;
+    private ConditionCategory categoryEnum;
 
     /** 严重程度 */
-    private Integer severityEnum;
+    private ConditionSeverity severityEnum;
 
     /** 疾病或诊断编码 */
     private String busNo;

@@ -22,7 +22,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     public static String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
 
+    public static String YYYYMMDD = "yyyyMMdd";
+
     public static String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+
+    public static String YMDHMS_FOR_READ = "yyyy年MM月dd日 HH时mm分ss秒";
 
     private static String[] parsePatterns =
         {"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM", "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss",
@@ -88,6 +92,25 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static final String dateTime() {
         Date now = new Date();
         return DateFormatUtils.format(now, "yyyyMMdd");
+    }
+
+    /**
+     * 获取当日日期
+     *
+     * @return 当日日期
+     */
+    public static final String today()
+    {
+        return dateTimeNow(YYYYMMDD);
+    }
+
+    /**
+     * 获取当日日期（可读）
+     * @return
+     */
+    public static final String getStrYmdHmsRead()
+    {
+        return dateTimeNow(YMDHMS_FOR_READ);
     }
 
     /**

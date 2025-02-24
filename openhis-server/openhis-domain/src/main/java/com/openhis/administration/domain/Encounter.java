@@ -1,6 +1,5 @@
 package com.openhis.administration.domain;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -8,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -16,7 +16,6 @@ import lombok.experimental.Accessors;
  * 就诊管理Entity实体
  *
  * @author system
- * @date 2025-02-20
  */
 @Data
 @TableName("adm_encounter")
@@ -38,10 +37,10 @@ public class Encounter extends HisBaseEntity {
     private String busNo;
 
     /** 状态编码 */
-    private String statusCode;
+    private EncounterStatus statusEnum;
 
     /** 类别编码 */
-    private Integer classEnum;
+    private EncounterClass classEnum;
 
     /** 类别医保编码 */
     private Integer ybClassEnum;
@@ -50,16 +49,16 @@ public class Encounter extends HisBaseEntity {
     private String classJson;
 
     /** 优先级编码 */
-    private Integer priorityEnum;
+    private ActPriority priorityEnum;
 
     /** 分类编码 */
-    private Integer typeEnum;
+    private EncounterType typeEnum;
 
     /** 服务ID */
     private Long serviceTypeId;
 
     /** 就诊对象状态 */
-    private Integer subjectStatusEnum;
+    private EncounterSubjectStatus subjectStatusEnum;
 
     /** 开始时间 */
     private Date startTime;

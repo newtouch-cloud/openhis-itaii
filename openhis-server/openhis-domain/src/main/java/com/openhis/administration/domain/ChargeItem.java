@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.ChargeItemStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,7 +30,7 @@ public class ChargeItem extends HisBaseEntity {
     private Long id;
 
     /** 状态 */
-    private Integer statusEnum;
+    private ChargeItemStatus statusEnum;
 
     /** 层级 */
     private String busNo;
@@ -105,6 +106,9 @@ public class ChargeItem extends HisBaseEntity {
 
     /** 索赔结果 */
     private Integer claimStateEnum;
+
+    /** 打印次数 */
+    private Integer printCount;
 
     /** 关联账户ID */
     private Long accountId;

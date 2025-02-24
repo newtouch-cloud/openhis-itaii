@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 public class ItemDefSearchParam {
 
     /** 定价类型 */
-    private String DefinitionType;
+    private String definitionType;
     /** 定价项目 */
     private String chargeItem;
     /** 模糊搜索条件 */

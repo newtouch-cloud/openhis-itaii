@@ -8,6 +8,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.AdministrativeGender;
+import com.openhis.common.enums.MaritalStatus;
+import com.openhis.common.enums.OccupationType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -44,7 +47,7 @@ public class Patient extends HisBaseEntity {
     private String busNo;
 
     /** 性别编码 */
-    private Integer genderEnum;
+    private AdministrativeGender genderEnum;
 
     /** 生日 */
     private Date birthDate;
@@ -53,10 +56,10 @@ public class Patient extends HisBaseEntity {
     private Date deceasedDate;
 
     /** 婚姻状态 */
-    private Integer maritalStatusEnum;
+    private MaritalStatus maritalStatusEnum;
 
     /** 职业编码 */
-    private Integer prfsEnum;
+    private OccupationType prfsEnum;
 
     /** 电话 */
     private String phone;

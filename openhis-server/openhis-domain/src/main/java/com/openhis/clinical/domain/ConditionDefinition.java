@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.ConditionDefinitionSource;
+import com.openhis.common.enums.PublicationStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,7 +31,7 @@ public class ConditionDefinition extends HisBaseEntity {
     private Long id;
 
     /** 所属分类 */
-    private Integer sourceEnum;
+    private ConditionDefinitionSource sourceEnum;
 
     /** 编码 */
     private String condition_code;
@@ -59,7 +61,7 @@ public class ConditionDefinition extends HisBaseEntity {
     private Integer ybMatchFlag;
 
     /** 状态 */
-    private Integer statusEnum;
+    private PublicationStatus statusEnum;
 
 
 }

@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.EventStatus;
+import com.openhis.common.enums.ProcedureCategory;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -35,13 +37,13 @@ public class Procedure extends HisBaseEntity {
     private Long baseMedReqId;
 
     /** 当前状态 */
-    private Integer statusEnum;
+    private EventStatus statusEnum;
 
     /** 当前状态原因 */
     private String statusReasonText;
 
     /** 分类 */
-    private Integer categoryEnum;
+    private ProcedureCategory categoryEnum;
 
     /** 手术编码 */
     private String procedureCode;

@@ -41,6 +41,10 @@ public interface PromptMsgConstant {
          * 请勿重复提交
          */
         String M00008 = "apl.common.M00008";
+        /**
+         * 查询成功
+         */
+        String M00009 = "apl.common.M00009";
 
     }
 

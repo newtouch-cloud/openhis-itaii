@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.DeviceCategory;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -41,10 +42,10 @@ public class DeviceDefinition extends HisBaseEntity {
     private String wbStr;
 
     /** 器材分类 */
-    private String deviceCode;
+    private DeviceCategory categoryEnum;
 
     /** 器材种类 */
-    private String deviceTypeCode;
+    private String typeCode;
 
     /** 包装单位 */
     private String unitCode;

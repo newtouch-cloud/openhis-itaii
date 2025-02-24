@@ -35,7 +35,7 @@ public class PatientIdentifier extends HisBaseEntity {
     private String identifierNo;
 
     /** 标识状态枚举 */
-    private Integer stateEnum;
+    private IdentifierUse stateEnum;
 
     /** 有效时间Start */
     private Date startTime;
