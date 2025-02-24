@@ -108,6 +108,8 @@ public class MybatisPlusConfig {
                     "cli_procedure_performer",
                     "doc_emr",
                     "doc_emr_template",
+                    "doc_emr_detail",
+                    "doc_emr_dict",
                     "fin_claim",
                     "fin_claim_response",
                     "fin_contract",
