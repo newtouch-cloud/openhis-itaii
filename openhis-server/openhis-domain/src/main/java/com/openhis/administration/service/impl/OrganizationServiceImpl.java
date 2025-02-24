@@ -1,5 +1,6 @@
 package com.openhis.administration.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +49,20 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
         // 返回科室信息列表
         return organizationPage;
+    }
+
+    /**
+     * 通过机构ID查询机构名称
+     *
+     * @param code 机构ID
+     * @return 机构名称
+     */
+    @Override
+    public Organization getByCode(String code) {
+        QueryWrapper<Organization> queryWrapper = new QueryWrapper<>();
+        //设置查询条件为机构Id code
+        queryWrapper.eq("code", code);
+        return organizationMapper.selectOne(queryWrapper);
     }
 
 }
