@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.EncounterLocationStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -35,7 +36,7 @@ public class EncounterLocation extends HisBaseEntity {
     private Long locationId;
 
     /** 状态枚举 */
-    private Integer statusEnum;
+    private EncounterLocationStatus statusEnum;
 
     /** 物理形式枚举 */
     private Integer formEnum;

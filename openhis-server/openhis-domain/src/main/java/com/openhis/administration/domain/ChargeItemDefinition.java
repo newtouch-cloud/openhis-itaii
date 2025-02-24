@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.PublicationStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -35,7 +36,7 @@ public class ChargeItemDefinition extends HisBaseEntity {
     private String title;
 
     /** 状态 */
-    private Integer statusEnum;
+    private PublicationStatus statusEnum;
 
     /** 机构编码 */
     private String orgCode;
@@ -66,6 +67,4 @@ public class ChargeItemDefinition extends HisBaseEntity {
 
     /** 基础价格 */
     private BigDecimal price;
-
-
 }

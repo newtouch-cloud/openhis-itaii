@@ -1,13 +1,14 @@
 package com.openhis.administration.domain;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.AccountBillingStatus;
+import com.openhis.common.enums.AccountStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,10 +30,10 @@ public class Account extends HisBaseEntity {
     private Long id;
 
     /** 状态枚举 */
-    private Integer statusEnum;
+    private AccountStatus statusEnum;
 
     /** 结账状态枚举 */
-    private Integer billingStatusEnum;
+    private AccountBillingStatus billingStatusEnum;
 
     /** 账户类型编码 */
     private String typeCode;
