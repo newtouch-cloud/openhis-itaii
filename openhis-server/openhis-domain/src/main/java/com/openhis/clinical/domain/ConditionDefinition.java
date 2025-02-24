@@ -1,15 +1,12 @@
 package com.openhis.clinical.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
 import com.openhis.common.enums.ConditionDefinitionSource;
 import com.openhis.common.enums.PublicationStatus;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -34,7 +31,7 @@ public class ConditionDefinition extends HisBaseEntity {
     private ConditionDefinitionSource sourceEnum;
 
     /** 编码 */
-    private String condition_code;
+    private String conditionCode;
 
     /** 诊断名称 */
     private String name;
@@ -62,6 +59,5 @@ public class ConditionDefinition extends HisBaseEntity {
 
     /** 状态 */
     private PublicationStatus statusEnum;
-
 
 }
