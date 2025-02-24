@@ -12,7 +12,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.openhis.clinical.domain.ConditionDefinition;
 import com.openhis.clinical.mapper.ConditionDefinitionMapper;
 import com.openhis.clinical.service.IConditionDefinitionService;
-import com.openhis.common.enums.DelFlag;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,22 +30,18 @@ public class ConditionDefinitionServiceImpl extends ServiceImpl<ConditionDefinit
 
     private final ConditionDefinitionMapper conditionDefinitionMapper;
 
-    @Override
-    public List<ConditionDefinition> getMedicationCategory() {
-        return null;
-    }
-
     /**
      * 查询病种目录分页列表
      * 
      * @param searchKey 查询条件
      * @param status 查询条件-状态
+     * @param sourceEnum 查询条件-疾病种类
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @return
      */
     @Override
-    public Page<ConditionDefinition> getPage(String searchKey, Integer status, Integer sourceEnum, Long id, Integer pageNo,
+    public Page<ConditionDefinition> getPage(String searchKey, Integer status, Integer sourceEnum, Integer pageNo,
         Integer pageSize) {
         Page<ConditionDefinition> conditionList;
         // 生成查询条件
@@ -54,7 +49,7 @@ public class ConditionDefinitionServiceImpl extends ServiceImpl<ConditionDefinit
         // 模糊查询项目
         if (StringUtils.isNotEmpty(searchKey)) {
             // 模糊查询项目为【疾病编码】，【疾病名称】，【拼音】，【五笔】
-            queryWrapper.and(q -> q.like(ConditionDefinition::getCondition_code, searchKey).or()
+            queryWrapper.and(q -> q.like(ConditionDefinition::getConditionCode, searchKey).or()
                 .like(ConditionDefinition::getName, searchKey).or().like(ConditionDefinition::getPyStr, searchKey).or()
                 .like(ConditionDefinition::getWbStr, searchKey));
         }
@@ -66,25 +61,25 @@ public class ConditionDefinitionServiceImpl extends ServiceImpl<ConditionDefinit
         if (sourceEnum != -1) {
             queryWrapper.eq(ConditionDefinition::getSourceEnum, sourceEnum);
         }
-        // Id查询
-        if (id != -1) {
-            queryWrapper.eq(ConditionDefinition::getId, id);
-        }
-        // 查询删除状态
-        queryWrapper.eq(ConditionDefinition::getDeleteFlag, DelFlag.NO.getCode());
         // 查询病种目录列表
         conditionList = conditionDefinitionMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
         // 返回病种目录列表
         return conditionList;
     }
 
+    /**
+     * 新增病种
+     * 
+     * @param conditionDefinition 病种目录实体
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean addDisease(ConditionDefinition conditionDefinition) {
         // 根据病种编码判断病种是否存在
         List<ConditionDefinition> conditionDefinitions =
             conditionDefinitionMapper.selectList(new LambdaQueryWrapper<ConditionDefinition>()
-                .eq(ConditionDefinition::getCondition_code, conditionDefinition.getCondition_code()));
+                .eq(ConditionDefinition::getConditionCode, conditionDefinition.getConditionCode()));
         if (conditionDefinitions.size() > 0) {
             return false;
         }
@@ -96,6 +91,12 @@ public class ConditionDefinitionServiceImpl extends ServiceImpl<ConditionDefinit
         return true;
     }
 
+    /**
+     * 新增医保病种
+     * 
+     * @param conditionDefinition 病种目录实体
+     * @return
+     */
     @Override
     public boolean addYbDisease(ConditionDefinition conditionDefinition) {
         return false;
