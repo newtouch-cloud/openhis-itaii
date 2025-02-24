@@ -29,7 +29,7 @@ public class ChargeItemServiceImpl extends ServiceImpl<ChargeItemMapper, ChargeI
     @Override
     public boolean saveChargeItem(ChargeItem chargeItem) {
         // 假设此处有业务相关处理
-        if (chargeItem.getCode() == null) {
+        if (chargeItem.getBusNo() == null) {
             return false;
         }
         return chargeItemMapper.insert(chargeItem) > 0;

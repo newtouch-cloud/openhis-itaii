@@ -132,6 +132,13 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
+        <!-- 中文汉字转换为首字母拼音包 -->
+        <dependency>
+            <groupId>com.belerweb</groupId>
+            <artifactId>pinyin4j</artifactId>
+            <version>2.5.1</version>
+        </dependency>
+
     </dependencies>
 
 </project>
