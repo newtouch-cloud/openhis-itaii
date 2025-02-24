@@ -29,7 +29,7 @@ public class MedicationDefinition extends HisBaseEntity {
     private Long id;
 
     /** 药品编号 */
-    private Long code;
+    private String busNo;
 
     /** 药品名称 */
     private String name;
@@ -44,10 +44,10 @@ public class MedicationDefinition extends HisBaseEntity {
     private String nameEn;
 
     /** 药品名称拼音码 */
-    private String pyCode;
+    private String pyStr;
 
     /** 药品五笔码 */
-    private String wbCode;
+    private String wbStr;
 
     /** 药品分类 */
     private String categoryCode;
@@ -56,10 +56,10 @@ public class MedicationDefinition extends HisBaseEntity {
     private String merchandiseName;
 
     /** 商品名称拼音码 */
-    private String merchandisePyCode;
+    private String merchandisePyStr;
 
     /** 商品五笔码 */
-    private String merchandiseWbCode;
+    private String merchandiseWbStr;
 
     /** 药品单位 */
     private String unitCode;
@@ -86,7 +86,7 @@ public class MedicationDefinition extends HisBaseEntity {
     private Integer ybMatchFlag;
 
     /** 医保编码 */
-    private String ybCode;
+    private String ybNo;
 
     /** 药理作用分类 */
     private String pharmacologyCategoryCode;

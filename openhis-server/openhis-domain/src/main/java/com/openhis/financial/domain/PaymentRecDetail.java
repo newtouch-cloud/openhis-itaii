@@ -28,8 +28,8 @@ public class PaymentRecDetail extends HisBaseEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
-    /** recId */
-    private Long predecessor;
+    /** 先前支付明细id */
+    private Long predecessorId;
 
     /** 付款类型 */
     private Integer targetEnum;
@@ -38,13 +38,13 @@ public class PaymentRecDetail extends HisBaseEntity {
     private Long accountId;
 
     /** 账户类型 */
-    private Integer accountType;
+    private Integer accountEnum;
 
     /** 支付类型 */
-    private Integer payType;
+    private Integer payEnum;
 
     /** 支付类型等级 */
-    private Integer payTypeClass;
+    private Integer payLevelEnum;
 
     /** 金额 */
     private BigDecimal amount;
@@ -56,7 +56,7 @@ public class PaymentRecDetail extends HisBaseEntity {
     private BigDecimal chargeAmount;
 
     /** 支付平台返回交易号 */
-    private String payTransId;
+    private String payTransNo;
 
     /** 支付平台返回交易信息 */
     private String payTransText;

@@ -29,7 +29,7 @@ public class DeviceDispense extends HisBaseEntity {
     private Long id;
 
     /** 器材发放id */
-    private String code;
+    private String busNo;
 
     /** 器材请求id */
     private String deviceReqId;

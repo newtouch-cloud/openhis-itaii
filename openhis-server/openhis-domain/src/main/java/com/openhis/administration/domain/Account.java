@@ -50,10 +50,10 @@ public class Account extends HisBaseEntity {
     private BigDecimal balanceAmount;
 
     /** 医保区域编码 */
-    private String ybAreaCode;
+    private String ybAreaNo;
 
     /** 合同编码 */
-    private String contractCode;
+    private String contractNo;
 
     /** 欠费限制额度 */
     private BigDecimal limitAccount;

@@ -60,7 +60,7 @@ public class SysLoginService {
      */
     public String login(String username, String password, String code, String uuid) {
         // 验证码校验
-        validateCaptcha(username, code, uuid);
+         validateCaptcha(username, code, uuid);
         // 登录前置校验
         loginPreCheck(username, password);
         // 用户验证
@@ -87,6 +87,11 @@ public class SysLoginService {
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS,
             MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser)authentication.getPrincipal();
+
+        // -----start-----登录时set租户id,正常应该从请求头获取,这行代码只是测试使用
+        loginUser.setTenantId(1);
+        // -----end-----登录时set租户id,正常应该从请求头获取,这行代码只是测试使用
+
         recordLoginInfo(loginUser.getUserId());
         // 生成token
         return tokenService.createToken(loginUser);

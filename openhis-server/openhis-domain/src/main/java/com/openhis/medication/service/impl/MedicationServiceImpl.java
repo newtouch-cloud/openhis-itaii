@@ -1,11 +1,5 @@
 package com.openhis.medication.service.impl;
 
-import java.util.List;
-
-import com.core.common.biz.HisBaseServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.openhis.common.enums.DelFlag;
@@ -13,8 +7,11 @@ import com.openhis.medication.domain.Medication;
 import com.openhis.medication.domain.MedicationDetail;
 import com.openhis.medication.mapper.MedicationMapper;
 import com.openhis.medication.service.IMedicationService;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 药品基本信息管理Service业务层处理
@@ -24,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class MedicationServiceImpl extends HisBaseServiceImpl<MedicationMapper, Medication> implements IMedicationService {
+public class MedicationServiceImpl extends ServiceImpl<MedicationMapper, Medication> implements IMedicationService {
 
     @Autowired
     private MedicationMapper medicationMapper;

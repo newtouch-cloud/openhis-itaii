@@ -35,10 +35,10 @@ public class PaymentReconciliation extends HisBaseEntity {
     private Long relationId;
 
     /** 支付的业务标识符 */
-    private String paymentIdentifier;
+    private String paymentNo;
 
     /** 付款类别 */
-    private Integer type;
+    private Integer paymentEnum;
 
     /** 付款实体ID */
     private Long paypmentReconciliationId;
@@ -47,10 +47,10 @@ public class PaymentReconciliation extends HisBaseEntity {
     private Integer kindEnum;
 
     /** 收款员 */
-    private Long enterer;
+    private Long entererId;
 
     /** 支付发起人类型 */
-    private Integer issuerType;
+    private Integer issuerEnum;
 
     /** 支付的患者ID */
     private Long patientId;
@@ -80,13 +80,13 @@ public class PaymentReconciliation extends HisBaseEntity {
     private Integer printCount;
 
     /** 合同编码 */
-    private String contractCode;
+    private String contractNo;
 
     /** 处方号集合 */
     private String chargeItemJson;
 
     /** 就诊ID */
-    private Long encoutnerId;
+    private Long encounterId;
 
 
 }

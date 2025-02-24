@@ -38,7 +38,7 @@ public class Contract extends HisBaseEntity {
     private Integer categoryEnum;
 
     /** 合同编码 */
-    private String code;
+    private String busNo;
 
     /** 机构 */
     private Long orgId;

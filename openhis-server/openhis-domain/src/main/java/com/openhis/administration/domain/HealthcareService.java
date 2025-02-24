@@ -29,7 +29,7 @@ public class HealthcareService extends HisBaseEntity {
     private Long id;
 
     /** 活动标记 */
-    private Integer active;
+    private Integer activeFlag;
 
     /** 提供部门ID */
     private Long offeredOrgId;

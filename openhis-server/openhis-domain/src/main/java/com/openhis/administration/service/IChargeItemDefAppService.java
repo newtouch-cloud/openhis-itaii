@@ -11,4 +11,27 @@ import com.openhis.administration.domain.ChargeItemDefApp;
  */
 public interface IChargeItemDefAppService extends IService<ChargeItemDefApp> {
 
+    /**
+     * 更新项目定价
+     * 
+     * @param chargeItemDefApp 更新内容
+     * @return 更新结果
+     */
+    boolean updateChargeItemDefApp(ChargeItemDefApp chargeItemDefApp);
+
+    /**
+     * 新增费用定价
+     *
+     * @param chargeItemDefApp 新增内容
+     * @return 新增结果
+     */
+    boolean addChargeItemDefApp(ChargeItemDefApp chargeItemDefApp);
+
+    /**
+     * 删除费用定价
+     *
+     * @param id 费用定价id
+     * @return 新增结果
+     */
+    boolean deleteChargeItemDefApp(Long id);
 }

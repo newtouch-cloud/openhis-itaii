@@ -32,34 +32,34 @@ public class ActivityDefinition extends HisBaseEntity {
     private Integer categoryEnum;
 
     /** 编码 */
-    private String code;
+    private String busNo;
 
     /** 项目名称 */
     private String name;
 
     /** 项目名称拼音 */
-    private String pyCode;
+    private String pyStr;
 
     /** 五笔拼音 */
-    private String wbCode;
+    private String wbStr;
 
     /** 类型 */
     private Integer typeEnum;
 
     /** 使用单位 */
-    private String permittedUnit;
+    private String permittedUnitCode;
 
     /** 医保标记 */
     private Integer ybFlag;
 
     /** 医保编码 */
-    private String ybCode;
+    private String ybNo;
 
     /** 医保对码标记 */
     private Integer ybMatchFlag;
 
     /** 状态 */
-    private String statusCode;
+    private Integer statusEnum;
 
     /** 身体部位 */
     private String bodySiteCode;
@@ -71,7 +71,7 @@ public class ActivityDefinition extends HisBaseEntity {
     private String description;
 
     /** 规则id */
-    private String ruleId;
+    private Integer ruleId;
 
 
 }

@@ -41,7 +41,7 @@ public class Condition extends HisBaseEntity {
     private Integer severityEnum;
 
     /** 疾病或诊断编码 */
-    private String code;
+    private String busNo;
 
     /** 身体部位 */
     private String bodySiteJson;
@@ -77,7 +77,7 @@ public class Condition extends HisBaseEntity {
     private Date recordedDatetime;
 
     /** 记录人 */
-    private Long recorder;
+    private Long recorderId;
 
     /** 阶段总结 */
     private String stageSummaryText;
@@ -86,7 +86,7 @@ public class Condition extends HisBaseEntity {
     private String evidence;
 
     /** 医保编码 */
-    private String ybCode;
+    private String ybNo;
 
 
 }

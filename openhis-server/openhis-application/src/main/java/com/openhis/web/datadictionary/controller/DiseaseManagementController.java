@@ -55,7 +55,7 @@ public class DiseaseManagementController {
     void AddDisease(DiseaseInDto diseaseInDto) {
         ConditionDefinition conditionDefinition = new ConditionDefinition();
         BeanUtils.copyProperties(diseaseInDto,conditionDefinition);
-        iConditionDefinitionService.AddDisease(conditionDefinition);
+//        iConditionDefinitionService.AddDisease(conditionDefinition);
     }
 
     // 新增医保病种目录

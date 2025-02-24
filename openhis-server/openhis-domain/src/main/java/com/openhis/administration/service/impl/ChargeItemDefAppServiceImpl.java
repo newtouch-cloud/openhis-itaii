@@ -14,6 +14,58 @@ import com.openhis.administration.service.IChargeItemDefAppService;
  * @date 2025-02-20
  */
 @Service
-public class ChargeItemDefAppServiceImpl extends ServiceImpl<ChargeItemDefAppMapper, ChargeItemDefApp> implements IChargeItemDefAppService {
+public class ChargeItemDefAppServiceImpl extends ServiceImpl<ChargeItemDefAppMapper, ChargeItemDefApp>
+    implements IChargeItemDefAppService {
 
+    /**
+     * 更新项目定价
+     *
+     * @param chargeItemDefApp 更新内容
+     * @return 更新结果
+     */
+    @Override
+    public boolean updateChargeItemDefApp(ChargeItemDefApp chargeItemDefApp) {
+        // 更新样例 一切以实际为主
+        if (chargeItemDefApp.getId() != null) {
+            // 获取更新前收费项目，避免更新导致数据库崩溃
+            if (baseMapper.selectById(chargeItemDefApp.getId()) == null) {
+                return false;
+            } else {
+                return baseMapper.updateById(chargeItemDefApp) > 0;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 新增费用定价
+     *
+     * @param chargeItemDefApp 新增内容
+     * @return 新增结果
+     */
+    @Override
+    public boolean addChargeItemDefApp(ChargeItemDefApp chargeItemDefApp) {
+        //此判断是为了避免插入时主键重复
+        if (chargeItemDefApp.getId() != null) {
+            return false;
+        } else {
+            return baseMapper.insert(chargeItemDefApp) > 0;
+        }
+    }
+
+    /**
+     * 删除费用定价
+     *
+     * @param id 费用定价id
+     * @return 新增结果
+     */
+    @Override
+    public boolean deleteChargeItemDefApp(Long id) {
+        if (baseMapper.selectById(id) == null) {
+            return false;
+        } else {
+            return baseMapper.deleteById(id) > 0;
+        }
+    }
 }

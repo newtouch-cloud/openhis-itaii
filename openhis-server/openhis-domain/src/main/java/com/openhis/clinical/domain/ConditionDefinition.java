@@ -32,16 +32,16 @@ public class ConditionDefinition extends HisBaseEntity {
     private Integer sourceEnum;
 
     /** 编码 */
-    private String code;
+    private String condition_code;
 
     /** 诊断名称 */
     private String name;
 
     /** 诊断名称拼音 */
-    private String pyCode;
+    private String pyStr;
 
     /** 诊断名称五笔拼音 */
-    private String wbCode;
+    private String wbStr;
 
     /** 类型 */
     private String typeCode;
@@ -53,7 +53,7 @@ public class ConditionDefinition extends HisBaseEntity {
     private Integer ybFlag;
 
     /** 医保编码 */
-    private String ybCode;
+    private String ybNo;
 
     /** 医保对码标记 */
     private Integer ybMatchFlag;

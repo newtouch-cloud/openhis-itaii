@@ -38,13 +38,13 @@ public class PaymentNotice extends HisBaseEntity {
     private Long paypmentReconciliationId;
 
     /** 被支付方 */
-    private Long payee;
+    private Long payeeId;
 
     /** 通知方式 */
     private String wayCode;
 
     /** 通知内容 */
-    private String content;
+    private String contentText;
 
     /** 被通知方 */
     private String recipient;
@@ -56,7 +56,7 @@ public class PaymentNotice extends HisBaseEntity {
     private Integer payStatus;
 
     /** 机构 */
-    private String orgCode;
+    private Integer orgId;
 
 
 }

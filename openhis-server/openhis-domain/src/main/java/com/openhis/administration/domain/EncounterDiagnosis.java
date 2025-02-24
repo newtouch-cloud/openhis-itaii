@@ -34,9 +34,6 @@ public class EncounterDiagnosis extends HisBaseEntity {
     /** 诊断_id */
     private Long conditionId;
 
-    /** 诊断编码 */
-    private String code;
-
     /** 住院患者疾病诊 */
     private Integer iptDiseCrsp;
 
