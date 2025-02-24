@@ -16,7 +16,9 @@ public enum AssignSeqEnum {
     /**
      * 例子
      */
-    TEST("1", "例子", "TE");
+    TEST("1", "例子", "TE"),
+    //患者编号
+    PATIENT_NUM("1", "患者编号", "PN");
 
     private final String code;
     private final String info;
