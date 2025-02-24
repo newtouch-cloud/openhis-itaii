@@ -8,7 +8,7 @@ import net.sourceforge.pinyin4j.PinyinHelper;
  * @author liuhr
  * @date 2025/2/24
  */
-public final class ChineseConvert {
+public final class ChineseConvertUtils {
 
     /**
      * 将中文汉字转换为首字母拼音
