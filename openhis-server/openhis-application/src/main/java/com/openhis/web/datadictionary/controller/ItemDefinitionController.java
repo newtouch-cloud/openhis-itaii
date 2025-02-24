@@ -22,14 +22,11 @@ import com.openhis.administration.domain.ChargeItemDefApp;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.service.IChargeItemDefAppService;
 import com.openhis.administration.service.IChargeItemDefinitionService;
-import com.openhis.administration.service.IDeviceDefinitionService;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.medication.service.IMedicationDefinitionService;
 import com.openhis.web.datadictionary.dto.ChargeItemDefPageDto;
 import com.openhis.web.datadictionary.dto.ItemDefSearchParam;
 import com.openhis.web.datadictionary.dto.ItemDefinitionDto;
 import com.openhis.web.datadictionary.mapper.ChargeItemDefSearchMapper;
-import com.openhis.workflow.service.IActivityDefinitionService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,12 +47,12 @@ public class ItemDefinitionController {
     private IChargeItemDefAppService chargeItemDefAppService;
     @Autowired(required = false)
     private ChargeItemDefSearchMapper chargeItemDefSearchMapper;
-    @Autowired(required = false)
-    private IMedicationDefinitionService medicationDefinitionService;
-    @Autowired(required = false)
-    private IDeviceDefinitionService deviceDefinitionService;
-    @Autowired(required = false)
-    private IActivityDefinitionService activityDefinitionService;
+//    @Autowired(required = false)
+//    private IMedicationDefinitionService medicationDefinitionService;
+//    @Autowired(required = false)
+//    private IDeviceDefinitionService deviceDefinitionService;
+//    @Autowired(required = false)
+//    private IActivityDefinitionService activityDefinitionService;
 
     /**
      * 项目定价列表
@@ -141,7 +138,8 @@ public class ItemDefinitionController {
                 chargeItemDefinitionPage.setTotal(0);
                 chargeItemDefinitionPage.setRecords(new ArrayList<>());
             }
-            return R.ok(chargeItemDefinitionPage);
+            return R.ok(chargeItemDefinitionPage,
+                MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
         } else if (DefinitionTypeEnum.DEVICE.getCode().equals(itemDefSearchParam.getDefinitionType())) {
             chargeItemDefinitionList =
                 chargeItemDefSearchMapper.getDevList(itemDefSearchParam, pageNo, pageSize, skipCount);
@@ -154,7 +152,8 @@ public class ItemDefinitionController {
                 chargeItemDefinitionPage.setTotal(0);
                 chargeItemDefinitionPage.setRecords(new ArrayList<>());
             }
-            return R.ok(chargeItemDefinitionPage);
+            return R.ok(chargeItemDefinitionPage,
+                MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
         } else if (DefinitionTypeEnum.ACTIVITY.getCode().equals(itemDefSearchParam.getDefinitionType())) {
             chargeItemDefinitionList =
                 chargeItemDefSearchMapper.getActList(itemDefSearchParam, pageNo, pageSize, skipCount);
@@ -167,9 +166,10 @@ public class ItemDefinitionController {
                 chargeItemDefinitionPage.setTotal(0);
                 chargeItemDefinitionPage.setRecords(new ArrayList<>());
             }
-            return R.ok(chargeItemDefinitionPage);
+            return R.ok(chargeItemDefinitionPage,
+                MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
         } else {
-            return R.ok();
+            return R.ok(new Page<>(), MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
         }
     }
 
@@ -185,7 +185,7 @@ public class ItemDefinitionController {
         ChargeItemDefinition chargeItemDefinition = new ChargeItemDefinition();
         BeanUtils.copyProperties(itemDefinitionDto, chargeItemDefinition);
         if (!chargeItemDefinitionService.updateById(chargeItemDefinition)) {
-            return R.fail();
+            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
         }
 
         // 更新收费项目adm_charge_item_def_app
