@@ -11,8 +11,7 @@ import com.openhis.administration.domain.Organization;
  * @date 2025-02-21
  */
 public interface IOrganizationService extends IService<Organization> {
-    Page<Organization> getOrganizationPage(Integer classEnum,Integer activeFlag, Integer pageNo, Integer pageSize);
-
+    Page<Organization> getOrganizationPage(Integer classEnum, Integer activeFlag, Integer pageNo, Integer pageSize);
 
     /**
      * 通过机构ID查询机构名称

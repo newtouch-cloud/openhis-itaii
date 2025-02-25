@@ -3,8 +3,7 @@
  */
 package com.openhis.web.inventorymanage.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,27 +12,27 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.ChargeItem;
 import com.openhis.administration.domain.Location;
-import com.openhis.administration.domain.Patient;
 import com.openhis.administration.service.IChargeItemService;
 import com.openhis.administration.service.ILocationService;
 import com.openhis.administration.service.IPatientService;
 import com.openhis.administration.service.ISupplierService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.medication.domain.Medication;
+import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.medication.service.IMedicationService;
-import com.openhis.web.inventorymanage.assembler.PurchaseInventoryAssembler;
 import com.openhis.web.inventorymanage.dto.InventoryDto;
 import com.openhis.web.inventorymanage.dto.InventoryReceiptInitDto;
 import com.openhis.web.inventorymanage.dto.InventorySearchParam;
 import com.openhis.web.inventorymanage.dto.SaveInventoryReceiptDto;
 import com.openhis.workflow.domain.SupplyRequest;
+import com.openhis.workflow.mapper.SupplyRequestMapper;
 import com.openhis.workflow.service.ISupplyRequestService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +60,8 @@ public class PurchaseInventoryController {
     private ISupplierService supplierService;
     @Autowired
     private ILocationService locationService;
+    @Autowired
+    private SupplyRequestMapper supplyRequestMapper;
 
     @GetMapping(value = "/init")
     public R<?> init() {
@@ -82,13 +83,42 @@ public class PurchaseInventoryController {
     // 4.查询选定对应药品类型的药品信息列表
 
     /**
+     * 入库单据列表
+     *
+     * @param inventorySearchParam 查询条件
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @param searchKey 模糊查询关键字
+     * @param request 请求数据
+     * @return 入库单据分页列表
+     */
+    @GetMapping(value = "/inventory-receipt-page")
+    public R<?> getPage(InventorySearchParam inventorySearchParam,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+        @RequestParam(name = "searchKey", required = false) String searchKey, HttpServletRequest request) {
+
+        // 设置模糊查询的字段名
+        HashSet<String> searchFields = new HashSet<>();
+        searchFields.add(CommonConstants.FieldName.BusNo);
+
+        // 构建查询条件
+        QueryWrapper<InventorySearchParam> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(inventorySearchParam, searchKey, searchFields, request);
+
+        // Page<InventoryReceiptDto> inventoryReceiptPage= supplyRequestService.page(new
+        // Page<>(pageNo,pageSize),queryWrapper);
+        return R.ok();
+    }
+
+    /**
      * 添加入库单据（生成供应请求）
      *
-     * @param inventoryDto 供应请求信息
+     * @param inventoryDto 入库单据
      */
     @PostMapping("/inventory-receipt")
-    public R<?> addSupplyRequest(@Validated @RequestBody InventoryDto inventoryDto) {
-        // 生成待发送的入库单据supply_request
+    public R<?> addInventoryReceipt(@Validated @RequestBody InventoryDto inventoryDto) {
+        // 生成待发送的入库单据
         SupplyRequest supplyRequest = new SupplyRequest();
         BeanUtils.copyProperties(inventoryDto, supplyRequest);
         // 如果业务上不需要其它处理 直接调用service的保存方法
@@ -120,7 +150,7 @@ public class PurchaseInventoryController {
      * @param saveInventoryReceiptDto 供应请求信息
      */
     @PutMapping("/inventory-receipt")
-    public R<?> editSupplyRequest(@Validated @RequestBody SaveInventoryReceiptDto saveInventoryReceiptDto) {
+    public R<?> editInventoryReceipt(@Validated @RequestBody SaveInventoryReceiptDto saveInventoryReceiptDto) {
         // 更新supply_request信息
         SupplyRequest saveRequest = new SupplyRequest();
         BeanUtils.copyProperties(saveInventoryReceiptDto, saveRequest);
@@ -140,7 +170,7 @@ public class PurchaseInventoryController {
      * @param supplyRequestId 主表id
      */
     @DeleteMapping("/inventory-receipt")
-    public R<?> deleteSupplyRequest(@RequestParam Long supplyRequestId) {
+    public R<?> deleteInventoryReceipt(@RequestParam Long supplyRequestId) {
         // 全都是逻辑删除
 
         boolean deleteSuccess = supplyRequestService.removeById(supplyRequestId);
@@ -153,48 +183,6 @@ public class PurchaseInventoryController {
             .remove(new LambdaUpdateWrapper<ChargeItem>().eq(ChargeItem::getServiceId, supplyRequestId));
 
         return deleteChargeItemSuccess ? R.ok() : R.fail();
-    }
-
-    /**
-     * 入库单据详情列表
-     *
-     * @param inventorySearchParam 查询条件
-     * @param pageNo 当前页码
-     * @param pageSize 查询条数
-     * @param request 请求数据
-     * @return 入库单据分页列表
-     */
-    @GetMapping(value = "/inventory-receipt-page")
-    public R<?> getDetailPage(InventorySearchParam inventorySearchParam,
-        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-
-        // 查询条件初始化
-        Medication medication = new Medication();
-        BeanUtils.copyProperties(inventorySearchParam, medication);
-
-        SupplyRequest supplyRequest = new SupplyRequest();
-        BeanUtils.copyProperties(inventorySearchParam, supplyRequest);
-
-        // 获取供应请求信息
-
-        // ====================================================================================
-
-        // 查询【供应申请管理】分页列表
-        Page<SupplyRequest> supplyRequestPage = supplyRequestService.getPage(supplyRequest, pageNo, pageSize);
-
-        // 根据【发放id】查询【药品基本信息管理】列表
-        List<Medication> medicationList = medicationService.listByIds(
-            supplyRequestPage.getRecords().stream().map(SupplyRequest::getDispenseId).collect(Collectors.toList()));
-
-        // 根据【患者id】查询【患者管理】列表
-        List<Patient> patientList = patientService.listByIds(
-            supplyRequestPage.getRecords().stream().map(SupplyRequest::getPatientId).collect(Collectors.toList()));
-
-        // 装配并返回【入库单据分页列表DTO】分页
-        return R
-            .ok(PurchaseInventoryAssembler.assembleInventoryReceiptDto(supplyRequestPage, medicationList, patientList));
-
     }
 
     /**

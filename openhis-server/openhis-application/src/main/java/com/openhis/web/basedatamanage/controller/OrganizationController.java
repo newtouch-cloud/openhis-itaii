@@ -52,7 +52,7 @@ public class OrganizationController {
 
         // 基础采番
         String code = assignSeqUtil.getSeq(AssignSeqEnum.TEST.getPrefix());
-        organization.setBus_no(code);
+        organization.setBusNo(code);
 
         boolean saveOrganizationSuccess = organizationService.save(organization);
 
@@ -86,6 +86,7 @@ public class OrganizationController {
     @DeleteMapping("/organization")
     public R<?> deleteSupplyRequest(@RequestParam Long orgId) {
 
+        // 在service层做业务校验
         boolean deleteSuccess = organizationService.removeById(orgId);
 
         return deleteSuccess
