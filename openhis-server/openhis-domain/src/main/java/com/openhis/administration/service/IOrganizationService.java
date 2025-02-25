@@ -17,9 +17,9 @@ public interface IOrganizationService extends IService<Organization> {
     /**
      * 通过机构ID查询机构名称
      *
-     * @param code 机构ID
+     * @param busNo 机构ID
      * @return 机构名称
      */
-    Organization getByCode(String code);
+    Organization getByBusNo(String busNo);
 
 }
