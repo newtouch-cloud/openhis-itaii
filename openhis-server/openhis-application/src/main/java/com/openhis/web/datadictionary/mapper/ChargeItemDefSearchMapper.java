@@ -25,11 +25,13 @@ public interface ChargeItemDefSearchMapper extends BaseMapper<ChargeItemDefiniti
      * @param itemDefSearchParam 查询条件
      * @param pageNo 页码
      * @param pageSize 页面大小
+     * @param searchKey 模糊搜索条件
      * @param skipCount 跳过条数
      * @return 分页查询
      */
     List<ChargeItemDefPageDto> getMedList(@Param("itemDefSearchParam") ItemDefSearchParam itemDefSearchParam,
-        @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("skipCount") Integer skipCount);
+        @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("searchKey") String searchKey,
+        @Param("skipCount") Integer skipCount);
 
     /**
      * 器具费用定价分页查询
@@ -37,11 +39,13 @@ public interface ChargeItemDefSearchMapper extends BaseMapper<ChargeItemDefiniti
      * @param itemDefSearchParam 查询条件
      * @param pageNo 页码
      * @param pageSize 页面大小
+     * @param searchKey 模糊搜索条件
      * @param skipCount 跳过条数
      * @return 分页查询
      */
     List<ChargeItemDefPageDto> getDevList(@Param("itemDefSearchParam") ItemDefSearchParam itemDefSearchParam,
-        @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("skipCount") int skipCount);
+        @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("searchKey") String searchKey,
+        @Param("skipCount") int skipCount);
 
     /**
      * 活动费用定价分页查询
@@ -49,9 +53,11 @@ public interface ChargeItemDefSearchMapper extends BaseMapper<ChargeItemDefiniti
      * @param itemDefSearchParam 查询条件
      * @param pageNo 页码
      * @param pageSize 页面大小
+     * @param searchKey 模糊搜索条件
      * @param skipCount 跳过条数
      * @return 分页查询
      */
     List<ChargeItemDefPageDto> getActList(@Param("itemDefSearchParam") ItemDefSearchParam itemDefSearchParam,
-        @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("skipCount") int skipCount);
+        @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("searchKey") String searchKey,
+        @Param("skipCount") int skipCount);
 }

@@ -6,10 +6,15 @@ package com.openhis.web.inventorymanage.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
+ * 入库
+ *
  * @author ZhangYC
  * @date 2025-02-20
  */
@@ -24,6 +29,7 @@ public class InventoryDto {
     private Integer itemQuantity;
 
     /** 物品编码 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long code;
 
     /** 物品计量单位 */

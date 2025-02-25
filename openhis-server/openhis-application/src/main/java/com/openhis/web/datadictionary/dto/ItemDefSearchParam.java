@@ -19,9 +19,7 @@ public class ItemDefSearchParam {
     /** 定价类型 */
     private String definitionType;
     /** 定价项目 */
-    private String chargeItem;
+    private Integer chargeItem;
     /** 模糊搜索条件 */
     private String searchKey;
-    /** 状态 */
-    private Integer statusEnum;
 }

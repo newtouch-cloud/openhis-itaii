@@ -1,15 +1,12 @@
 package com.openhis.administration.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
 import com.openhis.common.enums.OrganizationClass;
 import com.openhis.common.enums.OrganizationType;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -31,7 +28,7 @@ public class Organization extends HisBaseEntity {
     private Long id;
 
     /** 编码 */
-    private String bus_no;
+    private String busNo;
 
     /** 名称 */
     private String name;
@@ -59,6 +56,5 @@ public class Organization extends HisBaseEntity {
 
     /** 显示顺序 */
     private Integer displayOrder;
-
 
 }

@@ -1,14 +1,20 @@
+/*
+ * Copyright ©2023 CJB-CNIT Team. All rights reserved
+ */
 package com.openhis.common.constant;
 
 /**
  * APL消息ID常量类
+ *
+ * @author zwh
+ * @date 2025-02-25
  */
-public interface PromptMsgConstant {
+public class PromptMsgConstant {
 
     /**
      * 共用
      */
-    interface Common {
+    public interface Common {
         /**
          * {0}添加成功
          */
@@ -47,6 +53,4 @@ public interface PromptMsgConstant {
         String M00009 = "apl.common.M00009";
 
     }
-
-
 }
