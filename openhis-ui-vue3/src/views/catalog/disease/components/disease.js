@@ -45,23 +45,10 @@ export function delUser(userId) {
   })
 }
 
-// 用户状态修改
-export function changeUserStatus(userId, status) {
-  const data = {
-    userId,
-    status
-  }
+// 病种目录分类查询
+export function getDiseaseCategory() {
   return request({
-    url: '/system/user/changeStatus',
-    method: 'put',
-    data: data
-  })
-}
-
-// 查询用户个人信息
-export function getUserProfile() {
-  return request({
-    url: '/system/user/profile',
+    url: '/datadictionary/disease/information-category',
     method: 'get'
   })
 }

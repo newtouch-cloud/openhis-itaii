@@ -12,9 +12,9 @@
                   style="margin-bottom: 20px"
                />
             </div> -->
-        <div class="head-container">
+        <!-- <div class="head-container">
           <el-tree
-            :data="deptOptions"
+            :data="conditionDefinitionOptions"
             :props="{ label: 'label', children: 'children' }"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
@@ -24,7 +24,7 @@
             default-expand-all
             @node-click="handleNodeClick"
           />
-        </div>
+        </div> -->
       </el-col>
       <!--用户数据-->
       <el-col :span="20" :xs="24">
@@ -282,20 +282,16 @@
 
 <script setup name="Disease">
 import {
-  changeUserStatus,
   getDiseaseList,
   editDisease,
   addDisease,
-  deptTreeSelect,
+  getDiseaseCategory,
   getDiseaseOne,
 } from "./components/disease";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict(
-  "sys_normal_disable",
-  "sys_user_sex"
-);
+const { sys_normal_disable, sys_user_sex } = proxy.useDict( "sys_normal_disable","sys_user_sex");
 
 const diseaseList = ref([]);
 const open = ref(false);
@@ -309,7 +305,7 @@ const total = ref(0);
 const title = ref("");
 const dateRange = ref([]);
 const deptName = ref("");
-const deptOptions = ref(undefined);
+const conditionDefinitionOptions = ref(undefined);
 // const initPassword = ref(undefined);
 // const postOptions = ref([]);
 // const roleOptions = ref([]);
@@ -377,10 +373,11 @@ const filterNode = (value, data) => {
 // watch(deptName, val => {
 //   proxy.$refs["deptTreeRef"].filter(val);
 // });
-/** 查询部门下拉树结构 */
-function getDeptTree() {
-  deptTreeSelect().then((response) => {
-    deptOptions.value = response.data;
+/** 病种目录分类查询下拉树结构 */
+function getDiseaseCategoryList() {
+  getDiseaseCategory().then((response) => {
+    console.log(response, "response病种目录分类查询下拉树结构");
+    conditionDefinitionOptions.value = response.data;
   });
 }
 /** 查询病种目录列表 */
@@ -548,11 +545,11 @@ function handleView(row) {
   reset();
   open.value = true;
   getDiseaseOne(row.id).then((response) => {
-    console.log(response, "responsebbbb",row.id);
+    console.log(response, "responsebbbb", row.id);
     form.value = response.data;
     //  getList();
   });
 }
-getDeptTree();
+getDiseaseCategoryList();
 getList();
 </script>
