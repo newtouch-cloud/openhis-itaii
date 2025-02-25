@@ -24,14 +24,14 @@ public class HisQueryUtils {
     /**
      * 条件查询构造器
      *
-     * @param entity 传参实体
-     * @param searchKey 模糊查询关键字
+     * @param entity       传参实体
+     * @param searchKey    模糊查询关键字
      * @param searchFields 支持模糊查询的字段集合 ; 不需要模糊查询传 null 即可
-     * @param request 请求
+     * @param request      请求
      * @return 构造条件
      */
-    public static <T> QueryWrapper<T> buildQueryWrapper(T entity, String searchKey, HashSet<String> searchFields,
-        HttpServletRequest request) {
+    public static <T> QueryWrapper<T> buildQueryWrapper(Object entity, String searchKey, HashSet<String> searchFields,
+                                                        HttpServletRequest request) {
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
         // 添加租户id查询条件
         queryWrapper.eq(CommonConstants.Common.TENANT_ID, getCurrentTenantId());
@@ -45,7 +45,6 @@ public class HisQueryUtils {
             try {
                 Object value = field.get(entity);
                 if (value != null && !value.toString().equals("")) {
-                    // String fieldName = field.getName();
                     // 将驼峰命名的字段名转换为下划线命名的数据库字段名
                     String fieldName = camelToUnderline(field.getName());
                     // 处理等于条件
@@ -65,13 +64,12 @@ public class HisQueryUtils {
         }
         // 处理时间段查询
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateUtils.YYYY_MM_DD);
-        // DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Map<String, String[]> parameterMap = request.getParameterMap();
         for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
             String paramName = entry.getKey();
             // 检查参数名是否以 "STime" 或 "ETime" 结尾
             if (paramName.endsWith(CommonConstants.Common.S_TIME)
-                || paramName.endsWith(CommonConstants.Common.E_TIME)) {
+                    || paramName.endsWith(CommonConstants.Common.E_TIME)) {
                 // 提取字段名（去掉 "STime" 或 "ETime" 后缀）
                 String fieldName = paramName.substring(0, paramName.length() - 5);
                 // 驼峰转下划线
