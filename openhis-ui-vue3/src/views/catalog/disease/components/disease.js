@@ -13,9 +13,8 @@ export function getDiseaseList(query) {
 // 查询病种目录详细
 export function getDiseaseOne(id) {
   return request({
-    url: '/datadictionary/disease/information-one',
-    method: 'get',
-    params: id
+    url: '/datadictionary/disease/information-one' + parseStrEmpty(id),
+    method: 'get'
   })
 }
 
@@ -49,23 +48,6 @@ export function delUser(userId) {
 export function getDiseaseCategory() {
   return request({
     url: '/datadictionary/disease/information-category',
-    method: 'get'
-  })
-}
-
-// 修改用户个人信息
-export function updateUserProfile(data) {
-  return request({
-    url: '/system/user/profile',
-    method: 'put',
-    data: data
-  })
-}
-
-// 查询部门下拉树结构
-export function deptTreeSelect() {
-  return request({
-    url: '/system/user/deptTree',
     method: 'get'
   })
 }
