@@ -22,6 +22,4 @@ public class ItemDefSearchParam {
     private String chargeItem;
     /** 模糊搜索条件 */
     private String searchKey;
-    /** 状态 */
-    private Integer statusEnum;
 }
