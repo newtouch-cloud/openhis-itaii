@@ -54,14 +54,14 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     /**
      * 通过机构ID查询机构名称
      *
-     * @param code 机构ID
+     * @param busNo 机构ID
      * @return 机构名称
      */
     @Override
-    public Organization getByCode(String code) {
+    public Organization getByBusNo(String busNo) {
         QueryWrapper<Organization> queryWrapper = new QueryWrapper<>();
         // 设置查询条件为机构Id code
-        queryWrapper.eq("code", code);
+        queryWrapper.eq("bus_no", busNo);
         return organizationMapper.selectOne(queryWrapper);
     }
 

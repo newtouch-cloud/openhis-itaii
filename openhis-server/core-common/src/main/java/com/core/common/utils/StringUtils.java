@@ -569,4 +569,21 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         }
         return sb.toString();
     }
+
+    /**
+     *  拼接多个字符串，忽略null值。
+     * @param parts 可变参数，可以传入任意数量的字符串
+     * @return 拼接后的完整字符串
+     */
+    public static String joinStrings(String... parts) {
+        StringBuilder result = new StringBuilder();
+        for (String part : parts) {
+            if (part != null) { // 忽略null值
+                result.append(part);
+            }
+        }
+        return result.toString();
+    }
+
+
 }

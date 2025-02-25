@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.patientmanage.mapper.PatientManageMapper">
+    <select id="getPatientPage" resultType="com.openhis.web.patientmanage.dto.PatientInformationDto">
+        SELECT
+        pt.id,
+        pt.active_flag,
+        pt.temp_flag,
+        pt.name,
+        pt.name_json,
+        pt.bus_no,
+        pt.gender_enum,
+        pt.birth_date,
+        pt.deceased_date,
+        pt.marital_status_enum,
+        pt.prfs_enum,
+        pt.phone,
+        pt.address,
+        pt.address_province,
+        pt.address_city,
+        pt.address_district,
+        pt.address_street,
+        pt.address_json,
+        pt.nationality_code,
+        pt.id_card,
+        pt.py_str,
+        pt.wb_str,
+        pt.blood_abo,
+        pt.blood_rh,
+        pt.work_company,
+        pt.native_place,
+        pt.country_code,
+        pt.link_name,
+        pt.link_relation_code,
+        pt.link_telcom,
+        pt.link_jsons,
+        pt.organization_id,
+        pt.create_time
+        FROM adm_patient pt
+        <!-- 类型不一致，把organization_id转换成字符串类型-->
+        LEFT JOIN adm_organization ogt ON CAST(pt.organization_id AS VARCHAR) = ogt.bus_no
+        <where>
+            <!-- 如果传入busNo参数，且不为空 -->
+            <if test="busNo != null and busNo != ''">
+                AND busNo LIKE CONCAT(#{busNo}, '%')
+            </if>
+
+            <!-- 如果传入name参数，且不为空 -->
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT(#{name}, '%')
+            </if>
+        </where>
+        ORDER BY pt.bus_no
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countPatients" resultType="long">
+        SELECT COUNT(*)
+        FROM adm_patient pt
+        <!-- 类型不一致，把organization_id转换成字符串类型-->
+        LEFT JOIN adm_organization ogt ON CAST(pt.organization_id AS VARCHAR) = ogt.bus_no
+        <where>
+            <!-- 如果传入busNo参数，且不为空 -->
+            <if test="busNo != null and busNo != ''">
+                AND busNo LIKE CONCAT(#{busNo}, '%')
+            </if>
+
+            <!-- 如果传入name参数，且不为空 -->
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT(#{name}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>
