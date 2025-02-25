@@ -1,0 +1,202 @@
+package com.openhis.web.datadictionary.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.core.domain.R;
+import com.core.common.utils.MessageUtils;
+import com.core.common.utils.SecurityUtils;
+import com.core.common.utils.bean.BeanUtils;
+import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.PublicationStatus;
+import com.openhis.medication.domain.Medication;
+import com.openhis.medication.domain.MedicationDefinition;
+import com.openhis.medication.domain.MedicationDetail;
+import com.openhis.medication.service.IMedicationDefinitionService;
+import com.openhis.medication.service.IMedicationService;
+import com.openhis.web.datadictionary.dto.MedicationManageDto;
+import com.openhis.web.datadictionary.dto.MedicationManageUpDto;
+import com.openhis.web.datadictionary.mapper.MedicationManageSearchMapper;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * TODO:药品目录
+ *
+ * @author lpt
+ * @date 2025-02-21
+ */
+@RestController
+@RequestMapping("/datadictionary/medication")
+@Slf4j
+@AllArgsConstructor
+public class MedicationManageController {
+
+    private final IMedicationDefinitionService iMedicationDefinitionService;
+    private final IMedicationService iMedicationService;
+    private final MedicationManageSearchMapper medicationManageSearchMapper;
+
+    /**
+     * 查询病种目录分页列表
+     *
+     * @param searchKey 查询条件
+     * @param statusEnum 查询条件-状态
+     * @param ybMatchFlag 查询条件-是否对码
+     * @param categoryCode 查询条件-药品分类
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @return
+     */
+    @GetMapping("/information-page")
+    public R<?> getMedicationList(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
+        @RequestParam(value = "ybMatchFlag", defaultValue = "-1") Integer ybMatchFlag,
+        @RequestParam(value = "statusEnum", defaultValue = "-1") Integer statusEnum,
+        @RequestParam(value = "categoryCode", defaultValue = "") String categoryCode,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
+        // 分页设置
+        Integer offset = (pageNo - 1) * pageSize;
+        // 获取租户ID
+        Integer tenantId = SecurityUtils.getLoginUser().getTenantId();
+        // 查询药品目录列表
+        List<MedicationManageDto> medicationDetailList = medicationManageSearchMapper.getPage(searchKey, ybMatchFlag,
+            statusEnum, categoryCode, tenantId, pageSize, offset);
+        // 查询总记录数
+        long total =
+            medicationManageSearchMapper.getPageCount(searchKey, ybMatchFlag, statusEnum, categoryCode, tenantId);
+        // 创建Page对象并设置属性
+        Page<MedicationManageDto> medicationManageDtoPage = new Page<>(pageNo, pageSize, total);
+        medicationManageDtoPage.setRecords(medicationDetailList);
+        // 返回【药品录列表DTO】分页
+        return R.ok(medicationManageDtoPage);
+    }
+
+    /**
+     * 根据id查询药品详情
+     *
+     * @param id 药品ID
+     * @return
+     */
+    @GetMapping("/information-one/{id}")
+    public R<?> getDiseaseOne(@PathVariable("id") Long id) {
+        // 获取租户ID
+        Integer tenantId = SecurityUtils.getLoginUser().getTenantId();
+        // 查询药品目录列表
+        MedicationManageDto medicationManageDto = medicationManageSearchMapper.getOne(id, tenantId);
+        // 返回【药品录列表DTO】列表
+        return R.ok(medicationManageDto);
+    }
+
+    // 药品目录编辑
+    @PutMapping("/information")
+    public R<?> editMedication(@RequestBody MedicationManageUpDto medicationManageUpDto) {
+        MedicationDefinition medicationDefinition = new MedicationDefinition();
+        Medication medication = new Medication();
+        BeanUtils.copyProperties(medicationManageUpDto, medication); // 子表信息
+        BeanUtils.copyProperties(medicationManageUpDto, medicationDefinition);// 主表信息
+
+        // 更新子表药品信息
+        if (iMedicationService.updateById(medication)) {
+            // 更新主表药品信息
+            return iMedicationDefinitionService.updateById(medicationDefinition)
+                ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
+                : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+        } else {
+            return R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+        }
+    }
+
+    /**
+     * 药品目录停用
+     * 
+     * @param ids 药品ID列表
+     * @return
+     */
+    @PutMapping("/information-stop")
+    public R<?> editMedicationStop(@RequestBody List<Long> ids) {
+        List<Medication> medicationList = new ArrayList<>();
+        // 取得更新值
+        for (Long detail : ids) {
+            Medication medication = new Medication();
+            medication.setId(detail);
+            medication.setStatusEnum(PublicationStatus.RETIRED);
+            medicationList.add(medication);
+        }
+        // 更新药品信息
+        return iMedicationService.updateBatchById(medicationList)
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+    }
+
+    /**
+     * 药品目录停用
+     *
+     * @param ids 药品ID列表
+     * @return
+     */
+    @PutMapping("/information-start")
+    public R<?> editMedicationStart(@RequestBody List<Long> ids) {
+        List<Medication> medicationList = new ArrayList<>();
+        // 取得更新值
+        for (Long detail : ids) {
+            Medication medication = new Medication();
+            medication.setId(detail);
+            medication.setStatusEnum(PublicationStatus.ACTIVE);
+            medicationList.add(medication);
+        }
+        // 更新药品信息
+        return iMedicationService.updateBatchById(medicationList)
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+    }
+
+    /**
+     * 新增外来药品目录
+     * 
+     * @param medicationManageUpDto 药品目录信息
+     * @return
+     */
+    @PostMapping("/information")
+    public R<?> addMedication(@Validated @RequestBody MedicationManageUpDto medicationManageUpDto) {
+        MedicationDetail medicationDetail = new MedicationDetail();
+        BeanUtils.copyProperties(medicationManageUpDto, medicationDetail);
+        // 新增主表外来药品目录
+        if (iMedicationDefinitionService.addMedication(medicationDetail)) {
+            // 新增子表外来药品目录
+            return iMedicationService.addMedication(medicationDetail)
+                ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
+                : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
+        } else {
+            return R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
+        }
+    }
+
+    /**
+     * 新增医保药品目录
+     * 
+     * @param medicationManageUpDto 药品目录信息
+     * @return
+     */
+    @PostMapping("/information-yb")
+    public R<?> addYbMedication(@RequestBody MedicationManageUpDto medicationManageUpDto) {
+        return null;
+    }
+
+    /**
+     * 药品目录导出
+     *
+     * @param medicationManageDto 药品目录
+     * @return
+     */
+    @GetMapping("/information-export")
+    public R<?> exportDisease(@RequestBody MedicationManageDto medicationManageDto) {
+        return null;
+    }
+}

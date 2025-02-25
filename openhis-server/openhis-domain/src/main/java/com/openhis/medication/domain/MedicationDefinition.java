@@ -1,13 +1,12 @@
 package com.openhis.medication.domain;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -108,9 +107,6 @@ public class MedicationDefinition extends HisBaseEntity {
 
     /** 限制使用范围 */
     private String restrictedScope;
-
-    /** 是否使用 */
-    private Integer activeFlag;
 
     /** 儿童用药标志 */
     private Integer childrenFlag;

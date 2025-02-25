@@ -3,6 +3,9 @@
  */
 package com.openhis.medication.domain;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.core.common.core.domain.HisBaseEntity;
@@ -10,9 +13,6 @@ import com.core.common.core.domain.HisBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * 药品信息详情
@@ -30,7 +30,7 @@ public class MedicationDetail extends HisBaseEntity {
     private Long id;
 
     /** 药品编码 */
-    private Long medicationProductId;
+    private Long medicationDefId;
 
     /** 药品状态 */
     private Integer statusEnum;
@@ -78,7 +78,7 @@ public class MedicationDetail extends HisBaseEntity {
     private String definition;
 
     /** 药品编号 */
-    private Long code;
+    private String busNo;
 
     /** 药品名称 */
     private String name;
@@ -93,10 +93,10 @@ public class MedicationDetail extends HisBaseEntity {
     private String nameEn;
 
     /** 药品名称拼音码 */
-    private String pyCode;
+    private String pyStr;
 
     /** 药品五笔码 */
-    private String wbCode;
+    private String wbStr;
 
     /** 药品分类 */
     private Integer categoryCode;
@@ -105,10 +105,10 @@ public class MedicationDetail extends HisBaseEntity {
     private String merchandiseName;
 
     /** 商品名称拼音码 */
-    private String merchandisePyCode;
+    private String merchandisePyStr;
 
     /** 商品五笔码 */
-    private String merchandiseWbCode;
+    private String merchandiseWbStr;
 
     /** 药品单位 */
     private String unitCode;
@@ -135,7 +135,7 @@ public class MedicationDetail extends HisBaseEntity {
     private Integer ybMatchFlag;
 
     /** 医保编码 */
-    private String ybCode;
+    private String ybNo;
 
     /** 药理作用分类 */
     private String pharmacologyCategoryCode;

@@ -3,9 +3,10 @@ package com.openhis.web.datadictionary.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.validation.constraints.NotBlank;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -18,7 +19,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class MedicationManageDto {
+public class MedicationManageUpDto {
 
     /** ID */
     @JsonSerialize(using = ToStringSerializer.class)
@@ -27,9 +28,6 @@ public class MedicationManageDto {
     /** 药品编码 */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long medicationDefId;
-
-    /** 药品状态 */
-    private PublicationStatus statusEnum;
 
     /** 所属科室 */
     private Long orgId;
@@ -74,9 +72,11 @@ public class MedicationManageDto {
     private String definition;
 
     /** 药品编号 */
+    @NotBlank(message = "药品编号不能为空")
     private String busNo;
 
     /** 药品名称 */
+    @NotBlank(message = "药品名称不能为空")
     private String name;
 
     /** 适用范围 */

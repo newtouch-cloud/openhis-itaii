@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.datadictionary.mapper.MedicationManageSearchMapper">
+    <select id="getPage" parameterType="java.util.Map"
+            resultType="com.openhis.web.datadictionary.dto.MedicationManageDto">
+        SELECT T2.id,
+        T2.medication_def_id,
+        T2.status_enum,
+        T2.org_id,
+        T2.dose_form_code,
+        T2.total_volume,
+        T2.ingredient_item,
+        T2.active_flag,
+        T2.lot_number,
+        T2.effective_date,
+        T2.expiration_date,
+        T2.method_code,
+        T2.rate_code,
+        T2.dose,
+        T2.dose_unit_code,
+        T2.max_unit,
+        T2.definition,
+        T1.bus_no,
+        T1.name,
+        T1.domain_enum,
+        T1.version,
+        T1.name_en,
+        T1.py_str,
+        T1.wb_str,
+        T1.category_code,
+        T1.merchandise_name,
+        T1.merchandise_py_str,
+        T1.merchandise_wb_str,
+        T1.unit_code,
+        T1.min_unit_code,
+        T1.comprised_text,
+        T1.ingredient,
+        T1.part_percent,
+        T1.dose_from,
+        T1.approval_number,
+        T1.yb_match_flag,
+        T1.yb_no,
+        T1.pharmacology_category_code,
+        T1.skin_test_flag,
+        T1.inject_flag,
+        T1.manufacturer_id,
+        T1.supply_id,
+        T1.restricted_flag,
+        T1.restricted_scope,
+        T1.children_flag,
+        T1.characteristic
+        FROM med_medication_definition T1
+        LEFT JOIN med_medication T2 on T1.id = T2.medication_def_id
+        <where>
+            T1.delete_flag = '0'
+            <if test="searchKey!=null and searchKey!='' ">
+                AND ( T1.name LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.name_en LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.merchandise_name LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.bus_no LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.py_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.wb_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.merchandise_py_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.merchandise_wb_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%'))
+            </if>
+            <if test="ybMatchFlag!= -1">
+                AND T1.yb_match_flag = #{ybMatchFlag}
+            </if>
+            <if test="statusEnum!= -1">
+                AND T2.status_enum = #{statusEnum}
+            </if>
+            <if test="categoryCode!=null and categoryCode!='' ">
+                AND T1.category_code = #{categoryCode}
+            </if>
+            <if test="tenantId!= null">
+                AND T1.tenant_id = #{tenantId}
+            </if>
+        </where>
+        ORDER BY T1.bus_no
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="getOne" resultType="com.openhis.web.datadictionary.dto.MedicationManageDto">
+        SELECT T2.id,
+        T2.medication_def_id,
+        T2.status_enum,
+        T2.org_id,
+        T2.dose_form_code,
+        T2.total_volume,
+        T2.ingredient_item,
+        T2.active_flag,
+        T2.lot_number,
+        T2.effective_date,
+        T2.expiration_date,
+        T2.method_code,
+        T2.rate_code,
+        T2.dose,
+        T2.dose_unit_code,
+        T2.max_unit,
+        T2.definition,
+        T1.bus_no,
+        T1.name,
+        T1.domain_enum,
+        T1.version,
+        T1.name_en,
+        T1.py_str,
+        T1.wb_str,
+        T1.category_code,
+        T1.merchandise_name,
+        T1.merchandise_py_str,
+        T1.merchandise_wb_str,
+        T1.unit_code,
+        T1.min_unit_code,
+        T1.comprised_text,
+        T1.ingredient,
+        T1.part_percent,
+        T1.dose_from,
+        T1.approval_number,
+        T1.yb_match_flag,
+        T1.yb_no,
+        T1.pharmacology_category_code,
+        T1.skin_test_flag,
+        T1.inject_flag,
+        T1.manufacturer_id,
+        T1.supply_id,
+        T1.restricted_flag,
+        T1.restricted_scope,
+        T1.children_flag,
+        T1.characteristic
+        FROM med_medication_definition T1
+        LEFT JOIN med_medication T2 on T1.id = T2.medication_def_id
+        <where>
+            T1.delete_flag = '0'
+            <if test="id!= 0">
+                AND T1.id = #{id}
+            </if>
+            <if test="tenantId!= null">
+                AND T1.tenant_id = #{tenantId}
+            </if>
+        </where>
+    </select>
+    <select id="getPageCount" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM med_medication_definition T1
+        LEFT JOIN med_medication T2 on T1.id = T2.medication_def_id
+        <where>
+            T1.delete_flag = '0'
+            <if test="searchKey!=null and searchKey!='' ">
+                AND ( T1.name LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.name_en LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.merchandise_name LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.bus_no LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.py_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.wb_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.merchandise_py_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
+                T1.merchandise_wb_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%'))
+            </if>
+            <if test="ybMatchFlag!= -1">
+                AND T1.yb_match_flag = #{ybMatchFlag}
+            </if>
+            <if test="statusEnum!= -1">
+                AND T2.status_enum = #{statusEnum}
+            </if>
+            <if test="categoryCode!=null and categoryCode!='' ">
+                AND T1.category_code = #{categoryCode}
+            </if>
+            <if test="tenantId!= null">
+                AND T1.tenant_id = #{tenantId}
+            </if>
+        </where>
+    </select>
+</mapper>

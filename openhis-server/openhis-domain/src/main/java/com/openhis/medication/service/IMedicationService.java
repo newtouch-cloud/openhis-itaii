@@ -1,10 +1,10 @@
 package com.openhis.medication.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.openhis.medication.domain.Medication;
 import com.openhis.medication.domain.MedicationDetail;
-
-import java.util.List;
 
 /**
  * 药品基本信息管理Service接口
@@ -28,4 +28,10 @@ public interface IMedicationService extends IService<Medication> {
      * @return 药品详细信息列表
      */
     List<MedicationDetail> getDetailList();
+
+    // 新增药品目录
+    boolean addMedication(MedicationDetail medicationDetail);
+
+    // 新增医保药品目录
+    boolean addYbMedicatione(MedicationDetail medicationDetail);
 }

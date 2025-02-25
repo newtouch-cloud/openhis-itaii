@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,7 +33,7 @@ public class Medication extends HisBaseEntity {
     private Long medicationDefId;
 
     /** 药品状态 */
-    private Integer statusEnum;
+    private PublicationStatus statusEnum;
 
     /** 所属科室 */
     private Long orgId;
