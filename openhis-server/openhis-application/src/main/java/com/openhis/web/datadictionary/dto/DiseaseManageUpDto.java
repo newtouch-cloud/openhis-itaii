@@ -4,19 +4,20 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.enums.ConditionDefinitionSource;
 import com.openhis.common.enums.PublicationStatus;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
+
 /**
- * 疾病目录分页Dto
+ * 疾病目录更新Dto
  *
  * @author lpt
  * @date 2025-02-25
  */
 @Data
 @Accessors(chain = true)
-public class DiseaseManageDto {
+public class DiseaseManageUpDto {
     /** ID */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
@@ -25,9 +26,11 @@ public class DiseaseManageDto {
     private ConditionDefinitionSource sourceEnum;
 
     /** 编码 */
+    @NotBlank(message = "疾病编码不能为空")
     private String conditionCode;
 
     /** 诊断名称 */
+    @NotBlank(message = "疾病名称不能为空")
     private String name;
 
     /** 诊断名称拼音 */
@@ -50,8 +53,4 @@ public class DiseaseManageDto {
 
     /** 医保对码标记 */
     private Integer ybMatchFlag;
-
-    /** 状态 */
-    private PublicationStatus statusEnum;
-
 }

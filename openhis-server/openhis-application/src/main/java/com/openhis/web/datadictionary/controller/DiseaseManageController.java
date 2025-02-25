@@ -2,23 +2,31 @@ package com.openhis.web.datadictionary.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.clinical.domain.ConditionDefinition;
+import com.openhis.clinical.mapper.ConditionDefinitionMapper;
 import com.openhis.clinical.service.IConditionDefinitionService;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.ConditionDefinitionSource;
+import com.openhis.common.enums.PublicationStatus;
+import com.openhis.common.utils.HisPageUtils;
+import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.datadictionary.dto.DiseaseManageDto;
+import com.openhis.web.datadictionary.dto.DiseaseManageSelParam;
+import com.openhis.web.datadictionary.dto.DiseaseManageUpDto;
 import com.openhis.web.datadictionary.dto.DiseaseSourceDto;
 
 import lombok.AllArgsConstructor;
@@ -36,6 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class DiseaseManageController {
     private final IConditionDefinitionService iConditionDefinitionService;
+    private final ConditionDefinitionMapper conditionDefinitionMapper;
 
     /**
      * 病种目录分类查询
@@ -60,36 +69,29 @@ public class DiseaseManageController {
 
     /**
      * 查询病种目录分页列表
-     * 
-     * @param searchKey 查询条件
-     * @param status 查询条件-状态
-     * @param status 查询条件-疾病种类
+     *
+     * @param diseaseManageSelParam 查询条件
+     * @param searchKey 查询条件-模糊查询
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @return
      */
     @GetMapping("/information-page")
-    public R<?> getDiseaseList(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
-        @RequestParam(value = "status", defaultValue = "-1") Integer status,
-        @RequestParam(value = "sourceEnum", defaultValue = "-1") Integer sourceEnum,
+    public R<?> getDiseaseList(@RequestBody DiseaseManageSelParam diseaseManageSelParam,
+        @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
-        // 查询【病种目录】分页列表
-        Page<ConditionDefinition> diseasePage =
-            iConditionDefinitionService.getPage(searchKey, status, sourceEnum, pageNo, pageSize);
-
-        // 获取入病种目录列表
-        Page<DiseaseManageDto> diseaseManageDtoPage = new Page<>();
-        diseaseManageDtoPage.setRecords(diseasePage.getRecords().stream().map(entity -> {
-            // 定义【入病种目录列表DTO】
-            DiseaseManageDto dto = new DiseaseManageDto();
-            BeanUtils.copyProperties(entity, dto);
-            return dto;
-        }).collect(Collectors.toList()));
-
+        // 构建查询条件
+        QueryWrapper<ConditionDefinition> queryWrapper = HisQueryUtils.buildQueryWrapper(diseaseManageSelParam,
+            searchKey, new HashSet<>(Arrays.asList("condition_code", "name", "py_str", "wb_str")), request);
+        // 设置排序
+        queryWrapper.orderByAsc("condition_code");
+        // 分页查询
+        Page<DiseaseManageDto> diseasePage =
+            HisPageUtils.selectPage(conditionDefinitionMapper, queryWrapper, pageNo, pageSize, DiseaseManageDto.class);
         // 返回【病种目录列表DTO】分页
-        return R.ok(diseaseManageDtoPage);
+        return R.ok(diseasePage);
     }
 
     /**
@@ -109,49 +111,103 @@ public class DiseaseManageController {
     /**
      * 病种目录编辑
      * 
-     * @param diseaseManageDtos 病种目录列表
+     * @param diseaseManageDto 病种目录列表
      * @return
      */
     @PutMapping("/information")
-    public R<?> editDisease(@RequestBody List<DiseaseManageDto> diseaseManageDtos) {
-        List<ConditionDefinition> conditionDefinitionList = new ArrayList<>();
+    public R<?> editDisease(@RequestBody DiseaseManageUpDto diseaseManageDto) {
+
+        ConditionDefinition conditionDefinition = new ConditionDefinition();
+        BeanUtils.copyProperties(diseaseManageDto, conditionDefinition);
+
+        // 更新病种信息
+        return iConditionDefinitionService.updateById(conditionDefinition)
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"疾病目录"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+    }
+
+    /**
+     * 病种目录停用
+     *
+     * @param ids 病种目录ID列表
+     * @return
+     */
+    @PutMapping("/information-stop")
+    public R<?> editDiseaseStop(@RequestBody List<Long> ids) {
+        List<ConditionDefinition> conditionDefinitionList = new CopyOnWriteArrayList<>();
+
         // 取得更新值
-        for (DiseaseManageDto detail : diseaseManageDtos) {
+        for (Long detail : ids) {
             ConditionDefinition conditionDefinition = new ConditionDefinition();
-            BeanUtils.copyProperties(detail, conditionDefinition);
+            conditionDefinition.setId(detail);
+            conditionDefinition.setStatusEnum(PublicationStatus.RETIRED);
             conditionDefinitionList.add(conditionDefinition);
         }
         // 更新病种信息
         return iConditionDefinitionService.updateBatchById(conditionDefinitionList)
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, null))
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"疾病目录"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+    }
+
+    /**
+     * 病种目录启用
+     *
+     * @param ids 病种目录ID列表
+     * @return
+     */
+    @PutMapping("/information-start")
+    public R<?> editDiseaseStart(@RequestBody List<Long> ids) {
+        List<ConditionDefinition> conditionDefinitionList = new CopyOnWriteArrayList<>();
+
+        // 取得更新值
+        for (Long detail : ids) {
+            ConditionDefinition conditionDefinition = new ConditionDefinition();
+            conditionDefinition.setId(detail);
+            conditionDefinition.setStatusEnum(PublicationStatus.ACTIVE);
+            conditionDefinitionList.add(conditionDefinition);
+        }
+        // 更新病种信息
+        return iConditionDefinitionService.updateBatchById(conditionDefinitionList)
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"疾病目录"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
     }
 
     /**
      * 新增外来病种目录
      * 
-     * @param diseaseManageDto 病种目录实体
+     * @param diseaseManageUpDto 病种目录
      * @return
      */
     @PostMapping("/information")
-    public R<?> addDisease(@Validated @RequestBody DiseaseManageDto diseaseManageDto) {
+    public R<?> addDisease(@Validated @RequestBody DiseaseManageUpDto diseaseManageUpDto) {
         ConditionDefinition conditionDefinition = new ConditionDefinition();
-        BeanUtils.copyProperties(diseaseManageDto, conditionDefinition);
+        BeanUtils.copyProperties(diseaseManageUpDto, conditionDefinition);
         // 新增外来病种目录
+        conditionDefinition.setStatusEnum(PublicationStatus.DRAFT);
         return iConditionDefinitionService.addDisease(conditionDefinition)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"疾病目录"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
-
     }
 
     /**
      * 新增医保病种目录
      * 
-     * @param conditionDefinition 病种目录实体
+     * @param diseaseManageUpDto 病种目录
      * @return
      */
     @PostMapping("/information-yb")
-    public R<?> addYbDisease(@RequestBody ConditionDefinition conditionDefinition) {
+    public R<?> addYbDisease(@RequestBody DiseaseManageUpDto diseaseManageUpDto) {
+        return null;
+    }
+
+    /**
+     * 病种目录导出
+     *
+     * @param diseaseManageDto 病种目录
+     * @return
+     */
+    @GetMapping("/information-export")
+    public R<?> exportDisease(@RequestBody DiseaseManageDto diseaseManageDto) {
         return null;
     }
 }
