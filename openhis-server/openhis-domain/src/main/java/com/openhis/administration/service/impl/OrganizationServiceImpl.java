@@ -42,7 +42,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         }
 
         if (activeFlag != null) {
-            queryWrapper.eq(Organization::getTypeEnum, activeFlag);
+            queryWrapper.eq(Organization::getActiveFlag, activeFlag);
         }
 
         Page<Organization> organizationPage = organizationMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);

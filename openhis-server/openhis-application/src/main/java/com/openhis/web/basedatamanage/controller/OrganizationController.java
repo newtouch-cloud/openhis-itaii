@@ -54,11 +54,11 @@ public class OrganizationController {
         String code = assignSeqUtil.getSeq(AssignSeqEnum.TEST.getPrefix());
         organization.setBus_no(code);
 
-        boolean saveOrganizationSuccess = organizationService.save(organization);
+        boolean saveOrgSuccess = organizationService.save(organization);
 
-        return saveOrganizationSuccess
+        return saveOrgSuccess
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"科室信息"}))
-            : R.fail(PromptMsgConstant.Common.M00007, null);
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00003, new Object[] {"科室信息"}));
     }
 
     /**
@@ -72,10 +72,10 @@ public class OrganizationController {
         // Organization organization = new Organization();
         // BeanUtils.copyProperties(organizationdto, organization);
 
-        boolean updateSuccess = organizationService.updateById(organization);
-        return updateSuccess
+        boolean updateOrgSuccess = organizationService.updateById(organization);
+        return updateOrgSuccess
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"科室信息"}))
-            : R.fail(PromptMsgConstant.Common.M00007, null);
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"科室信息"}));
     }
 
     /**
@@ -86,9 +86,9 @@ public class OrganizationController {
     @DeleteMapping("/organization")
     public R<?> deleteSupplyRequest(@RequestParam Long orgId) {
 
-        boolean deleteSuccess = organizationService.removeById(orgId);
+        boolean deleteOrgSuccess = organizationService.removeById(orgId);
 
-        return deleteSuccess
+        return deleteOrgSuccess
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"科室信息"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00006, new Object[] {"科室信息删除失败"}));
     }
@@ -111,7 +111,7 @@ public class OrganizationController {
         // 查询【科室】分页列表
         Page<Organization> organizationPage =
             organizationService.getOrganizationPage(classEnum, activeFlag, pageNo, pageSize);
-        return R.ok(organizationPage);
+        return R.ok(organizationPage, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"科室信息"}));
     }
 
 }
