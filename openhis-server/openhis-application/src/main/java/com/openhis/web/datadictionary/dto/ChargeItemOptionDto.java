@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 public class ChargeItemOptionDto {
 
     /** 值 */
-    private String value;
+    private Integer value;
 
     /** 标签 */
     private String label;

@@ -134,7 +134,7 @@ public class ItemDefinitionController {
     public R<?> getDefinitionPage(ItemDefSearchParam itemDefSearchParam,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-        @RequestParam(value = "searchKey", defaultValue = "10") String searchKey, HttpServletRequest request) {
+        @RequestParam(value = "searchKey", required = false) String searchKey, HttpServletRequest request) {
 
         IPage<ChargeItemDefPageDto> chargeItemDefinitionPage = new Page<>();
         List<ChargeItemDefPageDto> chargeItemDefinitionList;
