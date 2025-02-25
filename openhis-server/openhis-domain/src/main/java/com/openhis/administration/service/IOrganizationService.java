@@ -13,12 +13,4 @@ import com.openhis.administration.domain.Organization;
 public interface IOrganizationService extends IService<Organization> {
     Page<Organization> getOrganizationPage(Integer classEnum, Integer activeFlag, Integer pageNo, Integer pageSize);
 
-    /**
-     * 通过机构ID查询机构名称
-     *
-     * @param busNo 机构ID
-     * @return 机构名称
-     */
-    Organization getByBusNo(String busNo);
-
 }
