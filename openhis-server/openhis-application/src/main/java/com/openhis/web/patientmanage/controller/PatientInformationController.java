@@ -71,7 +71,7 @@ public class PatientInformationController {
         // 设置五笔首拼
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
         // 设置地址
-        String fullAddress = stringUtils.joinStrings(patient.getAddressProvince(), patient.getAddressCity(),
+        String fullAddress = stringUtils.joinStrings(patient.getAddress(),patient.getAddressProvince(), patient.getAddressCity(),
             patient.getAddressDistrict(), patient.getAddressStreet());
         patient.setAddress(fullAddress);
 
@@ -103,7 +103,7 @@ public class PatientInformationController {
         // 设置五笔首拼
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
         // 设置地址
-        String fullAddress = stringUtils.joinStrings(patient.getAddressProvince(), patient.getAddressCity(),
+        String fullAddress = stringUtils.joinStrings(patient.getAddress(),patient.getAddressProvince(), patient.getAddressCity(),
             patient.getAddressDistrict(), patient.getAddressStreet());
         patient.setAddress(fullAddress);
 
@@ -115,24 +115,6 @@ public class PatientInformationController {
         }
 
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"病人信息"}));
-    }
-
-    /**
-     * 删除病人信息
-     *
-     * @param id 主表id
-     */
-    // todo 删除需要么？或者逻辑删除后续再改
-    @DeleteMapping("/patient-information")
-    public R<?> deletePatient(@RequestParam Long id) {
-
-        boolean deleteSuccess = patientService.removeById(id);
-
-        if (!deleteSuccess) {
-            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
-        }
-
-        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"病人信息"}));
     }
 
     /**
