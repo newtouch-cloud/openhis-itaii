@@ -28,7 +28,7 @@ public class Organization extends HisBaseEntity {
     private Long id;
 
     /** 编码 */
-    private String bus_no;
+    private String busNo;
 
     /** 名称 */
     private String name;
