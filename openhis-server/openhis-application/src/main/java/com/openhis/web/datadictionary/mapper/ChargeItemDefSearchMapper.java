@@ -5,7 +5,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.web.datadictionary.dto.ChargeItemDefPageDto;
 import com.openhis.web.datadictionary.dto.ItemDefSearchParam;
@@ -21,43 +25,31 @@ public interface ChargeItemDefSearchMapper extends BaseMapper<ChargeItemDefiniti
 
     /**
      * 药品费用定价分页查询
-     * 
-     * @param itemDefSearchParam 查询条件
-     * @param pageNo 页码
-     * @param pageSize 页面大小
-     * @param searchKey 模糊搜索条件
-     * @param skipCount 跳过条数
+     *
+     * @param page 分页条件
+     * @param queryWrapper 查询条件
      * @return 分页查询
      */
-    List<ChargeItemDefPageDto> getMedList(@Param("itemDefSearchParam") ItemDefSearchParam itemDefSearchParam,
-        @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("searchKey") String searchKey,
-        @Param("skipCount") Integer skipCount);
+    IPage<ChargeItemDefPageDto> getMedList(@Param("page") Page<ChargeItemDefPageDto> page,
+                                           @Param(Constants.WRAPPER) LambdaQueryWrapper<ChargeItemDefPageDto> queryWrapper);
 
     /**
      * 器具费用定价分页查询
-     * 
-     * @param itemDefSearchParam 查询条件
-     * @param pageNo 页码
-     * @param pageSize 页面大小
-     * @param searchKey 模糊搜索条件
-     * @param skipCount 跳过条数
+     *
+     * @param page 分页条件
+     * @param queryWrapper 查询条件
      * @return 分页查询
      */
-    List<ChargeItemDefPageDto> getDevList(@Param("itemDefSearchParam") ItemDefSearchParam itemDefSearchParam,
-        @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("searchKey") String searchKey,
-        @Param("skipCount") int skipCount);
+    IPage<ChargeItemDefPageDto> getDevList(@Param("page") Page<ChargeItemDefPageDto> page,
+                                           @Param(Constants.WRAPPER) LambdaQueryWrapper<ChargeItemDefPageDto> queryWrapper);
 
     /**
      * 活动费用定价分页查询
      *
-     * @param itemDefSearchParam 查询条件
-     * @param pageNo 页码
-     * @param pageSize 页面大小
-     * @param searchKey 模糊搜索条件
-     * @param skipCount 跳过条数
+     * @param page 分页条件
+     * @param queryWrapper 查询条件
      * @return 分页查询
      */
-    List<ChargeItemDefPageDto> getActList(@Param("itemDefSearchParam") ItemDefSearchParam itemDefSearchParam,
-        @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("searchKey") String searchKey,
-        @Param("skipCount") int skipCount);
+    IPage<ChargeItemDefPageDto> getActList(@Param("page") Page<ChargeItemDefPageDto> page,
+                                           @Param(Constants.WRAPPER) LambdaQueryWrapper<ChargeItemDefPageDto> queryWrapper);
 }

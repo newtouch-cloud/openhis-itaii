@@ -87,4 +87,19 @@ public class ChargeItemDefPageDto {
 
     /** 总条数  */
     private Integer totalCount;
+
+    /** 拼音助记码 */
+    private String pyStr;
+
+    /** 收费项目 */
+    private Integer categoryCode;
+
+    /** 编码 */
+    private String instanceTable;
+
+    /** 定价类型 */
+    private String definitionType;
+
+    /** 定价项目 */
+    private Integer chargeItem;
 }

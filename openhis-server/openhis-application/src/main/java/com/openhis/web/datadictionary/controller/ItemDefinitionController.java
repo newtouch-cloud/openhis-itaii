@@ -10,11 +10,15 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.enums.AssignSeqEnum;
@@ -22,6 +26,7 @@ import com.core.common.enums.ChargeItemEnum;
 import com.core.common.enums.DefinitionTypeEnum;
 import com.core.common.utils.AssignSeqUtil;
 import com.core.common.utils.MessageUtils;
+import com.core.common.utils.StringUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.ChargeItemDefApp;
 import com.openhis.administration.domain.ChargeItemDefinition;
@@ -124,51 +129,44 @@ public class ItemDefinitionController {
     /**
      * 项目定价列表
      *
-     * @param itemDefSearchParam 查询条件
+     * @param chargeItemDefPageDto 查询条件
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @param request 请求数据
      * @return 项目定价列表
      */
     @GetMapping(value = "/item-definition-page")
-    public R<?> getDefinitionPage(ItemDefSearchParam itemDefSearchParam,
+    public R<?> getDefinitionPage(ChargeItemDefPageDto chargeItemDefPageDto,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
         @RequestParam(value = "searchKey", required = false) String searchKey, HttpServletRequest request) {
 
         IPage<ChargeItemDefPageDto> chargeItemDefinitionPage = new Page<>();
-        List<ChargeItemDefPageDto> chargeItemDefinitionList;
-
-        // 跳过的数量
-        int skipCount = 0;
-        if (pageNo > 0) {
-            skipCount = (pageNo - 1) * pageSize;
+        // 初始化表格配置并构建查询条件
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""),
+            ChargeItemDefPageDto.class);
+        LambdaQueryWrapper<ChargeItemDefPageDto> queryWrapper = new LambdaQueryWrapper<>();
+        // 构造查询条件
+        if (StringUtils.isNotEmpty(searchKey)) {
+            queryWrapper.and(q -> q.like(ChargeItemDefPageDto::getChargeName, searchKey).or()
+                .like(ChargeItemDefPageDto::getItemNo, searchKey).or().like(ChargeItemDefPageDto::getPyStr, searchKey));
         }
-        // 通过 DefinitionType 区分药品定价/器具定价/手术定价
-        if (DefinitionTypeEnum.MEDICATION.getCode().equals(itemDefSearchParam.getDefinitionType())) {
-            // 获取定价列表
-            chargeItemDefinitionList =
-                chargeItemDefSearchMapper.getMedList(itemDefSearchParam, pageNo, pageSize, searchKey, skipCount);
-        } else if (DefinitionTypeEnum.DEVICE.getCode().equals(itemDefSearchParam.getDefinitionType())) {
-            // 获取定价列表
-            chargeItemDefinitionList =
-                chargeItemDefSearchMapper.getDevList(itemDefSearchParam, pageNo, pageSize, searchKey, skipCount);
-        } else if (DefinitionTypeEnum.ACTIVITY.getCode().equals(itemDefSearchParam.getDefinitionType())) {
-            // 获取定价列表
-            chargeItemDefinitionList =
-                chargeItemDefSearchMapper.getActList(itemDefSearchParam, pageNo, pageSize, searchKey, skipCount);
-        } else {
-            chargeItemDefinitionList = new ArrayList<>();
+        if (chargeItemDefPageDto.getChargeItem() != null) {
+            queryWrapper.eq(ChargeItemDefPageDto::getCategoryCode, chargeItemDefPageDto.getChargeItem());
         }
-        // 设置分页条件
-        chargeItemDefinitionPage.setSize(pageSize);
-        chargeItemDefinitionPage.setCurrent(pageNo);
-        if (chargeItemDefinitionList.size() > 0) {
-            chargeItemDefinitionPage.setTotal(chargeItemDefinitionList.get(0).getTotalCount());
-            chargeItemDefinitionPage.setRecords(chargeItemDefinitionList);
-        } else {
-            chargeItemDefinitionPage.setTotal(0);
-            chargeItemDefinitionPage.setRecords(new ArrayList<>());
+        // 通过 DefinitionType 区分药品定价/器具定价/活动定价
+        if (DefinitionTypeEnum.MEDICATION.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
+            queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, "med_medication_definition");
+            chargeItemDefinitionPage =
+                chargeItemDefSearchMapper.getMedList(new Page<>(pageNo, pageSize), queryWrapper);
+        } else if (DefinitionTypeEnum.DEVICE.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
+            queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, "adm_device_definition");
+            chargeItemDefinitionPage =
+                chargeItemDefSearchMapper.getDevList(new Page<>(pageNo, pageSize), queryWrapper);
+        } else if (DefinitionTypeEnum.ACTIVITY.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
+            queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, "wor_activity_definition");
+            chargeItemDefinitionPage =
+                chargeItemDefSearchMapper.getActList(new Page<>(pageNo, pageSize), queryWrapper);
         }
         return R.ok(chargeItemDefinitionPage, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
     }
