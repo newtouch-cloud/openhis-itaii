@@ -1,5 +1,7 @@
 package com.openhis.web.patientmanage.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,9 @@ import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.Patient;
 import com.openhis.administration.service.IPatientService;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.*;
 import com.openhis.web.patientmanage.dto.PatientInformationDto;
+import com.openhis.web.patientmanage.dto.PatientListDto;
 import com.openhis.web.patientmanage.mapper.PatientManageMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +53,114 @@ public class PatientInformationController {
     private final Long organizationId = 91L;
 
     /**
+     * 获取婚姻状态列表
+     */
+    @GetMapping("/list-maritalstatus")
+    public R<?> getMaritalStatus() {
+        // 获取婚姻状态
+        List<MaritalStatus> statusList = Arrays.asList(MaritalStatus.values());
+        List<PatientListDto> dtos = new ArrayList<>();
+        // 取得更新值
+        for (MaritalStatus status : statusList) {
+            PatientListDto dto = new PatientListDto();
+            dto.setValue(status.getValue());
+            dto.setInfo(status.getInfo());
+            dtos.add(dto);
+        }
+        return R.ok(dtos);
+    }
+
+    /**
+     * 获取职业编码列表
+     */
+    @GetMapping("/list-occupationtype")
+    public R<?> getOccupationType() {
+        // 获取职业编码
+        List<OccupationType> statusList = Arrays.asList(OccupationType.values());
+        List<PatientListDto> dtos = new ArrayList<>();
+        // 取得更新值
+        for (OccupationType status : statusList) {
+            PatientListDto dto = new PatientListDto();
+            dto.setValue(status.getValue());
+            dto.setInfo(status.getInfo());
+            dtos.add(dto);
+        }
+        return R.ok(dtos);
+    }
+
+    /**
+     * 获取性别列表
+     */
+    @GetMapping("/list-administrativegender")
+    public R<?> getAdministrativeGender() {
+        // 获取性别
+        List<AdministrativeGender> statusList = Arrays.asList(AdministrativeGender.values());
+        List<PatientListDto> dtos = new ArrayList<>();
+        // 取得更新值
+        for (AdministrativeGender status : statusList) {
+            PatientListDto dto = new PatientListDto();
+            dto.setValue(status.getValue());
+            dto.setInfo(status.getInfo());
+            dtos.add(dto);
+        }
+        return R.ok(dtos);
+    }
+
+    /**
+     * 获取ABO血型列表
+     */
+    @GetMapping("/list-bloodtypeabo")
+    public R<?> getBloodTypeABO() {
+        // 获取ABO血型
+        List<BloodTypeABO> statusList = Arrays.asList(BloodTypeABO.values());
+        List<PatientListDto> dtos = new ArrayList<>();
+        // 取得更新值
+        for (BloodTypeABO status : statusList) {
+            PatientListDto dto = new PatientListDto();
+            dto.setValue(status.getValue());
+            dto.setInfo(status.getInfo());
+            dtos.add(dto);
+        }
+        return R.ok(dtos);
+    }
+
+    /**
+     * 获取RH血型列表
+     */
+    @GetMapping("/list-bloodtypearh")
+    public R<?> getBloodTypeRH() {
+        // 获取RH血型
+        List<BloodTypeRH> statusList = Arrays.asList(BloodTypeRH.values());
+        List<PatientListDto> dtos = new ArrayList<>();
+        // 取得更新值
+        for (BloodTypeRH status : statusList) {
+            PatientListDto dto = new PatientListDto();
+            dto.setValue(status.getValue());
+            dto.setInfo(status.getInfo());
+            dtos.add(dto);
+        }
+        return R.ok(dtos);
+    }
+
+    /**
+     * 获取家庭关系列表
+     */
+    @GetMapping("/list-familyrelationshiptype")
+    public R<?> getFamilyRelationshipType() {
+        // 获取RH血型
+        List<FamilyRelationshipType> statusList = Arrays.asList(FamilyRelationshipType.values());
+        List<PatientListDto> dtos = new ArrayList<>();
+        // 取得更新值
+        for (FamilyRelationshipType status : statusList) {
+            PatientListDto dto = new PatientListDto();
+            dto.setValue(status.getValue());
+            dto.setInfo(status.getInfo());
+            dtos.add(dto);
+        }
+        return R.ok(dtos);
+    }
+
+    /**
      * 添加病人信息
      *
      * @param patientInformationDto 病人信息
@@ -71,8 +183,8 @@ public class PatientInformationController {
         // 设置五笔首拼
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
         // 设置地址
-        String fullAddress = stringUtils.joinStrings(patient.getAddress(),patient.getAddressProvince(), patient.getAddressCity(),
-            patient.getAddressDistrict(), patient.getAddressStreet());
+        String fullAddress = stringUtils.joinStrings(patient.getAddress(), patient.getAddressProvince(),
+            patient.getAddressCity(), patient.getAddressDistrict(), patient.getAddressStreet());
         patient.setAddress(fullAddress);
 
         // 调用服务层保存病人信息
@@ -103,8 +215,8 @@ public class PatientInformationController {
         // 设置五笔首拼
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
         // 设置地址
-        String fullAddress = stringUtils.joinStrings(patient.getAddress(),patient.getAddressProvince(), patient.getAddressCity(),
-            patient.getAddressDistrict(), patient.getAddressStreet());
+        String fullAddress = stringUtils.joinStrings(patient.getAddress(), patient.getAddressProvince(),
+            patient.getAddressCity(), patient.getAddressDistrict(), patient.getAddressStreet());
         patient.setAddress(fullAddress);
 
         // 调用服务层更新病人信息
