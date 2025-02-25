@@ -22,7 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 机构管理(科室)controller
+ * 机构管理controller
  *
  * @author
  * @date 2025-02-21
@@ -39,9 +39,9 @@ public class OrganizationController {
     private AssignSeqUtil assignSeqUtil;
 
     /**
-     * 添加科室信息
+     * 添加机构信息
      *
-     * @param organization 科室信息
+     * @param organization 机构信息
      */
     @PostMapping("/organization")
     public R<?> addOrganization(@Validated @RequestBody Organization organization) {
@@ -57,14 +57,14 @@ public class OrganizationController {
         boolean saveOrgSuccess = organizationService.save(organization);
 
         return saveOrgSuccess
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"科室信息"}))
-            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00003, new Object[] {"科室信息"}));
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"机构信息"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00003, new Object[] {"机构信息"}));
     }
 
     /**
-     * 编辑科室信息
+     * 编辑机构信息
      *
-     * @param organization 科室信息
+     * @param organization 机构信息
      */
     @PutMapping("/organization")
     public R<?> editOrganization(@Validated @RequestBody Organization organization) {
@@ -74,12 +74,12 @@ public class OrganizationController {
 
         boolean updateOrgSuccess = organizationService.updateById(organization);
         return updateOrgSuccess
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"科室信息"}))
-            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"科室信息"}));
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"机构信息"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"机构信息"}));
     }
 
     /**
-     * 删除科室信息
+     * 删除机构信息
      *
      * @param orgId 主表id
      */
@@ -89,29 +89,29 @@ public class OrganizationController {
         boolean deleteOrgSuccess = organizationService.removeById(orgId);
 
         return deleteOrgSuccess
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"科室信息"}))
-            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00006, new Object[] {"科室信息删除失败"}));
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"机构信息"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00006, new Object[] {"机构信息删除失败"}));
     }
 
     /**
-     * 科室分页列表
+     * 机构分页列表
      *
      * @param classEnum 机构分类枚举
      * @param activeFlag 活动标识
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @param request 请求数据
-     * @return 科室分页列表
+     * @return 机构分页列表
      */
     @GetMapping(value = "/organization")
     public R<?> getOrganizationPage(Integer classEnum, Integer activeFlag,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
-        // 查询【科室】分页列表
+        // 查询【机构】分页列表
         Page<Organization> organizationPage =
             organizationService.getOrganizationPage(classEnum, activeFlag, pageNo, pageSize);
-        return R.ok(organizationPage, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"科室信息"}));
+        return R.ok(organizationPage, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"机构信息"}));
     }
 
 }
