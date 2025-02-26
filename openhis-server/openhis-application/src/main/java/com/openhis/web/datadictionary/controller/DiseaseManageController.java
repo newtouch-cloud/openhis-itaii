@@ -77,7 +77,7 @@ public class DiseaseManageController {
      * @return
      */
     @GetMapping("/information-page")
-    public R<?> getDiseaseList(@RequestBody DiseaseManageSelParam diseaseManageSelParam,
+    public R<?> getDiseaseList(DiseaseManageSelParam diseaseManageSelParam,
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
