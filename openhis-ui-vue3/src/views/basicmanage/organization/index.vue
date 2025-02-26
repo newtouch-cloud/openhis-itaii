@@ -93,14 +93,10 @@
     />
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog title="添加科室" v-model="open" width="500px" append-to-body>
+    <el-dialog title="添加科室" v-model="open" width="600px" append-to-body>
       <el-form ref="orgRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="科室编号" prop="id">
-          <el-input v-model="form.id" placeholder="" />
-          <span
-            >如果不加字段的话 这个前端手动输入 格式可能是 0001.0012.0023
-            加字段的话这个就后端处理了</span
-          >
+        <el-form-item label="科室编号" prop="busNo">
+          <el-input v-model="form.busNo" placeholder="请输入科室编号" />
         </el-form-item>
         <el-form-item label="科室名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入科室名称" />
@@ -126,20 +122,20 @@
               style="width: 100%"
               v-model="form.deptId"
               :data="organization"
-              :props="{ value: 'id', label: 'name', children: 'children' }"
+              :props="{ value: 'busNo', label: 'name', children: 'children' }"
               value-key="id"
               check-strictly
             />
           </el-form-item>
         </el-col>
         <!-- <el-form-item label="状态" prop="status"> </el-form-item> -->
-        <el-form-item label="备注" prop="remark">
+        <!-- <el-form-item label="备注" prop="remark">
           <el-input
             v-model="form.remark"
             type="textarea"
             placeholder="请输入内容"
           ></el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -165,60 +161,7 @@ import {
 const { proxy } = getCurrentInstance();
 const { org_type } = proxy.useDict("org_type");
 const loading = ref(true);
-const organization = ref([
-  {
-    id: 1,
-    typeEnum: "1",
-    name: "内科系统",
-    status: "启用",
-  },
-  {
-    id: 2,
-    typeEnum: "2",
-    name: "外科系统",
-    status: "启用",
-    children: [
-      {
-        id: 31,
-        typeEnum: "1",
-        name: "外科疗区",
-        status: "停用",
-        children: [
-          {
-            id: 33,
-            typeEnum: "1",
-            name: "外科疗区",
-            status: "启用",
-          },
-          {
-            id: 34,
-            typeEnum: "1",
-            name: "内科疗区",
-            status: "启用",
-          },
-        ],
-      },
-      {
-        id: 32,
-        typeEnum: "1",
-        name: "内科疗区",
-        status: "停用",
-      },
-    ],
-  },
-  {
-    id: 3,
-    typeEnum: "1",
-    name: "中医系统",
-    status: "停用",
-  },
-  {
-    id: 4,
-    typeEnum: "1",
-    name: "护理系统",
-    status: "停用",
-  },
-]);
+const organization = ref([]);
 const queryParams = ref({});
 const open = ref(false);
 const form = ref({});
@@ -226,6 +169,7 @@ const orgTableRef = ref();
 const orgTypeOption = ref([{}]);
 const selectRowIds = ref([]);
 const rules = ref({
+  busNo: [{ required: true, message: "请输入科室编号", trigger: "change" }],
   name: [
     { required: true, message: "请输入科室名称", trigger: "change" },
     { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "change" },
@@ -245,10 +189,12 @@ function initOption() {
 
 function getPageList() {
   loading.value = false;
-  // getList(queryParams.value).then((res) => {
-  //   organization.value = res.data.records;
-  //   loading.value = false;
-  // });
+  getList(queryParams.value).then((res) => {
+    organization.value = res.data.records;
+    console.log(res.data.records);
+
+    loading.value = false;
+  });
 }
 
 function handleAdd() {
@@ -310,6 +256,8 @@ function handleDisabled(id) {
 }
 
 function handleSelectionChange() {
+  console.log(orgTableRef.value.getSelectionRows());
+
   selectRowIds.value = orgTableRef.value
     .getSelectionRows()
     .map((item) => item.id);

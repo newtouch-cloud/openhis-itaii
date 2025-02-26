@@ -71,7 +71,7 @@ public class OrganizationController {
      * @return 机构分页列表
      */
     @GetMapping(value = "/organization")
-    public R<?> getOrganizationPage(@RequestBody OrgQueryParam orgQueryParam,
+    public R<?> getOrganizationPage(OrgQueryParam orgQueryParam,
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {

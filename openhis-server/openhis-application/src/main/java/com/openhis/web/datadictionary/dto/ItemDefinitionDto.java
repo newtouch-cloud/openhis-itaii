@@ -3,6 +3,7 @@
  */
 package com.openhis.web.datadictionary.dto;
 
+import com.openhis.common.enums.PublicationStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -32,7 +33,7 @@ public class ItemDefinitionDto {
     private String title;
 
     /** 状态 */
-    private Integer statusEnum;
+    private PublicationStatus statusEnum;
 
     /** 机构编码 */
     private String orgCode;

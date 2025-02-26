@@ -102,10 +102,11 @@ public class DiseaseManageController {
      */
     @GetMapping("/information-one/{id}")
     public R<?> getDiseaseOne(@PathVariable("id") Long id) {
-
+        DiseaseManageDto diseaseManageDto = new DiseaseManageDto();
         // 根据ID查询【病种目录】
-        ConditionDefinition byId = iConditionDefinitionService.getById(id);
-        return R.ok(byId);
+        ConditionDefinition conditionDefinition = iConditionDefinitionService.getById(id);
+        BeanUtils.copyProperties(conditionDefinition, diseaseManageDto);
+        return R.ok(diseaseManageDto);
     }
 
     /**
