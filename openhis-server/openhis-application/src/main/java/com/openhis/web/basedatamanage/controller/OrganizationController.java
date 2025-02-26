@@ -125,11 +125,11 @@ public class OrganizationController {
      *
      * @param orgId 机构信息
      */
-    @GetMapping("/organization-editById")
+    @GetMapping("/organization-getById")
     public R<?> getOrganizationById(@Validated @RequestParam Long orgId) {
 
         Organization organization = organizationService.getById(orgId);
-        return R.ok(organization, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"机构信息"}));
+        return R.ok(organization, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"机构信息"}));
     }
 
     /**

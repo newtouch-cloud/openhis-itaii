@@ -5,7 +5,10 @@ package com.openhis.web.basedatamanage.dto;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.openhis.common.enums.*;
+import com.openhis.common.enums.LocationBedStatus;
+import com.openhis.common.enums.LocationForm;
+import com.openhis.common.enums.LocationMode;
+import com.openhis.common.enums.LocationStatus;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -58,10 +61,10 @@ public class LocationQueryDto {
     /** 显示顺序 */
     private Integer displayOrder;
 
-//    public LocationQueryDto(LocationForm form, String busNo, LocationMode mode) {
-    public LocationQueryDto(LocationForm form) {
-        this.statusEnum = LocationStatus.ACTIVE;
-        this.formEnum = form;
-//        this.modeEnum = mode;
-    }
+    // public LocationQueryDto(LocationForm form, String busNo, LocationMode mode) {
+    // public LocationQueryDto(LocationForm form) {
+    // this.statusEnum = LocationStatus.ACTIVE;
+    // this.formEnum = form;
+    // this.modeEnum = mode;
+    // }
 }
