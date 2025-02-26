@@ -35,6 +35,50 @@ public class HisQueryUtils {
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
         // 添加租户id查询条件
         queryWrapper.eq(CommonConstants.Common.TENANT_ID, getCurrentTenantId());
+        // 处理模糊查询关键字
+        if (searchKey != null && !searchKey.isEmpty() && searchFields != null && !searchFields.isEmpty()) {
+            queryWrapper.and(wrapper -> {
+                for (String field : searchFields) {
+                    wrapper.or().like(field, searchKey);
+                }
+            });
+        }
+        // 处理时间段查询
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateUtils.YYYY_MM_DD);
+        if (request != null) {
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+                String paramName = entry.getKey();
+                // 检查参数名是否以 "STime" 或 "ETime" 结尾
+                if (paramName.endsWith(CommonConstants.Common.S_TIME)
+                        || paramName.endsWith(CommonConstants.Common.E_TIME)) {
+                    // 提取字段名（去掉 "STime" 或 "ETime" 后缀）
+                    String fieldName = paramName.substring(0, paramName.length() - 5);
+                    // 驼峰转下划线
+                    String dbFieldName = camelToUnderline(fieldName);
+                    // 获取对应的 STime 和 ETime 值
+                    String startValue = getParameterValue(request, fieldName + CommonConstants.Common.S_TIME);
+                    String endValue = getParameterValue(request, fieldName + CommonConstants.Common.E_TIME);
+                    // 如果 Start 和 End 都有值，则添加时间段查询条件
+                    if (startValue != null && endValue != null) {
+                        try {
+                            SimpleDateFormat dateFormat;
+                            if (isValidFormat(formatter, startValue)) {
+                                dateFormat = new SimpleDateFormat(DateUtils.YYYY_MM_DD);
+                            } else {
+                                dateFormat = new SimpleDateFormat(DateUtils.YYYY_MM_DD_HH_MM_SS);
+                            }
+                            Date startDate = dateFormat.parse(startValue);
+                            Date endDate = dateFormat.parse(endValue);
+                            queryWrapper.ge(dbFieldName, startDate); // 大于等于 STime
+                            queryWrapper.le(dbFieldName, endDate); // 小于等于 ETime
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
         if (entity == null) {
             return queryWrapper;
         }
@@ -52,48 +96,6 @@ public class HisQueryUtils {
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
-            }
-        }
-        // 处理模糊查询关键字
-        if (searchKey != null && !searchKey.isEmpty() && searchFields != null && !searchFields.isEmpty()) {
-            queryWrapper.and(wrapper -> {
-                for (String field : searchFields) {
-                    wrapper.or().like(field, searchKey);
-                }
-            });
-        }
-        // 处理时间段查询
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateUtils.YYYY_MM_DD);
-        Map<String, String[]> parameterMap = request.getParameterMap();
-        for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-            String paramName = entry.getKey();
-            // 检查参数名是否以 "STime" 或 "ETime" 结尾
-            if (paramName.endsWith(CommonConstants.Common.S_TIME)
-                    || paramName.endsWith(CommonConstants.Common.E_TIME)) {
-                // 提取字段名（去掉 "STime" 或 "ETime" 后缀）
-                String fieldName = paramName.substring(0, paramName.length() - 5);
-                // 驼峰转下划线
-                String dbFieldName = camelToUnderline(fieldName);
-                // 获取对应的 STime 和 ETime 值
-                String startValue = getParameterValue(request, fieldName + CommonConstants.Common.S_TIME);
-                String endValue = getParameterValue(request, fieldName + CommonConstants.Common.E_TIME);
-                // 如果 Start 和 End 都有值，则添加时间段查询条件
-                if (startValue != null && endValue != null) {
-                    try {
-                        SimpleDateFormat dateFormat;
-                        if (isValidFormat(formatter, startValue)) {
-                            dateFormat = new SimpleDateFormat(DateUtils.YYYY_MM_DD);
-                        } else {
-                            dateFormat = new SimpleDateFormat(DateUtils.YYYY_MM_DD_HH_MM_SS);
-                        }
-                        Date startDate = dateFormat.parse(startValue);
-                        Date endDate = dateFormat.parse(endValue);
-                        queryWrapper.ge(dbFieldName, startDate); // 大于等于 STime
-                        queryWrapper.le(dbFieldName, endDate); // 小于等于 ETime
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         }
         return queryWrapper;
