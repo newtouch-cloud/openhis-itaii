@@ -136,7 +136,7 @@ public class MedicationManageController {
     }
 
     /**
-     * 药品目录停用
+     * 药品目录启用
      *
      * @param ids 药品ID列表
      * @return
