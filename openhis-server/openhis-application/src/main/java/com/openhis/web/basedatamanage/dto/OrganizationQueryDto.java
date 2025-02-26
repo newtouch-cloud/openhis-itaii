@@ -3,6 +3,9 @@
  */
 package com.openhis.web.basedatamanage.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.openhis.common.enums.OrganizationClass;
@@ -52,4 +55,7 @@ public class OrganizationQueryDto {
 
     /** 显示顺序 */
     private Integer displayOrder;
+
+    List<OrganizationQueryDto> children = new ArrayList<>();
+
 }
