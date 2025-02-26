@@ -3,10 +3,8 @@
  */
 package com.openhis.web.datadictionary.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,6 +31,7 @@ import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.service.IChargeItemDefAppService;
 import com.openhis.administration.service.IChargeItemDefinitionService;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.PublicationStatus;
 import com.openhis.web.datadictionary.dto.ChargeItemDefPageDto;
 import com.openhis.web.datadictionary.dto.ChargeItemOptionDto;
 import com.openhis.web.datadictionary.dto.ItemDefSearchParam;
@@ -72,56 +71,55 @@ public class ItemDefinitionController {
         List<ChargeItemOptionDto> chargeItemOptions = new ArrayList<>();
         if (DefinitionTypeEnum.MEDICATION.getCode().equals(itemDefSearchParam.getDefinitionType())) {
             // 西药
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.WEST_MEDICINE.getCode())
-                .setLabel(ChargeItemEnum.WEST_MEDICINE.getInfo()));
+            chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.WEST_MEDICINE.getCode(),
+                ChargeItemEnum.WEST_MEDICINE.getInfo()));
             // 中药饮片
-            chargeItemOptions
-                .add(new ChargeItemOptionDto().setValue(ChargeItemEnum.CHINESE_MEDICINE_SLICES_FEE.getCode())
-                    .setLabel(ChargeItemEnum.CHINESE_MEDICINE_SLICES_FEE.getInfo()));
+            chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.CHINESE_MEDICINE_SLICES_FEE.getCode(),
+                ChargeItemEnum.CHINESE_MEDICINE_SLICES_FEE.getInfo()));
             // 中成药
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.CHINESE_MEDICINE_FEE.getCode())
-                .setLabel(ChargeItemEnum.CHINESE_MEDICINE_FEE.getInfo()));
+            chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.CHINESE_MEDICINE_FEE.getCode(),
+                ChargeItemEnum.CHINESE_MEDICINE_FEE.getInfo()));
             // 其他
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.OTHER_FEE.getCode())
-                .setLabel(ChargeItemEnum.OTHER_FEE.getInfo()));
+            chargeItemOptions
+                .add(new ChargeItemOptionDto(ChargeItemEnum.OTHER_FEE.getCode(), ChargeItemEnum.OTHER_FEE.getInfo()));
         } else if (DefinitionTypeEnum.DEVICE.getCode().equals(itemDefSearchParam.getDefinitionType())) {
             // 卫生材料
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.SANITARY_MATERIALS_FEE.getCode())
-                .setLabel(ChargeItemEnum.SANITARY_MATERIALS_FEE.getInfo()));
+            chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.SANITARY_MATERIALS_FEE.getCode(),
+                ChargeItemEnum.SANITARY_MATERIALS_FEE.getInfo()));
             // 其他
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.OTHER_FEE.getCode())
-                .setLabel(ChargeItemEnum.OTHER_FEE.getInfo()));
+            chargeItemOptions
+                .add(new ChargeItemOptionDto(ChargeItemEnum.OTHER_FEE.getCode(), ChargeItemEnum.OTHER_FEE.getInfo()));
         } else if (DefinitionTypeEnum.ACTIVITY.getCode().equals(itemDefSearchParam.getDefinitionType())) {
             // 床位
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.BED_FEE.getCode())
-                .setLabel(ChargeItemEnum.BED_FEE.getInfo()));
+            chargeItemOptions
+                .add(new ChargeItemOptionDto(ChargeItemEnum.BED_FEE.getCode(), ChargeItemEnum.BED_FEE.getInfo()));
             // 诊察
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.DIAGNOSTIC_FEE.getCode())
-                .setLabel(ChargeItemEnum.DIAGNOSTIC_FEE.getInfo()));
+            chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.DIAGNOSTIC_FEE.getCode(),
+                ChargeItemEnum.DIAGNOSTIC_FEE.getInfo()));
             // 检查
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.CHECK_FEE.getCode())
-                .setLabel(ChargeItemEnum.CHECK_FEE.getInfo()));
+            chargeItemOptions
+                .add(new ChargeItemOptionDto(ChargeItemEnum.CHECK_FEE.getCode(), ChargeItemEnum.CHECK_FEE.getInfo()));
             // 化验
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.DIAGNOSTIC_TEST_FEE.getCode())
-                .setLabel(ChargeItemEnum.DIAGNOSTIC_TEST_FEE.getInfo()));
+            chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.DIAGNOSTIC_TEST_FEE.getCode(),
+                ChargeItemEnum.DIAGNOSTIC_TEST_FEE.getInfo()));
             // 治疗
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.MEDICAL_EXPENSE_FEE.getCode())
-                .setLabel(ChargeItemEnum.MEDICAL_EXPENSE_FEE.getInfo()));
+            chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.MEDICAL_EXPENSE_FEE.getCode(),
+                ChargeItemEnum.MEDICAL_EXPENSE_FEE.getInfo()));
             // 手术
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.OPERATION_FEE.getCode())
-                .setLabel(ChargeItemEnum.OPERATION_FEE.getInfo()));
+            chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.OPERATION_FEE.getCode(),
+                ChargeItemEnum.OPERATION_FEE.getInfo()));
             // 护理费
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.NURSING_FEE.getCode())
-                .setLabel(ChargeItemEnum.NURSING_FEE.getInfo()));
+            chargeItemOptions.add(
+                new ChargeItemOptionDto(ChargeItemEnum.NURSING_FEE.getCode(), ChargeItemEnum.NURSING_FEE.getInfo()));
             // 其他
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.GENERAL_CONSULTATION_FEE.getCode())
-                .setLabel(ChargeItemEnum.GENERAL_CONSULTATION_FEE.getInfo()));
+            chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.GENERAL_CONSULTATION_FEE.getCode(),
+                ChargeItemEnum.GENERAL_CONSULTATION_FEE.getInfo()));
             // 挂号
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.REGISTRATION_FEE.getCode())
-                .setLabel(ChargeItemEnum.REGISTRATION_FEE.getInfo()));
+            chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.REGISTRATION_FEE.getCode(),
+                ChargeItemEnum.REGISTRATION_FEE.getInfo()));
             // 其他
-            chargeItemOptions.add(new ChargeItemOptionDto().setValue(ChargeItemEnum.OTHER_FEE.getCode())
-                .setLabel(ChargeItemEnum.OTHER_FEE.getInfo()));
+            chargeItemOptions
+                .add(new ChargeItemOptionDto(ChargeItemEnum.OTHER_FEE.getCode(), ChargeItemEnum.OTHER_FEE.getInfo()));
         }
         return R.ok(chargeItemOptions);
     }
@@ -157,16 +155,13 @@ public class ItemDefinitionController {
         // 通过 DefinitionType 区分药品定价/器具定价/活动定价
         if (DefinitionTypeEnum.MEDICATION.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
             queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, "med_medication_definition");
-            chargeItemDefinitionPage =
-                chargeItemDefSearchMapper.getMedList(new Page<>(pageNo, pageSize), queryWrapper);
+            chargeItemDefinitionPage = chargeItemDefSearchMapper.getMedList(new Page<>(pageNo, pageSize), queryWrapper);
         } else if (DefinitionTypeEnum.DEVICE.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
             queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, "adm_device_definition");
-            chargeItemDefinitionPage =
-                chargeItemDefSearchMapper.getDevList(new Page<>(pageNo, pageSize), queryWrapper);
+            chargeItemDefinitionPage = chargeItemDefSearchMapper.getDevList(new Page<>(pageNo, pageSize), queryWrapper);
         } else if (DefinitionTypeEnum.ACTIVITY.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
             queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, "wor_activity_definition");
-            chargeItemDefinitionPage =
-                chargeItemDefSearchMapper.getActList(new Page<>(pageNo, pageSize), queryWrapper);
+            chargeItemDefinitionPage = chargeItemDefSearchMapper.getActList(new Page<>(pageNo, pageSize), queryWrapper);
         }
         return R.ok(chargeItemDefinitionPage, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
     }
@@ -194,6 +189,17 @@ public class ItemDefinitionController {
         return chargeItemDefAppService.updateChargeItemDefApp(chargeItemDefApp)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"费用定价"}))
             : R.fail(PromptMsgConstant.Common.M00007, null);
+    }
+
+    /**
+     * 修改项目定价
+     *
+     * @return 修改结果
+     */
+    @GetMapping(value = "/status-enum-option")
+    public R<?> getDropdownOption() {
+        return R.ok(Arrays.stream(PublicationStatus.values())
+            .map(status -> new ChargeItemOptionDto(status.getValue(), status.getInfo())).collect(Collectors.toList()));
     }
 
     /**
