@@ -28,18 +28,12 @@
                     v-model="form.name"
                     placeholder="请输入药品名"
                     maxlength="30"
-                    :disabled="form.id != undefined"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="拼音码(品名)" prop="name">
-                  <el-input
-                    v-model="form.name"
-                    placeholder=""
-                    maxlength="30"
-                    :disabled="form.id != undefined"
-                  />
+                  <el-input v-model="form.name" placeholder="" maxlength="30" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -50,28 +44,17 @@
                     v-model="form.conditionCode"
                     placeholder=""
                     maxlength="30"
-                    :disabled="form.id != undefined"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="小规格含量" prop="name">
-                  <el-input
-                    v-model="form.name"
-                    placeholder=""
-                    maxlength="30"
-                    :disabled="form.id != undefined"
-                  />
+                  <el-input v-model="form.name" placeholder="" maxlength="30" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="商品名" prop="name">
-                  <el-input
-                    v-model="form.name"
-                    placeholder=""
-                    maxlength="30"
-                    :disabled="form.id != undefined"
-                  />
+                  <el-input v-model="form.name" placeholder="" maxlength="30" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -82,7 +65,6 @@
                     v-model="form.conditionCode"
                     placeholder=""
                     maxlength="30"
-                    :disabled="form.id != undefined"
                   />
                 </el-form-item>
               </el-col>
@@ -146,28 +128,17 @@
                     v-model="form.conditionCode"
                     placeholder=""
                     maxlength="30"
-                    :disabled="form.id != undefined"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="采购单价" prop="name">
-                  <el-input
-                    v-model="form.name"
-                    placeholder=""
-                    maxlength="30"
-                    :disabled="form.id != undefined"
-                  />
+                  <el-input v-model="form.name" placeholder="" maxlength="30" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="采购拆零价" prop="name">
-                  <el-input
-                    v-model="form.name"
-                    placeholder=""
-                    maxlength="30"
-                    :disabled="form.id != undefined"
-                  />
+                  <el-input v-model="form.name" placeholder="" maxlength="30" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -208,7 +179,11 @@
             <el-row :gutter="24">
               <el-col :span="8">
                 <el-form-item label="给药途径" prop="conditionCode">
-                  <el-select v-model="queryParams.status" clearable>
+                  <el-select
+                    v-model="queryParams.status"
+                    clearable
+                    :disabled="form.id != undefined"
+                  >
                     <el-option
                       v-for="dict in sys_normal_disable"
                       :key="dict.value"
@@ -220,7 +195,11 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item label="用药频次" prop="name">
-                  <el-select v-model="queryParams.status" clearable>
+                  <el-select
+                    v-model="queryParams.status"
+                    clearable
+                    :disabled="form.id != undefined"
+                  >
                     <el-option
                       v-for="dict in sys_normal_disable"
                       :key="dict.value"
@@ -236,13 +215,13 @@
                     v-model="form.name"
                     placeholder=""
                     maxlength="30"
-                    :disabled="form.id != undefined"
                     style="width: 49%"
                   />
                   <el-select
                     v-model="queryParams.status"
                     clearable
                     style="width: 49%"
+                    :disabled="form.id != undefined"
                   >
                     <el-option
                       v-for="dict in sys_normal_disable"
@@ -257,7 +236,11 @@
             <el-row :gutter="24">
               <el-col :span="8">
                 <el-form-item label="剂型" prop="conditionCode">
-                  <el-select v-model="queryParams.status" clearable>
+                  <el-select
+                    v-model="queryParams.status"
+                    clearable
+                    :disabled="form.id != undefined"
+                  >
                     <el-option
                       v-for="dict in sys_normal_disable"
                       :key="dict.value"
@@ -269,7 +252,11 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item label="病案结算项" prop="name">
-                  <el-select v-model="queryParams.status" clearable>
+                  <el-select
+                    v-model="queryParams.status"
+                    clearable
+                    :disabled="form.id != undefined"
+                  >
                     <el-option
                       v-for="dict in sys_normal_disable"
                       :key="dict.value"
@@ -281,14 +268,7 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item label="剂量单位换算比" prop="name">
-                  <el-select v-model="queryParams.status" clearable>
-                    <el-option
-                      v-for="dict in sys_normal_disable"
-                      :key="dict.value"
-                      :label="dict.label"
-                      :value="dict.value"
-                    />
-                  </el-select>
+                  <el-input v-model="form.name" placeholder="" maxlength="30" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -349,7 +329,11 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="8">
-                <el-form-item label="库存预警量(最小单位)" prop="conditionCode"  class="custom-label-spacing">
+                <el-form-item
+                  label="库存预警量(最小单位)"
+                  prop="conditionCode"
+                  class="custom-label-spacing"
+                >
                   <el-input
                     v-model="form.conditionCode"
                     placeholder=""
@@ -364,7 +348,11 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="取消批次号管理" prop="name" class="custom-label-spacing">
+                <el-form-item
+                  label="取消批次号管理"
+                  prop="name"
+                  class="custom-label-spacing"
+                >
                   <el-checkbox v-model="form.status"></el-checkbox>
                 </el-form-item>
               </el-col>
@@ -503,7 +491,7 @@
                 <el-form-item label="说明" prop="status">
                   <el-input
                     v-model="textarea2"
-                    :autosize="{ minRows: 4, maxRows: 10}"
+                    :autosize="{ minRows: 4, maxRows: 10 }"
                     type="textarea"
                     placeholder=""
                   />
@@ -575,14 +563,32 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
+const props = defineProps({
+  item: {
+    type: Object,
+    required: false,
+  },
+});
+
 // 显示弹框
 function show() {
   // queryParams.roleId = props.roleId;
   // getList();
   visible.value = true;
 }
+// 显示弹框
+function edit() {
+  // queryParams.roleId = props.roleId;
+  // getList();
+  console.log(props, "22222");
+  console.log(props.item);
+  console.log("props.item");
+  form.value = props.item;
+  visible.value = true;
+}
 defineExpose({
   show,
+  edit,
 });
 </script>
 <style scoped>

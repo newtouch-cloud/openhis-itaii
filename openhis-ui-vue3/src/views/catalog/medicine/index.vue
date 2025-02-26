@@ -129,7 +129,7 @@
               type="primary"
               plain
               icon="Plus"
-              @click="openMedicineDialog"
+              @click="openAddMedicine"
               v-hasPermi="['system:user:add']"
               >添加新项目</el-button
             >
@@ -154,7 +154,7 @@
               >停用</el-button
             >
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button
               type="success"
               plain
@@ -164,7 +164,7 @@
               v-hasPermi="['system:user:remove']"
               >启用</el-button
             >
-          </el-col>
+          </el-col> -->
           <el-col :span="1.5">
             <el-button
               type="primary"
@@ -197,8 +197,8 @@
           <el-table-column
             label="编码"
             align="center"
-            key="conditionCode"
-            prop="conditionCode"
+            key="busNo"
+            prop="busNo"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -211,23 +211,23 @@
           <el-table-column
             label="规格"
             align="center"
-            key="pyStr"
-            prop="pyStr"
+            key="totalVolume"
+            prop="totalVolume"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="厂家(产地)"
             align="center"
-            key="ybNo"
-            prop="ybNo"
+            key="manufacturerId"
+            prop="manufacturerId"
             :show-overflow-tooltip="true"
             width="100"
           />
           <el-table-column
             label="单位"
             align="center"
-            key="ybName"
-            prop="ybName"
+            key="unitCode"
+            prop="unitCode"
             :show-overflow-tooltip="true"
             width="50"
           />
@@ -255,8 +255,8 @@
           <el-table-column
             label="拆零比"
             align="center"
-            key="statusEnum"
-            rop="statusEnum"
+            key="partPercent"
+            rop="partPercent"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -269,18 +269,18 @@
           <el-table-column
             label="医保编码"
             align="center"
-            key="statusEnum"
-            rop="statusEnum"
+            key="ybNo"
+            rop="ybNo"
             :show-overflow-tooltip="true"
           />
 
           <el-table-column
             label="医保已对码"
             align="center"
-            key="statusEnum"
-            rop="statusEnum"
+            key="ybMatchFlag"
+            rop="ybMatchFlag"
             :show-overflow-tooltip="true"
-             width="100"
+            width="100"
           />
           <el-table-column
             label="医保等级"
@@ -299,16 +299,16 @@
           <el-table-column
             label="限制使用标记"
             align="center"
-            key="statusEnum"
-            rop="statusEnum"
+            key="restrictedFlag"
+            rop="restrictedFlag"
             :show-overflow-tooltip="true"
-             width="110"
+            width="110"
           />
           <el-table-column
             label="限制使用范围"
             align="center"
-            key="statusEnum"
-            rop="statusEnum"
+            key="restrictedScope"
+            rop="restrictedScope"
             :show-overflow-tooltip="true"
             width="110"
           />
@@ -400,7 +400,7 @@
                 link
                 type="primary"
                 icon="Edit"
-                @click="handleUpdate(scope.row)"
+                @click="openEditMedicine(scope.row)"
                 v-hasPermi="['system:user:edit']"
                 >编辑</el-button
               >
@@ -408,7 +408,7 @@
                 link
                 type="primary"
                 icon="View"
-                @click="handleView(scope.row)"
+                @click="openViewMedicine(scope.row)"
                 v-hasPermi="['system:user:remove']"
                 >查看</el-button
               >
@@ -424,7 +424,12 @@
         />
       </el-col>
     </el-row>
-    <medicine-dialog ref="medicineRef" :roleId="queryParams.roleId" @ok="handleQuery" />
+    <medicine-dialog ref="medicineRef" :item="currentData" @ok="submitForm" />
+    <medicine-view-dialog
+      ref="medicineViewRef"
+      :item="viewData"
+      :viewFlg="viewFlg"
+    />
     <!-- 添加或修改用户配置对话框 -->
     <!-- <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form :model="form" :rules="rules" ref="diseaseRef" label-width="80px">
@@ -482,6 +487,8 @@ import {
   getDiseaseOne,
 } from "./components/medicine";
 import medicineDialog from "./components/medicineDialog";
+import medicineViewDialog from "./components/medicineViewDialog";
+import { nextTick } from "vue";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -503,6 +510,10 @@ const title = ref("");
 const dateRange = ref([]);
 const deptName = ref("");
 const conditionDefinitionOptions = ref(undefined);
+// 使用 ref 定义当前药品数据
+const currentData = ref({});
+// 使用 ref 定义当前查看药品数据
+const viewData = ref({});
 // const initPassword = ref(undefined);
 // const postOptions = ref([]);
 // const roleOptions = ref([]);
@@ -642,9 +653,29 @@ function cancel() {
   open.value = false;
   reset();
 }
-/** 打开新增/编辑弹窗 */
-function openMedicineDialog() {
+/** 打开新增弹窗 */
+function openAddMedicine() {
   proxy.$refs["medicineRef"].show();
+}
+/** 打开编辑弹窗 */
+function openEditMedicine(row) {
+  currentData.value = row;
+  console.log(currentData.value, "currentData");
+  // 确保子组件已经接收到最新的 props
+  nextTick(() => {
+    proxy.$refs["medicineRef"].edit();
+  });
+  // proxy.$refs["medicineRef"].edit();
+}
+/** 打开查看弹窗 */
+function openViewMedicine(row) {
+  viewData.value = row;
+  console.log(viewData.value, "currentData");
+  // 确保子组件已经接收到最新的 props
+  nextTick(() => {
+    proxy.$refs["medicineViewRef"].edit();
+  });
+  // proxy.$refs["medicineRef"].edit();
 }
 /** 新增按钮操作 */
 function handleAdd() {
