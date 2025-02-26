@@ -29,8 +29,8 @@ import com.openhis.common.enums.OrganizationType;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.basedatamanage.dto.OrgQueryParam;
-import com.openhis.web.basedatamanage.dto.OrganizationQueryDto;
 import com.openhis.web.basedatamanage.dto.OrganizationInitDto;
+import com.openhis.web.basedatamanage.dto.OrganizationQueryDto;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
