@@ -11,4 +11,19 @@ import com.openhis.administration.domain.DeviceDefinition;
  */
 public interface IDeviceDefinitionService extends IService<DeviceDefinition> {
 
+    /**
+     * 新增器材目录
+     *
+     * @param deviceDefinition 耗材器材实体
+     * @return
+     */
+    boolean addDevice(DeviceDefinition deviceDefinition);
+
+    /**
+     * 新增医保器材目录
+     *
+     * @param deviceDefinition 器材目录实体
+     * @return
+     */
+    boolean addYbDevice(DeviceDefinition deviceDefinition);
 }

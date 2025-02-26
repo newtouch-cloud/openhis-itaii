@@ -1,29 +1,23 @@
-package com.openhis.workflow.domain;
+package com.openhis.web.datadictionary.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.core.common.core.domain.HisBaseEntity;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 诊疗定义管理Entity实体
+ * 诊疗目录分页检索
  *
- * @author system
- * @date 2025-02-20
+ * @author lpt
+ * @date 2025-02-25
  */
 @Data
-@TableName("wor_activity_definition")
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false)
-public class ActivityDefinition extends HisBaseEntity {
-
+public class DiagnosisTreatmentDto {
     /** ID */
-    @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 目录类别 */
@@ -70,5 +64,4 @@ public class ActivityDefinition extends HisBaseEntity {
 
     /** 规则id */
     private Integer ruleId;
-
 }
