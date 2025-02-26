@@ -16,4 +16,10 @@ import com.openhis.administration.service.IHealthcareServiceService;
 @Service
 public class HealthcareServiceServiceImpl extends ServiceImpl<HealthcareServiceMapper, HealthcareService> implements IHealthcareServiceService {
 
+    @Override
+    public HealthcareService addHealthcareService(HealthcareService healthcareService){
+        baseMapper.insert(healthcareService);
+        return healthcareService;
+    }
+
 }
