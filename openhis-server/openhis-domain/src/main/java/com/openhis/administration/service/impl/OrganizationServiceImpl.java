@@ -8,7 +8,6 @@ import com.openhis.administration.domain.Organization;
 import com.openhis.administration.mapper.OrganizationMapper;
 import com.openhis.administration.service.IOrganizationService;
 import com.openhis.common.enums.AccountStatus;
-import com.openhis.common.enums.ActiveFlag;
 
 /**
  * 机构管理Service业务层处理
@@ -29,10 +28,10 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         if (orgId != null) {
             Organization organization = organizationMapper.selectById(orgId);
             if (organization.getActiveFlag().equals(AccountStatus.ACTIVE.getValue())) {
-                organization.setActiveFlag(ActiveFlag.INACTIVE.getValue());
+                organization.setActiveFlag(AccountStatus.INACTIVE.getValue());
                 return true;
             } else {
-                organization.setActiveFlag(ActiveFlag.ACTIVE.getValue());
+                organization.setActiveFlag(AccountStatus.ACTIVE.getValue());
                 return true;
             }
         } else {
