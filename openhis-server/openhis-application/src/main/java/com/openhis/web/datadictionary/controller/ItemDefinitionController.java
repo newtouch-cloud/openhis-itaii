@@ -47,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025-02-21
  */
 @RestController
-@RequestMapping("/dict-manager/definition")
+@RequestMapping("/dict-dictionary/definition")
 @Slf4j
 public class ItemDefinitionController {
 

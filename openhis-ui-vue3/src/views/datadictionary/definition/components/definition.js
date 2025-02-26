@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询费用定价信息列表
 export function listDefinition(query) {
   return request({
-    url: '/dict-manager/definition/item-definition-page',
+    url: '/dict-dictionary/definition/item-definition-page',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listDefinition(query) {
 // 初始化下拉选
 export function initOption(query) {
   return request({
-    url: '/dict-manager/definition/init',
+    url: '/dict-dictionary/definition/init',
     method: 'get',
     params: query
   })
@@ -21,7 +21,7 @@ export function initOption(query) {
 // 修改费用定价信息
 export function updateDefinition(data) {
   return request({
-    url: '/dict-manager/definition/item-definition',
+    url: '/dict-dictionary/definition/item-definition',
     method: 'put',
     data: data
   })
@@ -30,7 +30,7 @@ export function updateDefinition(data) {
 // 修改费用定价信息
 export function getOptions() {
   return request({
-    url: '/dict-manager/definition/status-enum-option',
+    url: '/dict-dictionary/definition/status-enum-option',
     method: 'get',
   })
 }
