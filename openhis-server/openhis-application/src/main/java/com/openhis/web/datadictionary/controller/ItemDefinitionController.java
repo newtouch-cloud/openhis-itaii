@@ -68,6 +68,7 @@ public class ItemDefinitionController {
      */
     @GetMapping(value = "/init")
     public R<?> getInitDefinitionOptions(ItemDefSearchParam itemDefSearchParam) {
+        /// TODO: 2025/2/26  收费项目下拉框 暂未做成用枚举代替，后续替换
         List<ChargeItemOptionDto> chargeItemOptions = new ArrayList<>();
         if (DefinitionTypeEnum.MEDICATION.getCode().equals(itemDefSearchParam.getDefinitionType())) {
             // 西药

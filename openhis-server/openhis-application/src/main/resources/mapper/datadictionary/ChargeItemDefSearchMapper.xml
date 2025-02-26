@@ -6,6 +6,7 @@
         T5.id,
         T5.charge_name,
         T5.status_enum,
+        T5.status_enum_text,
         T5.description,
         T5.effective_start,
         T5.effective_end,
@@ -32,6 +33,12 @@
         T1.id,
         T1.charge_name,
         T1.status_enum,
+        CASE
+            WHEN T1.status_enum = 1 THEN '草稿'
+            WHEN T1.status_enum = 2 THEN '有效'
+            WHEN T1.status_enum = 3 THEN '停用'
+            WHEN T1.status_enum = 4 THEN '未知'
+        END AS status_enum_text,
         T1.description,
         T1.effective_start,
         T1.effective_end,
@@ -69,6 +76,7 @@
         T5.id,
         T5.charge_name,
         T5.status_enum,
+        T5.status_enum_text,
         T5.description,
         T5.effective_start,
         T5.effective_end,
@@ -94,6 +102,12 @@
         T1.id,
         T1.charge_name,
         T1.status_enum,
+        CASE
+            WHEN T1.status_enum = 1 THEN '草稿'
+            WHEN T1.status_enum = 2 THEN '有效'
+            WHEN T1.status_enum = 3 THEN '停用'
+            WHEN T1.status_enum = 4 THEN '未知'
+        END AS status_enum_text,
         T1.description,
         T1.effective_start,
         T1.effective_end,
@@ -130,6 +144,7 @@
         T5.id,
         T5.charge_name,
         T5.status_enum,
+        T5.status_enum_text,
         T5.description,
         T5.effective_start,
         T5.effective_end,
@@ -153,6 +168,12 @@
         T1.id,
         T1.charge_name,
         T1.status_enum,
+        CASE
+            WHEN T1.status_enum = 1 THEN '草稿'
+            WHEN T1.status_enum = 2 THEN '有效'
+            WHEN T1.status_enum = 3 THEN '停用'
+            WHEN T1.status_enum = 4 THEN '未知'
+        END AS status_enum_text,
         T1.description,
         T1.effective_start,
         T1.effective_end,

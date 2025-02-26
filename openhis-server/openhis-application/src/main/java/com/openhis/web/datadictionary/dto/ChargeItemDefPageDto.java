@@ -38,6 +38,9 @@ public class ChargeItemDefPageDto {
     /** 状态 */
     private PublicationStatus statusEnum;
 
+    /** 状态值 */
+    private String statusEnumText;
+
     /** 单位 */
     private String unitCode;
 

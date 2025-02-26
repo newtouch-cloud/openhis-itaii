@@ -42,6 +42,8 @@
                 :max="999999.99"
                 :step="0.01"
                 :precision="2"
+                controls-position="right"
+                :controls="false"
                 disabled="true"
               />
             </el-form-item>
@@ -58,6 +60,8 @@
                 :max="999999.99"
                 :step="0.01"
                 :precision="2"
+                controls-position="right"
+                :controls="false"
                 disabled="true"
               />
             </el-form-item>
@@ -70,6 +74,8 @@
                 :max="999999.99"
                 :step="0.01"
                 :precision="2"
+                controls-position="right"
+                :controls="false"
               />
             </el-form-item>
           </el-col>
@@ -94,6 +100,8 @@
                 :max="999999.99"
                 :step="0.01"
                 :precision="2"
+                controls-position="right"
+                :controls="false"
                 disabled="true"
               />
             </el-form-item>
@@ -106,6 +114,8 @@
                 :max="999999.99"
                 :step="0.01"
                 :precision="2"
+                :controls="false"
+                controls-position="right"
               />
             </el-form-item>
           </el-col>
@@ -149,14 +159,12 @@
   </el-dialog>
 </template>
 <script setup>
-import { getOptions } from "./definition";
-const { proxy } = getCurrentInstance();
-const { charge_item_status } = proxy.useDict("charge_item_status");
 const emit = defineEmits(["submit", "update:open"]);
 const props = defineProps({
   title: String,
   open: Boolean,
   formData: Object,
+  statusOptions: Object
 });
 const localOpen = ref(props.open);
 const definitionRef = ref(null);
@@ -181,14 +189,6 @@ const submitForm = () => {
   });
 };
 
-/**获取状态下拉列表 */
-const getStatusOptions = () => {
-  getOptions({}).then((response) => {
-    options.value = response.data;
-    console.log(options.value);
-  });
-};
-
 /**
  * 取消操作的函数
  */
@@ -201,9 +201,8 @@ watch(
   () => props.open,
   (newVal) => {
     localOpen.value = newVal;
-    console.log(props.form);
     fromModel.value = props.formData;
-    getStatusOptions();
+    options.value = props.statusOptions
     if (!newVal) {
       // 如果对话框关闭，重置表单
       definitionRef.value.resetFields();
@@ -211,5 +210,11 @@ watch(
   }
 );
 </script>
-<style>
+<style lang="scss" scoped>
+:deep(.el-input-number .el-input__inner){
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  text-align: left;
+  line-height: 1;
+}
 </style>

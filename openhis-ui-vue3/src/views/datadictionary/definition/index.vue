@@ -109,7 +109,7 @@
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.partPercent ? scope.row.partPercent : "-" }}
+                {{ scope.row.partPercent ? thousandNumber(scope.row.partPercent) : "-" }}
               </template>
             </el-table-column>
             <el-table-column
@@ -120,18 +120,8 @@
             >
               <template #default="scope">
                 {{
-                  scope.row.conditionYbCode ? scope.row.conditionYbCode : "-"
+                  scope.row.conditionYbCode ? thousandNumber(scope.row.conditionYbCode) : "-"
                 }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="基础价格"
-              width="150"
-              prop="price"
-              align="center"
-            >
-              <template #default="scope">
-                {{ scope.row.price ? scope.row.price : "-" }}
               </template>
             </el-table-column>
             <el-table-column
@@ -141,7 +131,7 @@
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.amount ? scope.row.amount : "-" }}
+                {{ scope.row.amount ? thousandNumber(scope.row.amount) : "-" }}
               </template>
             </el-table-column>
             <el-table-column
@@ -165,7 +155,7 @@
               <template #default="scope">
                 {{
                   scope.row.partConditionPrice
-                    ? scope.row.partConditionPrice
+                    ? thousandNumber(scope.row.partConditionPrice)
                     : "-"
                 }}
               </template>
@@ -173,11 +163,11 @@
             <el-table-column
               label="拆零价格"
               width="150"
-              prop="partPrice"
+              prop="price"
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.partPrice ? scope.row.partPrice : "-" }}
+                {{ scope.row.price ? thousandNumber(scope.row.price) : "-" }}
               </template>
             </el-table-column>
             <el-table-column
@@ -192,26 +182,22 @@
             </el-table-column>
             <el-table-column
               label="调价时间"
-              width="150"
+              width="200"
               prop="updateTime"
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.updateTime ? scope.row.updateTime : "-" }}
+                {{ scope.row.updateTime ? moment(scope.row.updateTime).format("YYYY-MM-DD HH:mm:ss") : "-" }}
               </template>
             </el-table-column>
             <el-table-column
               label="状态"
               width="150"
-              prop="statusEnum"
+              prop="statusEnumText"
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.statusEnum ? "" : "-" }}
-                <dict-tag
-                  :options="charge_item_status"
-                  :value="scope.row.statusEnum"
-                />
+                {{ scope.row.statusEnumText ? scope.row.statusEnumText : "-" }}
               </template>
             </el-table-column>
             <el-table-column
@@ -386,11 +372,11 @@
             <el-table-column
               label="拆零价格"
               width="150"
-              prop="partPrice"
+              prop="price"
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.partPrice ? thousandNumber(scope.row.partPrice) : "-" }}
+                {{ scope.row.price ? thousandNumber(scope.row.price) : "-" }}
               </template>
             </el-table-column>
             <el-table-column
@@ -405,26 +391,22 @@
             </el-table-column>
             <el-table-column
               label="调价时间"
-              width="150"
+              width="200"
               prop="updateTime"
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.updateTime ? scope.row.updateTime : "-" }}
+                {{ scope.row.updateTime ? moment(scope.row.updateTime).format("YYYY-MM-DD HH:mm:ss") : "-" }}
               </template>
             </el-table-column>
             <el-table-column
               label="状态"
               width="150"
-              prop="statusEnum"
+              prop="statusEnumText"
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.statusEnum ? "" : "-" }}
-                <dict-tag
-                  :options="charge_item_status"
-                  :value="scope.row.statusEnum"
-                />
+                {{ scope.row.statusEnumText ? scope.row.statusEnumText : "-" }}
               </template>
             </el-table-column>
             <el-table-column
@@ -599,11 +581,11 @@
             <el-table-column
               label="拆零价格"
               width="150"
-              prop="partPrice"
+              prop="price"
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.partPrice ? thousandNumber(scope.row.partPrice) : "-" }}
+                {{ scope.row.price ? thousandNumber(scope.row.price) : "-" }}
               </template>
             </el-table-column>
             <el-table-column
@@ -618,22 +600,22 @@
             </el-table-column>
             <el-table-column
               label="调价时间"
-              width="150"
+              width="200"
               prop="updateTime"
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.updateTime ? moment(new Date(scope.row.updateTime)).format("YYYY-MM-DD HH:mm:ss") : "-" }}
+                {{ scope.row.updateTime ? moment(scope.row.updateTime).format("YYYY-MM-DD HH:mm:ss") : "-" }}
               </template>
             </el-table-column>
             <el-table-column
               label="状态"
               width="150"
-              prop="statusEnum"
+              prop="statusEnumText"
               align="center"
             >
               <template #default="scope">
-                {{ scope.row.statusEnum ? scope.row.statusEnum : "-" }}
+                {{ scope.row.statusEnumText ? scope.row.statusEnumText : "-" }}
               </template>
             </el-table-column>
             <el-table-column
@@ -655,13 +637,12 @@
         </el-tab-pane>
       </el-tabs>
     </el-form>
-    <edit :title="title" :open="open" :formData="form"
-      :charge_item_status="charge_item_status" @submit="submitForm" @update:open="handleOpenChange"
+    <edit :title="title" :open="open" :statusOptions="statusOptions" :formData="form" @submit="submitForm" @update:open="handleOpenChange"
       @update:form="handleFormChange" />
   </div>
 </template>
 <script setup>
-import { listDefinition, initOption, updateDefinition } from "./components/definition";
+import { listDefinition, initOption, updateDefinition, getOptions } from "./components/definition";
 import Edit from './components/edit.vue'
 import moment from 'moment'
 import { thousandNumber } from '@/utils/his.js'
@@ -673,8 +654,8 @@ const definitionList = ref([]);
 const total = ref(0);
 
 const { proxy } = getCurrentInstance();
-const { charge_item_status } = proxy.useDict("charge_item_status");
 const options = ref([]);
+const statusOptions = ref([]);
 const title = ref("");
 const open = ref(false);
 
@@ -708,6 +689,7 @@ function getList() {
     total.value = response.data.total;
     loading.value = false;
   });
+  getStatusOptions()
 }
 
 /** 搜索按钮操作 */
@@ -769,22 +751,30 @@ function submitForm(form) {
     getList();
   });
 }
+
+/**获取状态下拉列表 */
+const getStatusOptions = () => {
+  getOptions({}).then((response) => {
+    statusOptions.value = response.data;
+  });
+};
+
 handleInit();
 getList();
 </script>
-<style>
-.demo-tabs > .el-tabs__content {
+<style lang="scss" scoped>
+:deep(.demo-tabs > .el-tabs__content) {
   color: #6b778c;
   font-size: 32px;
   font-weight: 600;
 }
-.el-input__wrapper {
+:deep(.el-input__wrapper) {
   height: 32px;
 }
-.el-input__inner {
+:deep(.el-input__inner) {
   height: 30px;
 }
-.el-tabs__content{
+:deep(.el-tabs__content) {
   height: 80vh;
 }
 </style>
