@@ -1,32 +1,26 @@
-package com.openhis.administration.domain;
+package com.openhis.web.datadictionary.dto;
 
 import java.math.BigDecimal;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.core.common.core.domain.HisBaseEntity;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.enums.DeviceCategory;
 import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 器材定义管理Entity实体
+ * 器材目录分页检索
  *
- * @author system
- * @date 2025-02-20
+ * @author lpt
+ * @date 2025-02-25
  */
 @Data
-@TableName("adm_device_definition")
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false)
-public class DeviceDefinition extends HisBaseEntity {
-
+public class DeviceManageDto {
     /** ID */
-    @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 编码 */
@@ -106,5 +100,4 @@ public class DeviceDefinition extends HisBaseEntity {
 
     /** 过敏标记 */
     private Integer allergenFlag;
-
 }

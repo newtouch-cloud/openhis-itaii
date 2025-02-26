@@ -11,4 +11,19 @@ import com.openhis.workflow.domain.ActivityDefinition;
  */
 public interface IActivityDefinitionService extends IService<ActivityDefinition> {
 
+    /**
+     * 新增诊疗目录
+     *
+     * @param activityDefinition 诊疗目录实体
+     * @return
+     */
+    boolean addDiagnosisTreatment(ActivityDefinition activityDefinition);
+
+    /**
+     * 新增医保诊疗目录
+     *
+     * @param activityDefinition 诊疗目录实体
+     * @return
+     */
+    boolean addYbDiagnosisTreatment(ActivityDefinition activityDefinition);
 }

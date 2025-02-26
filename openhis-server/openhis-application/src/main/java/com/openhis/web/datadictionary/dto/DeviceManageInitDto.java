@@ -7,16 +7,17 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * 疾病目录初始dto
+ * 器材目录初始dto
  *
  * @author lpt
  * @date 2025-02-25
  */
 @Data
 @Accessors(chain = true)
-public class DiseaseManageInitDto {
+public class DeviceManageInitDto {
     private List<statusEnumOption> statusFlagOptions;
-    private List<diseaseCategory> diseaseCategoryList;
+    private List<deviceCategory> deviceCategories;
+    private List<exeOrganization> exeOrganizations;
 
     /**
      * 状态
@@ -33,17 +34,31 @@ public class DiseaseManageInitDto {
     }
 
     /**
-     * 疾病分类
+     * 器材分类
      */
     @Data
-    public static class diseaseCategory {
+    public static class deviceCategory {
         private Integer value;
         private String info;
-        List<diseaseCategory> children = new ArrayList<>();
+        List<deviceCategory> children = new ArrayList<>();
 
-        public diseaseCategory(Integer value, String info) {
+        public deviceCategory(Integer value, String info) {
             this.value = value;
             this.info = info;
+        }
+    }
+
+    /**
+     * 执行机构
+     */
+    @Data
+    public static class exeOrganization {
+        private Long value;
+        private String label;
+
+        public exeOrganization(Long value, String label) {
+            this.value = value;
+            this.label = label;
         }
     }
 }
