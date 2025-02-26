@@ -13,7 +13,7 @@ export function getDiseaseList(query) {
 // 查询病种目录详细
 export function getDiseaseOne(id) {
   return request({
-    url: '/datadictionary/disease/information-one' + parseStrEmpty(id),
+    url: '/datadictionary/disease/information-one/' + parseStrEmpty(id),
     method: 'get'
   })
 }
@@ -47,7 +47,7 @@ export function editDisease(data) {
 // 病种目录分类查询
 export function getDiseaseCategory() {
   return request({
-    url: '/datadictionary/disease/information-category',
+    url: '/datadictionary/disease/information-init',
     method: 'get'
   })
 }

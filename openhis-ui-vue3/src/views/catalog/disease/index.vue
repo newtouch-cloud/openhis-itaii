@@ -49,26 +49,26 @@
           v-show="showSearch"
           label-width="68px"
         >
-          <el-form-item label="疾病：" prop="diseaseName">
+          <el-form-item label="疾病：" prop="searchKey">
             <el-input
-              v-model="queryParams.diseaseName"
+              v-model="queryParams.searchKey"
               placeholder="名称/ICD10编码/拼音助记码"
               clearable
               style="width: 240px"
               @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="是否停用" prop="status">
+          <el-form-item label="是否停用" prop="statusEnum">
             <el-select
-              v-model="queryParams.status"
+              v-model="queryParams.statusEnum"
               clearable
               style="width: 240px"
             >
               <el-option
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
+                v-for="status in statusFlagOptions"
+                :key="status.value"
+                :label="status.info"
+                :value="status.value"
               />
             </el-select>
           </el-form-item>
@@ -322,6 +322,8 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const conditionDefinitionOptions = ref(undefined);
+// 是否停用
+const statusFlagOptions = ref(undefined);
 // const initPassword = ref(undefined);
 // const postOptions = ref([]);
 // const roleOptions = ref([]);
@@ -331,8 +333,9 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 50,
-    diseaseName: undefined, // 疾病名称
-    status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    searchKey: undefined, // 疾病名称
+    statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    sourceEnum: undefined, // 来源（包括 1：病种目录分类，2：自定义）
   },
   rules: {
     name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
@@ -357,12 +360,16 @@ const filterNode = (value, data) => {
 function getDiseaseCategoryList() {
   getDiseaseCategory().then((response) => {
     console.log(response, "response病种目录分类查询下拉树结构");
-    conditionDefinitionOptions.value = response.data;
+    conditionDefinitionOptions.value = response.data.diseaseCategoryList;
+    statusFlagOptions.value = response.data.statusFlagOptions;
+
   });
 }
 /** 查询病种目录列表 */
 function getList() {
   loading.value = true;
+  // queryParams.value.statusEnum = +queryParams.value.statusEnum
+  console.log(queryParams.value, "queryParams.value");
   getDiseaseList(queryParams.value).then((res) => {
     loading.value = false;
     console.log(res, "res");
@@ -373,7 +380,7 @@ function getList() {
 }
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.deptId = data.id;
+  queryParams.value.sourceEnum = data.id;
   handleQuery();
 }
 /** 搜索按钮操作 */
