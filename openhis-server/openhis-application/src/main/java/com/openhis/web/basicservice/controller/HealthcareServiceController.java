@@ -3,21 +3,14 @@
  */
 package com.openhis.web.basicservice.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.domain.HealthcareService;
-import com.openhis.administration.domain.Location;
 import com.openhis.administration.mapper.LocationMapper;
 import com.openhis.administration.service.IChargeItemDefinitionService;
 import com.openhis.administration.service.IHealthcareServiceService;
 import com.openhis.common.enums.AccountStatus;
 import com.openhis.common.enums.WhetherContainUnknown;
-import com.openhis.common.utils.HisPageUtils;
-import com.openhis.common.utils.HisQueryUtils;
-import com.openhis.medication.domain.Medication;
-import com.openhis.medication.domain.MedicationQueryDto;
 import com.openhis.web.basicservice.dto.HealthcareServiceAddOrUpdateParam;
 import com.openhis.web.basicservice.dto.HealthcareServiceInitDto;
 import com.openhis.web.basicservice.mapper.HealthcareServiceBizMapper;
@@ -26,8 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
