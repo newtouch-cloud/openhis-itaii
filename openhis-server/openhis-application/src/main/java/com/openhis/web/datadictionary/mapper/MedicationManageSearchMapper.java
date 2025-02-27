@@ -55,4 +55,7 @@ public interface MedicationManageSearchMapper extends BaseMapper<ChargeItemDefin
      * @return
      */
     MedicationManageDto getOne(@Param("id") Long id, @Param("tenantId") Integer tenantId);
+
+    List<MedicationManageDto> getList(@Param("searchKey") String searchKey, @Param("ybMatchFlag") Integer ybMatchFlag,
+                                      @Param("statusEnum") Integer statusEnum, @Param("categoryCode") String categoryCode,@Param("tenantId") Integer tenantId);
 }

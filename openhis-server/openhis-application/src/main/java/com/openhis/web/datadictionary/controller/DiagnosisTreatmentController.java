@@ -10,11 +10,6 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.openhis.administration.domain.Location;
-import com.openhis.common.enums.ConditionDefinitionSource;
-import com.openhis.web.basedatamanage.dto.OrganizationQueryDto;
-import com.openhis.web.basicservice.dto.HealthcareServiceInitDto;
-import com.openhis.web.datadictionary.dto.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,15 +17,23 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
+import com.core.common.core.domain.entity.SysDictData;
+import com.core.common.core.domain.entity.SysDictType;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
+import com.core.system.service.ISysDictTypeService;
 import com.openhis.administration.domain.Organization;
 import com.openhis.administration.service.IOrganizationService;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.ActivityDefCategory;
 import com.openhis.common.enums.OrganizationType;
 import com.openhis.common.enums.PublicationStatus;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
+import com.openhis.web.datadictionary.dto.DiagnosisTreatmentDto;
+import com.openhis.web.datadictionary.dto.DiagnosisTreatmentInitDto;
+import com.openhis.web.datadictionary.dto.DiagnosisTreatmentSelParam;
+import com.openhis.web.datadictionary.dto.DiagnosisTreatmentUpDto;
 import com.openhis.workflow.domain.ActivityDefinition;
 import com.openhis.workflow.mapper.ActivityDefinitionMapper;
 import com.openhis.workflow.service.IActivityDefinitionService;
@@ -52,6 +55,7 @@ public class DiagnosisTreatmentController {
     private final IActivityDefinitionService iActivityDefinitionService;
     private final ActivityDefinitionMapper activityDefinitionMapper;
     private final IOrganizationService iOrganizationService;
+    private final ISysDictTypeService iSysDictTypeService;
 
     /**
      * 诊疗目录初期查询
@@ -63,19 +67,56 @@ public class DiagnosisTreatmentController {
         DiagnosisTreatmentInitDto diagnosisTreatmentInitDto = new DiagnosisTreatmentInitDto();
         // 获取状态
         List<DiagnosisTreatmentInitDto.statusEnumOption> statusEnumOptions = Stream.of(PublicationStatus.values())
-                .map(status -> new DiagnosisTreatmentInitDto.statusEnumOption(status.getValue(), status.getInfo()))
-                .collect(Collectors.toList());
+            .map(status -> new DiagnosisTreatmentInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
         diagnosisTreatmentInitDto.setStatusFlagOptions(statusEnumOptions);
         // 获取执行科室
         LambdaQueryWrapper<Organization> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Organization::getTypeEnum, OrganizationType.HOSPITAL_DEPARTMENT);
         List<Organization> organizations = iOrganizationService.list(queryWrapper);
         List<DiagnosisTreatmentInitDto.exeOrganization> exeOrganizations = organizations.stream()
-                .map(exeOrg -> new DiagnosisTreatmentInitDto.exeOrganization(exeOrg.getId(), exeOrg.getName()))
-                .collect(Collectors.toList());
+            .map(exeOrg -> new DiagnosisTreatmentInitDto.exeOrganization(exeOrg.getId(), exeOrg.getName()))
+            .collect(Collectors.toList());
         diagnosisTreatmentInitDto.setExeOrganizations(exeOrganizations);
 
         // 获取诊疗分类
+        // 查询医疗服务项
+        SysDictType medical_service_item =
+            iSysDictTypeService.selectDictTypeByType(ActivityDefCategory.MEDICAL_SERVICE_ITEM.getCode());
+        // 查询医疗服务项类型
+        List<SysDictData> medical_service_items =
+            iSysDictTypeService.selectDictDataByType(ActivityDefCategory.MEDICAL_SERVICE_ITEM.getCode());
+        // 获取医疗服务项List
+        List<DiagnosisTreatmentInitDto.diseaseTreatmentType> diseaseTreatmentCategoryList = medical_service_items
+            .stream().map(status -> new DiagnosisTreatmentInitDto.diseaseTreatmentType(status.getDictValue(),
+                status.getDictLabel()))
+            .collect(Collectors.toList());
+        List<DiagnosisTreatmentInitDto.diseaseTreatmentCategory> diseaseTreatmentCategories = new ArrayList<>();
+
+        DiagnosisTreatmentInitDto.diseaseTreatmentCategory diseaseTreatmentCategory =
+            new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(medical_service_item.getDictId(),
+                medical_service_item.getDictName());
+        diseaseTreatmentCategory.setChildren(diseaseTreatmentCategoryList);
+        diseaseTreatmentCategories.add(diseaseTreatmentCategory);
+        diagnosisTreatmentInitDto.setDiseaseTreatmentCategoryList(diseaseTreatmentCategories);
+
+        // 查询手术与治疗
+        SysDictType medical_service_item2 =
+            iSysDictTypeService.selectDictTypeByType(ActivityDefCategory.TREATMENT_SURGERY.getCode());
+        // 查询手术与治疗类型
+        List<SysDictData> medical_service_items2 =
+            iSysDictTypeService.selectDictDataByType(ActivityDefCategory.TREATMENT_SURGERY.getCode());
+        // 获取手术与治疗List
+        List<DiagnosisTreatmentInitDto.diseaseTreatmentType> diseaseTreatmentCategoryList2 = medical_service_items2
+            .stream().map(status -> new DiagnosisTreatmentInitDto.diseaseTreatmentType(status.getDictValue(),
+                status.getDictLabel()))
+            .collect(Collectors.toList());
+        DiagnosisTreatmentInitDto.diseaseTreatmentCategory diseaseTreatmentCategory2 =
+            new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(medical_service_item2.getDictId(),
+                medical_service_item2.getDictName());
+        diseaseTreatmentCategory2.setChildren(diseaseTreatmentCategoryList2);
+        diseaseTreatmentCategories.add(diseaseTreatmentCategory2);
+        diagnosisTreatmentInitDto.setDiseaseTreatmentCategoryList(diseaseTreatmentCategories);
         return R.ok(diagnosisTreatmentInitDto);
     }
 

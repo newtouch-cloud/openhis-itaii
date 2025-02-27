@@ -16,9 +16,6 @@ public class DeviceManageSelParam {
     /** 器材分类 */
     private Integer categoryEnum;
 
-    /** 器材种类 */
-    private String typeCode;
-
     /** 医保对码标记 */
     private Integer ybMatchFlag;
 

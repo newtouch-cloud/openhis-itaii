@@ -38,11 +38,11 @@ public class DiagnosisTreatmentInitDto {
      */
     @Data
     public static class diseaseTreatmentCategory {
-        private Integer value;
+        private Long value;
         private String info;
-        List<diseaseTreatmentType> children = new ArrayList<>();
+        private List<diseaseTreatmentType> children = new ArrayList<>();
 
-        public diseaseTreatmentCategory(Integer value, String info) {
+        public diseaseTreatmentCategory(Long value, String info) {
             this.value = value;
             this.info = info;
         }
@@ -53,11 +53,11 @@ public class DiagnosisTreatmentInitDto {
      */
     @Data
     public static class diseaseTreatmentType {
-        private Integer value;
+        private String value;
         private String info;
-        List<diseaseTreatmentType> children = new ArrayList<>();
+        private List<diseaseTreatmentType> children = new ArrayList<>();
 
-        public diseaseTreatmentType(Integer value, String info) {
+        public diseaseTreatmentType(String value, String info) {
             this.value = value;
             this.info = info;
         }

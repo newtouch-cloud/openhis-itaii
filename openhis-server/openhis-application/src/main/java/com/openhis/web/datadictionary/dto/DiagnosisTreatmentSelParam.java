@@ -18,7 +18,7 @@ public class DiagnosisTreatmentSelParam {
     private Integer categoryEnum;
 
     /** 类型 */
-    private Integer typeEnum;
+    private String typeCode;
 
     /** 医保对码标记 */
     private Integer ybMatchFlag;
