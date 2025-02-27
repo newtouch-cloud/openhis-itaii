@@ -90,7 +90,7 @@ public class OrganizationController {
         List<Organization> organizationList = page.getRecords();
         // 将机构列表转为树结构
         List<OrganizationQueryDto> orgTree = buildTree(organizationList);
-        Page<OrganizationQueryDto> orgQueryDtoPage = new Page<>(pageNo, pageSize, page.getCurrent());
+        Page<OrganizationQueryDto> orgQueryDtoPage = new Page<>(pageNo, pageSize, page.getTotal());
         orgQueryDtoPage.setRecords(orgTree);
 
         return R.ok(orgQueryDtoPage,
