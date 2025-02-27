@@ -3,7 +3,6 @@
  */
 package com.openhis.web.basedatamanage.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

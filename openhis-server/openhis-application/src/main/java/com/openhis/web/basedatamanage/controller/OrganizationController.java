@@ -125,11 +125,11 @@ public class OrganizationController {
      *
      * @param orgId 机构信息
      */
-    @GetMapping("/organization-editById")
+    @GetMapping("/organization-getById")
     public R<?> getOrganizationById(@Validated @RequestParam Long orgId) {
 
         Organization organization = organizationService.getById(orgId);
-        return R.ok(organization, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"机构信息"}));
+        return R.ok(organization, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"机构信息"}));
     }
 
     /**
@@ -171,18 +171,33 @@ public class OrganizationController {
     }
 
     /**
-     * 停用启用
+     * 启用
      *
-     * @param orgId 主表id
+     * @param orgId 启用数据的Id
      */
-    @PutMapping("/organization-flag")
-    public R<?> changeOrgFlag(@RequestParam Long orgId) {
+    @PutMapping("/organization-active")
+    public R<?> changeActive(@RequestParam Long orgId) {
 
-        boolean flagChangeSuccess = organizationService.changeOrgFlag(orgId);
+        boolean activeSuccess = organizationService.activeChange(orgId);
 
-        return flagChangeSuccess
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"机构活动标识"}))
-            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"机构活动标识"}));
+        return activeSuccess
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"启用"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"启用"}));
+    }
+
+    /**
+     * 停用
+     *
+     * @param orgId 停用数据的Id
+     */
+    @PutMapping("/organization-inactive")
+    public R<?> changeInactive(@RequestParam Long orgId) {
+
+        boolean inActiveSuccess = organizationService.activeChange(orgId);
+
+        return inActiveSuccess
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"停用"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"停用"}));
     }
 
     /**

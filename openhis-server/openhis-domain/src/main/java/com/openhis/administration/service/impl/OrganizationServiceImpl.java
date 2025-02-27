@@ -23,20 +23,25 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     private OrganizationMapper organizationMapper;
 
     @Override
-    public boolean changeOrgFlag(Long orgId) {
-
+    public boolean activeChange(Long orgId) {
         if (orgId != null) {
             Organization organization = organizationMapper.selectById(orgId);
-            if (organization.getActiveFlag().equals(AccountStatus.ACTIVE.getValue())) {
-                organization.setActiveFlag(AccountStatus.INACTIVE.getValue());
-                return true;
-            } else {
-                organization.setActiveFlag(AccountStatus.ACTIVE.getValue());
+            if (organization != null) {
+                Integer activeFlag  = organization.getActiveFlag();
+                switch (activeFlag ) {
+                    case 1:
+                        organization.setActiveFlag(AccountStatus.INACTIVE.getValue());
+                        break;
+                    case 2:
+                        organization.setActiveFlag(AccountStatus.ACTIVE.getValue());
+                        break;
+                    default:
+                        return false;
+                }
+                organizationMapper.updateById(organization);
                 return true;
             }
-        } else {
-            return false;
         }
+        return false;
     }
-
 }

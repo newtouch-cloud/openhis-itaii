@@ -69,6 +69,7 @@ public class CabinetLocationController {
 
         // 设置排序
         queryWrapper.orderByDesc("create_time");
+
         // 执行分页查询并转换为 locationQueryDtoPage
         Page<LocationQueryDto> locationQueryDtoPage =
             HisPageUtils.selectPage(locationMapper, queryWrapper, pageNo, pageSize, LocationQueryDto.class);
@@ -80,14 +81,16 @@ public class CabinetLocationController {
     /**
      * 添加库房位置信息
      *
-     * @param locationQueryDto 位置信息
+     * @param locationQueryDto 库房位置信息
      */
     @PostMapping("/cabinet-location")
     public R<?> addLocation(@Validated @RequestBody LocationQueryDto locationQueryDto) {
 
-        LocationQueryDto locationQuery = new LocationQueryDto(LocationForm.CABINET);
+        // 设置为库房
+        // LocationQueryDto locationQuery = new LocationQueryDto(LocationForm.CABINET);
         Location location = new Location();
-        BeanUtils.copyProperties(locationQuery, location);
+        locationQueryDto.setFormEnum(LocationForm.CABINET);
+        BeanUtils.copyProperties(locationQueryDto, location);
 
         boolean saveLocationSuccess = locationService.save(location);
 
@@ -97,21 +100,21 @@ public class CabinetLocationController {
     }
 
     /**
-     * 获取位置需要编辑的信息
+     * 获取库房位置需要编辑的信息
      *
-     * @param locationId 位置信息
+     * @param locationId 库房位置信息Id
      */
-    @GetMapping("/cabinet-location-editById")
+    @GetMapping("/cabinet-location-getById")
     public R<?> getLocationById(@Validated @RequestParam Long locationId) {
 
         Location location = locationService.getById(locationId);
-        return R.ok(location, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"位置信息"}));
+        return R.ok(location, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"位置信息"}));
     }
 
     /**
-     * 编辑位置信息
+     * 编辑库房位置信息
      *
-     * @param location 位置信息
+     * @param location 库房位置信息
      */
     @PutMapping("/cabinet-location")
     public R<?> editLocation(@Validated @RequestBody Location location) {
@@ -124,9 +127,9 @@ public class CabinetLocationController {
     }
 
     /**
-     * 删除位置信息
+     * 删除库房位置信息
      *
-     * @param locationId 主表id
+     * @param locationId 库房位置信息Id
      */
     @DeleteMapping("/cabinet-location")
     public R<?> deleteLocation(@RequestParam Long locationId) {

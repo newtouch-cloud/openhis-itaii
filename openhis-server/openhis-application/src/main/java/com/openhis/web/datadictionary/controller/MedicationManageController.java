@@ -2,6 +2,8 @@ package com.openhis.web.datadictionary.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,6 +23,7 @@ import com.openhis.medication.domain.MedicationDetail;
 import com.openhis.medication.service.IMedicationDefinitionService;
 import com.openhis.medication.service.IMedicationService;
 import com.openhis.web.datadictionary.dto.MedicationManageDto;
+import com.openhis.web.datadictionary.dto.MedicationManageInitDto;
 import com.openhis.web.datadictionary.dto.MedicationManageUpDto;
 import com.openhis.web.datadictionary.mapper.MedicationManageSearchMapper;
 
@@ -44,7 +47,23 @@ public class MedicationManageController {
     private final MedicationManageSearchMapper medicationManageSearchMapper;
 
     /**
-     * 查询病种目录分页列表
+     * 药品目录初始化
+     *
+     * @return
+     */
+    @GetMapping("/information-init")
+    public R<?> getMedicationInit() {
+        MedicationManageInitDto medicationManageInitDto = new MedicationManageInitDto();
+        // 获取状态
+        List<MedicationManageInitDto.statusEnumOption> statusEnumOptions = Stream.of(PublicationStatus.values())
+            .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+        medicationManageInitDto.setStatusFlagOptions(statusEnumOptions);
+        return R.ok(medicationManageInitDto);
+    }
+
+    /**
+     * 查询药品目录分页列表
      *
      * @param searchKey 查询条件
      * @param statusEnum 查询条件-状态

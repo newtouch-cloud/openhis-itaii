@@ -15,6 +15,7 @@ public class HealthcareServiceInitDto {
 
     private List<activeFlagOption> activeFlagOptions;
     private List<locationIdOption> locationIdOptions;
+    private List<appointmentRequiredFlagOption> appointmentRequiredFlagOptions;
 
 
     /**
@@ -40,6 +41,20 @@ public class HealthcareServiceInitDto {
         private String label;
 
         public locationIdOption(Long value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
+
+    /**
+     * 是否需要预约
+     */
+    @Data
+    public static class appointmentRequiredFlagOption {
+        private Integer value;
+        private String label;
+
+        public appointmentRequiredFlagOption(Integer value, String label) {
             this.value = value;
             this.label = label;
         }

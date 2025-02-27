@@ -11,4 +11,6 @@ import com.openhis.administration.domain.HealthcareService;
  */
 public interface IHealthcareServiceService extends IService<HealthcareService> {
 
+    HealthcareService addHealthcareService(HealthcareService healthcareService);
+
 }
