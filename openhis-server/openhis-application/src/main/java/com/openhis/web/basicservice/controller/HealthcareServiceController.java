@@ -61,7 +61,7 @@ public class HealthcareServiceController {
                 .map(status -> new HealthcareServiceInitDto.activeFlagOption(status.getValue(), status.getInfo()))
                 .collect(Collectors.toList());
         healthcareServiceInitDto.setActiveFlagOptions(activeFlagOptions);
-        // 构建查询条件
+ /*       // 构建查询条件
         QueryWrapper<Location> queryWrapper = HisQueryUtils.buildQueryWrapper(null, searchKey,
                 new HashSet<>(Arrays.asList("name")), null);
         Page<Location> LocationPage = HisPageUtils.selectPage(
@@ -71,7 +71,7 @@ public class HealthcareServiceController {
         List<HealthcareServiceInitDto.locationIdOption> locationIdOptions = LocationList.stream()
                 .map(location -> new HealthcareServiceInitDto.locationIdOption(location.getId(), location.getName()))
                 .collect(Collectors.toList());
-        healthcareServiceInitDto.setLocationIdOptions(locationIdOptions);
+        healthcareServiceInitDto.setLocationIdOptions(locationIdOptions);*/
         // 是否需要预约
         List<HealthcareServiceInitDto.appointmentRequiredFlagOption> appointmentRequiredFlagOptions = Stream.of(WhetherContainUnknown.values())
                 .map(wh -> new HealthcareServiceInitDto.appointmentRequiredFlagOption(wh.getValue(), wh.getInfo()))

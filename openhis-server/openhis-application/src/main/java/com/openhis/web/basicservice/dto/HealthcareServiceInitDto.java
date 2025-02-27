@@ -14,7 +14,7 @@ public class HealthcareServiceInitDto {
 
 
     private List<activeFlagOption> activeFlagOptions;
-    private List<locationIdOption> locationIdOptions;
+    //private List<locationIdOption> locationIdOptions;
     private List<appointmentRequiredFlagOption> appointmentRequiredFlagOptions;
 
 
@@ -32,9 +32,9 @@ public class HealthcareServiceInitDto {
         }
     }
 
-    /**
+/*    *//**
      * 位置信息
-     */
+     *//*
     @Data
     public static class locationIdOption {
         private Long value;
@@ -44,7 +44,7 @@ public class HealthcareServiceInitDto {
             this.value = value;
             this.label = label;
         }
-    }
+    }*/
 
     /**
      * 是否需要预约
