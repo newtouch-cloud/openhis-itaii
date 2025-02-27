@@ -18,7 +18,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.core.domain.entity.SysDictData;
-import com.core.common.core.domain.entity.SysDictType;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.core.system.service.ISysDictTypeService;
@@ -80,9 +79,6 @@ public class DiagnosisTreatmentController {
         diagnosisTreatmentInitDto.setExeOrganizations(exeOrganizations);
 
         // 获取诊疗分类
-        // 查询医疗服务项
-        SysDictType medical_service_item =
-            iSysDictTypeService.selectDictTypeByType(ActivityDefCategory.MEDICAL_SERVICE_ITEM.getCode());
         // 查询医疗服务项类型
         List<SysDictData> medical_service_items =
             iSysDictTypeService.selectDictDataByType(ActivityDefCategory.MEDICAL_SERVICE_ITEM.getCode());
@@ -94,15 +90,12 @@ public class DiagnosisTreatmentController {
         List<DiagnosisTreatmentInitDto.diseaseTreatmentCategory> diseaseTreatmentCategories = new ArrayList<>();
 
         DiagnosisTreatmentInitDto.diseaseTreatmentCategory diseaseTreatmentCategory =
-            new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(medical_service_item.getDictId(),
-                medical_service_item.getDictName());
+            new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(ActivityDefCategory.MEDICAL_SERVICE_ITEM.getValue(),
+                ActivityDefCategory.MEDICAL_SERVICE_ITEM.getInfo());
         diseaseTreatmentCategory.setChildren(diseaseTreatmentCategoryList);
         diseaseTreatmentCategories.add(diseaseTreatmentCategory);
         diagnosisTreatmentInitDto.setDiseaseTreatmentCategoryList(diseaseTreatmentCategories);
 
-        // 查询手术与治疗
-        SysDictType medical_service_item2 =
-            iSysDictTypeService.selectDictTypeByType(ActivityDefCategory.TREATMENT_SURGERY.getCode());
         // 查询手术与治疗类型
         List<SysDictData> medical_service_items2 =
             iSysDictTypeService.selectDictDataByType(ActivityDefCategory.TREATMENT_SURGERY.getCode());
@@ -112,10 +105,11 @@ public class DiagnosisTreatmentController {
                 status.getDictLabel()))
             .collect(Collectors.toList());
         DiagnosisTreatmentInitDto.diseaseTreatmentCategory diseaseTreatmentCategory2 =
-            new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(medical_service_item2.getDictId(),
-                medical_service_item2.getDictName());
+            new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(ActivityDefCategory.TREATMENT_SURGERY.getValue(),
+                ActivityDefCategory.TREATMENT_SURGERY.getInfo());
         diseaseTreatmentCategory2.setChildren(diseaseTreatmentCategoryList2);
         diseaseTreatmentCategories.add(diseaseTreatmentCategory2);
+
         diagnosisTreatmentInitDto.setDiseaseTreatmentCategoryList(diseaseTreatmentCategories);
         return R.ok(diagnosisTreatmentInitDto);
     }

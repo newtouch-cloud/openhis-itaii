@@ -38,11 +38,11 @@ public class DiagnosisTreatmentInitDto {
      */
     @Data
     public static class diseaseTreatmentCategory {
-        private Long value;
+        private Integer value;
         private String info;
         private List<diseaseTreatmentType> children = new ArrayList<>();
 
-        public diseaseTreatmentCategory(Long value, String info) {
+        public diseaseTreatmentCategory(Integer value, String info) {
             this.value = value;
             this.info = info;
         }
