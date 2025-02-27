@@ -2,6 +2,7 @@ package com.openhis.web.datadictionary.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.enums.ActivityDefCategory;
 import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
@@ -21,7 +22,7 @@ public class DiagnosisTreatmentDto {
     private Long id;
 
     /** 目录类别 */
-    private Integer categoryEnum;
+    private ActivityDefCategory categoryEnum;
 
     /** 编码 */
     private String busNo;
@@ -36,7 +37,7 @@ public class DiagnosisTreatmentDto {
     private String wbStr;
 
     /** 类型 */
-    private Integer typeEnum;
+    private String typeCode;
 
     /** 使用单位 */
     private String permittedUnitCode;

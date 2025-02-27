@@ -4,6 +4,7 @@ import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.enums.ActivityDefCategory;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,7 +22,7 @@ public class DiagnosisTreatmentUpDto {
     private Long id;
 
     /** 目录类别 */
-    private Integer categoryEnum;
+    private ActivityDefCategory categoryEnum;
 
     /** 编码 */
     @NotBlank(message = "项目编码不能为空")
@@ -38,7 +39,7 @@ public class DiagnosisTreatmentUpDto {
     private String wbStr;
 
     /** 类型 */
-    private Integer typeEnum;
+    private String typeCode;
 
     /** 使用单位 */
     private String permittedUnitCode;

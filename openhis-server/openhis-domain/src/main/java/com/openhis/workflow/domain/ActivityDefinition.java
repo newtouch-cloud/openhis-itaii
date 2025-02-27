@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.ActivityDefCategory;
 import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
@@ -27,7 +28,7 @@ public class ActivityDefinition extends HisBaseEntity {
     private Long id;
 
     /** 目录类别 */
-    private Integer categoryEnum;
+    private ActivityDefCategory categoryEnum;
 
     /** 编码 */
     private String busNo;
@@ -42,7 +43,7 @@ public class ActivityDefinition extends HisBaseEntity {
     private String wbStr;
 
     /** 类型 */
-    private Integer typeEnum;
+    private String typeCode;
 
     /** 使用单位 */
     private String permittedUnitCode;
