@@ -207,7 +207,7 @@
             label="停用"
             align="center"
             key="statusEnum"
-            rop="statusEnum"
+            prop="statusEnum"
             width="160"
           />
           <el-table-column
@@ -450,7 +450,7 @@ function handleExport() {
 function handleSelectionChange(selection) {
   console.log(selection, "selection");
   // selectedData.value = selection.map((item) => ({ ...item })); // 存储选择的行数据
-  ids.value = selection.map(item => item.userId);
+  ids.value = selection.map(item => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }

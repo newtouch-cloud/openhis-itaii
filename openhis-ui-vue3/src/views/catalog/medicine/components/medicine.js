@@ -51,20 +51,3 @@ export function getMedicationCategory() {
     method: 'get'
   })
 }
-
-// 修改用户个人信息
-export function updateUserProfile(data) {
-  return request({
-    url: '/system/user/profile',
-    method: 'put',
-    data: data
-  })
-}
-
-// 查询部门下拉树结构
-export function deptTreeSelect() {
-  return request({
-    url: '/system/user/deptTree',
-    method: 'get'
-  })
-}
