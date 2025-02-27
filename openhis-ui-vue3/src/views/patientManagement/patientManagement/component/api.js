@@ -44,4 +44,22 @@ export function listfamilyrelationshiptype() {
     })
   }
 
+// 新增
+export function addPatient(data) {
+  return request({
+    url: '/patientmanage/information/patient-information',
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询菜单列表
+export function listPatient(query) {
+    return request({
+      url: '/patientmanage/information/patient-information-page',
+      method: 'get',
+      params: query
+    })
+  }
+
 
