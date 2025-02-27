@@ -10,5 +10,5 @@ import com.openhis.administration.domain.Organization;
  * @date 2025-02-21
  */
 public interface IOrganizationService extends IService<Organization> {
-    boolean changeOrgFlag(Long orgId);
+    boolean activeChange(Long orgId);
 }

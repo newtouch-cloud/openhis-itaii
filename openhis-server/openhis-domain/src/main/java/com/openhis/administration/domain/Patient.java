@@ -1,16 +1,13 @@
 package com.openhis.administration.domain;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
-import com.openhis.common.enums.AdministrativeGender;
-import com.openhis.common.enums.MaritalStatus;
-import com.openhis.common.enums.OccupationType;
+import com.openhis.common.enums.*;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -95,10 +92,10 @@ public class Patient extends HisBaseEntity {
     private String wbStr;
 
     /** 血型ABO */
-    private String bloodAbo;
+    private BloodTypeABO bloodAbo;
 
     /** 血型RH */
-    private String bloodRh;
+    private BloodTypeRH bloodRh;
 
     /** 工作单位 */
     private String workCompany;
@@ -123,6 +120,5 @@ public class Patient extends HisBaseEntity {
 
     /** 机构Id */
     private Long organizationId;
-
 
 }

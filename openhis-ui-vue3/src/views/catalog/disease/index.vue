@@ -12,19 +12,33 @@
                   style="margin-bottom: 20px"
                />
             </div> -->
-        <!-- <div class="head-container">
+        <div class="head-container">
           <el-tree
             :data="conditionDefinitionOptions"
-            :props="{ label: 'label', children: 'children' }"
+            :props="{ label: 'info', children: 'children' }"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             ref="deptTreeRef"
-            node-key="id"
+            node-key="value"
             highlight-current
             default-expand-all
             @node-click="handleNodeClick"
-          />
-        </div> -->
+          >
+            <template v-slot="{ node, data }">
+              <span class="custom-tree-node">
+                <i
+                  :class="{
+                    'el-icon-folder': !node.expanded && !data.children.length,
+                    'el-icon-folder-opened': node.expanded,
+                    'el-icon-document': data.children.length === 0,
+                  }"
+                  style="color: #409eff"
+                />
+                <span>{{ node.label }}</span>
+              </span>
+            </template>
+          </el-tree>
+        </div>
       </el-col>
       <!--用户数据-->
       <el-col :span="20" :xs="24">
@@ -35,26 +49,26 @@
           v-show="showSearch"
           label-width="68px"
         >
-          <el-form-item label="疾病：" prop="diseaseName">
+          <el-form-item label="疾病：" prop="searchKey">
             <el-input
-              v-model="queryParams.diseaseName"
+              v-model="queryParams.searchKey"
               placeholder="名称/ICD10编码/拼音助记码"
               clearable
               style="width: 240px"
               @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="是否停用" prop="status">
+          <el-form-item label="是否停用" prop="statusEnum">
             <el-select
-              v-model="queryParams.status"
+              v-model="queryParams.statusEnum"
               clearable
               style="width: 240px"
             >
               <el-option
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
+                v-for="status in statusFlagOptions"
+                :key="status.value"
+                :label="status.info"
+                :value="status.value"
               />
             </el-select>
           </el-form-item>
@@ -287,23 +301,29 @@ import {
   addDisease,
   getDiseaseCategory,
   getDiseaseOne,
+  stopDisease,
+  startDisease
 } from "./components/disease";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict( "sys_normal_disable","sys_user_sex");
+const { sys_normal_disable, sys_user_sex } = proxy.useDict(
+  "sys_normal_disable",
+  "sys_user_sex"
+);
 
 const diseaseList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
-const selectedData = ref([]); // 存储选择的行数据
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const conditionDefinitionOptions = ref(undefined);
+// 是否停用
+const statusFlagOptions = ref(undefined);
 // const initPassword = ref(undefined);
 // const postOptions = ref([]);
 // const roleOptions = ref([]);
@@ -313,16 +333,15 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 50,
-    diseaseName: undefined, // 疾病名称
-    status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    searchKey: undefined, // 疾病名称
+    statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    sourceEnum: undefined, // 来源（包括 1：病种目录分类，2：自定义）
   },
   rules: {
-    name: [
-      { required: true, message: "名称不能为空", trigger: "blur" },
-    ],
+    name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
     conditionCode: [
       { required: true, message: "编码不能为空", trigger: "blur" },
-    ]
+    ],
   },
 });
 
@@ -341,12 +360,16 @@ const filterNode = (value, data) => {
 function getDiseaseCategoryList() {
   getDiseaseCategory().then((response) => {
     console.log(response, "response病种目录分类查询下拉树结构");
-    conditionDefinitionOptions.value = response.data;
+    conditionDefinitionOptions.value = response.data.diseaseCategoryList;
+    statusFlagOptions.value = response.data.statusFlagOptions;
+
   });
 }
 /** 查询病种目录列表 */
 function getList() {
   loading.value = true;
+  // queryParams.value.statusEnum = +queryParams.value.statusEnum
+  console.log(queryParams.value, "queryParams.value");
   getDiseaseList(queryParams.value).then((res) => {
     loading.value = false;
     console.log(res, "res");
@@ -357,7 +380,7 @@ function getList() {
 }
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.deptId = data.id;
+  queryParams.value.sourceEnum = data.id;
   handleQuery();
 }
 /** 搜索按钮操作 */
@@ -374,17 +397,12 @@ function handleQuery() {
 //    handleQuery();
 // };
 /** 启用按钮操作 */
-function handleStart() {
-  selectedData.value.forEach((item) => {
-    item.statusEnum = "2";
-  });
-  const data = selectedData.value;
-  //   selectedData
-  console.log(data, "data");
+function handleStart(row) {
+  const stardIds = row.id || ids.value;
   proxy.$modal
     .confirm("是否确定启用数据！")
     .then(function () {
-      return editDisease(data);
+      return startDisease(stardIds);
     })
     .then(() => {
       getList();
@@ -393,16 +411,12 @@ function handleStart() {
     .catch(() => {});
 }
 /** 停用按钮操作 */
-function handleClose() {
-  selectedData.value.forEach((item) => {
-    item.statusEnum = "3";
-  });
-  const data = selectedData.value;
-  console.log(data, "data");
+function handleClose(row) {
+  const stopIds = row.id || ids.value;
   proxy.$modal
     .confirm("是否确认停用数据！")
     .then(function () {
-      return editDisease(data);
+      return stopDisease(stopIds);
     })
     .then(() => {
       getList();
@@ -435,7 +449,8 @@ function handleExport() {
 /** 选择条数  */
 function handleSelectionChange(selection) {
   console.log(selection, "selection");
-  selectedData.value = selection.map((item) => ({ ...item })); // 存储选择的行数据
+  // selectedData.value = selection.map((item) => ({ ...item })); // 存储选择的行数据
+  ids.value = selection.map(item => item.userId);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }
@@ -487,9 +502,7 @@ function submitForm() {
         //   ? (form.value.statusEnum = "3")
         //   : (form.value.statusEnum = "2");
         console.log(form.value, "editDisease", form.value.statusEnum);
-        let param = [];
-        param.push(form.value);
-        editDisease(param).then((response) => {
+        editDisease(form.value).then((response) => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
@@ -518,3 +531,9 @@ function handleView(row) {
 getDiseaseCategoryList();
 getList();
 </script>
+<style scoped>
+.custom-tree-node {
+  display: flex;
+  align-items: center;
+}
+</style>

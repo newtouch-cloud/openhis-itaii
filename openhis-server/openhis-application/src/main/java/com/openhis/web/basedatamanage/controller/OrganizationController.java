@@ -3,10 +3,7 @@
  */
 package com.openhis.web.basedatamanage.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.AssignSeqUtil;
@@ -26,8 +22,6 @@ import com.openhis.administration.mapper.OrganizationMapper;
 import com.openhis.administration.service.IOrganizationService;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.OrganizationType;
-import com.openhis.common.utils.HisPageUtils;
-import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.basedatamanage.dto.OrgQueryParam;
 import com.openhis.web.basedatamanage.dto.OrganizationInitDto;
 import com.openhis.web.basedatamanage.dto.OrganizationQueryDto;
@@ -77,20 +71,27 @@ public class OrganizationController {
      * @return 机构分页列表
      */
     @GetMapping(value = "/organization")
-    public R<?> getOrganizationPage(@RequestBody OrgQueryParam orgQueryParam,
+    public R<?> getOrganizationPage(OrgQueryParam orgQueryParam,
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
-        // 构建查询条件
-        QueryWrapper<Organization> queryWrapper = HisQueryUtils.buildQueryWrapper(orgQueryParam, searchKey,
-            new HashSet<>(Arrays.asList("name", "py_str", "wb_str")), request);
-
-        // 设置排序
-        queryWrapper.orderByDesc("create_time");
-        // 执行分页查询并转换为 orgQueryDtoPage
-        Page<OrganizationQueryDto> orgQueryDtoPage =
-            HisPageUtils.selectPage(organizationMapper, queryWrapper, pageNo, pageSize, OrganizationQueryDto.class);
+        // // 构建查询条件
+        // QueryWrapper<Organization> queryWrapper = HisQueryUtils.buildQueryWrapper(orgQueryParam, searchKey,
+        // new HashSet<>(Arrays.asList("name", "py_str", "wb_str")), request);
+        //
+        // // 设置排序
+        // queryWrapper.orderByDesc("create_time");
+        // // 执行分页查询并转换为 orgQueryDtoPage
+        // Page<OrganizationQueryDto> orgQueryDtoPage =
+        // HisPageUtils.selectPage(organizationMapper, queryWrapper, pageNo, pageSize, OrganizationQueryDto.class);
+        // 查询机构列表
+        Page<Organization> page = organizationService.page(new Page<>(pageNo, pageSize));
+        List<Organization> organizationList = page.getRecords();
+        // 将机构列表转为树结构
+        List<OrganizationQueryDto> orgTree = buildTree(organizationList);
+        Page<OrganizationQueryDto> orgQueryDtoPage = new Page<>(pageNo, pageSize, page.getTotal());
+        orgQueryDtoPage.setRecords(orgTree);
 
         return R.ok(orgQueryDtoPage,
             MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"机构信息"}));
@@ -124,11 +125,11 @@ public class OrganizationController {
      *
      * @param orgId 机构信息
      */
-    @GetMapping("/organization-editById")
+    @GetMapping("/organization-getById")
     public R<?> getOrganizationById(@Validated @RequestParam Long orgId) {
 
         Organization organization = organizationService.getById(orgId);
-        return R.ok(organization, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"机构信息"}));
+        return R.ok(organization, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"机构信息"}));
     }
 
     /**
@@ -170,18 +171,74 @@ public class OrganizationController {
     }
 
     /**
-     * 停用启用
+     * 启用
      *
-     * @param orgId 主表id
+     * @param orgId 启用数据的Id
      */
-    @PutMapping("/organization-flag")
-    public R<?> changeOrgFlag(@RequestParam Long orgId) {
+    @PutMapping("/organization-active")
+    public R<?> changeActive(@RequestParam Long orgId) {
 
-        boolean flagChangeSuccess = organizationService.changeOrgFlag(orgId);
+        boolean activeSuccess = organizationService.activeChange(orgId);
 
-        return flagChangeSuccess
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"机构活动标识"}))
-            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"机构活动标识"}));
+        return activeSuccess
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"启用"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"启用"}));
+    }
+
+    /**
+     * 停用
+     *
+     * @param orgId 停用数据的Id
+     */
+    @PutMapping("/organization-inactive")
+    public R<?> changeInactive(@RequestParam Long orgId) {
+
+        boolean inActiveSuccess = organizationService.activeChange(orgId);
+
+        return inActiveSuccess
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"停用"}))
+            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"停用"}));
+    }
+
+    /**
+     * 将机构列表转换为树结构
+     *
+     * @param records 机构列表
+     * @return tree
+     */
+    private List<OrganizationQueryDto> buildTree(List<Organization> records) {
+        // 按b_no的层级排序，确保父节点先处理
+        List<Organization> sortedRecords = records.stream()
+            .sorted(Comparator.comparingInt(r -> r.getBusNo().split("\\.").length)).collect(Collectors.toList());
+
+        Map<String, OrganizationQueryDto> nodeMap = new HashMap<>();
+        List<OrganizationQueryDto> tree = new ArrayList<>();
+
+        for (Organization record : sortedRecords) {
+            String bNo = record.getBusNo();
+            String[] parts = bNo.split("\\.");
+            OrganizationQueryDto node = new OrganizationQueryDto();
+            BeanUtils.copyProperties(record, node);
+            // 将当前节点加入映射
+            nodeMap.put(bNo, node);
+
+            if (parts.length == 1) {
+                // 根节点
+                tree.add(node);
+            } else {
+                // 获取父节点的b_no（去掉最后一部分）
+                String parentBNo = String.join(".", Arrays.copyOf(parts, parts.length - 1));
+                OrganizationQueryDto parent = nodeMap.get(parentBNo);
+
+                if (parent != null) {
+                    parent.getChildren().add(node);
+                } else {
+                    // 处理父节点不存在的情况（例如数据缺失）
+                    // 可根据需求调整为将节点加入根或抛出异常
+                }
+            }
+        }
+        return tree;
     }
 
 }

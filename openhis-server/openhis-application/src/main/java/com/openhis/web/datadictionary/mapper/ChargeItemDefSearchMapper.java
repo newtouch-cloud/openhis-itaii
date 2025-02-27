@@ -1,7 +1,5 @@
 package com.openhis.web.datadictionary.mapper;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +10,6 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.web.datadictionary.dto.ChargeItemDefPageDto;
-import com.openhis.web.datadictionary.dto.ItemDefSearchParam;
 
 /**
  * 费用定价管理Mapper接口
@@ -31,7 +28,7 @@ public interface ChargeItemDefSearchMapper extends BaseMapper<ChargeItemDefiniti
      * @return 分页查询
      */
     IPage<ChargeItemDefPageDto> getMedList(@Param("page") Page<ChargeItemDefPageDto> page,
-                                           @Param(Constants.WRAPPER) LambdaQueryWrapper<ChargeItemDefPageDto> queryWrapper);
+        @Param(Constants.WRAPPER) LambdaQueryWrapper<ChargeItemDefPageDto> queryWrapper);
 
     /**
      * 器具费用定价分页查询
@@ -41,7 +38,7 @@ public interface ChargeItemDefSearchMapper extends BaseMapper<ChargeItemDefiniti
      * @return 分页查询
      */
     IPage<ChargeItemDefPageDto> getDevList(@Param("page") Page<ChargeItemDefPageDto> page,
-                                           @Param(Constants.WRAPPER) LambdaQueryWrapper<ChargeItemDefPageDto> queryWrapper);
+        @Param(Constants.WRAPPER) LambdaQueryWrapper<ChargeItemDefPageDto> queryWrapper);
 
     /**
      * 活动费用定价分页查询
@@ -51,5 +48,5 @@ public interface ChargeItemDefSearchMapper extends BaseMapper<ChargeItemDefiniti
      * @return 分页查询
      */
     IPage<ChargeItemDefPageDto> getActList(@Param("page") Page<ChargeItemDefPageDto> page,
-                                           @Param(Constants.WRAPPER) LambdaQueryWrapper<ChargeItemDefPageDto> queryWrapper);
+        @Param(Constants.WRAPPER) LambdaQueryWrapper<ChargeItemDefPageDto> queryWrapper);
 }

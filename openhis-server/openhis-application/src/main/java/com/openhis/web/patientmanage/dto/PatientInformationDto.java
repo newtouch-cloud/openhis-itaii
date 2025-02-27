@@ -35,19 +35,19 @@ public class PatientInformationDto {
     private String busNo;
 
     /** 性别编码 */
-    private AdministrativeGender genderEnum;
+    private Integer genderEnum;
 
     /** 生日 */
     private Date birthDate;
 
     /** 死亡时间 */
-    private Date deceasedDate;
+    private String deceasedDate;
 
     /** 婚姻状态 */
-    private MaritalStatus maritalStatusEnum;
+    private Integer maritalStatusEnum;
 
     /** 职业编码 */
-    private OccupationType prfsEnum;
+    private Integer prfsEnum;
 
     /** 电话 */
     private String phone;
@@ -83,10 +83,10 @@ public class PatientInformationDto {
     private String wbStr;
 
     /** 血型ABO */
-    private String bloodAbo;
+    private Integer bloodAbo;
 
     /** 血型RH */
-    private String bloodRh;
+    private Integer bloodRh;
 
     /** 工作单位 */
     private String workCompany;

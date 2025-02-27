@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <!--疾病目录数据-->
+      <!--药品目录-->
       <el-col :span="4" :xs="24">
         <!-- <div class="head-container">
                <el-input
@@ -12,21 +12,21 @@
                   style="margin-bottom: 20px"
                />
             </div> -->
-        <!-- <div class="head-container">
+        <div class="head-container">
           <el-tree
-            :data="conditionDefinitionOptions"
-            :props="{ label: 'label', children: 'children' }"
+            :data="medicationOptions"
+            :props="{ label: 'info', children: 'children' }"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
-            ref="deptTreeRef"
+            ref="medicationTreeRef"
             node-key="id"
             highlight-current
             default-expand-all
             @node-click="handleNodeClick"
           />
-        </div> -->
+        </div>
       </el-col>
-      <!--用户数据-->
+      <!--药品目录-->
       <el-col :span="20" :xs="24">
         <el-form
           :model="queryParams"
@@ -37,9 +37,9 @@
         >
           <el-row :gutter="24">
             <el-col :span="6">
-              <el-form-item label="药品" prop="diseaseName" label-width="40">
+              <el-form-item label="药品" prop="searchKey" label-width="40">
                 <el-input
-                  v-model="queryParams.diseaseName"
+                  v-model="queryParams.searchKey"
                   placeholder="品名/商品名/英文品名/编码/拼音"
                   clearable
                   style="width: 240px"
@@ -53,7 +53,7 @@
                 prop="status"
                 label-width="100"
               >
-                <el-select v-model="queryParams.status" clearable>
+                <el-select v-model="queryParams.statusEnum" clearable>
                   <el-option
                     v-for="dict in sys_normal_disable"
                     :key="dict.value"
@@ -70,7 +70,7 @@
                 label-width="100"
               >
                 <el-select
-                  v-model="queryParams.status"
+                  v-model="queryParams.ybMatchFlag"
                   placeholder="用户状态"
                   clearable
                 >
@@ -83,7 +83,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <!-- <el-col :span="4">
               <el-form-item label="已发生业务" prop="status" label-width="100">
                 <el-select
                   v-model="queryParams.status"
@@ -98,7 +98,7 @@
                   />
                 </el-select>
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="4">
               <el-form-item label="医保等级" prop="status" label-width="80">
                 <el-select
@@ -116,7 +116,6 @@
               </el-form-item>
             </el-col>
           </el-row>
-
           <!-- <el-form-item>
                   <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
                   <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -129,7 +128,7 @@
               type="primary"
               plain
               icon="Plus"
-              @click="openMedicineDialog"
+              @click="openAddMedicine"
               v-hasPermi="['system:user:add']"
               >添加新项目</el-button
             >
@@ -154,7 +153,7 @@
               >停用</el-button
             >
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button
               type="success"
               plain
@@ -164,7 +163,7 @@
               v-hasPermi="['system:user:remove']"
               >启用</el-button
             >
-          </el-col>
+          </el-col> -->
           <el-col :span="1.5">
             <el-button
               type="primary"
@@ -189,7 +188,7 @@
 
         <el-table
           v-loading="loading"
-          :data="diseaseList"
+          :data="medicationList"
           @selection-change="handleSelectionChange"
           width="90%"
         >
@@ -197,8 +196,8 @@
           <el-table-column
             label="编码"
             align="center"
-            key="conditionCode"
-            prop="conditionCode"
+            key="busNo"
+            prop="busNo"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -211,23 +210,23 @@
           <el-table-column
             label="规格"
             align="center"
-            key="pyStr"
-            prop="pyStr"
+            key="totalVolume"
+            prop="totalVolume"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="厂家(产地)"
             align="center"
-            key="ybNo"
-            prop="ybNo"
+            key="manufacturerId"
+            prop="manufacturerId"
             :show-overflow-tooltip="true"
             width="100"
           />
           <el-table-column
             label="单位"
             align="center"
-            key="ybName"
-            prop="ybName"
+            key="unitCode"
+            prop="unitCode"
             :show-overflow-tooltip="true"
             width="50"
           />
@@ -255,8 +254,8 @@
           <el-table-column
             label="拆零比"
             align="center"
-            key="statusEnum"
-            rop="statusEnum"
+            key="partPercent"
+            rop="partPercent"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -269,18 +268,18 @@
           <el-table-column
             label="医保编码"
             align="center"
-            key="statusEnum"
-            rop="statusEnum"
+            key="ybNo"
+            rop="ybNo"
             :show-overflow-tooltip="true"
           />
 
           <el-table-column
             label="医保已对码"
             align="center"
-            key="statusEnum"
-            rop="statusEnum"
+            key="ybMatchFlag"
+            rop="ybMatchFlag"
             :show-overflow-tooltip="true"
-             width="100"
+            width="100"
           />
           <el-table-column
             label="医保等级"
@@ -299,16 +298,16 @@
           <el-table-column
             label="限制使用标记"
             align="center"
-            key="statusEnum"
-            rop="statusEnum"
+            key="restrictedFlag"
+            rop="restrictedFlag"
             :show-overflow-tooltip="true"
-             width="110"
+            width="110"
           />
           <el-table-column
             label="限制使用范围"
             align="center"
-            key="statusEnum"
-            rop="statusEnum"
+            key="restrictedScope"
+            rop="restrictedScope"
             :show-overflow-tooltip="true"
             width="110"
           />
@@ -400,7 +399,7 @@
                 link
                 type="primary"
                 icon="Edit"
-                @click="handleUpdate(scope.row)"
+                @click="openEditMedicine(scope.row)"
                 v-hasPermi="['system:user:edit']"
                 >编辑</el-button
               >
@@ -408,7 +407,7 @@
                 link
                 type="primary"
                 icon="View"
-                @click="handleView(scope.row)"
+                @click="openViewMedicine(scope.row)"
                 v-hasPermi="['system:user:remove']"
                 >查看</el-button
               >
@@ -424,10 +423,19 @@
         />
       </el-col>
     </el-row>
-    <medicine-dialog ref="medicineRef" :roleId="queryParams.roleId" @ok="handleQuery" />
+    <medicine-dialog
+      ref="medicineRef"
+      :item="currentData"
+      @submit="submitForm"
+    />
+    <medicine-view-dialog
+      ref="medicineViewRef"
+      :item="viewData"
+      :viewFlg="viewFlg"
+    />
     <!-- 添加或修改用户配置对话框 -->
     <!-- <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form :model="form" :rules="rules" ref="diseaseRef" label-width="80px">
+      <el-form :model="form" :rules="rules" ref="medicationRef" label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="名称" prop="name">
@@ -473,15 +481,17 @@
   </div>
 </template>
 
-<script setup name="Disease">
+<script setup name="Medication">
 import {
-  getDiseaseList,
-  editDisease,
-  addDisease,
-  getDiseaseCategory,
-  getDiseaseOne,
+  getMedicationList,
+  editMedication,
+  addMedication,
+  getMedicationCategory,
+  getMedicationOne,
 } from "./components/medicine";
 import medicineDialog from "./components/medicineDialog";
+import medicineViewDialog from "./components/medicineViewDialog";
+import { nextTick } from "vue";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -490,19 +500,20 @@ const { sys_normal_disable, sys_user_sex } = proxy.useDict(
   "sys_user_sex"
 );
 
-const diseaseList = ref([]);
+const medicationList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
-const ids = ref([]);
 const selectedData = ref([]); // 存储选择的行数据
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-const dateRange = ref([]);
-const deptName = ref("");
-const conditionDefinitionOptions = ref(undefined);
+const medicationOptions = ref(undefined);
+// 使用 ref 定义当前药品数据
+const currentData = ref({});
+// 使用 ref 定义当前查看药品数据
+const viewData = ref({});
 // const initPassword = ref(undefined);
 // const postOptions = ref([]);
 // const roleOptions = ref([]);
@@ -512,14 +523,16 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 50,
-    diseaseName: undefined, // 疾病名称
+    searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
+    statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    ybMatchFlag: undefined, // 是否医保匹配（包括 1：是，0：否）
     status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
   },
   rules: {
-    name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    conditionCode: [
-      { required: true, message: "编码不能为空", trigger: "blur" },
-    ],
+    // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
+    // conditionCode: [
+    //   { required: true, message: "编码不能为空", trigger: "blur" },
+    // ],
   },
 });
 
@@ -535,20 +548,20 @@ const filterNode = (value, data) => {
 //   proxy.$refs["deptTreeRef"].filter(val);
 // });
 /** 病种目录分类查询下拉树结构 */
-function getDiseaseCategoryList() {
-  getDiseaseCategory().then((response) => {
-    console.log(response, "response病种目录分类查询下拉树结构");
-    conditionDefinitionOptions.value = response.data;
+function getMedicationCategoryList() {
+  getMedicationCategory().then((response) => {
+    console.log(response, "response药品目录分类查询下拉树结构");
+    medicationOptions.value = response.data;
   });
 }
 /** 查询病种目录列表 */
 function getList() {
   loading.value = true;
-  getDiseaseList(queryParams.value).then((res) => {
+  getMedicationList(queryParams.value).then((res) => {
     loading.value = false;
     console.log(res, "res");
-    diseaseList.value = res.data.records;
-    total.value = res.total;
+    medicationList.value = res.data.records;
+    total.value = res.data.total;
   });
 }
 /** 节点单击事件 */
@@ -573,7 +586,7 @@ function handleStart() {
   proxy.$modal
     .confirm("是否确定启用数据！")
     .then(function () {
-      return editDisease(data);
+      return editMedication(data);
     })
     .then(() => {
       getList();
@@ -591,7 +604,7 @@ function handleClose() {
   proxy.$modal
     .confirm("是否确认停用数据！")
     .then(function () {
-      return editDisease(data);
+      return editMedication(data);
     })
     .then(() => {
       getList();
@@ -635,16 +648,44 @@ function reset() {
     status: undefined,
     statusEnum: undefined,
   };
-  proxy.resetForm("diseaseRef");
+  proxy.resetForm("medicationRef");
 }
 /** 取消按钮 */
 function cancel() {
   open.value = false;
   reset();
 }
-/** 打开新增/编辑弹窗 */
-function openMedicineDialog() {
+/** 打开新增弹窗 */
+function openAddMedicine() {
   proxy.$refs["medicineRef"].show();
+}
+/** 打开编辑弹窗 */
+function openEditMedicine(row) {
+  currentData.value = row;
+  console.log(currentData.value, "currentData");
+  // 确保子组件已经接收到最新的 props
+  nextTick(() => {
+    proxy.$refs["medicineRef"].edit();
+  });
+  // proxy.$refs["medicineRef"].edit();
+}
+/** 打开查看弹窗 */
+function openViewMedicine(row) {
+  // viewData.value = row;
+  reset();
+  getMedicationOne(row.id).then((response) => {
+    viewData.value = response.data;
+    nextTick(() => {
+      proxy.$refs["medicineViewRef"].edit();
+    });
+    getList();
+  });
+  console.log(viewData.value, "currentData");
+  // 确保子组件已经接收到最新的 props
+  nextTick(() => {
+    proxy.$refs["medicineViewRef"].edit();
+  });
+  // proxy.$refs["medicineRef"].edit();
 }
 /** 新增按钮操作 */
 function handleAdd() {
@@ -661,43 +702,37 @@ function handleUpdate(row) {
   title.value = "病种编辑";
 }
 /** 提交按钮 */
-function submitForm() {
-  proxy.$refs["diseaseRef"].validate((valid) => {
-    if (valid) {
-      if (form.value.id != undefined) {
-        form.value.status
-          ? (form.value.statusEnum = "3")
-          : (form.value.statusEnum = "2");
-        console.log(form.value, "editDisease", form.value.statusEnum);
-        let param = [];
-        param.push(form.value);
-        editDisease(param).then((response) => {
-          proxy.$modal.msgSuccess("修改成功");
-          open.value = false;
-          getList();
-        });
-      } else {
-        addDisease(form.value).then((response) => {
-          proxy.$modal.msgSuccess("新增成功");
-          open.value = false;
-          getList();
-        });
-      }
-    }
-  });
+function submitForm(formData) {
+  if (formData.id != undefined) {
+    // form.value.status
+    //   ? (form.value.statusEnum = "3")
+    //   : (form.value.statusEnum = "2");
+    // console.log(form.value, "editMedication", form.value.statusEnum);
+    editMedication(formData).then((response) => {
+      proxy.$modal.msgSuccess("修改成功");
+      open.value = false;
+      getList();
+    });
+  } else {
+    addMedication(formData).then((response) => {
+      proxy.$modal.msgSuccess("新增成功");
+      open.value = false;
+      getList();
+    });
+  }
 }
 
 /** 详细按钮操作 */
 function handleView(row) {
   reset();
   open.value = true;
-  getDiseaseOne(row.id).then((response) => {
+  getMedicationOne(row.id).then((response) => {
     console.log(response, "responsebbbb", row.id);
     form.value = response.data;
     //  getList();
   });
 }
-getDiseaseCategoryList();
+getMedicationCategoryList();
 getList();
 </script>
 <style scoped>

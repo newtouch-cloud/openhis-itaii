@@ -1,10 +1,11 @@
 package com.openhis.web.datadictionary.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,9 +26,9 @@ import com.openhis.common.enums.PublicationStatus;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.datadictionary.dto.DiseaseManageDto;
+import com.openhis.web.datadictionary.dto.DiseaseManageInitDto;
 import com.openhis.web.datadictionary.dto.DiseaseManageSelParam;
 import com.openhis.web.datadictionary.dto.DiseaseManageUpDto;
-import com.openhis.web.datadictionary.dto.DiseaseSourceDto;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,24 +48,24 @@ public class DiseaseManageController {
     private final ConditionDefinitionMapper conditionDefinitionMapper;
 
     /**
-     * 病种目录分类查询
-     *
+     * 病种目录初始化
+     * 
      * @return
      */
-    @GetMapping("/information-category")
-    public R<?> getDiseaseCategory() {
+    @GetMapping("/information-init")
+    public R<?> getDiseaseInit() {
+        DiseaseManageInitDto diseaseManageInitDto = new DiseaseManageInitDto();
         // 获取疾病目录种类
-        List<ConditionDefinitionSource> statusList = Arrays.asList(ConditionDefinitionSource.values());
-        List<DiseaseSourceDto> diseaseSourceDtos = new ArrayList<>();
-        // 取得更新值
-        for (ConditionDefinitionSource detail : statusList) {
-            DiseaseSourceDto diseaseSourceDto = new DiseaseSourceDto();
-            diseaseSourceDto.setCode(detail.getCode());
-            diseaseSourceDto.setValue(detail.getValue());
-            diseaseSourceDto.setInfo(detail.getInfo());
-            diseaseSourceDtos.add(diseaseSourceDto);
-        }
-        return R.ok(diseaseSourceDtos);
+        List<DiseaseManageInitDto.diseaseCategory> diseaseCategoryList = Stream.of(ConditionDefinitionSource.values())
+            .map(status -> new DiseaseManageInitDto.diseaseCategory(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+        diseaseManageInitDto.setDiseaseCategoryList(diseaseCategoryList);
+        // 获取状态
+        List<DiseaseManageInitDto.statusEnumOption> statusEnumOptions = Stream.of(PublicationStatus.values())
+            .map(status -> new DiseaseManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+        diseaseManageInitDto.setStatusFlagOptions(statusEnumOptions);
+        return R.ok(diseaseManageInitDto);
     }
 
     /**
@@ -102,10 +103,11 @@ public class DiseaseManageController {
      */
     @GetMapping("/information-one/{id}")
     public R<?> getDiseaseOne(@PathVariable("id") Long id) {
-
+        DiseaseManageDto diseaseManageDto = new DiseaseManageDto();
         // 根据ID查询【病种目录】
-        ConditionDefinition byId = iConditionDefinitionService.getById(id);
-        return R.ok(byId);
+        ConditionDefinition conditionDefinition = iConditionDefinitionService.getById(id);
+        BeanUtils.copyProperties(conditionDefinition, diseaseManageDto);
+        return R.ok(diseaseManageDto);
     }
 
     /**

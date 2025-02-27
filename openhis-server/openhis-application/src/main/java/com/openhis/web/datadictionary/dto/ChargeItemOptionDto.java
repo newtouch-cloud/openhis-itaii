@@ -21,4 +21,9 @@ public class ChargeItemOptionDto {
 
     /** 标签 */
     private String label;
+
+    public ChargeItemOptionDto(Integer value, String info) {
+        this.value = value;
+        this.label = info;
+    }
 }

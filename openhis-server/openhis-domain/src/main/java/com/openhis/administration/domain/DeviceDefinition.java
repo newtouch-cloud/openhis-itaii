@@ -1,14 +1,14 @@
 package com.openhis.administration.domain;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
 import com.openhis.common.enums.DeviceCategory;
+import com.openhis.common.enums.PublicationStatus;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -81,7 +81,7 @@ public class DeviceDefinition extends HisBaseEntity {
     private Integer ybMatchFlag;
 
     /** 状态 */
-    private Integer statusEnum;
+    private PublicationStatus statusEnum;
 
     /** 生产厂家 */
     private Long manufacturerId;
@@ -106,6 +106,5 @@ public class DeviceDefinition extends HisBaseEntity {
 
     /** 过敏标记 */
     private Integer allergenFlag;
-
 
 }

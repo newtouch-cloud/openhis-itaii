@@ -1,12 +1,8 @@
 package com.openhis.administration.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,7 +40,7 @@ public class HealthcareService extends HisBaseEntity {
     private String specialtyCode;
 
     /** 地点 */
-    private String locationId;
+    private Long locationId;
 
     /** 服务名称 */
     private String name;

@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class DiseaseManageSelParam {
     /** 所属分类 */
-    private ConditionDefinitionSource sourceEnum;
+    private Integer sourceEnum;
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
 }

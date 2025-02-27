@@ -6,6 +6,7 @@ package com.openhis.web.datadictionary.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.openhis.common.enums.PublicationStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -35,7 +36,10 @@ public class ChargeItemDefPageDto {
     private String totalVolume;
 
     /** 状态 */
-    private Integer statusEnum;
+    private PublicationStatus statusEnum;
+
+    /** 状态值 */
+    private String statusEnumText;
 
     /** 单位 */
     private String unitCode;

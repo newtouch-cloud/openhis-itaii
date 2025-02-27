@@ -2,9 +2,14 @@ package com.openhis.web.datadictionary.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.core.common.utils.poi.ExcelUtil;
+import com.core.system.domain.SysOperLog;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +26,7 @@ import com.openhis.medication.domain.MedicationDetail;
 import com.openhis.medication.service.IMedicationDefinitionService;
 import com.openhis.medication.service.IMedicationService;
 import com.openhis.web.datadictionary.dto.MedicationManageDto;
+import com.openhis.web.datadictionary.dto.MedicationManageInitDto;
 import com.openhis.web.datadictionary.dto.MedicationManageUpDto;
 import com.openhis.web.datadictionary.mapper.MedicationManageSearchMapper;
 
@@ -44,7 +50,23 @@ public class MedicationManageController {
     private final MedicationManageSearchMapper medicationManageSearchMapper;
 
     /**
-     * 查询病种目录分页列表
+     * 药品目录初始化
+     *
+     * @return
+     */
+    @GetMapping("/information-init")
+    public R<?> getMedicationInit() {
+        MedicationManageInitDto medicationManageInitDto = new MedicationManageInitDto();
+        // 获取状态
+        List<MedicationManageInitDto.statusEnumOption> statusEnumOptions = Stream.of(PublicationStatus.values())
+            .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+        medicationManageInitDto.setStatusFlagOptions(statusEnumOptions);
+        return R.ok(medicationManageInitDto);
+    }
+
+    /**
+     * 查询药品目录分页列表
      *
      * @param searchKey 查询条件
      * @param statusEnum 查询条件-状态
@@ -189,14 +211,26 @@ public class MedicationManageController {
         return null;
     }
 
+
     /**
      * 药品目录导出
-     *
-     * @param medicationManageDto 药品目录
+     * @param searchKey 查询条件
+     * @param statusEnum 查询条件-状态
+     * @param ybMatchFlag 查询条件-是否对码
+     * @param categoryCode 查询条件-药品分类
+     * @param response
      * @return
      */
     @GetMapping("/information-export")
-    public R<?> exportDisease(@RequestBody MedicationManageDto medicationManageDto) {
+    public R<?> exportMedication(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
+                                 @RequestParam(value = "ybMatchFlag", defaultValue = "-1") Integer ybMatchFlag,
+                                 @RequestParam(value = "statusEnum", defaultValue = "-1") Integer statusEnum,
+                                 @RequestParam(value = "categoryCode", defaultValue = "") String categoryCode, HttpServletResponse response) {
+        // 获取租户ID
+        Integer tenantId = SecurityUtils.getLoginUser().getTenantId();
+        List<MedicationManageDto> list = medicationManageSearchMapper.getList(searchKey,ybMatchFlag,statusEnum,categoryCode,tenantId);
+        ExcelUtil<MedicationManageDto> util = new ExcelUtil<>(MedicationManageDto.class);
+        util.exportExcel(response, list, "药品目录");
         return null;
     }
 }
