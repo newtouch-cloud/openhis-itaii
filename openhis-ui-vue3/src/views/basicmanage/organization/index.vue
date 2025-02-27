@@ -44,11 +44,10 @@
       row-key="id"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" :selectable="selectable" width="55" />
+      <el-table-column type="selection" width="55" />
       <el-table-column label="科室名称" align="left" prop="name" />
       <el-table-column label="科室类型" align="center" prop="typeEnum" />
-      <el-table-column label="科室主任" align="center" prop="dictId" />
-      <el-table-column label="状态" align="center" prop="status" />
+      <el-table-column label="状态" align="center" prop="activeFlag" />
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button
@@ -61,26 +60,26 @@
           <el-button
             link
             type="primary"
-            @click="handleDisabled(scope.row)"
+            @click="handleDisabled(scope.row.id)"
             v-hasPermi="['system:dict:remove']"
-            v-if="scope.row.status == '启用'"
+            v-if="scope.row.activeFlag == '1'"
             >停用</el-button
           >
           <el-button
             link
             type="primary"
-            @click="handleDisabled(scope.row)"
+            @click="handleDisabled(scope.row.id)"
             v-hasPermi="['system:dict:remove']"
             v-else
             >启用</el-button
           >
-          <el-button
+          <!-- <el-button
             link
             type="primary"
-            @click="handleAdd(scope.row)"
+            @click="handleAddInferior(scope.row)"
             v-hasPermi="['system:dict:edit']"
             >添加下级</el-button
-          >
+          > -->
         </template>
       </el-table-column>
     </el-table>
@@ -109,18 +108,18 @@
             style="width: 100%"
           >
             <el-option
-              v-for="dict in org_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
+              v-for="item in orgTypeOption"
+              :key="item.value"
+              :label="item.code"
+              :value="item.value"
             />
           </el-select>
         </el-form-item>
         <el-col>
-          <el-form-item label="上级科室" prop="deptId">
+          <el-form-item label="上级科室" prop="busNoParent">
             <el-tree-select
               style="width: 100%"
-              v-model="form.deptId"
+              v-model="form.busNoParent"
               :data="organization"
               :props="{ value: 'busNo', label: 'name', children: 'children' }"
               value-key="id"
@@ -156,6 +155,7 @@ import {
   disableOrg,
   initOrgTypeOption,
   getOrgDetail,
+  enableOrg,
 } from "./components/api";
 
 const { proxy } = getCurrentInstance();
@@ -166,8 +166,9 @@ const queryParams = ref({});
 const open = ref(false);
 const form = ref({});
 const orgTableRef = ref();
-const orgTypeOption = ref([{}]);
+const orgTypeOption = ref([]);
 const selectRowIds = ref([]);
+const total = ref(0);
 const rules = ref({
   busNo: [{ required: true, message: "请输入科室编号", trigger: "change" }],
   name: [
@@ -180,49 +181,66 @@ const rules = ref({
 getPageList();
 
 function initOption() {
-  if (!orgTypeOption.value) {
+  if (orgTypeOption.value.length == 0) {
     initOrgTypeOption().then((res) => {
-      orgTypeOption.value = res.data.records;
+      orgTypeOption.value = res.data;
     });
   }
+}
+
+function reset() {
+  form.value.busNo = undefined;
+  form.value.name = undefined;
+  form.value.typeEnum = undefined;
+  form.value.busNoParent = undefined;
+  proxy.resetForm("orgRef");
 }
 
 function getPageList() {
   loading.value = false;
   getList(queryParams.value).then((res) => {
     organization.value = res.data.records;
-    console.log(res.data.records);
-
+    total.value = res.data.total;
     loading.value = false;
   });
 }
 
 function handleAdd() {
+  reset();
   initOption();
-  proxy.resetForm("orgRef");
   open.value = true;
+  console.log(form.value);
 }
 
-function handelEdit(id) {
+function handelEdit(row) {
+  reset();
   initOption();
-  getOrgDetail(id).then((res) => {
-    form.value = res.data.records;
-  });
+  // if (row.busNo.lastIndexOf(".") != -1) {
+  //   row.busNoParent = row.busNo.substring(0, row.busNo.lastIndexOf("."));
+  //   row.busNo = row.busNo.substring(
+  //     row.busNo.lastIndexOf(".") + 1,
+  //     row.busNo.length
+  //   );
+  // }
+  form.value.busNo = row.busNo;
+  form.value.name = row.name;
+  form.value.typeEnum = row.typeEnum;
+  form.value.busNoParent = undefined;
   open.value = true;
 }
 
 function cancel() {
   open.value = false;
-  proxy.resetForm("orgRef");
+  reset();
 }
 
-/**
- * 新增提交
- */
 function submitForm() {
   proxy.$refs["orgRef"].validate((valid) => {
     if (valid) {
-      if (form.value.id != undefined) {
+      if (form.value.busNoParent) {
+        form.value.busNo = form.value.busNoParent + "." + form.value.busNo;
+      }
+      if (form.value.id == undefined) {
         addOrganization(form.value).then((res) => {
           proxy.$modal.msgSuccess(res.msg);
           open.value = false;
@@ -255,11 +273,24 @@ function handleDisabled(id) {
   });
 }
 
-function handleSelectionChange() {
-  console.log(orgTableRef.value.getSelectionRows());
+function handelEnable(id){
+  enableOrg(id).then((res) => {
+    proxy.$modal.msgSuccess(res.msg);
+    getList();
+  });
+}
 
+function handleSelectionChange() {
   selectRowIds.value = orgTableRef.value
     .getSelectionRows()
     .map((item) => item.id);
 }
+
+// function handleAddInferior(row) {
+//   initOption();
+//   proxy.resetForm("orgRef");
+//   open.value = true;
+//   form.value.busNoParent = row.busNo;
+//   row.busNo = undefined;
+// }
 </script>

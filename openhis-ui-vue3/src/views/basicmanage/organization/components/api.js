@@ -41,14 +41,21 @@ export function getOrgDetail(id) {
 
 export function initOrgTypeOption() {
   return request({
-    url: '/basedatamanage/organization/organization',
+    url: '/basedatamanage/organization/init',
     method: 'get',
   })
 }
 
 export function disableOrg(id) {
   return request({
-    url: '/basedatamanage/organization/organization?orgId=' + id,
+    url: '/basedatamanage/organization/organization-inactive?orgId=' + id,
+    method: 'put',
+  })
+}
+
+export function enableOrg(id) {
+  return request({
+    url: '/basedatamanage/organization/organization-active?orgId=' + id,
     method: 'put',
   })
 }
