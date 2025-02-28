@@ -47,12 +47,20 @@
 
             <!-- 如果传入name参数，且不为空 -->
             <if test="name != null and name != ''">
-                AND pt.name LIKE CONCAT( '%', #{name}, '%')
-            </if>
-
-            <!-- 如果传入name参数，且不为空 -->
-            <if test="name != null and name != ''">
-                AND pt.py_str LIKE CONCAT('%',#{name}, '%')
+                <choose>
+                    <!-- 如果name参数中包含汉字 -->
+                    <when test="name.matches('.*[\u4e00-\u9fa5].*')">
+                        AND pt.name LIKE CONCAT('%', #{name}, '%')
+                    </when>
+                    <!-- 如果name参数中只包含字母 -->
+                    <when test="name.matches('^[a-zA-Z]+$')">
+                        AND pt.py_str LIKE CONCAT('%', #{name}, '%')
+                    </when>
+                    <!-- 如果name参数中既包含汉字又包含字母 -->
+                    <otherwise>
+                        AND (pt.name LIKE CONCAT('%', #{name}, '%') OR pt.py_str LIKE CONCAT('%', #{name}, '%'))
+                    </otherwise>
+                </choose>
             </if>
         </where>
         ORDER BY pt.bus_no
@@ -72,11 +80,20 @@
 
             <!-- 如果传入name参数，且不为空 -->
             <if test="name != null and name != ''">
-                AND pt.name LIKE CONCAT('%',#{name}, '%')
-            </if>
-            <!-- 如果传入name参数，且不为空 -->
-            <if test="name != null and name != ''">
-                AND pt.py_str LIKE CONCAT('%',#{name}, '%')
+                <choose>
+                    <!-- 如果name参数中包含汉字 -->
+                    <when test="name.matches('.*[\u4e00-\u9fa5].*')">
+                        AND pt.name LIKE CONCAT('%', #{name}, '%')
+                    </when>
+                    <!-- 如果name参数中只包含字母 -->
+                    <when test="name.matches('^[a-zA-Z]+$')">
+                        AND pt.py_str LIKE CONCAT('%', #{name}, '%')
+                    </when>
+                    <!-- 如果name参数中既包含汉字又包含字母 -->
+                    <otherwise>
+                        AND (pt.name LIKE CONCAT('%', #{name}, '%') OR pt.py_str LIKE CONCAT('%', #{name}, '%'))
+                    </otherwise>
+                </choose>
             </if>
         </where>
     </select>
