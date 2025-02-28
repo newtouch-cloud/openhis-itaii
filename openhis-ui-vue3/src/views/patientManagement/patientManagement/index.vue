@@ -79,7 +79,7 @@
 					  <el-col :span="8">
 						<el-form-item label="性别" prop="genderEnum">
 						   <el-radio-group v-model="form.genderEnum" :disabled="isViewMode">
-								<el-radio v-for="item in administrativegenderList" :key="item.value" :label="item.value" >
+								<el-radio v-for="item in administrativegenderList" :key="item.value" :label="item.value"  @change="radiochange">
 									{{ item.info }}
 								</el-radio>
 						   </el-radio-group>
@@ -223,10 +223,8 @@
 <script  setup name="patientManagement">
 import pcas from 'china-division/dist/pcas-code.json';
 import { ref, computed } from 'vue';
-import familyRelationships from "./component/familyRelationships"
 import {listmaritalstatus,listoccupationtype,lisadministrativegender,listbloodtypeabo,listbloodtypearh,listfamilyrelationshiptype,
-	addPatient,listPatient} from "./component/api"
-import { RegionFullGroup  } from 'v-region'
+	addPatient,listPatient,updatePatient} from "./component/api"
 
 const showSearch = ref(true);
 const open = ref(false);
@@ -306,6 +304,7 @@ function getList() {
   });
   lisadministrativegender().then(response => {
 	administrativegenderList.value = response.data
+	console.log("administrativegenderList.value",administrativegenderList.value)
   });
   listbloodtypeabo().then(response => {
 	bloodtypeaboList.value = response.data
@@ -325,7 +324,7 @@ function reset() {
     nameJson: undefined,
     menuName: undefined,
     age: undefined,
-    genderEnum: undefined,
+    genderEnum: 0,
     idType: undefined,
 	idCard: undefined,
 	phone: undefined,
@@ -384,6 +383,7 @@ function handleUpdate(row) {
   const codes = convertAddressToCodes(selectedOptions1.value);
   selectedOptions.value = codes.filter(code => code !== null);
   isViewMode.value = false;
+  console.log("form.value12",form.value)
   open.value = true;
   title.value = "修改菜单";
 }
@@ -414,12 +414,16 @@ function cancel() {
   open.value = false;
   reset();
 }
+function radiochange(){
+	console.log("form.value.eadio",form.value.genderEnum)
+}
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["patientRef"].validate(valid => {
     if (valid) {
       if (form.value.busNo != undefined) {
-        updateMenu(form.value).then(response => {
+		console.log("form.value.up",form.value)
+        updatePatient(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();

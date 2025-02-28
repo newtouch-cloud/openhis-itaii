@@ -62,4 +62,13 @@ export function listPatient(query) {
     })
   }
 
+  // 修改
+export function updatePatient(data) {
+    return request({
+      url: '/patientmanage/information/patient-information',
+      method: 'put',
+      data: data
+    })
+  }
+
 
