@@ -110,7 +110,7 @@ public class Patient extends HisBaseEntity {
     private String linkName;
 
     /** 联系人关系 */
-    private Integer linkRelationCode;
+    private FamilyRelationshipType linkRelationCode;
 
     /** 联系人电话 */
     private String linkTelcom;
