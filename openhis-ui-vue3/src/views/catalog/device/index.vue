@@ -1,24 +1,15 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <!--药品目录-->
+      <!--器材目录-->
       <el-col :span="4" :xs="24">
-        <!-- <div class="head-container">
-               <el-input
-                  v-model="deptName"
-                  placeholder="请输入部门名称"
-                  clearable
-                  prefix-icon="Search"
-                  style="margin-bottom: 20px"
-               />
-            </div> -->
         <div class="head-container">
           <el-tree
-            :data="medicationOptions"
+            :data="deviceCategories"
             :props="{ label: 'info', children: 'children' }"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
-            ref="medicationTreeRef"
+            ref="treeRef"
             node-key="id"
             highlight-current
             default-expand-all
@@ -26,7 +17,7 @@
           />
         </div>
       </el-col>
-      <!--药品目录-->
+      <!--器材目录-->
       <el-col :span="20" :xs="24">
         <el-form
           :model="queryParams"
@@ -36,8 +27,8 @@
           label-width="68px"
         >
           <el-row :gutter="24">
-            <el-col :span="6">
-              <el-form-item label="药品" prop="searchKey" label-width="40">
+            <!-- <el-col :span="5">
+              <el-form-item label="项目名" prop="searchKey" label-width="55">
                 <el-input
                   v-model="queryParams.searchKey"
                   placeholder="品名/商品名/英文品名/编码/拼音"
@@ -46,19 +37,15 @@
                   @keyup.enter="handleQuery"
                 />
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="4">
-              <el-form-item
-                label="是否系统预置"
-                prop="status"
-                label-width="100"
-              >
+              <el-form-item label="状态" prop="statusEnum" label-width="50">
                 <el-select v-model="queryParams.statusEnum" clearable>
                   <el-option
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
+                    v-for="status in statusFlagOptions"
+                    :key="status.value"
+                    :label="status.info"
+                    :value="status.value"
                   />
                 </el-select>
               </el-form-item>
@@ -66,60 +53,40 @@
             <el-col :span="4">
               <el-form-item
                 label="医保是否对码"
-                prop="status"
+                prop="ybMatchFlag"
                 label-width="100"
               >
                 <el-select
                   v-model="queryParams.ybMatchFlag"
-                  placeholder="用户状态"
+                  placeholder=""
                   clearable
                 >
                   <el-option
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
+                    v-for="item in exeOrganizations"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
                   />
                 </el-select>
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="4">
-              <el-form-item label="已发生业务" prop="status" label-width="100">
-                <el-select
-                  v-model="queryParams.status"
-                  placeholder="用户状态"
-                  clearable
-                >
-                  <el-option
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col> -->
             <el-col :span="4">
-              <el-form-item label="医保等级" prop="status" label-width="80">
+              <el-form-item label="执行科室" prop="ruleId" label-width="100">
                 <el-select
-                  v-model="queryParams.status"
-                  placeholder="用户状态"
+                  v-model="queryParams.ruleId"
+                  placeholder=""
                   clearable
                 >
                   <el-option
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
+                    v-for="item in exeOrganizations"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
                   />
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
-          <!-- <el-form-item>
-                  <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-                  <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-               </el-form-item> -->
         </el-form>
 
         <el-row :gutter="10" class="mb8">
@@ -128,7 +95,7 @@
               type="primary"
               plain
               icon="Plus"
-              @click="openAddMedicine"
+              @click="openAddDevice"
               v-hasPermi="['system:user:add']"
               >添加新项目</el-button
             >
@@ -153,7 +120,7 @@
               >停用</el-button
             >
           </el-col>
-          <!-- <el-col :span="1.5">
+          <el-col :span="1.5">
             <el-button
               type="success"
               plain
@@ -163,7 +130,7 @@
               v-hasPermi="['system:user:remove']"
               >启用</el-button
             >
-          </el-col> -->
+          </el-col>
           <el-col :span="1.5">
             <el-button
               type="primary"
@@ -188,7 +155,7 @@
 
         <el-table
           v-loading="loading"
-          :data="medicationList"
+          :data="deviceList"
           @selection-change="handleSelectionChange"
           width="90%"
         >
@@ -201,54 +168,47 @@
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="项目"
+            label="器材名称"
             align="center"
             key="name"
             prop="name"
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="规格"
+            label="拼音"
             align="center"
-            key="totalVolume"
-            prop="totalVolume"
+            key="pyStr"
+            prop="pyStr"
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="厂家(产地)"
+            label="器材分类"
             align="center"
-            key="manufacturerId"
-            prop="manufacturerId"
+            key="categoryEnum"
+            prop="categoryEnum"
             :show-overflow-tooltip="true"
             width="100"
           />
           <el-table-column
-            label="单位"
+            label="器材种类"
             align="center"
-            key="unitCode"
-            prop="unitCode"
+            key="typeCode"
+            prop="typeCode"
             :show-overflow-tooltip="true"
             width="50"
           />
           <el-table-column
-            label="拆零单位"
+            label="包装单位"
             align="center"
-            key="ybMatchflag"
-            prop="ybMatchflag"
+            key="unitCode"
+            prop="unitCode"
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="单价"
+            label="包装规格"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="拆零价"
-            align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="size"
+            prop="size"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -259,11 +219,49 @@
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="组套标记"
+            label="最小使用单位"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="minUnitCode"
+            prop="minUnitCode"
             :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="产品型号"
+            align="center"
+            key="modelNumber"
+            prop="modelNumber"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="高值器材标志"
+            align="center"
+            key="hvcmFlag"
+            prop="hvcmFlag"
+            :show-overflow-tooltip="true"
+          />
+
+          <el-table-column
+            label="销售单位"
+            align="center"
+            key="salesUnitCode"
+            prop="salesUnitCode"
+            :show-overflow-tooltip="true"
+            width="100"
+          />
+          <el-table-column
+            label="批准文号"
+            align="center"
+            key="approvalNumber"
+            prop="approvalNumber"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="医保标记"
+            align="center"
+            key="ybFlag"
+            prop="ybFlag"
+            :show-overflow-tooltip="true"
+            width="110"
           />
           <el-table-column
             label="医保编码"
@@ -271,55 +269,17 @@
             key="ybNo"
             prop="ybNo"
             :show-overflow-tooltip="true"
+            width="110"
           />
-
           <el-table-column
-            label="医保已对码"
+            label="医保对码标记"
             align="center"
             key="ybMatchFlag"
             prop="ybMatchFlag"
             :show-overflow-tooltip="true"
-            width="100"
           />
           <el-table-column
-            label="医保等级"
-            align="center"
-            key="statusEnum"
-            prop="statusEnum"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="发票项目"
-            align="center"
-            key="statusEnum"
-            prop="statusEnum"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="限制使用标记"
-            align="center"
-            key="restrictedFlag"
-            prop="restrictedFlag"
-            :show-overflow-tooltip="true"
-            width="110"
-          />
-          <el-table-column
-            label="限制使用范围"
-            align="center"
-            key="restrictedScope"
-            prop="restrictedScope"
-            :show-overflow-tooltip="true"
-            width="110"
-          />
-          <el-table-column
-            label="目录限价"
-            align="center"
-            key="statusEnum"
-            prop="statusEnum"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="病案结算项"
+            label="状态"
             align="center"
             key="statusEnum"
             prop="statusEnum"
@@ -327,63 +287,63 @@
             width="90"
           />
           <el-table-column
-            label="已发生业务"
+            label="生产厂家"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="manufacturerId"
+            prop="manufacturerId"
             :show-overflow-tooltip="true"
             width="90"
           />
           <el-table-column
-            label="确认可用标记"
+            label="供应商"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="supplyId"
+            prop="supplyId"
             :show-overflow-tooltip="true"
             width="110"
           />
           <el-table-column
-            label="停用"
+            label="说明"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="description"
+            prop="description"
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="取消批次号管理"
+            label="适用范围"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
-            :show-overflow-tooltip="true"
-            width="120"
-          />
-          <el-table-column
-            label="用法煎法"
-            align="center"
-            key="statusEnum"
-            prop="statusEnum"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="剂量单位换算比"
-            align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="jurisdiction"
+            prop="jurisdiction"
             :show-overflow-tooltip="true"
             width="120"
           />
           <el-table-column
-            label="采购价"
+            label="执行科室"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="ruleId"
+            prop="ruleId"
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="采购拆零价"
+            label="器材版本"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="version"
+            prop="version"
+            :show-overflow-tooltip="true"
+            width="120"
+          />
+          <el-table-column
+            label="主要成分"
+            align="center"
+            key="substanceText"
+            prop="substanceText"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="过敏标记"
+            align="center"
+            key="allergenFlag"
+            prop="allergenFlag"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -399,7 +359,7 @@
                 link
                 type="primary"
                 icon="Edit"
-                @click="openEditMedicine(scope.row)"
+                @click="openEditDevice(scope.row)"
                 v-hasPermi="['system:user:edit']"
                 >编辑</el-button
               >
@@ -407,7 +367,7 @@
                 link
                 type="primary"
                 icon="View"
-                @click="openViewMedicine(scope.row)"
+                @click="openViewDevice(scope.row)"
                 v-hasPermi="['system:user:remove']"
                 >查看</el-button
               >
@@ -423,74 +383,30 @@
         />
       </el-col>
     </el-row>
-    <medicine-dialog
-      ref="medicineRef"
+    <device-dialog
+      ref="deviceRef"
+      :title="title"
       :item="currentData"
-      @submit="submitForm"
+      @submit="getList()"
     />
-    <medicine-view-dialog
-      ref="medicineViewRef"
+    <device-view-dialog
+      ref="deviceViewRef"
       :item="viewData"
       :viewFlg="viewFlg"
     />
-    <!-- 添加或修改用户配置对话框 -->
-    <!-- <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form :model="form" :rules="rules" ref="medicationRef" label-width="80px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="名称" prop="name">
-              <el-input
-                v-model="form.name"
-                placeholder="请输入名称"
-                maxlength="30"
-                :disabled="form.id != undefined"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="编码" prop="conditionCode">
-              <el-input
-                v-model="form.conditionCode"
-                placeholder="请输入编码"
-                maxlength="30"
-                :disabled="form.id != undefined"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="拼音" prop="pyStr">
-              <el-input v-model="form.pyStr" maxlength="11" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="停用" prop="status">
-              <el-checkbox v-model="form.status"></el-checkbox>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog> -->
   </div>
 </template>
 
-<script setup name="Medication">
+<script setup name="Device">
 import {
-  getMedicationList,
-  editMedication,
-  addMedication,
-  getMedicationCategory,
-  getMedicationOne,
-} from "./components/medicine";
-import medicineDialog from "./components/medicineDialog";
-import medicineViewDialog from "./components/medicineViewDialog";
+  getDeviceList,
+  stopDevice,
+  startDevice,
+  getDiseaseTreatmentInit,
+  getDeviceOne,
+} from "./components/device";
+import deviceDialog from "./components/deviceDialog";
+import deviceViewDialog from "./components/deviceViewDialog";
 import { nextTick } from "vue";
 
 const router = useRouter();
@@ -500,23 +416,22 @@ const { sys_normal_disable, sys_user_sex } = proxy.useDict(
   "sys_user_sex"
 );
 
-const medicationList = ref([]);
+const deviceList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
-const selectedData = ref([]); // 存储选择的行数据
+const ids = ref([]); // 存储选择的行数据
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-const medicationOptions = ref(undefined);
-// 使用 ref 定义当前药品数据
+const deviceCategories = ref(undefined);
+const statusFlagOptions = ref(undefined);
+const exeOrganizations = ref(undefined);
+// 使用 ref 定义当前器材数据
 const currentData = ref({});
-// 使用 ref 定义当前查看药品数据
+// 使用 ref 定义当前查看器材数据
 const viewData = ref({});
-// const initPassword = ref(undefined);
-// const postOptions = ref([]);
-// const roleOptions = ref([]);
 
 const data = reactive({
   form: {},
@@ -524,9 +439,11 @@ const data = reactive({
     pageNum: 1,
     pageSize: 50,
     searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
+    typeEnum: undefined, // 类型（包括 1：中药，2：成药）
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
     ybMatchFlag: undefined, // 是否医保匹配（包括 1：是，0：否）
-    status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    ruleId: undefined, // 执行科室
+    categoryEnum: undefined, // 目录分类
   },
   rules: {
     // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
@@ -543,30 +460,28 @@ const filterNode = (value, data) => {
   if (!value) return true;
   return data.label.indexOf(value) !== -1;
 };
-// /** 根据名称筛选部门树 */
-// watch(deptName, val => {
-//   proxy.$refs["deptTreeRef"].filter(val);
-// });
+
 /** 病种目录分类查询下拉树结构 */
-function getMedicationCategoryList() {
-  getMedicationCategory().then((response) => {
-    console.log(response, "response药品目录分类查询下拉树结构");
-    medicationOptions.value = response.data;
+function getDiseaseTreatmentList() {
+  getDiseaseTreatmentInit().then((response) => {
+    console.log(response, "response器材目录分类查询下拉树结构");
+    deviceCategories.value = response.data.deviceCategories;
+    statusFlagOptions.value = response.data.statusFlagOptions;
+    exeOrganizations.value = response.data.exeOrganizations;
   });
 }
 /** 查询病种目录列表 */
 function getList() {
   loading.value = true;
-  getMedicationList(queryParams.value).then((res) => {
+  getDeviceList(queryParams.value).then((res) => {
     loading.value = false;
-    console.log(res, "res");
-    medicationList.value = res.data.records;
+    deviceList.value = res.data.records;
     total.value = res.data.total;
   });
 }
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.deptId = data.id;
+  queryParams.value.categoryEnum = data.id;
   handleQuery();
 }
 /** 搜索按钮操作 */
@@ -577,16 +492,12 @@ function handleQuery() {
 
 /** 启用按钮操作 */
 function handleStart() {
-  selectedData.value.forEach((item) => {
-    item.statusEnum = "2";
-  });
-  const data = selectedData.value;
+  const stardIds =  ids.value;
   //   selectedData
-  console.log(data, "data");
   proxy.$modal
     .confirm("是否确定启用数据！")
     .then(function () {
-      return editMedication(data);
+      return startDevice(stardIds);
     })
     .then(() => {
       getList();
@@ -596,15 +507,11 @@ function handleStart() {
 }
 /** 停用按钮操作 */
 function handleClose() {
-  selectedData.value.forEach((item) => {
-    item.statusEnum = "3";
-  });
-  const data = selectedData.value;
-  console.log(data, "data");
+  const stopIds =  ids.value;
   proxy.$modal
     .confirm("是否确认停用数据！")
     .then(function () {
-      return editMedication(data);
+      return stopDevice(stopIds);
     })
     .then(() => {
       getList();
@@ -626,7 +533,8 @@ function handleExport() {
 /** 选择条数  */
 function handleSelectionChange(selection) {
   console.log(selection, "selection");
-  selectedData.value = selection.map((item) => ({ ...item })); // 存储选择的行数据
+  // selectedData.value = selection.map((item) => ({ ...item })); // 存储选择的行数据
+  ids.value = selection.map(item => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }
@@ -639,100 +547,48 @@ function importTemplate() {
     `user_template_${new Date().getTime()}.xlsx`
   );
 }
-/** 重置操作表单 */
-function reset() {
-  form.value = {
-    id: undefined,
-    conditionCode: undefined,
-    pyStr: undefined,
-    status: undefined,
-    statusEnum: undefined,
-  };
-  proxy.resetForm("medicationRef");
-}
-/** 取消按钮 */
-function cancel() {
-  open.value = false;
-  reset();
-}
+
 /** 打开新增弹窗 */
-function openAddMedicine() {
-  proxy.$refs["medicineRef"].show();
+function openAddDevice() {
+  console.log("打开新增弹窗");
+  title.value = "新增";
+  nextTick(() => {
+    proxy.$refs.deviceRef.show();
+  });
 }
 /** 打开编辑弹窗 */
-function openEditMedicine(row) {
+function openEditDevice(row) {
+  console.log("打开新增弹窗");
   currentData.value = row;
   console.log(currentData.value, "currentData");
+  title.value = "编辑";
   // 确保子组件已经接收到最新的 props
   nextTick(() => {
-    proxy.$refs["medicineRef"].edit();
+    proxy.$refs["deviceRef"].edit();
   });
-  // proxy.$refs["medicineRef"].edit();
+  // proxy.$refs["deviceRef"].edit();
 }
 /** 打开查看弹窗 */
-function openViewMedicine(row) {
+function openViewDevice(row) {
   // viewData.value = row;
-  reset();
-  getMedicationOne(row.id).then((response) => {
-    viewData.value = response.data;
+  getDeviceOne(row.id).then((response) => {
+    currentData.value = response.data;
+    title.value = "查看";
     nextTick(() => {
-      proxy.$refs["medicineViewRef"].edit();
+      proxy.$refs["deviceRef"].edit();
     });
     getList();
   });
-  console.log(viewData.value, "currentData");
-  // 确保子组件已经接收到最新的 props
-  nextTick(() => {
-    proxy.$refs["medicineViewRef"].edit();
-  });
-  // proxy.$refs["medicineRef"].edit();
-}
-/** 新增按钮操作 */
-function handleAdd() {
-  reset();
-  open.value = true;
-  title.value = "新增";
-}
-/** 修改按钮操作 */
-function handleUpdate(row) {
-  reset();
-  console.log(row, "row");
-  form.value = row;
-  open.value = true;
-  title.value = "病种编辑";
-}
-/** 提交按钮 */
-function submitForm(formData) {
-  if (formData.id != undefined) {
-    // form.value.status
-    //   ? (form.value.statusEnum = "3")
-    //   : (form.value.statusEnum = "2");
-    // console.log(form.value, "editMedication", form.value.statusEnum);
-    editMedication(formData).then((response) => {
-      proxy.$modal.msgSuccess("修改成功");
-      open.value = false;
-      getList();
-    });
-  } else {
-    addMedication(formData).then((response) => {
-      proxy.$modal.msgSuccess("新增成功");
-      open.value = false;
-      getList();
-    });
-  }
+  // console.log(viewData.value, "currentData");
+  // // 确保子组件已经接收到最新的 props
+  // nextTick(() => {
+  //   proxy.$refs["deviceViewRef"].edit();
+  // });
+  // proxy.$refs["deviceRef"].edit();
 }
 
-/** 详细按钮操作 */
-function handleView(row) {
-  reset();
-  open.value = true;
-  getMedicationOne(row.id).then((response) => {
-    console.log(response, "responsebbbb", row.id);
-    form.value = response.data;
-    //  getList();
-  });
-}
-getMedicationCategoryList();
+
+getDiseaseTreatmentList();
 getList();
 </script>
 <style scoped>
