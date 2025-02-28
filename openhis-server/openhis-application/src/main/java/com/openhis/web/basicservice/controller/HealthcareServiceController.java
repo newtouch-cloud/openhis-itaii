@@ -3,16 +3,22 @@
  */
 package com.openhis.web.basicservice.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.domain.HealthcareService;
 import com.openhis.administration.service.IChargeItemDefinitionService;
 import com.openhis.administration.service.IHealthcareServiceService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.AccountStatus;
 import com.openhis.common.enums.WhetherContainUnknown;
+import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.basicservice.dto.HealthcareServiceAddOrUpdateParam;
+import com.openhis.web.basicservice.dto.HealthcareServiceDto;
 import com.openhis.web.basicservice.dto.HealthcareServiceInitDto;
 import com.openhis.web.basicservice.mapper.HealthcareServiceBizMapper;
 import lombok.AllArgsConstructor;
@@ -21,6 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,7 +45,6 @@ public class HealthcareServiceController {
 
     private final IHealthcareServiceService iHealthcareServiceService;
     private final IChargeItemDefinitionService iChargeItemDefinitionService;
-
 
     private final HealthcareServiceBizMapper healthcareServiceBizMapper;
 
@@ -75,6 +83,29 @@ public class HealthcareServiceController {
         boolean res = iChargeItemDefinitionService.addChargeItemDefinitionByHealthcareService(healthcareService, chargeItemDefinitionFormData);
         return res ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[]{"服务管理"})) :
                 R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00010, null));
+    }
+
+    /**
+     * 服务管理 分页查询
+     *
+     * @param healthcareServiceDto 查询条件
+     * @param searchKey            模糊查询关键字
+     * @param pageNo               当前页码
+     * @param pageSize             查询条数
+     * @param request              请求数据
+     * @return 列表信息
+     */
+    @GetMapping(value = "/healthcare-service-page")
+    public R<?> getHealthcareServicePage(@RequestBody HealthcareServiceDto healthcareServiceDto,
+                                         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
+                                         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+                                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
+        // 构建查询条件
+        QueryWrapper<HealthcareServiceDto> queryWrapper = HisQueryUtils.buildQueryWrapper(healthcareServiceDto, searchKey,
+                new HashSet<>(Arrays.asList("name", "charge_name")), request);
+        IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper.getHealthcareServicePage(
+                new Page<>(pageNo, pageSize), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, queryWrapper);
+        return R.ok(healthcareServicePage, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
     }
 
 
