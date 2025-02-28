@@ -71,42 +71,42 @@
 
     </dependencies>
 
-    <!--    <build>-->
-    <!--        <plugins>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.springframework.boot</groupId>-->
-    <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-    <!--                <version>2.5.15</version>-->
-    <!--                <configuration>-->
-    <!--                    <fork>true</fork> &lt;!&ndash; 如果没有该配置，devtools不会生效 &ndash;&gt;-->
-    <!--                </configuration>-->
-    <!--                <executions>-->
-    <!--                    <execution>-->
-    <!--                        <goals>-->
-    <!--                            <goal>repackage</goal>-->
-    <!--                        </goals>-->
-    <!--                    </execution>-->
-    <!--                </executions>-->
-    <!--            </plugin>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.apache.maven.plugins</groupId>-->
-    <!--                <artifactId>maven-war-plugin</artifactId>-->
-    <!--                <version>3.1.0</version>-->
-    <!--                <configuration>-->
-    <!--                    <failOnMissingWebXml>false</failOnMissingWebXml>-->
-    <!--                    <warName>${project.artifactId}</warName>-->
-    <!--                </configuration>-->
-    <!--            </plugin>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.apache.maven.plugins</groupId>-->
-    <!--                <artifactId>maven-compiler-plugin</artifactId>-->
-    <!--                <configuration>-->
-    <!--                    <source>8</source>-->
-    <!--                    <target>8</target>-->
-    <!--                </configuration>-->
-    <!--            </plugin>-->
-    <!--        </plugins>-->
-    <!--        <finalName>${project.artifactId}</finalName>-->
-    <!--    </build>-->
+<!--        <build>-->
+<!--            <plugins>-->
+<!--                <plugin>-->
+<!--                    <groupId>org.springframework.boot</groupId>-->
+<!--                    <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                    <version>2.5.15</version>-->
+<!--                    <configuration>-->
+<!--                        <fork>true</fork> &lt;!&ndash; 如果没有该配置，devtools不会生效 &ndash;&gt;-->
+<!--                    </configuration>-->
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <goals>-->
+<!--                                <goal>repackage</goal>-->
+<!--                            </goals>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
+<!--                </plugin>-->
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-war-plugin</artifactId>-->
+<!--                    <version>3.1.0</version>-->
+<!--                    <configuration>-->
+<!--                        <failOnMissingWebXml>false</failOnMissingWebXml>-->
+<!--                        <warName>${project.artifactId}</warName>-->
+<!--                    </configuration>-->
+<!--                </plugin>-->
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                    <configuration>-->
+<!--                        <source>8</source>-->
+<!--                        <target>8</target>-->
+<!--                    </configuration>-->
+<!--                </plugin>-->
+<!--            </plugins>-->
+<!--            <finalName>${project.artifactId}</finalName>-->
+<!--        </build>-->
 
 </project>
