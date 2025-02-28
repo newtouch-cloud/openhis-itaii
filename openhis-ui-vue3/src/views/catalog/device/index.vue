@@ -377,7 +377,7 @@
         <pagination
           v-show="total > 0"
           :total="total"
-          v-model:page="queryParams.pageNum"
+          v-model:page="queryParams.pageNo"
           v-model:limit="queryParams.pageSize"
           @pagination="getList"
         />
@@ -436,7 +436,7 @@ const viewData = ref({});
 const data = reactive({
   form: {},
   queryParams: {
-    pageNum: 1,
+    pageNo: 1,
     pageSize: 50,
     searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
     typeEnum: undefined, // 类型（包括 1：中药，2：成药）
@@ -472,6 +472,7 @@ function getDiseaseTreatmentList() {
 }
 /** 查询器材目录列表 */
 function getList() {
+  console.log(getList, "getList");
   loading.value = true;
   getDeviceList(queryParams.value).then((res) => {
     loading.value = false;
@@ -486,7 +487,7 @@ function handleNodeClick(data) {
 }
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.pageNum = 1;
+  queryParams.value.pageNo = 1;
   getList();
 }
 
@@ -558,7 +559,8 @@ function openAddDevice() {
 }
 /** 打开编辑弹窗 */
 function openEditDevice(row) {
-  console.log("打开新增弹窗");
+  currentData.value = {}
+  console.log("打开编辑弹窗");
   currentData.value = row;
   console.log(currentData.value, "currentData");
   title.value = "编辑";

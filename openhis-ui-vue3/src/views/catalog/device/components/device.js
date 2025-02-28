@@ -3,6 +3,7 @@ import { parseStrEmpty } from "@/utils/openhis";
 
 // 查询器材目录列表
 export function getDeviceList(query) {
+  console.log(query,'aaaaa')
   return request({
     url: '/datadictionary/device/information-page',
     method: 'get',

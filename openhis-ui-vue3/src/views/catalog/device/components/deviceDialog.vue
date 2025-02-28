@@ -265,12 +265,6 @@ const emits = defineEmits(["submit"]); // 声明自定义事件
 
 const data = reactive({
   form: {},
-  queryParams: {
-    pageNum: 1,
-    pageSize: 50,
-    diseaseName: undefined, // 疾病名称
-    status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
-  },
   rules: {
     // busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
     // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
@@ -353,6 +347,8 @@ function submitForm() {
     //   : (form.value.statusEnum = "2");
     // console.log(form.value, "editDevice", form.value.statusEnum);
     editDevice(form.value).then((response) => {
+      // 触发自定义事件，并传递数据给父组件
+      emits("submit");
       proxy.$modal.msgSuccess("修改成功");
       visible.value = false;
       reset(); // 重置表单数据
@@ -366,6 +362,12 @@ function submitForm() {
       reset(); // 重置表单数据
     });
   }
+}
+
+/** 取消按钮 */
+function cancel() {
+  open.value = false;
+  reset();
 }
 defineExpose({
   show,

@@ -304,12 +304,6 @@ const conditionDefinitionOptions = ref(undefined);
 
 const data = reactive({
   form: {},
-  queryParams: {
-    pageNum: 1,
-    pageSize: 50,
-    diseaseName: undefined, // 疾病名称
-    status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
-  },
   rules: {
     name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
     conditionCode: [

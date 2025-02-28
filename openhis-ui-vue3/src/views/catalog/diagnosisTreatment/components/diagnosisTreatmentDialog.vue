@@ -30,7 +30,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="拼音码(项目名称)" prop="pyStr" class="custom-label-spacing">
+            <el-form-item
+              label="拼音码(项目名称)"
+              prop="pyStr"
+              class="custom-label-spacing"
+            >
               <el-input v-model="form.pyStr" placeholder="" maxlength="30" />
             </el-form-item>
           </el-col>
@@ -59,7 +63,11 @@
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="使用单位" prop="permittedUnitCode">
-              <el-input v-model="form.permittedUnitCode" placeholder="" maxlength="30" />
+              <el-input
+                v-model="form.permittedUnitCode"
+                placeholder=""
+                maxlength="30"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -75,7 +83,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-      
+
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="医保对码标记" prop="ybMatchFlag">
@@ -94,14 +102,22 @@
           <el-col :span="8">
             <el-form-item label="身体部位" prop="bodySiteCode">
               <!-- <el-input v-model="form.ybFlag" placeholder="" maxlength="30" /> -->
-              <el-input v-model="form.bodySiteCode" placeholder="" maxlength="30" />
+              <el-input
+                v-model="form.bodySiteCode"
+                placeholder=""
+                maxlength="30"
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="所需标本" prop="specimenCode">
-              <el-input v-model="form.specimenCode" placeholder="" maxlength="30" />
+              <el-input
+                v-model="form.specimenCode"
+                placeholder=""
+                maxlength="30"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -109,7 +125,6 @@
               <el-checkbox v-model="form.ruleId"></el-checkbox>
             </el-form-item>
           </el-col>
-
         </el-row>
         <el-row :gutter="24">
           <el-col :span="16">
@@ -124,7 +139,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <template #footer v-if="title !='查看'">
+      <template #footer v-if="title != '查看'">
         <div class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
@@ -156,12 +171,6 @@ const emits = defineEmits(["submit"]); // 声明自定义事件
 
 const data = reactive({
   form: {},
-  queryParams: {
-    pageNum: 1,
-    pageSize: 50,
-    diseaseName: undefined, // 疾病名称
-    status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
-  },
   rules: {
     // busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
     // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
@@ -188,17 +197,17 @@ const props = defineProps({
 function show() {
   // queryParams.roleId = props.roleId;
   // getList();
-  title.value = ''
-  title.value = props.title
-  console.log(props, "22222",title.value);
+  title.value = "";
+  title.value = props.title;
+  console.log(props, "22222", title.value);
   visible.value = true;
 }
 // 显示弹框
 function edit() {
   // queryParams.roleId = props.roleId;
   // getList();
-  title.value = ''
-  title.value = props.title
+  title.value = "";
+  title.value = props.title;
   form.value = props.item;
   visible.value = true;
 }
@@ -229,6 +238,8 @@ function reset() {
 function submitForm() {
   if (form.value.id != undefined) {
     editDiagnosisTreatment(form.value).then((response) => {
+      // 触发自定义事件，并传递数据给父组件
+      emits("submit");
       proxy.$modal.msgSuccess("修改成功");
       visible.value = false;
       reset(); // 重置表单数据
@@ -242,6 +253,11 @@ function submitForm() {
       reset(); // 重置表单数据
     });
   }
+}
+/** 取消按钮 */
+function cancel() {
+  open.value = false;
+  reset();
 }
 defineExpose({
   show,
