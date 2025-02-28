@@ -42,12 +42,17 @@
         <where>
             <!-- 如果传入busNo参数，且不为空 -->
             <if test="busNo != null and busNo != ''">
-                AND busNo LIKE CONCAT(#{busNo}, '%')
+                AND pt.busNo LIKE CONCAT('%',#{busNo}, '%')
             </if>
 
             <!-- 如果传入name参数，且不为空 -->
             <if test="name != null and name != ''">
-                AND name LIKE CONCAT(#{name}, '%')
+                AND pt.name LIKE CONCAT( '%', #{name}, '%')
+            </if>
+
+            <!-- 如果传入name参数，且不为空 -->
+            <if test="name != null and name != ''">
+                AND pt.py_str LIKE CONCAT('%',#{name}, '%')
             </if>
         </where>
         ORDER BY pt.bus_no
@@ -62,12 +67,16 @@
         <where>
             <!-- 如果传入busNo参数，且不为空 -->
             <if test="busNo != null and busNo != ''">
-                AND busNo LIKE CONCAT(#{busNo}, '%')
+                AND pt.busNo LIKE CONCAT('%',#{busNo}, '%')
             </if>
 
             <!-- 如果传入name参数，且不为空 -->
             <if test="name != null and name != ''">
-                AND name LIKE CONCAT(#{name}, '%')
+                AND pt.name LIKE CONCAT('%',#{name}, '%')
+            </if>
+            <!-- 如果传入name参数，且不为空 -->
+            <if test="name != null and name != ''">
+                AND pt.py_str LIKE CONCAT('%',#{name}, '%')
             </if>
         </where>
     </select>

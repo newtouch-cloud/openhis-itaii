@@ -223,7 +223,7 @@ public class PatientInformationController {
             return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
         }
 
-        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"病人信息"}));
+        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"病人信息"}));
     }
 
     /**
@@ -249,11 +249,7 @@ public class PatientInformationController {
         Page<PatientInformationDto> patientInformationPage = new Page<>(pageNo, pageSize, total);
         patientInformationPage.setRecords(listPatients);
 
-        if (patientInformationPage == null || patientInformationPage.getRecords().isEmpty()) {
-            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00006, null));
-        }
-        return R.ok(patientInformationPage,
-            MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"病人信息"}));
+        return R.ok(patientInformationPage);
     }
 
 }
