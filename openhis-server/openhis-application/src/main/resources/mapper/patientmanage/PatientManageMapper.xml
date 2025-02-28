@@ -42,7 +42,7 @@
         <where>
             <!-- 如果传入busNo参数，且不为空 -->
             <if test="busNo != null and busNo != ''">
-                AND pt.busNo LIKE CONCAT('%',#{busNo}, '%')
+                AND pt.bus_no LIKE CONCAT('%',#{busNo}, '%')
             </if>
 
             <!-- 如果传入name参数，且不为空 -->
@@ -67,7 +67,7 @@
         <where>
             <!-- 如果传入busNo参数，且不为空 -->
             <if test="busNo != null and busNo != ''">
-                AND pt.busNo LIKE CONCAT('%',#{busNo}, '%')
+                AND pt.bus_no LIKE CONCAT('%',#{busNo}, '%')
             </if>
 
             <!-- 如果传入name参数，且不为空 -->
