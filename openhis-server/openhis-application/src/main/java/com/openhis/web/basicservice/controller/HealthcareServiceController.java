@@ -3,6 +3,7 @@
  */
 package com.openhis.web.basicservice.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -106,6 +107,41 @@ public class HealthcareServiceController {
         IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper.getHealthcareServicePage(
                 new Page<>(pageNo, pageSize), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, queryWrapper);
         return R.ok(healthcareServicePage, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
+    }
+
+
+    /**
+     * 服务管理 编辑
+     *
+     * @param healthcareServiceAddOrUpdateParam 表单数据
+     * @return 编辑结果
+     */
+    @PutMapping(value = "/healthcare-service")
+    public R<?> edit(@Validated @RequestBody HealthcareServiceAddOrUpdateParam healthcareServiceAddOrUpdateParam) {
+        // 服务管理-表单数据
+        HealthcareService healthcareServiceFormData = healthcareServiceAddOrUpdateParam.getHealthcareServiceFormData();
+        boolean res = iHealthcareServiceService.updateHealthcareService(healthcareServiceFormData);
+        return res ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[]{"服务管理"})) :
+                R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+    }
+
+    /**
+     * 服务管理 删除
+     *
+     * @param id ID
+     * @return 删除结果
+     */
+    @DeleteMapping(value = "/healthcare-service")
+    @Transactional(rollbackFor = Exception.class)
+    public R<?> delete(@RequestParam Long id) {
+        boolean res = iHealthcareServiceService.removeById(id);
+        // 同时删除非同定价
+        LambdaQueryWrapper<ChargeItemDefinition> QueryWrapper = new LambdaQueryWrapper<>();
+        QueryWrapper.eq(ChargeItemDefinition::getInstanceId, id).
+                eq(ChargeItemDefinition::getInstanceTable, CommonConstants.TableName.ADM_HEALTHCARE_SERVICE);
+        iChargeItemDefinitionService.remove(QueryWrapper);
+        return res ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[]{"服务管理"})) :
+                R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00006, null));
     }
 
 
