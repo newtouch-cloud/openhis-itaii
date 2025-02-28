@@ -1,5 +1,7 @@
 package com.openhis.administration.service.impl;
 
+import com.openhis.administration.domain.HealthcareService;
+import com.openhis.common.constant.CommonConstants;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -9,6 +11,7 @@ import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.mapper.ChargeItemDefinitionMapper;
 import com.openhis.administration.service.IChargeItemDefinitionService;
 import com.openhis.common.enums.DelFlag;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 费用定价管理Service业务层处理
@@ -18,19 +21,19 @@ import com.openhis.common.enums.DelFlag;
  */
 @Service
 public class ChargeItemDefinitionServiceImpl extends ServiceImpl<ChargeItemDefinitionMapper, ChargeItemDefinition>
-    implements IChargeItemDefinitionService {
+        implements IChargeItemDefinitionService {
 
     /**
      * 获取分页列表
      *
      * @param chargeItemDefinition 查询条件
-     * @param pageNo 页码
-     * @param pageSize 页面大小
+     * @param pageNo               页码
+     * @param pageSize             页面大小
      * @return 分页列表
      */
     @Override
     public Page<ChargeItemDefinition> getPage(ChargeItemDefinition chargeItemDefinition, Integer pageNo,
-        Integer pageSize) {
+                                              Integer pageSize) {
 
         LambdaQueryWrapper<ChargeItemDefinition> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ChargeItemDefinition::getDeleteFlag, DelFlag.NO.getValue());
@@ -73,4 +76,26 @@ public class ChargeItemDefinitionServiceImpl extends ServiceImpl<ChargeItemDefin
             return baseMapper.deleteById(id) > 0;
         }
     }
+
+
+    /**
+     * 通过服务管理新增费用定价
+     *
+     * @param healthcareService    服务管理
+     * @param chargeItemDefinition 费用定价
+     * @return 新增结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean addChargeItemDefinitionByHealthcareService(HealthcareService healthcareService, ChargeItemDefinition chargeItemDefinition) {
+        // 服务管理主键id
+        if (healthcareService.getId() != null) {
+            chargeItemDefinition.setInstanceTable(CommonConstants.TableName.ADM_HEALTHCARE_SERVICE);
+            chargeItemDefinition.setInstanceId(healthcareService.getId());
+            return baseMapper.insert(chargeItemDefinition) > 0;
+        } else {
+            return false;
+        }
+    }
+
 }
