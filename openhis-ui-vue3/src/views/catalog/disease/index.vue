@@ -521,6 +521,7 @@ function submitForm() {
 /** 详细按钮操作 */
 function handleView(row) {
   reset();
+  title.value = "查看";
   open.value = true;
   getDiseaseOne(row.id).then((response) => {
     console.log(response, "responsebbbb", row.id);

@@ -680,12 +680,6 @@ function openViewMedicine(row) {
     });
     getList();
   });
-  console.log(viewData.value, "currentData");
-  // 确保子组件已经接收到最新的 props
-  nextTick(() => {
-    proxy.$refs["medicineViewRef"].edit();
-  });
-  // proxy.$refs["medicineRef"].edit();
 }
 /** 新增按钮操作 */
 function handleAdd() {
