@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.openhis.web.patientmanage.mapper.PatientManageMapper">
+    <!-- 病人信息相关查询-->
     <select id="getPatientPage" resultType="com.openhis.web.patientmanage.dto.PatientInformationDto">
         SELECT
         pt.id,
@@ -97,4 +98,7 @@
             </if>
         </where>
     </select>
+
+    <!-- 门诊记录相关查询-->
+
 </mapper>

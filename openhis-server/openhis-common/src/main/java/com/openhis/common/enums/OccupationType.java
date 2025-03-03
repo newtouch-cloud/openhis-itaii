@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum OccupationType {
+public enum OccupationType implements HisEnumInterface {
     STATE_CIVIL_SERVANT(11, "11", "国家公务员"),
     PROFESSIONAL(13, "13", "专业技术人员"),
     CLERK(17, "17", "职员"),

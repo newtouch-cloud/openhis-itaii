@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MaritalStatus {
+public enum MaritalStatus implements HisEnumInterface {
 
     UNMARRIED(10, "10", "未婚"),
     MARRIED(20, "20", "已婚"),

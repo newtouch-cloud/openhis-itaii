@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.core.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +11,16 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.enums.AssignSeqEnum;
+import com.core.common.utils.AssignSeqUtil;
+import com.core.common.utils.ChineseConvertUtils;
+import com.core.common.utils.MessageUtils;
+import com.core.common.utils.StringUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.Patient;
 import com.openhis.administration.service.IPatientService;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.*;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.web.patientmanage.dto.PatientInformationDto;
 import com.openhis.web.patientmanage.dto.PatientListDto;
 import com.openhis.web.patientmanage.mapper.PatientManageMapper;
@@ -171,18 +175,15 @@ public class PatientInformationController {
         // 使用基础采番，设置病人ID
         String code = assignSeqUtil.getSeq(AssignSeqEnum.PATIENT_NUM.getPrefix());
         patient.setBusNo(code);
-        // 设置生日
-        patient.setBirthDate(patientService.extractBirthday(patient.getIdCard()));
+
         // 设置机构ID
         patient.setOrganizationId(organizationId);
+        // 设置生日
+        patient.setBirthDate(patientService.extractBirthday(patient.getIdCard()));
         // 设置拼音首拼
         patient.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(patient.getName()));
         // 设置五笔首拼
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
-        // 设置地址
-        String fullAddress = stringUtils.joinStrings(patient.getAddressProvince(),
-            patient.getAddressCity(), patient.getAddressDistrict(), patient.getAddressStreet(),patient.getAddress());
-        patient.setAddress(fullAddress);
 
         // 调用服务层保存病人信息
         boolean savePatientSuccess = patientService.save(patient);
@@ -211,19 +212,12 @@ public class PatientInformationController {
         patient.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(patient.getName()));
         // 设置五笔首拼
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
-        // 设置地址
-        String fullAddress = stringUtils.joinStrings(patient.getAddressProvince(),
-            patient.getAddressCity(), patient.getAddressDistrict(), patient.getAddressStreet(),patient.getAddress());
-        patient.setAddress(fullAddress);
 
         // 调用服务层更新病人信息
-        boolean updateSuccess = patientService.updateById(patient);
+        return patientService.updateById(patient)
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"病人信息"}))
+            : R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
 
-        if (!updateSuccess) {
-            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
-        }
-
-        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"病人信息"}));
     }
 
     /**
@@ -248,7 +242,20 @@ public class PatientInformationController {
         // 创建Page对象并设置属性
         Page<PatientInformationDto> patientInformationPage = new Page<>(pageNo, pageSize, total);
         patientInformationPage.setRecords(listPatients);
-
+        patientInformationPage.getRecords().forEach(e -> {
+            // 性别枚举类回显赋值
+            e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
+            // 婚姻状态枚举类回显赋值
+            e.setMaritalStatusEnum_enumText(EnumUtils.getInfoByValue(MaritalStatus.class, e.getMaritalStatusEnum()));
+            // 职业编码枚举类回显赋值
+            e.setPrfsEnum_enumText(EnumUtils.getInfoByValue(OccupationType.class, e.getPrfsEnum()));
+            // 血型ABO枚举类回显赋值
+            e.setBloodAbo_text(EnumUtils.getInfoByValue(BloodTypeABO.class, e.getBloodAbo()));
+            // 血型RH枚举类回显赋值
+            e.setBloodRh_enumText(EnumUtils.getInfoByValue(BloodTypeRH.class, e.getBloodRh()));
+            // 家庭关系枚举类回显赋值
+            e.setLinkRelationCode_enumText(EnumUtils.getInfoByValue(FamilyRelationshipType.class, e.getLinkRelationCode()));
+        });
         return R.ok(patientInformationPage);
     }
 

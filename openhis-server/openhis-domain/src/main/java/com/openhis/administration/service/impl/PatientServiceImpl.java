@@ -1,6 +1,5 @@
 package com.openhis.administration.service.impl;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -39,8 +38,9 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
         // 将生日字符串转换为 LocalDate
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate date = LocalDate.parse(birthdayStr, formatter);
-        // 使用系统默认时区,将 LocalDate 转换为 Date
-        return Date.from(Instant.from(date.atStartOfDay(ZoneId.systemDefault())));
+
+        // 将 LocalDate 转换为 java.util.Date
+        return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
 }

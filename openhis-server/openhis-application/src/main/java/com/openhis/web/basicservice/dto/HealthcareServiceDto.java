@@ -21,6 +21,7 @@ public class HealthcareServiceDto {
      * 活动标记
      */
     private Integer activeFlag;
+    private String activeFlag_enumText;
 
     /**
      * 提供部门ID
