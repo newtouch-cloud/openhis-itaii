@@ -4,4 +4,49 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.openhis.web.basicservice.mapper.HealthcareServiceBizMapper">
 
+    <select id="getHealthcareServicePage" resultType="com.openhis.web.basicservice.dto.HealthcareServiceDto">
+        SELECT
+            T3.id,
+            T3.tenant_id,
+            T3.active_flag,
+            T3.offered_org_id,
+            T3.category_code,
+            T3.type_code,
+            T3.specialty_code,
+            T3.location_id,
+            T3.NAME,
+            T3.COMMENT,
+            T3.extra_details,
+            T3.contact,
+            T3.appointment_required_flag,
+            T3.charge_name,
+            T3.price
+        FROM
+            (
+                SELECT
+                    T1.id,
+                    T1.tenant_id,
+                    T1.active_flag,
+                    T1.offered_org_id,
+                    T1.category_code,
+                    T1.type_code,
+                    T1.specialty_code,
+                    T1.location_id,
+                    T1.NAME,
+                    T1.COMMENT,
+                    T1.extra_details,
+                    T1.contact,
+                    T1.appointment_required_flag,
+                    T2.charge_name,
+                    T2.price
+                FROM
+                    adm_healthcare_service AS T1
+                        LEFT JOIN adm_charge_item_definition AS T2 ON T2.instance_id = T1.ID
+                        AND T2.instance_table = #{tableName}
+                ORDER BY
+                    T1.create_time DESC
+            ) AS T3
+            ${ew.customSqlSegment}
+    </select>
+
 </mapper>

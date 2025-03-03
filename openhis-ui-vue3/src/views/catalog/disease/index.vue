@@ -239,7 +239,7 @@
         <pagination
           v-show="total > 0"
           :total="total"
-          v-model:page="queryParams.pageNum"
+          v-model:page="queryParams.pageNo"
           v-model:limit="queryParams.pageSize"
           @pagination="getList"
         />
@@ -331,7 +331,7 @@ const statusFlagOptions = ref(undefined);
 const data = reactive({
   form: {},
   queryParams: {
-    pageNum: 1,
+    pageNo: 1,
     pageSize: 50,
     searchKey: undefined, // 疾病名称
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
@@ -385,7 +385,7 @@ function handleNodeClick(data) {
 }
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.pageNum = 1;
+  queryParams.value.pageNo = 1;
   getList();
 }
 // /** 重置按钮操作 */
@@ -521,6 +521,7 @@ function submitForm() {
 /** 详细按钮操作 */
 function handleView(row) {
   reset();
+  title.value = "查看";
   open.value = true;
   getDiseaseOne(row.id).then((response) => {
     console.log(response, "responsebbbb", row.id);

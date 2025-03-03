@@ -417,7 +417,7 @@
         <pagination
           v-show="total > 0"
           :total="total"
-          v-model:page="queryParams.pageNum"
+          v-model:page="queryParams.pageNo"
           v-model:limit="queryParams.pageSize"
           @pagination="getList"
         />
@@ -521,7 +521,7 @@ const viewData = ref({});
 const data = reactive({
   form: {},
   queryParams: {
-    pageNum: 1,
+    pageNo: 1,
     pageSize: 50,
     searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
@@ -571,7 +571,7 @@ function handleNodeClick(data) {
 }
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.pageNum = 1;
+  queryParams.value.pageNo = 1;
   getList();
 }
 
@@ -680,12 +680,6 @@ function openViewMedicine(row) {
     });
     getList();
   });
-  console.log(viewData.value, "currentData");
-  // 确保子组件已经接收到最新的 props
-  nextTick(() => {
-    proxy.$refs["medicineViewRef"].edit();
-  });
-  // proxy.$refs["medicineRef"].edit();
 }
 /** 新增按钮操作 */
 function handleAdd() {

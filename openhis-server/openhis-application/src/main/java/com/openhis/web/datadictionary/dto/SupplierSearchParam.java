@@ -24,16 +24,11 @@ public class SupplierSearchParam implements Serializable {
      */
     @Schema(description = "编号")
     private String busNo;
-    /**
-     * 名称*
-     */
-    @Schema(description = "名称")
-    private String name;
 
     /**
      * 名称*
      */
     @Schema(description = "供应商类型")
-    private String typeEnum;
+    private Integer typeEnum;
 
 }

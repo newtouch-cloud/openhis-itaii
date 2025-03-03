@@ -52,5 +52,10 @@ public class PromptMsgConstant {
          */
         String M00009 = "apl.common.M00009";
 
+        /**
+         * 操作失败,请联系管理员
+         */
+        String M00010 = "apl.common.M00010";
+
     }
 }

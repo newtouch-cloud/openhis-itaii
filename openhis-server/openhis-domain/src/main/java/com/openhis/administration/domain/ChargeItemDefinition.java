@@ -38,8 +38,8 @@ public class ChargeItemDefinition extends HisBaseEntity {
     /** 状态 */
     private PublicationStatus statusEnum;
 
-    /** 机构编码 */
-    private String orgCode;
+    /** 机构ID */
+    private Long orgId;
 
     /** 描述 */
     private String description;
@@ -60,7 +60,7 @@ public class ChargeItemDefinition extends HisBaseEntity {
     private String typeCode;
 
     /** 医保类别 */
-    private Integer ybType;
+    private String ybType;
 
     /** 是否使用详细价格规则 */
     private Integer conditionFlag;

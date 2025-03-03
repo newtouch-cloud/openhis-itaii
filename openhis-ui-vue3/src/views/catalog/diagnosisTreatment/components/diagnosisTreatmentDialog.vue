@@ -21,7 +21,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="器材名称" prop="name">
+            <el-form-item label="项目名称" prop="name">
               <el-input
                 v-model="form.name"
                 placeholder="请输入器材名称"
@@ -31,7 +31,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item
-              label="拼音码(器材名称)"
+              label="拼音码(项目名称)"
               prop="pyStr"
               class="custom-label-spacing"
             >
@@ -41,12 +41,12 @@
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="器材五笔拼音" prop="wbStr">
+            <el-form-item label="五笔拼音" prop="wbStr">
               <el-input v-model="form.wbStr" placeholder="" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="器材分类" prop="categoryEnum">
+            <el-form-item label="目录分类" prop="categoryEnum">
               <el-input
                 v-model="form.categoryEnum"
                 placeholder=""
@@ -55,85 +55,16 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="器材种类" prop="typeCode">
+            <el-form-item label="类型" prop="typeCode">
               <el-input v-model="form.typeCode" placeholder="" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="包装单位" prop="unitCode">
-              <el-input v-model="form.unitCode" placeholder="" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="包装规格" prop="size">
+            <el-form-item label="使用单位" prop="permittedUnitCode">
               <el-input
-                v-model="form.size"
-                placeholder=""
-                maxlength="30"
-                :disabled="form.id != undefined"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="最小单位" prop="minUnitCode">
-              <el-input
-                v-model="form.minUnitCode"
-                placeholder=""
-                maxlength="30"
-                :disabled="form.id != undefined"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="拆零比" prop="partPercent">
-              <el-input
-                v-model="form.partPercent"
-                placeholder=""
-                maxlength="30"
-                :disabled="form.id != undefined"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="产品型号" prop="modelNumber">
-              <el-input
-                v-model="form.modelNumber"
-                placeholder=""
-                maxlength="30"
-                :disabled="form.id != undefined"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="高值器材标志" prop="hvcmFlag">
-              <!-- <el-input
-                v-model="form.hvcmFlag"
-                placeholder=""
-                maxlength="30"
-                :disabled="form.id != undefined"
-              /> -->
-              <el-checkbox v-model="form.hvcmFlag"></el-checkbox>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="销售单位" prop="salesUnitCode">
-              <el-input
-                v-model="form.salesUnitCode"
-                placeholder=""
-                maxlength="30"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="批准文号" prop="approvalNumber">
-              <el-input
-                v-model="form.approvalNumber"
+                v-model="form.permittedUnitCode"
                 placeholder=""
                 maxlength="30"
               />
@@ -143,15 +74,17 @@
             <el-form-item label="医保标记" prop="ybFlag">
               <!-- <el-input v-model="form.ybFlag" placeholder="" maxlength="30" /> -->
               <el-checkbox v-model="form.ybFlag"></el-checkbox>
+              <!-- <el-input v-model="form.ybFlag" placeholder="" maxlength="30" /> -->
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="医保编码" prop="ybNo">
+            <el-form-item label="医保编码" prop="conditionCode">
               <el-input v-model="form.ybNo" placeholder="" maxlength="30" />
             </el-form-item>
           </el-col>
+        </el-row>
+
+        <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="医保对码标记" prop="ybMatchFlag">
               <el-checkbox v-model="form.ybMatchFlag"></el-checkbox>
@@ -166,26 +99,11 @@
               />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="生产厂家" prop="manufacturerId">
+            <el-form-item label="身体部位" prop="bodySiteCode">
+              <!-- <el-input v-model="form.ybFlag" placeholder="" maxlength="30" /> -->
               <el-input
-                v-model="form.manufacturerId"
-                placeholder=""
-                maxlength="30"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="供应商" prop="supplyId">
-              <el-input v-model="form.supplyId" placeholder="" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="适用范围" prop="jurisdiction">
-              <el-input
-                v-model="form.jurisdiction"
+                v-model="form.bodySiteCode"
                 placeholder=""
                 maxlength="30"
               />
@@ -194,29 +112,17 @@
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="执行科室" prop="ruleId">
-              <el-input v-model="form.ruleId" placeholder="" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="器材版本" prop="version">
-              <el-input v-model="form.version" placeholder="" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="主要成分" prop="substanceText">
+            <el-form-item label="所需标本" prop="specimenCode">
               <el-input
-                v-model="form.substanceText"
+                v-model="form.specimenCode"
                 placeholder=""
                 maxlength="30"
               />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="过敏标记" prop="allergenFlag">
-              <el-checkbox v-model="form.allergenFlag"></el-checkbox>
+            <el-form-item label="规则id" prop="ruleId">
+              <el-checkbox v-model="form.ruleId"></el-checkbox>
             </el-form-item>
           </el-col>
         </el-row>
@@ -245,12 +151,12 @@
 
 <script setup name="MedicineDialog">
 import {
-  getDeviceList,
-  editDevice,
-  addDevice,
+  getDiagnosisTreatmentList,
+  editDiagnosisTreatment,
+  addDiagnosisTreatment,
   getDiseaseTreatmentInit,
-  getDeviceOne,
-} from "./device";
+  getDiagnosisTreatmentOne,
+} from "./diagnosisTreatment";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -315,26 +221,15 @@ function reset() {
     wbStr: undefined, // 五笔码
     categoryEnum: undefined, // 类别
     typeCode: undefined, // 类型编码
-    unitCode: undefined, // 单位编码
-    size: undefined, // 规格
-    partPercent: undefined, // 占比
-    minUnitCode: undefined, // 最小单位编码
-    modelNumber: undefined, // 型号
-    hvcmFlag: undefined, // 高值器材标志
-    salesUnitCode: undefined, // 销售单位编码
-    approvalNumber: undefined, // 批准文号
-    ybFlag: undefined, // 医保标志
+    permittedUnitCode: undefined, // 使用单位
+    ybFlag: undefined, // 医保标记
     ybNo: undefined, // 医保编码
     ybMatchFlag: undefined, // 医保对码标记
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
-    manufacturerId: undefined, // 厂家编码
-    supplyId: undefined, // 供应商编码
+    bodySiteCode: undefined, // 身体部位
+    specimenCode: undefined, // 所需标本
     description: undefined, // 说明
-    jurisdiction: undefined, // 适用范围
     ruleId: undefined, // 执行科室
-    version: undefined, // 器材版本
-    substanceText: undefined, // 主要成分
-    allergenFlag: undefined, // 过敏标记
   };
   proxy.resetForm("medicationRef");
 }
@@ -342,11 +237,7 @@ function reset() {
 /** 提交按钮 */
 function submitForm() {
   if (form.value.id != undefined) {
-    // form.value.status
-    //   ? (form.value.statusEnum = "3")
-    //   : (form.value.statusEnum = "2");
-    // console.log(form.value, "editDevice", form.value.statusEnum);
-    editDevice(form.value).then((response) => {
+    editDiagnosisTreatment(form.value).then((response) => {
       // 触发自定义事件，并传递数据给父组件
       emits("submit");
       proxy.$modal.msgSuccess("修改成功");
@@ -354,7 +245,7 @@ function submitForm() {
       reset(); // 重置表单数据
     });
   } else {
-    addDevice(form.value).then((response) => {
+    addDiagnosisTreatment(form.value).then((response) => {
       // 触发自定义事件，并传递数据给父组件
       emits("submit");
       proxy.$modal.msgSuccess("新增成功");
@@ -363,7 +254,6 @@ function submitForm() {
     });
   }
 }
-
 /** 取消按钮 */
 function cancel() {
   open.value = false;

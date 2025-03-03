@@ -11,6 +11,18 @@ import com.openhis.administration.domain.HealthcareService;
  */
 public interface IHealthcareServiceService extends IService<HealthcareService> {
 
+    /**
+     * 服务管理 新增
+     * @param healthcareService 表单信息
+     * @return 入库后信息
+     */
     HealthcareService addHealthcareService(HealthcareService healthcareService);
+
+    /**
+     * 服务管理 编辑
+     * @param healthcareService 表单信息
+     * @return 编辑结果
+     */
+    boolean updateHealthcareService(HealthcareService healthcareService);
 
 }

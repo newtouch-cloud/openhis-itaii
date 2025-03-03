@@ -42,12 +42,25 @@
         <where>
             <!-- 如果传入busNo参数，且不为空 -->
             <if test="busNo != null and busNo != ''">
-                AND busNo LIKE CONCAT(#{busNo}, '%')
+                AND pt.bus_no LIKE CONCAT('%',#{busNo}, '%')
             </if>
 
             <!-- 如果传入name参数，且不为空 -->
             <if test="name != null and name != ''">
-                AND name LIKE CONCAT(#{name}, '%')
+                <choose>
+                    <!-- 如果name参数中包含汉字 -->
+                    <when test="name.matches('.*[\u4e00-\u9fa5].*')">
+                        AND pt.name LIKE CONCAT('%', #{name}, '%')
+                    </when>
+                    <!-- 如果name参数中只包含字母 -->
+                    <when test="name.matches('^[a-zA-Z]+$')">
+                        AND pt.py_str LIKE CONCAT('%', #{name}, '%')
+                    </when>
+                    <!-- 如果name参数中既包含汉字又包含字母 -->
+                    <otherwise>
+                        AND (pt.name LIKE CONCAT('%', #{name}, '%') OR pt.py_str LIKE CONCAT('%', #{name}, '%'))
+                    </otherwise>
+                </choose>
             </if>
         </where>
         ORDER BY pt.bus_no
@@ -62,12 +75,25 @@
         <where>
             <!-- 如果传入busNo参数，且不为空 -->
             <if test="busNo != null and busNo != ''">
-                AND busNo LIKE CONCAT(#{busNo}, '%')
+                AND pt.bus_no LIKE CONCAT('%',#{busNo}, '%')
             </if>
 
             <!-- 如果传入name参数，且不为空 -->
             <if test="name != null and name != ''">
-                AND name LIKE CONCAT(#{name}, '%')
+                <choose>
+                    <!-- 如果name参数中包含汉字 -->
+                    <when test="name.matches('.*[\u4e00-\u9fa5].*')">
+                        AND pt.name LIKE CONCAT('%', #{name}, '%')
+                    </when>
+                    <!-- 如果name参数中只包含字母 -->
+                    <when test="name.matches('^[a-zA-Z]+$')">
+                        AND pt.py_str LIKE CONCAT('%', #{name}, '%')
+                    </when>
+                    <!-- 如果name参数中既包含汉字又包含字母 -->
+                    <otherwise>
+                        AND (pt.name LIKE CONCAT('%', #{name}, '%') OR pt.py_str LIKE CONCAT('%', #{name}, '%'))
+                    </otherwise>
+                </choose>
             </if>
         </where>
     </select>

@@ -5,7 +5,7 @@
       <el-col :span="4" :xs="24">
         <div class="head-container">
           <el-tree
-            :data="deviceCategories"
+            :data="diseaseTreatmentCategoryList"
             :props="{ label: 'info', children: 'children' }"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
@@ -86,6 +86,22 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <el-col :span="4">
+              <el-form-item label="类型" prop="typeCode" label-width="100">
+                <el-select
+                  v-model="queryParams.typeCode"
+                  placeholder=""
+                  clearable
+                >
+                  <el-option
+                    v-for="item in exeOrganizations"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form>
 
@@ -95,7 +111,7 @@
               type="primary"
               plain
               icon="Plus"
-              @click="openAddDevice"
+              @click="openAddDiagnosisTreatment"
               v-hasPermi="['system:user:add']"
               >添加新项目</el-button
             >
@@ -155,7 +171,7 @@
 
         <el-table
           v-loading="loading"
-          :data="deviceList"
+          :data="diagnosisTreatmentList"
           @selection-change="handleSelectionChange"
           width="90%"
         >
@@ -168,7 +184,7 @@
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="器材名称"
+            label="项目名称"
             align="center"
             key="name"
             prop="name"
@@ -182,7 +198,7 @@
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="器材分类"
+            label="目录类别"
             align="center"
             key="categoryEnum"
             prop="categoryEnum"
@@ -190,7 +206,7 @@
             width="100"
           />
           <el-table-column
-            label="器材种类"
+            label="类型"
             align="center"
             key="typeCode"
             prop="typeCode"
@@ -198,61 +214,10 @@
             width="50"
           />
           <el-table-column
-            label="包装单位"
+            label="使用单位"
             align="center"
-            key="unitCode"
-            prop="unitCode"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="包装规格"
-            align="center"
-            key="size"
-            prop="size"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="拆零比"
-            align="center"
-            key="partPercent"
-            prop="partPercent"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="最小使用单位"
-            align="center"
-            key="minUnitCode"
-            prop="minUnitCode"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="产品型号"
-            align="center"
-            key="modelNumber"
-            prop="modelNumber"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="高值器材标志"
-            align="center"
-            key="hvcmFlag"
-            prop="hvcmFlag"
-            :show-overflow-tooltip="true"
-          />
-
-          <el-table-column
-            label="销售单位"
-            align="center"
-            key="salesUnitCode"
-            prop="salesUnitCode"
-            :show-overflow-tooltip="true"
-            width="100"
-          />
-          <el-table-column
-            label="批准文号"
-            align="center"
-            key="approvalNumber"
-            prop="approvalNumber"
+            key="permittedUnitCode"
+            prop="permittedUnitCode"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -261,7 +226,6 @@
             key="ybFlag"
             prop="ybFlag"
             :show-overflow-tooltip="true"
-            width="110"
           />
           <el-table-column
             label="医保编码"
@@ -269,7 +233,6 @@
             key="ybNo"
             prop="ybNo"
             :show-overflow-tooltip="true"
-            width="110"
           />
           <el-table-column
             label="医保对码标记"
@@ -284,23 +247,22 @@
             key="statusEnum"
             prop="statusEnum"
             :show-overflow-tooltip="true"
-            width="90"
           />
           <el-table-column
-            label="生产厂家"
+            label="身体部位"
             align="center"
-            key="manufacturerId"
-            prop="manufacturerId"
+            key="bodySiteCode"
+            prop="bodySiteCode"
             :show-overflow-tooltip="true"
-            width="90"
           />
+
           <el-table-column
-            label="供应商"
+            label="所需标本"
             align="center"
-            key="supplyId"
-            prop="supplyId"
+            key="specimenCode"
+            prop="specimenCode"
             :show-overflow-tooltip="true"
-            width="110"
+            width="100"
           />
           <el-table-column
             label="说明"
@@ -310,40 +272,10 @@
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="适用范围"
-            align="center"
-            key="jurisdiction"
-            prop="jurisdiction"
-            :show-overflow-tooltip="true"
-            width="120"
-          />
-          <el-table-column
-            label="执行科室"
+            label="规则id"
             align="center"
             key="ruleId"
             prop="ruleId"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="器材版本"
-            align="center"
-            key="version"
-            prop="version"
-            :show-overflow-tooltip="true"
-            width="120"
-          />
-          <el-table-column
-            label="主要成分"
-            align="center"
-            key="substanceText"
-            prop="substanceText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="过敏标记"
-            align="center"
-            key="allergenFlag"
-            prop="allergenFlag"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -359,7 +291,7 @@
                 link
                 type="primary"
                 icon="Edit"
-                @click="openEditDevice(scope.row)"
+                @click="openEditDiagnosisTreatment(scope.row)"
                 v-hasPermi="['system:user:edit']"
                 >编辑</el-button
               >
@@ -367,7 +299,7 @@
                 link
                 type="primary"
                 icon="View"
-                @click="openViewDevice(scope.row)"
+                @click="openViewDiagnosisTreatment(scope.row)"
                 v-hasPermi="['system:user:remove']"
                 >查看</el-button
               >
@@ -383,30 +315,30 @@
         />
       </el-col>
     </el-row>
-    <device-dialog
-      ref="deviceRef"
+    <diagnosis-treatment-dialog
+      ref="diagnosisTreatmentRef"
       :title="title"
       :item="currentData"
       @submit="getList()"
     />
-    <device-view-dialog
-      ref="deviceViewRef"
+    <diagnosis-treatment-view-dialog
+      ref="diagnosisTreatmentViewRef"
       :item="viewData"
       :viewFlg="viewFlg"
     />
   </div>
 </template>
 
-<script setup name="Device">
+<script setup name="DiagnosisTreatment">
 import {
-  getDeviceList,
-  stopDevice,
-  startDevice,
+  getDiagnosisTreatmentList,
+  stopDiseaseTreatment,
+  startDiseaseTreatment,
   getDiseaseTreatmentInit,
-  getDeviceOne,
-} from "./components/device";
-import deviceDialog from "./components/deviceDialog";
-import deviceViewDialog from "./components/deviceViewDialog";
+  getDiagnosisTreatmentOne,
+} from "./components/diagnosisTreatment";
+import diagnosisTreatmentDialog from "./components/diagnosisTreatmentDialog";
+import diagnosisTreatmentViewDialog from "./components/diagnosisTreatmentViewDialog";
 import { nextTick } from "vue";
 
 const router = useRouter();
@@ -416,7 +348,7 @@ const { sys_normal_disable, sys_user_sex } = proxy.useDict(
   "sys_user_sex"
 );
 
-const deviceList = ref([]);
+const diagnosisTreatmentList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -425,7 +357,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-const deviceCategories = ref(undefined);
+const diseaseTreatmentCategoryList = ref(undefined);
 const statusFlagOptions = ref(undefined);
 const exeOrganizations = ref(undefined);
 // 使用 ref 定义当前器材数据
@@ -439,7 +371,7 @@ const data = reactive({
     pageNo: 1,
     pageSize: 50,
     searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
-    typeEnum: undefined, // 类型（包括 1：中药，2：成药）
+    typeCode: undefined, // 类型（包括 1：中药，2：成药）
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
     ybMatchFlag: undefined, // 是否医保匹配（包括 1：是，0：否）
     ruleId: undefined, // 执行科室
@@ -461,22 +393,22 @@ const filterNode = (value, data) => {
   return data.label.indexOf(value) !== -1;
 };
 
-/** 器材目录分类查询下拉树结构 */
+/** 诊断目录分类查询下拉树结构 */
 function getDiseaseTreatmentList() {
   getDiseaseTreatmentInit().then((response) => {
     console.log(response, "response器材目录分类查询下拉树结构");
-    deviceCategories.value = response.data.deviceCategories;
+    diseaseTreatmentCategoryList.value = response.data.diseaseTreatmentCategoryList;
     statusFlagOptions.value = response.data.statusFlagOptions;
     exeOrganizations.value = response.data.exeOrganizations;
   });
 }
-/** 查询器材目录列表 */
+/** 查询诊断目录列表 */
 function getList() {
-  console.log(getList, "getList");
   loading.value = true;
-  getDeviceList(queryParams.value).then((res) => {
+  getDiagnosisTreatmentList(queryParams.value).then((res) => {
     loading.value = false;
-    deviceList.value = res.data.records;
+    diagnosisTreatmentList.value = res.data.records;
+    console.log(diagnosisTreatmentList, "res.data");
     total.value = res.data.total;
   });
 }
@@ -498,7 +430,7 @@ function handleStart() {
   proxy.$modal
     .confirm("是否确定启用数据！")
     .then(function () {
-      return startDevice(stardIds);
+      return startDiseaseTreatment(stardIds);
     })
     .then(() => {
       getList();
@@ -512,7 +444,7 @@ function handleClose() {
   proxy.$modal
     .confirm("是否确认停用数据！")
     .then(function () {
-      return stopDevice(stopIds);
+      return stopDiseaseTreatment(stopIds);
     })
     .then(() => {
       getList();
@@ -550,43 +482,42 @@ function importTemplate() {
 }
 
 /** 打开新增弹窗 */
-function openAddDevice() {
+function openAddDiagnosisTreatment() {
   console.log("打开新增弹窗");
   title.value = "新增";
   nextTick(() => {
-    proxy.$refs.deviceRef.show();
+    proxy.$refs.diagnosisTreatmentRef.show();
   });
 }
 /** 打开编辑弹窗 */
-function openEditDevice(row) {
-  currentData.value = {}
-  console.log("打开编辑弹窗");
+function openEditDiagnosisTreatment(row) {
+  console.log("打开新增弹窗");
   currentData.value = row;
   console.log(currentData.value, "currentData");
   title.value = "编辑";
   // 确保子组件已经接收到最新的 props
   nextTick(() => {
-    proxy.$refs["deviceRef"].edit();
+    proxy.$refs["diagnosisTreatmentRef"].edit();
   });
-  // proxy.$refs["deviceRef"].edit();
+  // proxy.$refs["diagnosisTreatmentRef"].edit();
 }
 /** 打开查看弹窗 */
-function openViewDevice(row) {
+function openViewDiagnosisTreatment(row) {
   // viewData.value = row;
-  getDeviceOne(row.id).then((response) => {
+  getDiagnosisTreatmentOne(row.id).then((response) => {
     currentData.value = response.data;
     title.value = "查看";
     nextTick(() => {
-      proxy.$refs["deviceRef"].edit();
+      proxy.$refs["diagnosisTreatmentRef"].edit();
     });
     getList();
   });
   // console.log(viewData.value, "currentData");
   // // 确保子组件已经接收到最新的 props
   // nextTick(() => {
-  //   proxy.$refs["deviceViewRef"].edit();
+  //   proxy.$refs["diagnosisTreatmentViewRef"].edit();
   // });
-  // proxy.$refs["deviceRef"].edit();
+  // proxy.$refs["diagnosisTreatmentRef"].edit();
 }
 
 
