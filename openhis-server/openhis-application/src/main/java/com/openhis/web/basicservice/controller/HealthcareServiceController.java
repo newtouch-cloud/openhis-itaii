@@ -17,6 +17,7 @@ import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.AccountStatus;
 import com.openhis.common.enums.WhetherContainUnknown;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.basicservice.dto.HealthcareServiceAddOrUpdateParam;
 import com.openhis.web.basicservice.dto.HealthcareServiceDto;
@@ -106,6 +107,10 @@ public class HealthcareServiceController {
                 new HashSet<>(Arrays.asList("name", "charge_name")), request);
         IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper.getHealthcareServicePage(
                 new Page<>(pageNo, pageSize), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, queryWrapper);
+        // 枚举类回显赋值
+        healthcareServicePage.getRecords().forEach(e ->
+                e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()))
+        );
         return R.ok(healthcareServicePage, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
     }
 

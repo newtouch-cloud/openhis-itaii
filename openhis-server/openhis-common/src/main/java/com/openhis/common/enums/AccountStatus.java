@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum AccountStatus {
+public enum AccountStatus implements ValueEnum {
 
     ACTIVE (1, "active", "有效"),
 
