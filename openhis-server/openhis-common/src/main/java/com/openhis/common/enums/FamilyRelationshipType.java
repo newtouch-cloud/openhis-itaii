@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum FamilyRelationshipType {
+public enum FamilyRelationshipType implements ValueEnum {
 
     SELF(1, "01", "本人"),
     HOUSEHOLDER(2, "02", "户主"),

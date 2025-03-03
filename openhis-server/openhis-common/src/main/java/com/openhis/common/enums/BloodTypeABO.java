@@ -13,7 +13,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum BloodTypeABO {
+public enum BloodTypeABO implements ValueEnum {
 
     TYPE_A(1, "typeA", "A 型"),
     TYPE_B(2, "typeB", "B 型"),

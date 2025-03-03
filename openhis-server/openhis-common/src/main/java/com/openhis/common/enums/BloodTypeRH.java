@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum BloodTypeRH {
+public enum BloodTypeRH implements ValueEnum{
 
     TYPE_RH_NEGATIVEB(1, "typeRHNegative", "Rh 阴性"),
     TYPE_RH_POSITIVE(2, "typeRHPositive", "Rh 阳性"),

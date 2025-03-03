@@ -2,9 +2,13 @@ package com.openhis.web.patientmanage.dto;
 
 import java.util.Date;
 
-import com.openhis.common.enums.AdministrativeGender;
-import com.openhis.common.enums.MaritalStatus;
-import com.openhis.common.enums.OccupationType;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import lombok.Data;
 
@@ -17,6 +21,8 @@ import lombok.Data;
 @Data
 public class PatientInformationDto {
 
+    /** ID */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 活动标记 */
@@ -26,6 +32,7 @@ public class PatientInformationDto {
     private Integer tempFlag;
 
     /** 患者姓名 */
+    @NotBlank(message = "患者姓名不能为空")
     private String name;
 
     /** 患者其他名称 */
@@ -36,6 +43,7 @@ public class PatientInformationDto {
 
     /** 性别编码 */
     private Integer genderEnum;
+    private String genderEnum_text;
 
     /** 生日 */
     private Date birthDate;
@@ -45,11 +53,17 @@ public class PatientInformationDto {
 
     /** 婚姻状态 */
     private Integer maritalStatusEnum;
+    private String maritalStatusEnum_text;
 
     /** 职业编码 */
     private Integer prfsEnum;
+    private String prfsEnum_text;
 
     /** 电话 */
+    @NotNull(message = "电话不能为空")
+    @NotBlank(message = "电话不能为空")
+    @Size(min = 11, max = 11, message = "电话长度必须为11位")
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "电话格式不正确")
     private String phone;
 
     /** 地址 */
@@ -74,6 +88,9 @@ public class PatientInformationDto {
     private String nationalityCode;
 
     /** 身份证号 */
+    @NotNull(message = "身份证号不能为空")
+    @Size(min = 18, max = 18, message = "身份证号必须是18位")
+    @Pattern(regexp = "^[0-9Xx]{18}$", message = "身份证号格式不正确")
     private String idCard;
 
     /** 拼音码 */
@@ -84,9 +101,11 @@ public class PatientInformationDto {
 
     /** 血型ABO */
     private Integer bloodAbo;
+    private String bloodAbo_text;
 
     /** 血型RH */
     private Integer bloodRh;
+    private String bloodRh_text;
 
     /** 工作单位 */
     private String workCompany;
@@ -102,8 +121,11 @@ public class PatientInformationDto {
 
     /** 联系人关系 */
     private Integer linkRelationCode;
+    private String linkRelationCode_text;
 
     /** 联系人电话 */
+    @Size(min = 11, max = 11, message = "电话长度必须为11位")
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "电话格式不正确")
     private String linkTelcom;
 
     /** 其他联系人 */
@@ -118,7 +140,4 @@ public class PatientInformationDto {
     /** 创建时间 */
     private Date createTime;
 
-    /** 删除标识 */
-    // 0 为未删除，1 为删除
-    private String deleteFlag;
 }
