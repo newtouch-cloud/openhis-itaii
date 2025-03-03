@@ -43,7 +43,7 @@ public class PatientInformationDto {
 
     /** 性别编码 */
     private Integer genderEnum;
-    private String genderEnum_text;
+    private String genderEnum_enumText;
 
     /** 生日 */
     private Date birthDate;
@@ -53,11 +53,11 @@ public class PatientInformationDto {
 
     /** 婚姻状态 */
     private Integer maritalStatusEnum;
-    private String maritalStatusEnum_text;
+    private String maritalStatusEnum_enumText;
 
     /** 职业编码 */
     private Integer prfsEnum;
-    private String prfsEnum_text;
+    private String prfsEnum_enumText;
 
     /** 电话 */
     @NotNull(message = "电话不能为空")
@@ -105,7 +105,7 @@ public class PatientInformationDto {
 
     /** 血型RH */
     private Integer bloodRh;
-    private String bloodRh_text;
+    private String bloodRh_enumText;
 
     /** 工作单位 */
     private String workCompany;
@@ -121,7 +121,7 @@ public class PatientInformationDto {
 
     /** 联系人关系 */
     private Integer linkRelationCode;
-    private String linkRelationCode_text;
+    private String linkRelationCode_enumText;
 
     /** 联系人电话 */
     @Size(min = 11, max = 11, message = "电话长度必须为11位")

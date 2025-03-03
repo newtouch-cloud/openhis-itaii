@@ -244,17 +244,17 @@ public class PatientInformationController {
         patientInformationPage.setRecords(listPatients);
         patientInformationPage.getRecords().forEach(e -> {
             // 性别枚举类回显赋值
-            e.setGenderEnum_text(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
+            e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
             // 婚姻状态枚举类回显赋值
-            e.setMaritalStatusEnum_text(EnumUtils.getInfoByValue(MaritalStatus.class, e.getMaritalStatusEnum()));
+            e.setMaritalStatusEnum_enumText(EnumUtils.getInfoByValue(MaritalStatus.class, e.getMaritalStatusEnum()));
             // 职业编码枚举类回显赋值
-            e.setPrfsEnum_text(EnumUtils.getInfoByValue(OccupationType.class, e.getPrfsEnum()));
+            e.setPrfsEnum_enumText(EnumUtils.getInfoByValue(OccupationType.class, e.getPrfsEnum()));
             // 血型ABO枚举类回显赋值
             e.setBloodAbo_text(EnumUtils.getInfoByValue(BloodTypeABO.class, e.getBloodAbo()));
             // 血型RH枚举类回显赋值
-            e.setBloodRh_text(EnumUtils.getInfoByValue(BloodTypeRH.class, e.getBloodRh()));
+            e.setBloodRh_enumText(EnumUtils.getInfoByValue(BloodTypeRH.class, e.getBloodRh()));
             // 家庭关系枚举类回显赋值
-            e.setLinkRelationCode_text(EnumUtils.getInfoByValue(FamilyRelationshipType.class, e.getLinkRelationCode()));
+            e.setLinkRelationCode_enumText(EnumUtils.getInfoByValue(FamilyRelationshipType.class, e.getLinkRelationCode()));
         });
         return R.ok(patientInformationPage);
     }
