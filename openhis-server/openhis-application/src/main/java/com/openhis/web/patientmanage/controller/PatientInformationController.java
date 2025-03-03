@@ -184,10 +184,6 @@ public class PatientInformationController {
         patient.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(patient.getName()));
         // 设置五笔首拼
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
-        // 设置地址
-        String fullAddress = stringUtils.joinStrings(patient.getAddressProvince(), patient.getAddressCity(),
-            patient.getAddressDistrict(), patient.getAddressStreet(), patient.getAddress());
-        patient.setAddress(fullAddress);
 
         // 调用服务层保存病人信息
         boolean savePatientSuccess = patientService.save(patient);
@@ -216,10 +212,6 @@ public class PatientInformationController {
         patient.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(patient.getName()));
         // 设置五笔首拼
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
-        // 设置地址
-        String fullAddress = stringUtils.joinStrings(patient.getAddressProvince(), patient.getAddressCity(),
-            patient.getAddressDistrict(), patient.getAddressStreet(), patient.getAddress());
-        patient.setAddress(fullAddress);
 
         // 调用服务层更新病人信息
         return patientService.updateById(patient)

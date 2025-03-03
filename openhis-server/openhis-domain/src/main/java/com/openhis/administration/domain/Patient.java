@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
-import com.openhis.common.enums.*;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,7 +43,7 @@ public class Patient extends HisBaseEntity {
     private String busNo;
 
     /** 性别编码 */
-    private AdministrativeGender genderEnum;
+    private Integer genderEnum;
 
     /** 生日 */
     private Date birthDate;
@@ -53,10 +52,10 @@ public class Patient extends HisBaseEntity {
     private Date deceasedDate;
 
     /** 婚姻状态 */
-    private MaritalStatus maritalStatusEnum;
+    private Integer maritalStatusEnum;
 
     /** 职业编码 */
-    private OccupationType prfsEnum;
+    private Integer prfsEnum;
 
     /** 电话 */
     private String phone;
@@ -92,10 +91,10 @@ public class Patient extends HisBaseEntity {
     private String wbStr;
 
     /** 血型ABO */
-    private BloodTypeABO bloodAbo;
+    private Integer bloodAbo;
 
     /** 血型RH */
-    private BloodTypeRH bloodRh;
+    private Integer bloodRh;
 
     /** 工作单位 */
     private String workCompany;
@@ -110,7 +109,7 @@ public class Patient extends HisBaseEntity {
     private String linkName;
 
     /** 联系人关系 */
-    private FamilyRelationshipType linkRelationCode;
+    private Integer linkRelationCode;
 
     /** 联系人电话 */
     private String linkTelcom;
