@@ -61,3 +61,11 @@ export function startSupplier(ids) {
     data: ids
   })
 }
+
+// 查询厂商类型
+export function getSupplierInit() {
+  return request({
+    url: '/data-dictionary/supplier/information-init',
+    method: 'get'
+  })
+}

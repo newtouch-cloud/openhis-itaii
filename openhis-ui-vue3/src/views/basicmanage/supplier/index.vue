@@ -33,9 +33,9 @@
           style="width: 240px"
         >
           <el-option
-            v-for="dict in sys_normal_disable"
+            v-for="dict in supplierTypeOptions"
             :key="dict.value"
-            :label="dict.label"
+            :label="dict.info"
             :value="dict.value"
           />
         </el-select>
@@ -89,8 +89,8 @@
         <el-button
           type="warning"
           plain
-          icon="Download"
-          @click="handleExport"
+          icon="CircleClose"
+          @click="handleClear"
           v-hasPermi="['system:user:export']"
           >清空条件</el-button
         >
@@ -148,8 +148,8 @@
       <el-table-column
         label="活动标识"
         align="center"
-        key="activeFlag"
-        prop="activeFlag"
+        key="activeFlag_enumText"
+        prop="activeFlag_enumText"
         width="160"
       />
       <el-table-column
@@ -195,7 +195,12 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form :model="form" :rules="rules" ref="supplierRef" label-width="90px">
+      <el-form
+        :model="form"
+        :rules="rules"
+        ref="supplierRef"
+        label-width="90px"
+      >
         <el-row>
           <el-col :span="12">
             <el-form-item label="名称" prop="name">
@@ -267,7 +272,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <template #footer>
+      <template #footer v-if="title != '查看'">
         <div class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
@@ -285,6 +290,7 @@ import {
   getSupplierOne,
   stopSupplier,
   startSupplier,
+  getSupplierInit,
 } from "./components/supplier";
 
 const router = useRouter();
@@ -303,7 +309,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-const conditionDefinitionOptions = ref(undefined);
+const supplierTypeOptions = ref(undefined);
 // 是否停用
 const statusFlagOptions = ref(undefined);
 // const initPassword = ref(undefined);
@@ -315,20 +321,35 @@ const data = reactive({
   queryParams: {
     pageNo: 1,
     pageSize: 50,
-    searchKey: undefined, // 疾病名称
+    searchKey: undefined, // 供应商名称
+    busNo: undefined, // 编码
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
     sourceEnum: undefined, // 来源（包括 1：厂商/产地目录分类，2：自定义）
   },
   rules: {
+    busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
     name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    conditionCode: [
-      { required: true, message: "编码不能为空", trigger: "blur" },
+    pyStr: [{ required: true, message: "拼音不能为空", trigger: "blur" }],
+    wbStr: [{ required: true, message: "五笔拼音不能为空", trigger: "blur" }],
+    typeEnum: [{ required: true, message: "类型不能为空", trigger: "blur" }],
+    address: [{ required: true, message: "地址不能为空", trigger: "blur" }],
+    phone: [{ required: true, message: "联系人电话不能为空", trigger: "blur" }],
+    email: [{ required: true, message: "联系人邮箱不能为空", trigger: "blur" }],
+    activeFlag: [
+      { required: true, message: "活动标识不能为空", trigger: "blur" },
     ],
   },
 });
 
 const { queryParams, form, rules } = toRefs(data);
 
+/** 厂商种类查询下拉树结构 */
+function getsupplierTypeList() {
+  getSupplierInit().then((response) => {
+    console.log(response, "response");
+    supplierTypeOptions.value = response.data.supplierTypeOptions;
+  });
+}
 
 /** 查询厂商/产地目录列表 */
 function getList() {
@@ -353,14 +374,7 @@ function handleQuery() {
   queryParams.value.pageNo = 1;
   getList();
 }
-// /** 重置按钮操作 */
-// function resetQuery() {
-//    dateRange.value = [];
-//    proxy.resetForm("queryRef");
-//    queryParams.value.deptId = undefined;
-//    proxy.$refs.deptTreeRef.setCurrentKey(null);
-//    handleQuery();
-// };
+
 /** 启用按钮操作 */
 function handleStart(row) {
   const stardIds = row.id || ids.value;
@@ -389,27 +403,17 @@ function handleClose(row) {
     })
     .catch(() => {});
 }
-/** 导出按钮操作 */
-function handleExport() {
-  proxy.download(
-    "system/user/export",
-    {
-      ...queryParams.value,
-    },
-    `user_${new Date().getTime()}.xlsx`
-  );
+/** 清空条件按钮操作 */
+function handleClear() {
+  // queryParams.value.pageNo = 1;
+  // queryParams.value.searchKey = undefined;
+  // queryParams.value.statusEnum = undefined;
+  // queryParams.value.sourceEnum = undefined;
+  // queryParams.value.busNo = undefined;
+  // 清空查询条件
+  proxy.resetForm("queryRef");
+  getList();
 }
-// /** 用户状态修改  */
-// function handleStatusChange(row) {
-//    let text = row.status === "0" ? "启用" : "停用";
-//    proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
-//       return changeUserStatus(row.userId, row.status);
-//    }).then(() => {
-//       proxy.$modal.msgSuccess(text + "成功");
-//    }).catch(function () {
-//       row.status = row.status === "0" ? "1" : "0";
-//    });
-// };
 
 /** 选择条数  */
 function handleSelectionChange(selection) {
@@ -454,7 +458,7 @@ function handleAdd() {
 function handleUpdate(row) {
   reset();
   console.log(row, "row");
-  form.value = row;
+  form.value = JSON.parse(JSON.stringify(row));
   open.value = true;
   title.value = "厂商/产地编辑";
 }
@@ -463,9 +467,6 @@ function submitForm() {
   proxy.$refs["supplierRef"].validate((valid) => {
     if (valid) {
       if (form.value.id != undefined) {
-        // form.value.status
-        //   ? (form.value.statusEnum = "3")
-        //   : (form.value.statusEnum = "2");
         console.log(form.value, "editSupplier", form.value.statusEnum);
         editSupplier(form.value).then((response) => {
           proxy.$modal.msgSuccess("修改成功");
@@ -491,9 +492,9 @@ function handleView(row) {
   getSupplierOne(row.id).then((response) => {
     console.log(response, "responsebbbb", row.id);
     form.value = response.data;
-    //  getList();
   });
 }
+getsupplierTypeList();
 getList();
 </script>
 <style scoped>

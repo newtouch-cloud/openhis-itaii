@@ -661,7 +661,7 @@ function openAddMedicine() {
 }
 /** 打开编辑弹窗 */
 function openEditMedicine(row) {
-  currentData.value = row;
+  currentData.value = JSON.parse(JSON.stringify(row));
   console.log(currentData.value, "currentData");
   // 确保子组件已经接收到最新的 props
   nextTick(() => {
@@ -691,7 +691,7 @@ function handleAdd() {
 function handleUpdate(row) {
   reset();
   console.log(row, "row");
-  form.value = row;
+  form.value = JSON.parse(JSON.stringify(row));
   open.value = true;
   title.value = "病种编辑";
 }

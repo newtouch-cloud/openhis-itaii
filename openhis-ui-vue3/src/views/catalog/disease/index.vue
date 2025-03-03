@@ -61,7 +61,6 @@
           <el-form-item label="是否停用" prop="statusEnum">
             <el-select
               v-model="queryParams.statusEnum"
-              clearable
               style="width: 240px"
             >
               <el-option
@@ -200,8 +199,8 @@
           <el-table-column
             label="医保对码标志"
             align="center"
-            key="ybMatchflag"
-            prop="ybMatchflag"
+            key="ybMatchFlag"
+            prop="ybMatchFlag"
           />
           <el-table-column
             label="停用"
@@ -380,7 +379,7 @@ function getList() {
 }
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.sourceEnum = data.id;
+  queryParams.value.sourceEnum = data.value;
   handleQuery();
 }
 /** 搜索按钮操作 */
@@ -489,7 +488,7 @@ function handleAdd() {
 function handleUpdate(row) {
   reset();
   console.log(row, "row");
-  form.value = row;
+  form.value = JSON.parse(JSON.stringify(row));
   open.value = true;
   title.value = "病种编辑";
 }

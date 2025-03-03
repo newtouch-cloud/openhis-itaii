@@ -174,9 +174,17 @@ const data = reactive({
   rules: {
     // busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
     // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    // conditionCode: [
-    //   { required: true, message: "编码不能为空", trigger: "blur" },
-    // ],
+    // pyStr: [{ required: true, message: "拼音不能为空", trigger: "blur" }],
+    // wbStr: [{ required: true, message: "五笔拼音不能为空", trigger: "blur" }],
+    // categoryEnum: [{ required: true, message: "器材分类不能为空", trigger: "blur" }],
+    // typeCode: [{ required: true, message: "器材种类不能为空", trigger: "blur" }],
+    // unitCode: [{ required: true, message: "包装单位不能为空", trigger: "blur" }],
+    // size: [{ required: true, message: "包装规格不能为空", trigger: "blur" }],
+    // partPercent: [{ required: true, message: "拆零比不能为空", trigger: "blur" }],
+    // minUnitCode: [{ required: true, message: "最小使用单位不能为空", trigger: "blur" }],
+    // modelNumber: [{ required: true, message: "产品型号不能为空", trigger: "blur" }],
+    // hvcmFlag: [{ required: true, message: "高值器材标志不能为空", trigger: "blur" }],    
+    // salesUnitCode: [{ required: true, message: "销售单位不能为空", trigger: "blur" }],
   },
 });
 
@@ -195,6 +203,7 @@ const props = defineProps({
 
 // 显示弹框
 function show() {
+  reset();
   // queryParams.roleId = props.roleId;
   // getList();
   title.value = "";
@@ -204,6 +213,7 @@ function show() {
 }
 // 显示弹框
 function edit() {
+  reset();
   // queryParams.roleId = props.roleId;
   // getList();
   title.value = "";
@@ -236,6 +246,9 @@ function reset() {
 
 /** 提交按钮 */
 function submitForm() {
+  form.value.ybFlag ? (form.value.ybFlag = 1) : (form.value.ybFlag = 0);
+  form.value.ybMatchFlag ? (form.value.ybMatchFlag = 1) : (form.value.ybMatchFlag = 0);
+  form.value.ruleId ? (form.value.ruleId = 1) : (form.value.ruleId = 0);
   if (form.value.id != undefined) {
     editDiagnosisTreatment(form.value).then((response) => {
       // 触发自定义事件，并传递数据给父组件
@@ -256,7 +269,7 @@ function submitForm() {
 }
 /** 取消按钮 */
 function cancel() {
-  open.value = false;
+  visible.value = false;
   reset();
 }
 defineExpose({

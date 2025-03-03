@@ -40,7 +40,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item label="状态" prop="statusEnum" label-width="50">
-                <el-select v-model="queryParams.statusEnum" clearable>
+                <el-select v-model="queryParams.statusEnum">
                   <el-option
                     v-for="status in statusFlagOptions"
                     :key="status.value"
@@ -56,11 +56,7 @@
                 prop="ybMatchFlag"
                 label-width="100"
               >
-                <el-select
-                  v-model="queryParams.ybMatchFlag"
-                  placeholder=""
-                  clearable
-                >
+                <el-select v-model="queryParams.ybMatchFlag" placeholder="">
                   <el-option
                     v-for="item in exeOrganizations"
                     :key="item.value"
@@ -397,7 +393,8 @@ const filterNode = (value, data) => {
 function getDiseaseTreatmentList() {
   getDiseaseTreatmentInit().then((response) => {
     console.log(response, "response器材目录分类查询下拉树结构");
-    diseaseTreatmentCategoryList.value = response.data.diseaseTreatmentCategoryList;
+    diseaseTreatmentCategoryList.value =
+      response.data.diseaseTreatmentCategoryList;
     statusFlagOptions.value = response.data.statusFlagOptions;
     exeOrganizations.value = response.data.exeOrganizations;
   });
@@ -414,18 +411,21 @@ function getList() {
 }
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.categoryEnum = data.id;
+  console.log(data, "节点单击事件");
+  queryParams.value.categoryEnum = data.value;
+  console.log(queryParams, "queryParams节点单击事件");
   handleQuery();
 }
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNo = 1;
+  console.log(queryParams, "queryParams搜索");
   getList();
 }
 
 /** 启用按钮操作 */
 function handleStart() {
-  const stardIds =  ids.value;
+  const stardIds = ids.value;
   //   selectedData
   proxy.$modal
     .confirm("是否确定启用数据！")
@@ -440,7 +440,7 @@ function handleStart() {
 }
 /** 停用按钮操作 */
 function handleClose() {
-  const stopIds =  ids.value;
+  const stopIds = ids.value;
   proxy.$modal
     .confirm("是否确认停用数据！")
     .then(function () {
@@ -467,7 +467,7 @@ function handleExport() {
 function handleSelectionChange(selection) {
   console.log(selection, "selection");
   // selectedData.value = selection.map((item) => ({ ...item })); // 存储选择的行数据
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }
@@ -492,7 +492,13 @@ function openAddDiagnosisTreatment() {
 /** 打开编辑弹窗 */
 function openEditDiagnosisTreatment(row) {
   console.log("打开新增弹窗");
-  currentData.value = row;
+  currentData.value = JSON.parse(JSON.stringify(row));
+  currentData.value.ybFlag == 1
+    ? (currentData.value.ybFlag = true)
+    : (currentData.value.ybFlag = false);
+  currentData.value.ybMatchFlag == 1
+    ? (currentData.value.ybMatchFlag = true)
+    : (currentData.value.ybMatchFlag = false);
   console.log(currentData.value, "currentData");
   title.value = "编辑";
   // 确保子组件已经接收到最新的 props
@@ -506,6 +512,12 @@ function openViewDiagnosisTreatment(row) {
   // viewData.value = row;
   getDiagnosisTreatmentOne(row.id).then((response) => {
     currentData.value = response.data;
+    currentData.value.ybFlag == 1
+      ? (currentData.value.ybFlag = true)
+      : (currentData.value.ybFlag = false);
+    currentData.value.ybMatchFlag == 1
+      ? (currentData.value.ybMatchFlag = true)
+      : (currentData.value.ybMatchFlag = false);
     title.value = "查看";
     nextTick(() => {
       proxy.$refs["diagnosisTreatmentRef"].edit();
@@ -519,7 +531,6 @@ function openViewDiagnosisTreatment(row) {
   // });
   // proxy.$refs["diagnosisTreatmentRef"].edit();
 }
-
 
 getDiseaseTreatmentList();
 getList();

@@ -56,11 +56,7 @@
                 prop="ybMatchFlag"
                 label-width="100"
               >
-                <el-select
-                  v-model="queryParams.ybMatchFlag"
-                  placeholder=""
-                  clearable
-                >
+                <el-select v-model="queryParams.ybMatchFlag" placeholder="">
                   <el-option
                     v-for="item in exeOrganizations"
                     :key="item.value"
@@ -482,7 +478,7 @@ function getList() {
 }
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.categoryEnum = data.id;
+  queryParams.value.categoryEnum = data.value;
   handleQuery();
 }
 /** 搜索按钮操作 */
@@ -493,7 +489,7 @@ function handleQuery() {
 
 /** 启用按钮操作 */
 function handleStart() {
-  const stardIds =  ids.value;
+  const stardIds = ids.value;
   //   selectedData
   proxy.$modal
     .confirm("是否确定启用数据！")
@@ -508,7 +504,7 @@ function handleStart() {
 }
 /** 停用按钮操作 */
 function handleClose() {
-  const stopIds =  ids.value;
+  const stopIds = ids.value;
   proxy.$modal
     .confirm("是否确认停用数据！")
     .then(function () {
@@ -535,7 +531,7 @@ function handleExport() {
 function handleSelectionChange(selection) {
   console.log(selection, "selection");
   // selectedData.value = selection.map((item) => ({ ...item })); // 存储选择的行数据
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }
@@ -559,10 +555,24 @@ function openAddDevice() {
 }
 /** 打开编辑弹窗 */
 function openEditDevice(row) {
-  currentData.value = {}
+  currentData.value = {};
   console.log("打开编辑弹窗");
-  currentData.value = row;
+  currentData.value = JSON.parse(JSON.stringify(row));
   console.log(currentData.value, "currentData");
+  currentData.value.hvcmFlag == 1
+    ? (currentData.value.hvcmFlag = true)
+    : (currentData.value.hvcmFlag = false);
+  currentData.value.ybFlag == 1
+    ? (currentData.value.ybFlag = true)
+    : (currentData.value.ybFlag = false);
+  currentData.value.ybMatchFlag == 1
+    ? (currentData.value.ybMatchFlag = true)
+    : (currentData.value.ybMatchFlag = false);
+  currentData.value.allergenFlag == 1
+    ? (currentData.value.allergenFlag = true)
+    : (currentData.value.allergenFlag = false);
+  console.log(currentData.value, "currentDataform");
+
   title.value = "编辑";
   // 确保子组件已经接收到最新的 props
   nextTick(() => {
@@ -575,6 +585,18 @@ function openViewDevice(row) {
   // viewData.value = row;
   getDeviceOne(row.id).then((response) => {
     currentData.value = response.data;
+    currentData.value.hvcmFlag == 1
+      ? (currentData.value.hvcmFlag = true)
+      : (currentData.value.hvcmFlag = false);
+    currentData.value.ybFlag == 1
+      ? (currentData.value.ybFlag = true)
+      : (currentData.value.ybFlag = false);
+    currentData.value.ybMatchFlag == 1
+      ? (currentData.value.ybMatchFlag = true)
+      : (currentData.value.ybMatchFlag = false);
+    currentData.value.allergenFlag == 1
+      ? (currentData.value.allergenFlag = true)
+      : (currentData.value.allergenFlag = false);
     title.value = "查看";
     nextTick(() => {
       proxy.$refs["deviceRef"].edit();
@@ -588,7 +610,6 @@ function openViewDevice(row) {
   // });
   // proxy.$refs["deviceRef"].edit();
 }
-
 
 getDiseaseTreatmentList();
 getList();
