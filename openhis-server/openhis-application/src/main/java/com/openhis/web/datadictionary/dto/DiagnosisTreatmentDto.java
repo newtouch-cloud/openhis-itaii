@@ -44,12 +44,14 @@ public class DiagnosisTreatmentDto {
 
     /** 医保标记 */
     private Integer ybFlag;
+    private String ybFlag_enumText;
 
     /** 医保编码 */
     private String ybNo;
 
     /** 医保对码标记 */
     private Integer ybMatchFlag;
+    private String ybMatchFlag_enumText;
 
     /** 状态 */
     private PublicationStatus statusEnum;

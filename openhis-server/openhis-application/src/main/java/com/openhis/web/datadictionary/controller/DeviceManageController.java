@@ -27,6 +27,8 @@ import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.DeviceCategory;
 import com.openhis.common.enums.OrganizationType;
 import com.openhis.common.enums.PublicationStatus;
+import com.openhis.common.enums.WhetherContainUnknown;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.datadictionary.dto.DeviceManageDto;
@@ -101,9 +103,22 @@ public class DeviceManageController {
             new HashSet<>(Arrays.asList("bus_no", "name", "py_str", "wb_str")), request);
         // 设置排序
         queryWrapper.orderByAsc("bus_no");
+
         // 分页查询
         Page<DeviceManageDto> deviceManagePage =
             HisPageUtils.selectPage(DeviceDefinitionMapper, queryWrapper, pageNo, pageSize, DeviceManageDto.class);
+
+        deviceManagePage.getRecords().forEach(e -> {
+            // 高值器材标志枚举类回显赋值
+            e.setHvcmFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getHvcmFlag()));
+            // 医保标记枚举类回显赋值
+            e.setYbFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbFlag()));
+            // 医保对码标记枚举类回显赋值
+            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbMatchFlag()));
+            // 过敏标记枚举类回显赋值
+            e.setAllergenFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getAllergenFlag()));
+        });
+
         // 返回【器材目录列表DTO】分页
         return R.ok(deviceManagePage);
     }

@@ -27,6 +27,8 @@ import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.ActivityDefCategory;
 import com.openhis.common.enums.OrganizationType;
 import com.openhis.common.enums.PublicationStatus;
+import com.openhis.common.enums.WhetherContainUnknown;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.datadictionary.dto.DiagnosisTreatmentDto;
@@ -137,6 +139,14 @@ public class DiagnosisTreatmentController {
         // 分页查询
         Page<DiagnosisTreatmentDto> diseaseTreatmentPage = HisPageUtils.selectPage(activityDefinitionMapper,
             queryWrapper, pageNo, pageSize, DiagnosisTreatmentDto.class);
+
+        diseaseTreatmentPage.getRecords().forEach(e -> {
+            // 医保标记枚举类回显赋值
+            e.setYbFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbFlag()));
+            // 医保对码标记枚举类回显赋值
+            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbMatchFlag()));
+        });
+
         // 返回【诊疗目录列表DTO】分页
         return R.ok(diseaseTreatmentPage);
     }

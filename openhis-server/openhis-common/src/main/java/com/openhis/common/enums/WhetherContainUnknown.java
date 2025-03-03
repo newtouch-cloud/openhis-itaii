@@ -1,6 +1,7 @@
 package com.openhis.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum WhetherContainUnknown {
+public enum WhetherContainUnknown implements HisEnumInterface {
     NO(0, "no", "否"),
     YES(1, "yes", "是"),
     UNKNOWN(2, "unknown", "未知");

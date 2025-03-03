@@ -58,6 +58,7 @@ public class DeviceManageDto {
 
     /** 高值器材标志 */
     private Integer hvcmFlag;
+    private String hvcmFlag_enumText;
 
     /** 销售单位 */
     private String salesUnitCode;
@@ -67,12 +68,14 @@ public class DeviceManageDto {
 
     /** 医保标记 */
     private Integer ybFlag;
+    private String ybFlag_enumText;
 
     /** 医保编码 */
     private String ybNo;
 
     /** 医保对码标记 */
     private Integer ybMatchFlag;
+    private String ybMatchFlag_enumText;
 
     /** 状态 */
     private PublicationStatus statusEnum;
@@ -100,4 +103,5 @@ public class DeviceManageDto {
 
     /** 过敏标记 */
     private Integer allergenFlag;
+    private String allergenFlag_enumText;
 }
