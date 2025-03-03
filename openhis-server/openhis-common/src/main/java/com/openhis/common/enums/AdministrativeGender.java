@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum AdministrativeGender implements ValueEnum {
+public enum AdministrativeGender implements HisEnumInterface {
     MALE(1, "male", "男性"),
     FEMALE(2, "female", "女性"),
     OTHER(3, "other", "其他"),
