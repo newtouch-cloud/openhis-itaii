@@ -20,4 +20,12 @@ public interface IPatientService extends IService<Patient> {
      * @return 出生日
      */
     Date extractBirthday(String idCard);
+
+    /**
+     * 判断日期是否为未来时间
+     *
+     * @param date 字符串日期
+     * @return 是/否
+     */
+    boolean  isFuture(String date);
 }
