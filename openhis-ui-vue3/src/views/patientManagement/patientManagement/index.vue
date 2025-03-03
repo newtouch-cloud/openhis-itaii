@@ -1,12 +1,12 @@
 <template>
 	<div class="app-container">
 		<el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
-		   <el-form-item label="病人名称" prop="patientname">
-		      <el-input v-model="queryParams.patientname"  placeholder="请输入病人名称" clearable style="width: 200px"
+		   <el-form-item label="病人名称" prop="name">
+		      <el-input v-model="queryParams.name"  placeholder="请输入病人名称/缩写" clearable style="width: 200px"
 		         @keyup.enter="handleQuery" />
 		   </el-form-item>
-		   <el-form-item label="病人ID" prop="patientid">
-		      <el-input v-model="queryParams.patientid"  placeholder="请输入病人ID" clearable style="width: 200px"
+		   <el-form-item label="病人ID" prop="busNo">
+		      <el-input v-model="queryParams.busNo"  placeholder="请以输入病人ID" clearable style="width: 200px"
 		         @keyup.enter="handleQuery" />
 		   </el-form-item>
 		   <el-form-item>
@@ -48,7 +48,7 @@
 			   </template>
 			</el-table-column>
 		  </el-table>
-		  <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+		  <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNo" v-model:limit="queryParams.pageSize" @pagination="getList" />
 		  
 		  <!-- 添加或修改对话框 -->
 		  <el-dialog :title="title" v-model="open" width="980px" append-to-body>
@@ -76,10 +76,10 @@
 						   <el-input v-model="form.age" clearable :disabled="isViewMode"/>
 						</el-form-item>
 					  </el-col> -->
-					  <el-col :span="8">
+					  <el-col :span="12">
 						<el-form-item label="性别" prop="genderEnum">
 						   <el-radio-group v-model="form.genderEnum" :disabled="isViewMode">
-								<el-radio v-for="item in administrativegenderList" :key="item.value" :label="item.value"  @change="radiochange">
+								<el-radio v-for="item in administrativegenderList" :key="item.value" :label="item.value" >
 									{{ item.info }}
 								</el-radio>
 						   </el-radio-group>
@@ -229,7 +229,7 @@ import {listmaritalstatus,listoccupationtype,lisadministrativegender,listbloodty
 const showSearch = ref(true);
 const open = ref(false);
 const title = ref("");
-const total = ref(1);
+const total = ref();
 const patientList = ref([])
 const maritalstatusList = ref([])  //婚姻
 const occupationtypeList = ref([]) //职业
@@ -242,6 +242,7 @@ const options = ref(pcas); // 地区数据
 const selectedOptions = ref([]); // v-model 绑定的选中值
 
 const { proxy } = getCurrentInstance();
+
 const { patient_gender_enum,sys_idtype,prfs_enum,blood_rh,blood_abo,marital_status_enum,patient_temp_flag,link_relation_code} =
  proxy.useDict("patient_gender_enum", "sys_idtype","prfs_enum","blood_rh","blood_abo","marital_status_enum","patient_temp_flag","link_relation_code");
 
@@ -249,16 +250,16 @@ const data = reactive({
   isViewMode: false,
   form: {},
   queryParams: {
-	pageNum: 1,
+	pageNo: 1,
     pageSize: 10,
-    patientname: undefined,
-    patientid: undefined
+    name: undefined,
+    busNo: undefined
   },
   rules: {
     name: [{ required: true, message: "姓名不能为空", trigger: "blur" }],
     idCard: [
     { required: true, message: '证件号码不能为空', trigger: 'blur' },
-    // { min: 18, message: '证件号码不能少于18位', trigger: 'blur' }
+    { min: 18, message: '证件号码不能少于18位', trigger: 'blur' }
   	],
     phone: [{ required: true, message: "联系方式不能为空", trigger: "blur" }],
   },
@@ -292,7 +293,7 @@ const findNodeByCode = (data, code) => {
 function getList() {
 // console.log("v-region",RegionData)
   listPatient(queryParams.value).then(response => {
-    console.log("res",response)
+    console.log("res",response,queryParams.value)
 	patientList.value = response.data.records
 	total.value = response.data.total;
   });
@@ -304,7 +305,6 @@ function getList() {
   });
   lisadministrativegender().then(response => {
 	administrativegenderList.value = response.data
-	console.log("administrativegenderList.value",administrativegenderList.value)
   });
   listbloodtypeabo().then(response => {
 	bloodtypeaboList.value = response.data
@@ -352,7 +352,7 @@ function reset() {
 }
 /** 搜索按钮操作 */
 function handleQuery() {
-	queryParams.value.pageNum = 1;
+	queryParams.value.pageNo = 1;
   getList();
 }
 /** 重置按钮操作 */
@@ -388,7 +388,7 @@ function handleUpdate(row) {
   title.value = "修改菜单";
 }
 const convertAddressToCodes = (selectedOptions1) => {
-  const [provinceName, cityName, areaName, streetName] = selectedOptions1; // 假设地址格式为 [省, 市, 区, 街道]
+  const [provinceName, cityName, areaName, streetName] = selectedOptions1; 
   const findCode = (data, name) => {
     for (const item of data) {
       if (item.name === name) {
@@ -401,21 +401,16 @@ const convertAddressToCodes = (selectedOptions1) => {
     }
     return null;
   };
-
   const provinceCode = findCode(options.value, provinceName);
   const cityCode = findCode(options.value, cityName);
   const areaCode = findCode(options.value, areaName);
   const streetCode = findCode(options.value, streetName);
-
   return [provinceCode, cityCode, areaCode, streetCode];
 };
 /** 取消按钮 */
 function cancel() {
   open.value = false;
   reset();
-}
-function radiochange(){
-	console.log("form.value.eadio",form.value.genderEnum)
 }
 /** 提交按钮 */
 function submitForm() {
@@ -429,7 +424,6 @@ function submitForm() {
           getList();
         });
       } else {
-		// form.value.prfsEnum = String(form.value.prfsEnum);
 		console.log("form.value",form.value)
         addPatient(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
