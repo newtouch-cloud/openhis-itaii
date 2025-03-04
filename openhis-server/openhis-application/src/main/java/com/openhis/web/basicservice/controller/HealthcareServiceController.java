@@ -119,6 +119,28 @@ public class HealthcareServiceController {
         return R.ok(healthcareServicePage, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
     }
 
+    /**
+     * 服务管理 详情
+     *
+     * @param id 主键
+     * @return 详情
+     */
+    @GetMapping(value = "/healthcare-service-detail/{id}")
+    public R<?> getHealthcareServiceDetail(@PathVariable("id") Long id) {
+        HealthcareServiceDto healthcareServiceDto = new HealthcareServiceDto();
+        healthcareServiceDto.setId(id);
+        // 构建查询条件
+        QueryWrapper<HealthcareServiceDto> queryWrapper = HisQueryUtils.buildQueryWrapper(healthcareServiceDto, null,
+                null, null);
+        IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper.getHealthcareServicePage(
+                new Page<>(1, 1), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, queryWrapper);
+        HealthcareServiceDto healthcareServiceDtoDetail = healthcareServicePage.getRecords().get(0);
+        // 枚举赋值
+        healthcareServiceDtoDetail.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, healthcareServiceDtoDetail.getActiveFlag()))
+                .setAppointmentRequiredFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, healthcareServiceDtoDetail.getAppointmentRequiredFlag()));
+        return R.ok(healthcareServiceDtoDetail);
+    }
+
 
     /**
      * 服务管理 编辑
