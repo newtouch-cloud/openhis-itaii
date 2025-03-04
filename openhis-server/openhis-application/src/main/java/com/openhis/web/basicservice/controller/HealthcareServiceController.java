@@ -105,9 +105,12 @@ public class HealthcareServiceController {
                 new HashSet<>(Arrays.asList("name", "charge_name")), request);
         IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper.getHealthcareServicePage(
                 new Page<>(pageNo, pageSize), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, queryWrapper);
-        // 活动标记-枚举类回显赋值
-        healthcareServicePage.getRecords().forEach(e ->
-                e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()))
+        healthcareServicePage.getRecords().forEach(e -> {
+                    // 活动标记-枚举类回显赋值
+                    e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
+                    // 预约要求-枚举类回显赋值
+                    e.setAppointmentRequiredFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getAppointmentRequiredFlag()));
+                }
         );
         return R.ok(healthcareServicePage, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
     }

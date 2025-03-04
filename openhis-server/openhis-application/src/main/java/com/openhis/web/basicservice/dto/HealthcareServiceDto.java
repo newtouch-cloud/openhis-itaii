@@ -82,6 +82,7 @@ public class HealthcareServiceDto {
      * 预约要求
      */
     private Integer appointmentRequiredFlag;
+    private String appointmentRequiredFlag_enumText;
 
     /**
      * 名称
