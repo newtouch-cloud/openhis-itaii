@@ -3,7 +3,9 @@
  */
 package com.openhis.web.inventorymanage.controller;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
@@ -25,12 +28,10 @@ import com.openhis.administration.service.IPatientService;
 import com.openhis.administration.service.ISupplierService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.medication.service.IMedicationService;
-import com.openhis.web.inventorymanage.dto.InventoryDto;
-import com.openhis.web.inventorymanage.dto.InventoryReceiptInitDto;
-import com.openhis.web.inventorymanage.dto.InventorySearchParam;
-import com.openhis.web.inventorymanage.dto.SaveInventoryReceiptDto;
+import com.openhis.web.inventorymanage.dto.*;
 import com.openhis.workflow.domain.SupplyRequest;
 import com.openhis.workflow.mapper.SupplyRequestMapper;
 import com.openhis.workflow.service.ISupplyRequestService;
@@ -103,12 +104,13 @@ public class PurchaseInventoryController {
         searchFields.add(CommonConstants.FieldName.BusNo);
 
         // 构建查询条件
-        QueryWrapper<InventorySearchParam> queryWrapper =
+        QueryWrapper<SupplyRequest> queryWrapper =
             HisQueryUtils.buildQueryWrapper(inventorySearchParam, searchKey, searchFields, request);
+        // 查询入库单据分页列表
+        Page<InventoryReceiptDto> inventoryReceiptPage =
+            HisPageUtils.selectPage(supplyRequestMapper, queryWrapper, pageNo, pageSize, InventoryReceiptDto.class);
 
-        // Page<InventoryReceiptDto> inventoryReceiptPage= supplyRequestService.page(new
-        // Page<>(pageNo,pageSize),queryWrapper);
-        return R.ok();
+        return R.ok(inventoryReceiptPage);
     }
 
     /**

@@ -30,6 +30,7 @@ import com.openhis.administration.domain.ChargeItemDefApp;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.service.IChargeItemDefAppService;
 import com.openhis.administration.service.IChargeItemDefinitionService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.PublicationStatus;
 import com.openhis.web.datadictionary.dto.ChargeItemDefPageDto;
@@ -68,7 +69,7 @@ public class ItemDefinitionController {
      */
     @GetMapping(value = "/init")
     public R<?> getInitDefinitionOptions(ItemDefSearchParam itemDefSearchParam) {
-        /// TODO: 2025/2/26  收费项目下拉框 暂未做成用枚举代替，后续替换
+        /// TODO: 2025/2/26 收费项目下拉框 暂未做成用枚举代替，后续替换
         List<ChargeItemOptionDto> chargeItemOptions = new ArrayList<>();
         if (DefinitionTypeEnum.MEDICATION.getCode().equals(itemDefSearchParam.getDefinitionType())) {
             // 西药
@@ -155,13 +156,14 @@ public class ItemDefinitionController {
         }
         // 通过 DefinitionType 区分药品定价/器具定价/活动定价
         if (DefinitionTypeEnum.MEDICATION.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
-            queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, "med_medication_definition");
+            queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable,
+                CommonConstants.TableName.MED_MEDICATION_DEFINITION);
             chargeItemDefinitionPage = chargeItemDefSearchMapper.getMedList(new Page<>(pageNo, pageSize), queryWrapper);
         } else if (DefinitionTypeEnum.DEVICE.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
-            queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, "adm_device_definition");
+            queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, CommonConstants.TableName.ADM_DEVICE_DEFINITION);
             chargeItemDefinitionPage = chargeItemDefSearchMapper.getDevList(new Page<>(pageNo, pageSize), queryWrapper);
         } else if (DefinitionTypeEnum.ACTIVITY.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
-            queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, "wor_activity_definition");
+            queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, CommonConstants.TableName.WOR_ACTIVITY_DEFINITION);
             chargeItemDefinitionPage = chargeItemDefSearchMapper.getActList(new Page<>(pageNo, pageSize), queryWrapper);
         }
         return R.ok(chargeItemDefinitionPage, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));

@@ -36,6 +36,21 @@ public class CommonConstants {
          * 服务管理
          */
         String ADM_HEALTHCARE_SERVICE = "adm_healthcare_service";
+
+        /**
+         * 药品定义
+         */
+        String MED_MEDICATION_DEFINITION = "med_medication_definition";
+
+        /**
+         * 器材定义
+         */
+        String ADM_DEVICE_DEFINITION = "adm_device_definition";
+
+        /**
+         * 活动定义
+         */
+        String WOR_ACTIVITY_DEFINITION = "wor_activity_definition";
     }
 
     /**
