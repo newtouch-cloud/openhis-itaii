@@ -1,4 +1,5 @@
 package com.openhis.common.enums;
+
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +9,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum EncounterClass {
+public enum EncounterClass implements HisEnumInterface {
     IMP(1, "IMP", "住院"),
 
     AMB(2, "AMB", "门诊"),

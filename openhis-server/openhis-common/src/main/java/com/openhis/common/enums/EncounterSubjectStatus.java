@@ -3,7 +3,9 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
+/**
+ * 就诊对象状态
+ */
 @Getter
 @AllArgsConstructor
 public enum EncounterSubjectStatus implements HisEnumInterface {

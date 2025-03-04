@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum EncounterStatus {
+public enum EncounterStatus implements HisEnumInterface {
     PLANNED(1, "draft", "已安排"),
 
     IN_PROGRESS(2, "in-progress", "进行中"),
