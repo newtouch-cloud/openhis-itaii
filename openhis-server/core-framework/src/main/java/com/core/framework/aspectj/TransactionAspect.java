@@ -9,6 +9,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+/**
+ * 事务处理
+ */
 @Aspect
 @Component
 public class TransactionAspect {

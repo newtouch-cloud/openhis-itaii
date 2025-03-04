@@ -25,7 +25,6 @@ import com.openhis.web.basicservice.dto.HealthcareServiceInitDto;
 import com.openhis.web.basicservice.mapper.HealthcareServiceBizMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,7 +96,7 @@ public class HealthcareServiceController {
      * @return 列表信息
      */
     @GetMapping(value = "/healthcare-service-page")
-    public R<?> getHealthcareServicePage(@RequestBody HealthcareServiceDto healthcareServiceDto,
+    public R<?> getHealthcareServicePage(HealthcareServiceDto healthcareServiceDto,
                                          @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
                                          @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
@@ -106,7 +105,7 @@ public class HealthcareServiceController {
                 new HashSet<>(Arrays.asList("name", "charge_name")), request);
         IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper.getHealthcareServicePage(
                 new Page<>(pageNo, pageSize), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, queryWrapper);
-        // 枚举类回显赋值
+        // 活动标记-枚举类回显赋值
         healthcareServicePage.getRecords().forEach(e ->
                 e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()))
         );
