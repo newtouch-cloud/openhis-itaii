@@ -3,7 +3,9 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
+/**
+ * 就诊类型
+ */
 @Getter
 @AllArgsConstructor
 public enum EncounterClass {
