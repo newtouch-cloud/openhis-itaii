@@ -1,7 +1,5 @@
 package com.openhis.web.patientmanage.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +12,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.openhis.common.enums.AdministrativeGender;
 import com.openhis.common.enums.EncounterSubjectStatus;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.web.patientmanage.dto.OutpatientRecordDto;
 import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
-import com.openhis.web.patientmanage.dto.PatientListDto;
 import com.openhis.web.patientmanage.mapper.PatientManageMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,42 +45,6 @@ public class OutpatientRecordController {
     }
 
     /**
-     * 获取性别列表
-     */
-    @GetMapping("/list-administrativegender")
-    public R<?> getAdministrativeGender() {
-        // 获取性别
-        List<AdministrativeGender> statusList = Arrays.asList(AdministrativeGender.values());
-        List<PatientListDto> dtos = new ArrayList<>();
-        // 取得更新值
-        for (AdministrativeGender status : statusList) {
-            PatientListDto dto = new PatientListDto();
-            dto.setValue(status.getValue());
-            dto.setInfo(status.getInfo());
-            dtos.add(dto);
-        }
-        return R.ok(dtos);
-    }
-
-    /**
-     * 获取就诊状态列表
-     */
-    @GetMapping("/list-encountersubjectstatus")
-    public R<?> getEncounterSubjectStatus() {
-        // 获取就诊状态
-        List<EncounterSubjectStatus> statusList = Arrays.asList(EncounterSubjectStatus.values());
-        List<PatientListDto> dtos = new ArrayList<>();
-        // 取得更新值
-        for (EncounterSubjectStatus status : statusList) {
-            PatientListDto dto = new PatientListDto();
-            dto.setValue(status.getValue());
-            dto.setInfo(status.getInfo());
-            dtos.add(dto);
-        }
-        return R.ok(dtos);
-    }
-
-    /**
      * 分页查询门诊记录,可选条件
      *
      * @param outpatientRecordSearchParam 查询条件
@@ -102,10 +64,17 @@ public class OutpatientRecordController {
         // 查询总记录数
         long total = patientManageMapper.countOutpatientRecords(outpatientRecordSearchParam);
         // 创建Page对象并设置属性
-        Page<OutpatientRecordDto> OutpatientRecordPage = new Page<>(pageNo, pageSize, total);
-        OutpatientRecordPage.setRecords(listOutpatientRecords);
+        Page<OutpatientRecordDto> outpatientRecordPage = new Page<>(pageNo, pageSize, total);
+        outpatientRecordPage.setRecords(listOutpatientRecords);
+        outpatientRecordPage.getRecords().forEach(e -> {
+            // 性别枚举类回显赋值
+            e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
+            // 就诊对象状态枚举类回显赋值
+            e.setSubjectStatusEnum_enumText(
+                EnumUtils.getInfoByValue(EncounterSubjectStatus.class, e.getSubjectStatusEnum()));
+        });
 
-        return R.ok(OutpatientRecordPage);
+        return R.ok(outpatientRecordPage);
     }
 
 }

@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum EncounterSubjectStatus {
+public enum EncounterSubjectStatus implements HisEnumInterface {
     PLANNED(1, "arrived", "已到达"),
 
     TRIAGED(2, "triaged", "已分诊"),
