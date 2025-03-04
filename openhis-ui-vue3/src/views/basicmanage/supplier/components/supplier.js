@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import { parseStrEmpty } from "@/utils/openhis";
 
-// 查询病种目录列表
+// 查询厂商列表
 export function getSupplierList(query) {
   return request({
     url: '/data-dictionary/supplier/get-supplier-list',
@@ -10,7 +10,7 @@ export function getSupplierList(query) {
   })
 }
 
-// 查询病种目录详细
+// 查询厂商详细
 export function getSupplierOne(id) {
   return request({
     url: '/data-dictionary/supplier/get-supplier-detail/' + parseStrEmpty(id),
@@ -18,7 +18,7 @@ export function getSupplierOne(id) {
   })
 }
 
-// 新增病种目录
+// 新增厂商
 export function addSupplier(data) {
   return request({
     url: '/data-dictionary/supplier/add-supplier',
@@ -27,7 +27,7 @@ export function addSupplier(data) {
   })
 }
 
-// 修改病种目录
+// 修改厂商
 export function editSupplier(data) {
   return request({
     url: '/data-dictionary/supplier/edit-supplier',
@@ -36,7 +36,7 @@ export function editSupplier(data) {
   })
 }
 
-// // 删除病种目录
+// // 删除厂商
 // export function delUser(userId) {
 //   return request({
 //     url: '/system/user/' + userId,
@@ -44,7 +44,7 @@ export function editSupplier(data) {
 //   })
 // }
 
-// 停用病种目录
+// 停用厂商
 export function stopSupplier(ids) {
   return request({
     url: '/data-dictionary/supplier/information-stop',
@@ -53,7 +53,7 @@ export function stopSupplier(ids) {
   })
 }
 
-// 启用病种目录
+// 启用厂商
 export function startSupplier(ids) {
   return request({
     url: '/data-dictionary/supplier/information-start',
