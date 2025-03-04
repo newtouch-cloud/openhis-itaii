@@ -44,6 +44,13 @@
     <dependencyManagement>
         <dependencies>
 
+            <!-- 小程序应用 -->
+            <dependency>
+                <groupId>com.openhis</groupId>
+                <artifactId>openhis-miniapp</artifactId>
+                <version>${openhis.version}</version>
+            </dependency>
+
             <!-- 应用 -->
             <dependency>
                 <groupId>com.openhis</groupId>
@@ -286,6 +293,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>openhis-miniapp</module>
         <module>openhis-application</module>
         <module>openhis-domain</module>
         <module>openhis-common</module>
