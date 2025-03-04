@@ -28,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -139,17 +140,23 @@ public class HealthcareServiceController {
     /**
      * 服务管理 删除
      *
-     * @param id ID
+     * @param ids ID
      * @return 删除结果
      */
     @DeleteMapping(value = "/healthcare-service")
-    public R<?> delete(@RequestParam Long id) {
-        boolean res = iHealthcareServiceService.removeById(id);
+    public R<?> delete(@RequestParam String ids) {
+        List<Long> idsList = new ArrayList<>();
+        if (ids != null) {
+            idsList = Arrays.stream(ids.split(",")).map(Long::parseLong).collect(Collectors.toList());
+        }
+        boolean res = iHealthcareServiceService.removeByIds(idsList);
         // 同时删除非同定价
-        LambdaQueryWrapper<ChargeItemDefinition> QueryWrapper = new LambdaQueryWrapper<>();
-        QueryWrapper.eq(ChargeItemDefinition::getInstanceId, id).
-                eq(ChargeItemDefinition::getInstanceTable, CommonConstants.TableName.ADM_HEALTHCARE_SERVICE);
-        iChargeItemDefinitionService.remove(QueryWrapper);
+        for (Long id : idsList) {
+            LambdaQueryWrapper<ChargeItemDefinition> QueryWrapper = new LambdaQueryWrapper<>();
+            QueryWrapper.eq(ChargeItemDefinition::getInstanceId, id).
+                    eq(ChargeItemDefinition::getInstanceTable, CommonConstants.TableName.ADM_HEALTHCARE_SERVICE);
+            iChargeItemDefinitionService.remove(QueryWrapper);
+        }
         return res ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[]{"服务管理"})) :
                 R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00006, null));
     }
