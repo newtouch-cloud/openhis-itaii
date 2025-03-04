@@ -53,6 +53,7 @@ public class SupplierDto {
 
     /** 活动标识 */
     private Integer activeFlag;
+    private String activeFlag_enumText;
 
     /** 机构编号 */
     @JsonSerialize(using = ToStringSerializer.class)

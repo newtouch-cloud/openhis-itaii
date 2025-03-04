@@ -19,7 +19,9 @@ import com.openhis.administration.domain.Supplier;
 import com.openhis.administration.mapper.SupplierMapper;
 import com.openhis.administration.service.ISupplierService;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.AccountStatus;
 import com.openhis.common.enums.SupplierType;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.datadictionary.dto.*;
@@ -84,6 +86,10 @@ public class SupplierManagementController {
         // 分页查询
         Page<SupplierDto> supplierPage =
                 HisPageUtils.selectPage(supplierMapper, queryWrapper, pageNo, pageSize, SupplierDto.class);
+        // 枚举类回显赋值
+        supplierPage.getRecords().forEach(e ->
+                        e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()))
+        );
         // 返回【病种目录列表DTO】分页
         return R.ok(supplierPage);
     }
@@ -124,14 +130,14 @@ public class SupplierManagementController {
     /**
      * 厂商/产地详细查询
      *
-     * @param supplierId 查询条件
+     * @param id 查询条件
      * @return 厂商/产地查询结果
      */
-    @GetMapping(value = "/get-supplier-detail")
-    public R<?> getSupplierDetail(@RequestParam(name = "id", required = true) String supplierId) {
+    @GetMapping(value = "/get-supplier-detail/{id}")
+    public R<?> getSupplierDetail(@PathVariable("id") Long id) {
         SupplierDto supplierDto = new SupplierDto();
         // 根据ID查询【供应商信息】
-        Supplier supplier = supplierService.getById(supplierId);
+        Supplier supplier = supplierService.getById(id);
         BeanUtils.copyProperties(supplier, supplierDto);
         return R.ok(supplierDto);
     }
