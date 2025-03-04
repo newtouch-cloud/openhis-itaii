@@ -37,10 +37,10 @@ public class Encounter extends HisBaseEntity {
     private String busNo;
 
     /** 状态编码 */
-    private EncounterStatus statusEnum;
+    private Integer statusEnum;
 
     /** 类别编码 */
-    private EncounterClass classEnum;
+    private Integer classEnum;
 
     /** 类别医保编码 */
     private Integer ybClassEnum;
@@ -49,16 +49,16 @@ public class Encounter extends HisBaseEntity {
     private String classJson;
 
     /** 优先级编码 */
-    private ActPriority priorityEnum;
+    private Integer priorityEnum;
 
     /** 分类编码 */
-    private EncounterType typeEnum;
+    private Integer typeEnum;
 
     /** 服务ID */
     private Long serviceTypeId;
 
     /** 就诊对象状态 */
-    private EncounterSubjectStatus subjectStatusEnum;
+    private Integer subjectStatusEnum;
 
     /** 开始时间 */
     private Date startTime;
