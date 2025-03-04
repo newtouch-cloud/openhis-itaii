@@ -101,7 +101,7 @@ public class PatientInformationDto {
 
     /** 血型ABO */
     private Integer bloodAbo;
-    private String bloodAbo_text;
+    private String bloodAbo_enumText;
 
     /** 血型RH */
     private Integer bloodRh;

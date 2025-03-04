@@ -38,8 +38,7 @@
         pt.organization_id,
         pt.create_time
         FROM adm_patient pt
-        <!-- 类型不一致，把organization_id转换成字符串类型-->
-        LEFT JOIN adm_organization ogt ON CAST(pt.organization_id AS VARCHAR) = ogt.bus_no
+        LEFT JOIN adm_organization ogt ON pt.organization_id = ogt.id
         <where>
             <!-- 如果传入busNo参数，且不为空 -->
             <if test="busNo != null and busNo != ''">
@@ -72,7 +71,7 @@
         SELECT COUNT(*)
         FROM adm_patient pt
         <!-- 类型不一致，把organization_id转换成字符串类型-->
-        LEFT JOIN adm_organization ogt ON CAST(pt.organization_id AS VARCHAR) = ogt.bus_no
+        LEFT JOIN adm_organization ogt ON pt.organization_id = ogt.id
         <where>
             <!-- 如果传入busNo参数，且不为空 -->
             <if test="busNo != null and busNo != ''">
@@ -99,6 +98,115 @@
         </where>
     </select>
 
+
     <!-- 门诊记录相关查询-->
+    <select id="getOutpatientRecord" parameterType="com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam"
+            resultType="com.openhis.web.patientmanage.dto.OutpatientRecordDto">
+        SELECT
+        pt.name,
+        pt.id_card,
+        c.description,
+        pt.bus_no,
+        e.bus_no,
+        pt.gender_enum,
+        e.start_time,
+        e.subject_status_enum,
+        ogt.name,
+        p.name,
+        pt.phone
+        FROM
+        adm_encounter e
+        LEFT JOIN
+        adm_organization ogt ON e.organization_id = ogt.id
+        LEFT JOIN
+        adm_patient pt ON e.patient_id = pt.id
+        LEFT JOIN
+        cli_condition c ON e.patient_id = c.patient_id
+        LEFT JOIN
+        adm_encounter_participant ep ON ep.encounter_id = e.id
+        LEFT JOIN
+        adm_practitioner p ON p.id = ep.practitioner_id
+        <where>
+            <!-- 参与者类型是首诊医生 -->
+            ep.type_code = '1'
+            <!-- 如果传入searchKey参数，且不为空 -->
+            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.searchKey != null and OutpatientRecordSearchParam.searchKey != ''">
+                AND pt.id_card LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
+                OR pt.bus_no LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
+                OR e.bus_no LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
+                OR pt.name LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
+            </if>
+
+            <!-- 如果传入phone参数，且不为空 -->
+            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.phone != null and OutpatientRecordSearchParam.phone != ''">
+                AND pt.phone LIKE CONCAT('%',#{phone}, '%')
+            </if>
+
+            <!-- 时间筛选 -->
+            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.startTime != null and OutpatientRecordSearchParam.endTime != null">
+                AND e.start_time BETWEEN #{OutpatientRecordSearchParam.startTime} AND
+                #{OutpatientRecordSearchParam.endTime}
+            </if>
+
+            <!-- 如果传入doctorName参数，且不为空 -->
+            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.doctorName != null and OutpatientRecordSearchParam.doctorName != null">
+                AND p.name = #{OutpatientRecordSearchParam.doctorName}
+            </if>
+        </where>
+        ORDER BY pt.bus_no,e.bus_no,ep.practitioner_id
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countOutpatientRecords" resultType="long">
+        SELECT COUNT(*)
+        FROM
+        adm_encounter e
+        LEFT JOIN
+        adm_organization ogt ON e.organization_id = ogt.id
+        LEFT JOIN
+        adm_patient pt ON e.patient_id = pt.id
+        LEFT JOIN
+        cli_condition c ON e.patient_id = c.patient_id
+        LEFT JOIN
+        adm_encounter_participant ep ON ep.encounter_id = e.id
+        LEFT JOIN
+        adm_practitioner p ON p.id = ep.practitioner_id
+        <where>
+            <!-- 参与者类型是首诊医生 -->
+            ep.type_code = '1'
+            <!-- 如果传入searchKey参数，且不为空 -->
+            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.searchKey != null and OutpatientRecordSearchParam.searchKey != ''">
+                AND pt.id_card LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
+                OR pt.bus_no LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
+                OR e.bus_no LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
+                OR pt.name LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
+            </if>
+
+            <!-- 如果传入phone参数，且不为空 -->
+            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.phone != null and OutpatientRecordSearchParam.phone != ''">
+                AND pt.phone LIKE CONCAT('%',#{phone}, '%')
+            </if>
+
+            <!-- 时间筛选 -->
+            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.startTime != null and OutpatientRecordSearchParam.endTime != null">
+                AND e.start_time BETWEEN #{OutpatientRecordSearchParam.startTime} AND
+                #{OutpatientRecordSearchParam.endTime}
+            </if>
+
+            <!-- 如果传入doctorName参数，且不为空 -->
+            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.doctorName != null and OutpatientRecordSearchParam.doctorName != null">
+                AND p.name = #{OutpatientRecordSearchParam.doctorName}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询医生名字列表-->
+    <select id="getDoctorNames" resultType="java.lang.String">
+        SELECT MIN(p.name) AS practitioner_name
+        FROM adm_encounter_participant ep
+                 LEFT JOIN adm_practitioner p ON ep.practitioner_id = p.id
+        WHERE ep.type_code = '1'
+        GROUP BY ep.practitioner_id;
+    </select>
 
 </mapper>
