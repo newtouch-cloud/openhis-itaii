@@ -73,7 +73,6 @@ public class HealthcareServiceController {
      * 服务管理 新增
      */
     @PostMapping(value = "/healthcare-service")
-    @Transactional(rollbackFor = Exception.class)
     public R<?> add(@Validated @RequestBody HealthcareServiceAddOrUpdateParam healthcareServiceAddOrUpdateParam) {
         // 服务管理-表单数据
         HealthcareService healthcareServiceFormData = healthcareServiceAddOrUpdateParam.getHealthcareServiceFormData();
@@ -137,7 +136,6 @@ public class HealthcareServiceController {
      * @return 删除结果
      */
     @DeleteMapping(value = "/healthcare-service")
-    @Transactional(rollbackFor = Exception.class)
     public R<?> delete(@RequestParam Long id) {
         boolean res = iHealthcareServiceService.removeById(id);
         // 同时删除非同定价

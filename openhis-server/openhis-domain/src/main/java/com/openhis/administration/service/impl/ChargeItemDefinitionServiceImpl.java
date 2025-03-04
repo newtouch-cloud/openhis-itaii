@@ -86,7 +86,6 @@ public class ChargeItemDefinitionServiceImpl extends ServiceImpl<ChargeItemDefin
      * @return 新增结果
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public boolean addChargeItemDefinitionByHealthcareService(HealthcareService healthcareService, ChargeItemDefinition chargeItemDefinition) {
         // 服务管理主键id
         if (healthcareService.getId() != null) {

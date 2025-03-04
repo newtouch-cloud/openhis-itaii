@@ -24,7 +24,6 @@ public class HealthcareServiceServiceImpl extends ServiceImpl<HealthcareServiceM
      * @return 入库后信息
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public HealthcareService addHealthcareService(HealthcareService healthcareService) {
         baseMapper.insert(healthcareService);
         return healthcareService;
