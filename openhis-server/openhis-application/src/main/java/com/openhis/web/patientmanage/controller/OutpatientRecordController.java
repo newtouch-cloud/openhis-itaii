@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.openhis.common.enums.AdministrativeGender;
+import com.openhis.common.enums.EncounterSubjectStatus;
 import com.openhis.web.patientmanage.dto.OutpatientRecordDto;
 import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
 import com.openhis.web.patientmanage.dto.PatientListDto;
@@ -55,6 +56,24 @@ public class OutpatientRecordController {
         List<PatientListDto> dtos = new ArrayList<>();
         // 取得更新值
         for (AdministrativeGender status : statusList) {
+            PatientListDto dto = new PatientListDto();
+            dto.setValue(status.getValue());
+            dto.setInfo(status.getInfo());
+            dtos.add(dto);
+        }
+        return R.ok(dtos);
+    }
+
+    /**
+     * 获取就诊状态列表
+     */
+    @GetMapping("/list-encountersubjectstatus")
+    public R<?> getEncounterSubjectStatus() {
+        // 获取就诊状态
+        List<EncounterSubjectStatus> statusList = Arrays.asList(EncounterSubjectStatus.values());
+        List<PatientListDto> dtos = new ArrayList<>();
+        // 取得更新值
+        for (EncounterSubjectStatus status : statusList) {
             PatientListDto dto = new PatientListDto();
             dto.setValue(status.getValue());
             dto.setInfo(status.getInfo());
