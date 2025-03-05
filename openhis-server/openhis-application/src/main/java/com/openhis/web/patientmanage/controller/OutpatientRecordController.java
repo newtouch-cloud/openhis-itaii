@@ -1,11 +1,12 @@
 package com.openhis.web.patientmanage.controller;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
@@ -51,13 +52,9 @@ public class OutpatientRecordController {
      * @param pageSize 每页大小（默认为10）
      */
     @GetMapping("/outpatient-record-page")
-    public R<?> getPatient(OutpatientRecordSearchParam  outpatientRecordSearchParam,
+    public R<?> getPatient(OutpatientRecordSearchParam outpatientRecordSearchParam,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-
-        System.out.println("doctorName"+outpatientRecordSearchParam.getDoctorName());
-        System.out.println("phone"+outpatientRecordSearchParam.getPhone());
-        System.out.println("searchKey"+outpatientRecordSearchParam.getSearchKey());
 
         // 跳过的记录数
         Integer offset = (pageNo - 1) * pageSize;
