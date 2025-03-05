@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.core.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.enums.AssignSeqEnum;
+import com.core.common.utils.*;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.Patient;
 import com.openhis.administration.service.IPatientService;
@@ -181,8 +181,8 @@ public class PatientInformationController {
         patient.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(patient.getName()));
         // 设置五笔首拼
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
-        //设置死亡时间
-        if(patientService.isFuture(patientInformationDto.getDeceasedDate())){
+        // 设置死亡时间
+        if (patientService.isFuture(patientInformationDto.getDeceasedDate())) {
             return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00003, new Object[] {"死亡时间未来时"}));
         }
         patient.setDeceasedDate(DateUtils.parseDate(patientInformationDto.getDeceasedDate()));
@@ -213,8 +213,8 @@ public class PatientInformationController {
         patient.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(patient.getName()));
         // 设置五笔首拼
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
-        //设置死亡时间
-        if(patientService.isFuture(patientInformationDto.getDeceasedDate())){
+        // 设置死亡时间
+        if (patientService.isFuture(patientInformationDto.getDeceasedDate())) {
             return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"死亡时间未来时"}));
         }
         patient.setDeceasedDate(DateUtils.parseDate(patientInformationDto.getDeceasedDate()));
@@ -256,11 +256,12 @@ public class PatientInformationController {
             // 职业编码枚举类回显赋值
             e.setPrfsEnum_enumText(EnumUtils.getInfoByValue(OccupationType.class, e.getPrfsEnum()));
             // 血型ABO枚举类回显赋值
-            e.setBloodAbo_text(EnumUtils.getInfoByValue(BloodTypeABO.class, e.getBloodAbo()));
+            e.setBloodAbo_enumText(EnumUtils.getInfoByValue(BloodTypeABO.class, e.getBloodAbo()));
             // 血型RH枚举类回显赋值
             e.setBloodRh_enumText(EnumUtils.getInfoByValue(BloodTypeRH.class, e.getBloodRh()));
             // 家庭关系枚举类回显赋值
-            e.setLinkRelationCode_enumText(EnumUtils.getInfoByValue(FamilyRelationshipType.class, e.getLinkRelationCode()));
+            e.setLinkRelationCode_enumText(
+                EnumUtils.getInfoByValue(FamilyRelationshipType.class, e.getLinkRelationCode()));
         });
         return R.ok(patientInformationPage);
     }

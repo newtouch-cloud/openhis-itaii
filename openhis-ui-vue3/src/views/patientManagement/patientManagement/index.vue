@@ -26,18 +26,18 @@
 		    <el-table-column prop="idCard" label="身份证号" width="180" />
 		    <el-table-column prop="busNo" label="病人ID" width="180" />
 			<el-table-column prop="name" label="病人名称" width="180" />
-			<el-table-column prop="genderEnum_text" label="性别" width="180" />
-			<el-table-column prop="maritalStatusEnum_text" label="婚姻状况" width="180" /><!--:formatter="formatMaritalStatus"-->
+			<el-table-column prop="genderEnum_enumText" label="性别" width="180" />
+			<el-table-column prop="maritalStatusEnum_enumText" label="婚姻状况" width="180" /><!--:formatter="formatMaritalStatus"-->
 			<el-table-column prop="nationalityCode" label="民族" width="180" />
 			<el-table-column prop="birthDate" label="生日" width="160" />
 			<el-table-column prop="phone" label="电话" width="140" />
 			<el-table-column prop="bloodAbo_text" label="血型ABO" width="140" />
-			<el-table-column prop="bloodRh_text" label="血型RH" width="140" />
+			<el-table-column prop="bloodRh_enumText" label="血型RH" width="140" />
 			<el-table-column prop="linkName" label="联系人" width="180" />
 			<el-table-column prop="linkTelcom" label="联系人电话" width="180" />
-			<el-table-column prop="linkRelationCode_text" label="联系人关系" width="180" />
+			<el-table-column prop="linkRelationCode_enumText" label="联系人关系" width="180" />
 			<el-table-column prop="address" label="家庭地址" width="180" />
-			<el-table-column prop="prfsEnum_text" label="职业" width="180" />
+			<el-table-column prop="prfsEnum_enumText" label="职业" width="180" />
 			<el-table-column prop="workCompany" label="工作单位" width="180" />
 			<el-table-column prop="organizationName" label="登记医院" width="180" />
 			<el-table-column prop="deceasedDate" label="死亡时间" width="180" />
@@ -238,7 +238,7 @@ const administrativegenderList = ref([]) //性别
 const bloodtypeaboList = ref([]) //血型abo
 const bloodtypearhList = ref([]) //血型RH
 const familyrelationshiptypeList = ref([]) //家庭关系
-const addressCom = ref("");
+const addressCom = ref(""); //地址
 
 const options = ref(pcas); // 地区数据
 const selectedOptions = ref([]); // v-model 绑定的选中值
@@ -295,7 +295,6 @@ const findNodeByCode = (data, code) => {
 /** 查询菜单列表 */
 function getList() {
   listPatient(queryParams.value).then(response => {
-    console.log("res",response,queryParams.value)
 	patientList.value = response.data.records
 	total.value = response.data.total;
   });
@@ -386,7 +385,6 @@ function handleUpdate(row) {
   const codes = convertAddressToCodes(selectedOptions1.value);
   selectedOptions.value = codes.filter(code => code !== null);
   isViewMode.value = false;
-  console.log("form.value12",form.value)
   open.value = true;
   title.value = "修改菜单";
 }
@@ -422,25 +420,18 @@ function submitForm() {
       if (form.value.busNo != undefined) {
 		const newAddress = form.value.addressProvince+form.value.addressCity +  form.value.addressDistrict + form.value.addressStreet + form.value.address
 		if (addressCom.value !== newAddress) {
-			console.log("6666666666", form.value.address,addressCom.value);
-    		// 如果不一致，清空并重新赋值
     		form.value.address = newAddress;
-    		console.log("地址已更新为：", form.value.address);
-		} 
-		console.log("form.value.up",form.value)
+		}
         updatePatient(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
-		  reset()
           getList();
         });
       } else {
 		form.value.address = form.value.addressProvince+form.value.addressCity +  form.value.addressDistrict + form.value.addressStreet + form.value.address
-		console.log("form.value",form.value)
         addPatient(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
-		  reset()
           getList();
         });
       }

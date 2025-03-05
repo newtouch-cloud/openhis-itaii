@@ -1,7 +1,5 @@
 package com.openhis.web.basicservice.dto;
 
-import com.openhis.administration.domain.ChargeItemDefinition;
-import com.openhis.administration.domain.HealthcareService;
 import lombok.Data;
 
 /**
@@ -11,15 +9,15 @@ import lombok.Data;
  * @date 2025-02-20
  */
 @Data
-public class HealthcareServiceAddOrUpdateParam{
+public class HealthcareServiceAddOrUpdateParam {
     /**
-     *  服务管理
+     * 服务管理
      */
-    private HealthcareService healthcareServiceFormData;
+    private HealthcareServiceFormData healthcareServiceFormData;
 
     /**
-     *  费用定价
+     * 费用定价
      */
-    private ChargeItemDefinition chargeItemDefinitionFormData;
+    private ChargeItemDefinitionFormData chargeItemDefinitionFormData;
 
 }

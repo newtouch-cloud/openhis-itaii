@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
+import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.domain.HealthcareService;
 import com.openhis.administration.service.IChargeItemDefinitionService;
@@ -19,9 +20,7 @@ import com.openhis.common.enums.AccountStatus;
 import com.openhis.common.enums.WhetherContainUnknown;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
-import com.openhis.web.basicservice.dto.HealthcareServiceAddOrUpdateParam;
-import com.openhis.web.basicservice.dto.HealthcareServiceDto;
-import com.openhis.web.basicservice.dto.HealthcareServiceInitDto;
+import com.openhis.web.basicservice.dto.*;
 import com.openhis.web.basicservice.mapper.HealthcareServiceBizMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -74,13 +74,17 @@ public class HealthcareServiceController {
     @PostMapping(value = "/healthcare-service")
     public R<?> add(@Validated @RequestBody HealthcareServiceAddOrUpdateParam healthcareServiceAddOrUpdateParam) {
         // 服务管理-表单数据
-        HealthcareService healthcareServiceFormData = healthcareServiceAddOrUpdateParam.getHealthcareServiceFormData();
+        HealthcareServiceFormData healthcareServiceFormData = healthcareServiceAddOrUpdateParam.getHealthcareServiceFormData();
         // 费用定价-表单数据
-        ChargeItemDefinition chargeItemDefinitionFormData = healthcareServiceAddOrUpdateParam.getChargeItemDefinitionFormData();
+        ChargeItemDefinitionFormData chargeItemDefinitionFormData = healthcareServiceAddOrUpdateParam.getChargeItemDefinitionFormData();
         // 服务管理-新增
-        HealthcareService healthcareService = iHealthcareServiceService.addHealthcareService(healthcareServiceFormData);
+        HealthcareService healthcareService = new HealthcareService();
+        BeanUtils.copyProperties(healthcareServiceFormData, healthcareService);
+        HealthcareService healthcareServiceAfterAdd = iHealthcareServiceService.addHealthcareService(healthcareService);
         // 同时保存费用定价
-        boolean res = iChargeItemDefinitionService.addChargeItemDefinitionByHealthcareService(healthcareService, chargeItemDefinitionFormData);
+        ChargeItemDefinition chargeItemDefinition = new ChargeItemDefinition();
+        BeanUtils.copyProperties(chargeItemDefinitionFormData, chargeItemDefinition);
+        boolean res = iChargeItemDefinitionService.addChargeItemDefinitionByHealthcareService(healthcareServiceAfterAdd, chargeItemDefinition);
         return res ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[]{"服务管理"})) :
                 R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00010, null));
     }
@@ -105,11 +109,36 @@ public class HealthcareServiceController {
                 new HashSet<>(Arrays.asList("name", "charge_name")), request);
         IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper.getHealthcareServicePage(
                 new Page<>(pageNo, pageSize), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, queryWrapper);
-        // 活动标记-枚举类回显赋值
-        healthcareServicePage.getRecords().forEach(e ->
-                e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()))
+        healthcareServicePage.getRecords().forEach(e -> {
+                    // 活动标记-枚举类回显赋值
+                    e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
+                    // 预约要求-枚举类回显赋值
+                    e.setAppointmentRequiredFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getAppointmentRequiredFlag()));
+                }
         );
         return R.ok(healthcareServicePage, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
+    }
+
+    /**
+     * 服务管理 详情
+     *
+     * @param id 主键
+     * @return 详情
+     */
+    @GetMapping(value = "/healthcare-service-detail/{id}")
+    public R<?> getHealthcareServiceDetail(@PathVariable("id") Long id) {
+        HealthcareServiceDto healthcareServiceDto = new HealthcareServiceDto();
+        healthcareServiceDto.setId(id);
+        // 构建查询条件
+        QueryWrapper<HealthcareServiceDto> queryWrapper = HisQueryUtils.buildQueryWrapper(healthcareServiceDto, null,
+                null, null);
+        IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper.getHealthcareServicePage(
+                new Page<>(1, 1), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, queryWrapper);
+        HealthcareServiceDto healthcareServiceDtoDetail = healthcareServicePage.getRecords().get(0);
+        // 枚举赋值
+        healthcareServiceDtoDetail.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, healthcareServiceDtoDetail.getActiveFlag()))
+                .setAppointmentRequiredFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, healthcareServiceDtoDetail.getAppointmentRequiredFlag()));
+        return R.ok(healthcareServiceDtoDetail);
     }
 
 
@@ -122,8 +151,10 @@ public class HealthcareServiceController {
     @PutMapping(value = "/healthcare-service")
     public R<?> edit(@Validated @RequestBody HealthcareServiceAddOrUpdateParam healthcareServiceAddOrUpdateParam) {
         // 服务管理-表单数据
-        HealthcareService healthcareServiceFormData = healthcareServiceAddOrUpdateParam.getHealthcareServiceFormData();
-        boolean res = iHealthcareServiceService.updateHealthcareService(healthcareServiceFormData);
+        HealthcareServiceFormData healthcareServiceFormData = healthcareServiceAddOrUpdateParam.getHealthcareServiceFormData();
+        HealthcareService healthcareService = new HealthcareService();
+        BeanUtils.copyProperties(healthcareServiceFormData, healthcareService);
+        boolean res = iHealthcareServiceService.updateHealthcareService(healthcareService);
         return res ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[]{"服务管理"})) :
                 R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
     }
@@ -131,17 +162,23 @@ public class HealthcareServiceController {
     /**
      * 服务管理 删除
      *
-     * @param id ID
+     * @param ids ID
      * @return 删除结果
      */
     @DeleteMapping(value = "/healthcare-service")
-    public R<?> delete(@RequestParam Long id) {
-        boolean res = iHealthcareServiceService.removeById(id);
+    public R<?> delete(@RequestParam String ids) {
+        List<Long> idsList = new ArrayList<>();
+        if (ids != null) {
+            idsList = Arrays.stream(ids.split(",")).map(Long::parseLong).collect(Collectors.toList());
+        }
+        boolean res = iHealthcareServiceService.removeByIds(idsList);
         // 同时删除非同定价
-        LambdaQueryWrapper<ChargeItemDefinition> QueryWrapper = new LambdaQueryWrapper<>();
-        QueryWrapper.eq(ChargeItemDefinition::getInstanceId, id).
-                eq(ChargeItemDefinition::getInstanceTable, CommonConstants.TableName.ADM_HEALTHCARE_SERVICE);
-        iChargeItemDefinitionService.remove(QueryWrapper);
+        for (Long id : idsList) {
+            LambdaQueryWrapper<ChargeItemDefinition> QueryWrapper = new LambdaQueryWrapper<>();
+            QueryWrapper.eq(ChargeItemDefinition::getInstanceId, id).
+                    eq(ChargeItemDefinition::getInstanceTable, CommonConstants.TableName.ADM_HEALTHCARE_SERVICE);
+            iChargeItemDefinitionService.remove(QueryWrapper);
+        }
         return res ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[]{"服务管理"})) :
                 R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00006, null));
     }

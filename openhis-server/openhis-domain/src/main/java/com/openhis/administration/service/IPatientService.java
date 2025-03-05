@@ -1,9 +1,10 @@
 package com.openhis.administration.service;
 
-import java.util.Date;
-
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.openhis.administration.domain.Patient;
+
+import java.util.Date;
 
 /**
  * 患者管理Service接口
@@ -15,7 +16,7 @@ public interface IPatientService extends IService<Patient> {
 
     /**
      * 从身份证号码中提取生日
-     * 
+     *
      * @param idCard 身份证号
      * @return 出生日
      */
@@ -27,5 +28,7 @@ public interface IPatientService extends IService<Patient> {
      * @param date 字符串日期
      * @return 是/否
      */
-    boolean  isFuture(String date);
+    boolean isFuture(String date);
+
+
 }

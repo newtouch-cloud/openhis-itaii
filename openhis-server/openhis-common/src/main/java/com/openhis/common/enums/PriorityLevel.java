@@ -5,25 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 就诊类型
+ * 优先级
  */
 @Getter
 @AllArgsConstructor
-public enum EncounterClass implements HisEnumInterface {
-    IMP(1, "IMP", "住院"),
+public enum PriorityLevel implements HisEnumInterface {
 
-    AMB(2, "AMB", "门诊"),
-
-    OBSENC(3, "OBSENC", "留观"),
-
-    EMER(4, "EMER", "急诊"),
-
-    VR(5, "VR", "线上"),
-
-    HH(6, "HH", "家庭");
+    EMERGENCY(1, "EM", "紧急"),
+    PRIORITY(2, "PR", "优先"),
+    ORDINARY(3, "OR", "普通"),
+    NOT_URGENT(4, "NU", "不紧急");
 
     @EnumValue
     private final Integer value;
     private final String code;
     private final String info;
+
 }
