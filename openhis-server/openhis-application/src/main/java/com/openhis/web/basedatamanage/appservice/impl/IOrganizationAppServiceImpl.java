@@ -1,16 +1,18 @@
 package com.openhis.web.basedatamanage.appservice.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.administration.domain.Organization;
 import com.openhis.administration.service.IOrganizationService;
 import com.openhis.web.basedatamanage.appservice.IOrganizationAppService;
 import com.openhis.web.basedatamanage.dto.OrganizationQueryDto;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class IOrganizationAppServiceImpl implements IOrganizationAppService {
@@ -39,7 +41,7 @@ public class IOrganizationAppServiceImpl implements IOrganizationAppService {
     private List<OrganizationQueryDto> buildTree(List<Organization> records) {
         // 按b_no的层级排序，确保父节点先处理
         List<Organization> sortedRecords = records.stream()
-                .sorted(Comparator.comparingInt(r -> r.getBusNo().split("\\.").length)).collect(Collectors.toList());
+            .sorted(Comparator.comparingInt(r -> r.getBusNo().split("\\.").length)).collect(Collectors.toList());
 
         Map<String, OrganizationQueryDto> nodeMap = new HashMap<>();
         List<OrganizationQueryDto> tree = new ArrayList<>();

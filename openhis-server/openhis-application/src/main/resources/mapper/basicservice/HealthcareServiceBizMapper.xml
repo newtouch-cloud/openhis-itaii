@@ -43,7 +43,6 @@
                     adm_healthcare_service AS T1
                         LEFT JOIN adm_charge_item_definition AS T2 ON T2.instance_id = T1.ID
                         AND T2.instance_table = #{tableName}
-                        AND T1.delete_flag = '0'
                 WHERE T1.delete_flag = '0'
                 ORDER BY
                     T1.create_time DESC
