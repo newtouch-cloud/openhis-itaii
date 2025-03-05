@@ -30,13 +30,5 @@ public interface IPatientService extends IService<Patient> {
      */
     boolean isFuture(String date);
 
-    /**
-     * 通过关键字查询患者信息
-     *
-     * @param searchKey 关键字
-     * @param pageNo    当前页码
-     * @param pageSize  查询条数
-     * @return 患者信息
-     */
-    Page<Patient> getPatientBySearchKey(String searchKey, Integer pageNo, Integer pageSize);
+
 }
