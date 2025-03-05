@@ -4,14 +4,14 @@
 package com.openhis.web.outpatientservice.controller;
 
 import com.core.common.core.domain.R;
-import com.openhis.common.enums.AccountStatus;
 import com.openhis.common.enums.PriorityLevel;
-import com.openhis.web.basicservice.dto.HealthcareServiceInitDto;
+import com.openhis.web.outpatientservice.controller.appservice.IOutpatientRegistrationService;
 import com.openhis.web.outpatientservice.dto.OutpatientRegistrationInitDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -27,6 +27,8 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class OutpatientRegistrationController {
 
+    private final IOutpatientRegistrationService iOutpatientRegistrationService;
+
     /**
      * 门诊挂号基础数据初始化
      */
@@ -40,5 +42,21 @@ public class OutpatientRegistrationController {
         outpatientRegistrationInitDto.setPriorityLevelOptionOptions(priorityLevelOptionOptions);
         return R.ok(outpatientRegistrationInitDto);
     }
+
+    /**
+     * 门诊挂号 - 查询患者信息
+     *
+     * @param searchKey 模糊查询关键字
+     * @param pageNo    当前页
+     * @param pageSize  每页多少条
+     * @return 患者信息
+     */
+    @GetMapping(value = "/patient-metadata")
+    public R<?> getPatientMetadata(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
+                                   @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return R.ok(iOutpatientRegistrationService.getPatientMetadataBySearchKey(searchKey, pageNo, pageSize));
+    }
+
 
 }
