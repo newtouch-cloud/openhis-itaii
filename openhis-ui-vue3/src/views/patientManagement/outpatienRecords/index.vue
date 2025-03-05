@@ -9,7 +9,7 @@
 				<el-input v-model="queryParams.phone" placeholder="请输入联系方式" clearable style="width: 200px"
 					@keyup.enter="handleQuery" />
 			</el-form-item>
-			<el-form-item label="病人名称" prop="patientname">
+			<el-form-item label="起始时间">
 				<el-date-picker v-model="dateRange" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
 					start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
 			</el-form-item>
@@ -41,7 +41,7 @@
 			<el-table-column prop="workCompany" label="会诊医生工作单位" width="180" />
 			<el-table-column prop="organizationName" label="协同服务" width="180" /> -->
 		</el-table>
-		<pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+		<pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNo"
 			v-model:limit="queryParams.pageSize" @pagination="getList" />
 	</div>
 </template>
@@ -93,7 +93,7 @@ function getList() {
 /** 搜索按钮操作 */
 function handleQuery() {
 	console.log("123",queryParams.value)
-	queryParams.value.pageNum = 1;
+	queryParams.value.pageNo = 1;
 	getList();
 }
 /** 重置按钮操作 */
