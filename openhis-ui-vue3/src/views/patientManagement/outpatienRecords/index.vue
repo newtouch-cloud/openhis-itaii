@@ -80,7 +80,7 @@ const doctorOptions = computed(() => {
 
 /** 查询门诊记录列表 */
 function getList() {
-	listOutpatienRecords(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
+	listOutpatienRecords(queryParams.value).then(response => {
 		console.log(response);
 		outpatienRecordsList.value = response.data.records;
 		total.value = response.data.total;
@@ -92,8 +92,10 @@ function getList() {
 
 /** 搜索按钮操作 */
 function handleQuery() {
-	console.log("123",queryParams.value)
+	queryParams.value.beginTime = dateRange.value[0];
+	queryParams.value.endTime = dateRange.value[1];
 	queryParams.value.pageNo = 1;
+	console.log("123",queryParams.value,typeof queryParams.value.beginTime)
 	getList();
 }
 /** 重置按钮操作 */
