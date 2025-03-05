@@ -2,7 +2,9 @@ package com.core.common.utils;
 
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 /**
  * 根据出生日期算年龄
@@ -15,7 +17,9 @@ public final class AgeCalculatorUtil {
     /**
      * 当前年龄取得（床位列表表示年龄用）
      */
-    public static String getAge(LocalDateTime dateTime) {
+    public static String getAge(Date date) {
+        // 将 Date 转换为 LocalDateTime
+        LocalDateTime dateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime now = LocalDateTime.now();
         int years = now.getYear() - dateTime.getYear();
         if (years > 2) {
@@ -78,5 +82,4 @@ public final class AgeCalculatorUtil {
     private static boolean isLeapYear(int year) {
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
-
 }

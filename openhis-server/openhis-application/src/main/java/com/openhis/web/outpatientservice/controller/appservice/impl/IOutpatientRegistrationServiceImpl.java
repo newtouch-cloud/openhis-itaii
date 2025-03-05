@@ -3,6 +3,7 @@ package com.openhis.web.outpatientservice.controller.appservice.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.utils.AgeCalculatorUtil;
 import com.openhis.administration.domain.Patient;
 import com.openhis.administration.mapper.PatientMapper;
 import com.openhis.common.enums.AdministrativeGender;
@@ -49,6 +50,8 @@ public class IOutpatientRegistrationServiceImpl implements IOutpatientRegistrati
         patientMetadataPage.getRecords().forEach(e -> {
             // 性别枚举
             e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
+            // 计算年龄
+            e.setAge(AgeCalculatorUtil.getAge(e.getBirthDate()));
         });
         return patientMetadataPage;
     }

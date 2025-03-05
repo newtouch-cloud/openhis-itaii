@@ -30,6 +30,7 @@ public class HealthcareServiceDto {
      * 提供部门ID
      */
     @Dict(dictTable = "adm_organization",dictCode = "id",dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long offeredOrgId;
     private String offeredOrgId_dictText;
 
@@ -58,6 +59,7 @@ public class HealthcareServiceDto {
      * 地点
      */
     @Dict(dictTable = "adm_location",dictCode = "id",dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
     private String locationId_dictText;
 
