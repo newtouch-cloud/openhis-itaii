@@ -1,12 +1,9 @@
-package com.openhis.web.outpatientservice.controller.appservice;
+package com.openhis.web.outpatientservice.appservice;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.web.outpatientservice.dto.PatientMetadata;
 
-/**
- * 门诊挂号 Service
- */
-public interface IOutpatientRegistrationService {
+public interface IOutpatientRegistrationAppService {
 
     /**
      * 门诊挂号 - 查询患者信息
@@ -17,5 +14,4 @@ public interface IOutpatientRegistrationService {
      * @return 患者信息
      */
     Page<PatientMetadata> getPatientMetadataBySearchKey(String searchKey, Integer pageNo, Integer pageSize);
-
 }

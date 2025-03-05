@@ -1,5 +1,4 @@
-package com.openhis.web.outpatientservice.controller.appservice.impl;
-
+package com.openhis.web.outpatientservice.appservice.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,7 +9,7 @@ import com.openhis.common.enums.AdministrativeGender;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
-import com.openhis.web.outpatientservice.controller.appservice.IOutpatientRegistrationService;
+import com.openhis.web.outpatientservice.appservice.IOutpatientRegistrationAppService;
 import com.openhis.web.outpatientservice.dto.PatientMetadata;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ import java.util.HashSet;
  * 门诊挂号 实现类
  */
 @Service
-public class IOutpatientRegistrationServiceImpl implements IOutpatientRegistrationService {
+public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistrationAppService {
 
     @Resource
     PatientMapper patientMapper;
@@ -57,3 +56,4 @@ public class IOutpatientRegistrationServiceImpl implements IOutpatientRegistrati
     }
 
 }
+

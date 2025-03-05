@@ -5,7 +5,8 @@ package com.openhis.web.outpatientservice.controller;
 
 import com.core.common.core.domain.R;
 import com.openhis.common.enums.PriorityLevel;
-import com.openhis.web.outpatientservice.controller.appservice.IOutpatientRegistrationService;
+import com.openhis.web.basedatamanage.appservice.IOrganizationAppService;
+import com.openhis.web.outpatientservice.appservice.IOutpatientRegistrationAppService;
 import com.openhis.web.outpatientservice.dto.OutpatientRegistrationInitDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +28,11 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class OutpatientRegistrationController {
 
-    private final IOutpatientRegistrationService iOutpatientRegistrationService;
+    private final IOutpatientRegistrationAppService iOutpatientRegistrationAppService;
+    private final IOrganizationAppService iOrganizationAppService;
 
     /**
-     * 门诊挂号基础数据初始化
+     * 门诊挂号 - 基础数据初始化
      */
     @GetMapping(value = "/init")
     public R<?> init() {
@@ -55,7 +57,21 @@ public class OutpatientRegistrationController {
     public R<?> getPatientMetadata(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
                                    @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-        return R.ok(iOutpatientRegistrationService.getPatientMetadataBySearchKey(searchKey, pageNo, pageSize));
+        return R.ok(iOutpatientRegistrationAppService.getPatientMetadataBySearchKey(searchKey, pageNo, pageSize));
+    }
+
+    /**
+     * 门诊挂号 - 查询机构树
+     *
+     * @param pageNo   当前页码
+     * @param pageSize 查询条数
+     * @return 机构分页列表
+     */
+    @GetMapping(value = "/organization-tree")
+    public R<?> getOrganizationTree(
+            @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return R.ok(iOrganizationAppService.getOrganizationTree(pageNo, pageSize));
     }
 
 
