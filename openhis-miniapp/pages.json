@@ -3,15 +3,56 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTextStyle": "white",
+				"navigationBarTitleText": "首页"
+			}
+		},
+		{
+			"path": "pages/healthCard/healthCard",
+			"style": {
+				"navigationBarTextStyle": "white",
+				"navigationBarTitleText": "健康卡"
+			}
+		},
+		{
+			"path": "pages/personInfo/personInfo",
+			"style": {
+				"navigationBarTextStyle": "white",
+				"navigationBarTitleText": "个人中心"
 			}
 		}
 	],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarTextStyle": "white",
+		"backgroundColor": "#F8F8F8",
+		"navigationBarBackgroundColor": "#ffffff"
+		// "titleNView": true
 	},
-	"uniIdRouter": {}
+	"uniIdRouter": {},
+
+	"tabBar": {
+		"color": "#282828",
+		"selectedColor": "#00a2f3",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/images/tabbar/shouye.png",
+				"selectedIconPath": "static/images/tabbar/shouye_1.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/healthCard/healthCard",
+				"iconPath": "static/images/tabbar/erweima.png",
+				"selectedIconPath": "static/images/tabbar/erweima_1.png",
+				"text": "健康卡"
+			},
+			{
+				"pagePath": "pages/personInfo/personInfo",
+				"iconPath": "static/images/tabbar/wode.png",
+				"selectedIconPath": "static/images/tabbar/wode_1.png",
+				"text": "个人中心"
+			}
+		]
+	}
 }
