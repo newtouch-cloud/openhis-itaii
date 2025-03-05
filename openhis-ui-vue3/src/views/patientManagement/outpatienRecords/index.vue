@@ -13,7 +13,7 @@
 				<el-date-picker v-model="dateRange" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
 					start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
 			</el-form-item>
-			<el-form-item label="医生" prop="patientid">
+			<el-form-item label="医生" prop="doctorName">
 				<el-select v-model="queryParams.doctorName" placeholder="请选择医生" clearable @keyup.enter="handleQuery"
 					style="width: 160px">
 					<el-option v-for="item in doctorOptions" :key="item.value" :label="item.label"
