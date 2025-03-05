@@ -82,6 +82,9 @@ public class ServiceRequest extends HisBaseEntity {
     /** 执行人 */
     private Long performerId;
 
+    /** 核对人 */
+    private Long performerCheckId;
+
     /** 执行位置 */
     private Long locationId;
 

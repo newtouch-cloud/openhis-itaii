@@ -1,9 +1,9 @@
 package com.core.framework.aspectj;
 
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -17,7 +17,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class TransactionAspect {
 
     private final PlatformTransactionManager transactionManager;
-    private TransactionStatus transactionStatus;
+    private final ThreadLocal<TransactionStatus> transactionStatus = new ThreadLocal<>();
 
     public TransactionAspect(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
@@ -28,7 +28,8 @@ public class TransactionAspect {
             "@annotation(org.springframework.web.bind.annotation.PutMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
     public void beginTransaction() {
-        transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        transactionStatus.set(status);
     }
 
     @AfterReturning("@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
@@ -36,8 +37,10 @@ public class TransactionAspect {
             "@annotation(org.springframework.web.bind.annotation.PutMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
     public void commitTransaction() {
-        if (transactionStatus != null && !transactionStatus.isCompleted()) {
-            transactionManager.commit(transactionStatus);
+        TransactionStatus status = transactionStatus.get();
+        if (status != null && !status.isCompleted()) {
+            transactionManager.commit(status);
+            transactionStatus.remove(); // 清除 ThreadLocal 中的状态
         }
     }
 
@@ -47,8 +50,10 @@ public class TransactionAspect {
             "@annotation(org.springframework.web.bind.annotation.DeleteMapping)",
             throwing = "ex")
     public void rollbackTransaction(Exception ex) {
-        if (transactionStatus != null && !transactionStatus.isCompleted()) {
-            transactionManager.rollback(transactionStatus);
+        TransactionStatus status = transactionStatus.get();
+        if (status != null && !status.isCompleted()) {
+            transactionManager.rollback(status);
+            transactionStatus.remove(); // 清除 ThreadLocal 中的状态
         }
     }
 }
