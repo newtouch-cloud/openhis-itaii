@@ -1,5 +1,7 @@
 package com.openhis.web.basicservice.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.annotation.Dict;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -15,6 +17,7 @@ public class HealthcareServiceDto {
     /**
      * ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
