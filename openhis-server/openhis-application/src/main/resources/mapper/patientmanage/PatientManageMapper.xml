@@ -139,13 +139,14 @@
 
             <!-- 如果传入phone参数，且不为空 -->
             <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.phone != null and OutpatientRecordSearchParam.phone != ''">
-                AND pt.phone LIKE CONCAT('%',#{phone}, '%')
+                AND pt.phone LIKE CONCAT('%',#{OutpatientRecordSearchParam.phone}, '%')
             </if>
 
             <!-- 时间筛选 -->
-            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.startTime != null and OutpatientRecordSearchParam.endTime != null">
-                AND e.start_time BETWEEN #{OutpatientRecordSearchParam.startTime} AND
-                #{OutpatientRecordSearchParam.endTime}
+            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.beginTime != null and OutpatientRecordSearchParam.endTime != null">
+                AND e.start_time BETWEEN
+                TO_TIMESTAMP(#{OutpatientRecordSearchParam.beginTime} || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AND
+                TO_TIMESTAMP(#{OutpatientRecordSearchParam.endTime} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
             </if>
 
             <!-- 如果传入doctorName参数，且不为空 -->
@@ -184,13 +185,14 @@
 
             <!-- 如果传入phone参数，且不为空 -->
             <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.phone != null and OutpatientRecordSearchParam.phone != ''">
-                AND pt.phone LIKE CONCAT('%',#{phone}, '%')
+                AND pt.phone LIKE CONCAT('%',#{OutpatientRecordSearchParam.phone}, '%')
             </if>
 
             <!-- 时间筛选 -->
-            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.startTime != null and OutpatientRecordSearchParam.endTime != null">
-                AND e.start_time BETWEEN #{OutpatientRecordSearchParam.startTime} AND
-                #{OutpatientRecordSearchParam.endTime}
+            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.beginTime != null and OutpatientRecordSearchParam.endTime != null">
+                AND e.start_time BETWEEN
+                TO_TIMESTAMP(#{OutpatientRecordSearchParam.beginTime} || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AND
+                TO_TIMESTAMP(#{OutpatientRecordSearchParam.endTime} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
             </if>
 
             <!-- 如果传入doctorName参数，且不为空 -->
