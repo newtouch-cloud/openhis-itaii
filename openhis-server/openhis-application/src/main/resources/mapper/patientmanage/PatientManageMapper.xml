@@ -106,13 +106,13 @@
         pt.name,
         pt.id_card,
         c.description,
-        pt.bus_no,
-        e.bus_no,
+        pt.bus_no as patientBusNo,
+        e.bus_no as encounterBusNo,
         pt.gender_enum,
-        e.start_time,
+        e.start_time as encounterTime,
         e.subject_status_enum,
-        ogt.name,
-        p.name,
+        ogt.name as organizationName,
+        p.name as doctorName,
         pt.phone
         FROM
         adm_encounter e

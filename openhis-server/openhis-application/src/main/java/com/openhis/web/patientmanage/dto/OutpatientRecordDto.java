@@ -30,12 +30,14 @@ public class OutpatientRecordDto {
 
     /** 性别编码 */
     private Integer genderEnum;
+    private String genderEnum_enumText;
 
     /** 就诊时间 */
     private Date encounterTime;
 
     /** 就诊对象状态 */
     private Integer subjectStatusEnum;
+    private String subjectStatusEnum_enumText;
 
     /** 机构名称/接诊医院 */
     private String organizationName;
