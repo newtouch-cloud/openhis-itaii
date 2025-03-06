@@ -25,7 +25,6 @@ import lombok.experimental.Accessors;
 public class OrganizationQueryDto {
 
     /** ID */
-    @TableId(type = IdType.ASSIGN_ID)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
