@@ -61,6 +61,6 @@ public class ConditionDefinition extends HisBaseEntity {
     private Integer ybMatchFlag;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
 
 }

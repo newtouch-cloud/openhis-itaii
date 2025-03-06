@@ -142,7 +142,7 @@ public class DiseaseManageController {
         for (Long detail : ids) {
             ConditionDefinition conditionDefinition = new ConditionDefinition();
             conditionDefinition.setId(detail);
-            conditionDefinition.setStatusEnum(PublicationStatus.RETIRED);
+            conditionDefinition.setStatusEnum(PublicationStatus.RETIRED.getValue());
             conditionDefinitionList.add(conditionDefinition);
         }
         // 更新病种信息
@@ -165,7 +165,7 @@ public class DiseaseManageController {
         for (Long detail : ids) {
             ConditionDefinition conditionDefinition = new ConditionDefinition();
             conditionDefinition.setId(detail);
-            conditionDefinition.setStatusEnum(PublicationStatus.ACTIVE);
+            conditionDefinition.setStatusEnum(PublicationStatus.ACTIVE.getValue());
             conditionDefinitionList.add(conditionDefinition);
         }
         // 更新病种信息
@@ -185,7 +185,7 @@ public class DiseaseManageController {
         ConditionDefinition conditionDefinition = new ConditionDefinition();
         BeanUtils.copyProperties(diseaseManageUpDto, conditionDefinition);
         // 新增外来病种目录
-        conditionDefinition.setStatusEnum(PublicationStatus.DRAFT);
+        conditionDefinition.setStatusEnum(PublicationStatus.DRAFT.getValue());
         return iConditionDefinitionService.addDisease(conditionDefinition)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"疾病目录"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));

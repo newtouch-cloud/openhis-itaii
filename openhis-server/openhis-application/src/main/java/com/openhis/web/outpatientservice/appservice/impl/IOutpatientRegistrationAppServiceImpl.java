@@ -16,13 +16,18 @@ import com.core.common.utils.AgeCalculatorUtil;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.Patient;
 import com.openhis.administration.mapper.PatientMapper;
+import com.openhis.clinical.domain.ConditionDefinition;
+import com.openhis.clinical.mapper.ConditionDefinitionMapper;
 import com.openhis.common.enums.AdministrativeGender;
+import com.openhis.common.enums.PublicationStatus;
+import com.openhis.common.enums.WhetherContainUnknown;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.financial.domain.Contract;
 import com.openhis.financial.mapper.ContractMapper;
 import com.openhis.web.outpatientservice.appservice.IOutpatientRegistrationAppService;
+import com.openhis.web.outpatientservice.dto.ConditionDefinitionMetadata;
 import com.openhis.web.outpatientservice.dto.ContractMetadata;
 import com.openhis.web.outpatientservice.dto.PatientMetadata;
 
@@ -37,6 +42,9 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
 
     @Resource
     ContractMapper contractMapper;
+
+    @Resource
+    ConditionDefinitionMapper conditionDefinitionMapper;
 
     /**
      * 门诊挂号 - 查询患者信息
@@ -86,6 +94,37 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
             }
             return metadata;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 查询诊断信息
+     *
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 诊断信息
+     */
+    @Override
+    public Page<ConditionDefinitionMetadata> getConditionDefinitionMetadataSearchKey(String searchKey, Integer pageNo,
+        Integer pageSize) {
+        // 构建查询条件
+        ConditionDefinition conditionDefinition = new ConditionDefinition();
+        // 查询状态是有效的
+        conditionDefinition.setStatusEnum(PublicationStatus.ACTIVE.getValue());
+        QueryWrapper<ConditionDefinition> queryWrapper = HisQueryUtils.buildQueryWrapper(conditionDefinition, searchKey,
+            new HashSet<>(Arrays.asList("name", "py_str", "wb_str")), null);
+        // 设置排序
+        queryWrapper.orderByDesc("update_time");
+        // 诊断信息
+        Page<ConditionDefinitionMetadata> conditionDefinitionMetadataPage = HisPageUtils
+            .selectPage(conditionDefinitionMapper, queryWrapper, pageNo, pageSize, ConditionDefinitionMetadata.class);
+        conditionDefinitionMetadataPage.getRecords().forEach(e -> {
+            // 医保标记
+            e.setYbFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbFlag()));
+            // 医保对码标记
+            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbMatchFlag()));
+        });
+        return conditionDefinitionMetadataPage;
     }
 
 }

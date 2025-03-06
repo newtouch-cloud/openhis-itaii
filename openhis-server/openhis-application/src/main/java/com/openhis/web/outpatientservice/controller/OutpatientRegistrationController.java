@@ -74,8 +74,15 @@ public class OutpatientRegistrationController {
     }
 
     /**
-     * 查询第一诊断
+     * 查询诊断信息
      */
+    @GetMapping(value = "/condition-definition-metadata")
+    public R<?> getConditionDefinitionMetadata(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return R
+            .ok(iOutpatientRegistrationAppService.getConditionDefinitionMetadataSearchKey(searchKey, pageNo, pageSize));
+    }
 
     /**
      * 查询就诊位置
