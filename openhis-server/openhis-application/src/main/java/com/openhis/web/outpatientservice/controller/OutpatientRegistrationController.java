@@ -20,6 +20,8 @@ import com.openhis.web.outpatientservice.dto.OutpatientRegistrationInitDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.validation.Valid;
+
 /**
  * 门诊挂号 controller
  */
@@ -128,7 +130,7 @@ public class OutpatientRegistrationController {
      * @return 结果
      */
     @PostMapping(value = "/save")
-    public R<?> saveRegister(@RequestBody OutpatientRegistrationAddParam outpatientRegistrationAddParam) {
+    public R<?> saveRegister(@Valid @RequestBody OutpatientRegistrationAddParam outpatientRegistrationAddParam) {
         return iOutpatientRegistrationAppService.saveRegister(outpatientRegistrationAddParam);
     }
 

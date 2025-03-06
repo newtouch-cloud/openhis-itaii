@@ -17,8 +17,14 @@ import com.core.common.core.domain.R;
 import com.core.common.utils.AgeCalculatorUtil;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
+import com.openhis.administration.domain.Encounter;
+import com.openhis.administration.domain.EncounterLocation;
+import com.openhis.administration.domain.EncounterParticipant;
 import com.openhis.administration.domain.Patient;
 import com.openhis.administration.mapper.PatientMapper;
+import com.openhis.administration.service.IEncounterLocationService;
+import com.openhis.administration.service.IEncounterParticipantService;
+import com.openhis.administration.service.IEncounterService;
 import com.openhis.clinical.domain.ConditionDefinition;
 import com.openhis.clinical.mapper.ConditionDefinitionMapper;
 import com.openhis.common.constant.CommonConstants;
@@ -59,6 +65,15 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
     @Resource
     HealthcareServiceBizMapper healthcareServiceBizMapper;
 
+    @Resource
+    IEncounterService iEncounterService;
+
+    @Resource
+    IEncounterLocationService iEncounterLocationService;
+
+    @Resource
+    IEncounterParticipantService iEncounterParticipantService;
+
     /**
      * 门诊挂号 - 查询患者信息
      *
@@ -71,7 +86,7 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
     public Page<PatientMetadata> getPatientMetadataBySearchKey(String searchKey, Integer pageNo, Integer pageSize) {
         // 构建查询条件
         QueryWrapper<Patient> queryWrapper = HisQueryUtils.buildQueryWrapper(null, searchKey,
-            new HashSet<>(Arrays.asList("id_card","name", "py_str", "wb_str")), null);
+            new HashSet<>(Arrays.asList("id_card", "name", "py_str", "wb_str")), null);
         // 设置排序
         queryWrapper.orderByDesc("update_time");
         // 患者信息
@@ -194,6 +209,40 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
      */
     @Override
     public R<?> saveRegister(OutpatientRegistrationAddParam outpatientRegistrationAddParam) {
+        // 就诊管理-表单数据
+        EncounterFormData encounterFormData = outpatientRegistrationAddParam.getEncounterFormData();
+        // 就诊位置管理-表单数据
+        EncounterLocationFormData encounterLocationFormData =
+            outpatientRegistrationAddParam.getEncounterLocationFormData();
+        // 就诊参数者管理-表单数据
+        EncounterParticipantFormData encounterParticipantFormData =
+            outpatientRegistrationAddParam.getEncounterParticipantFormData();
+
+        // 患者ID
+        Long patientId = encounterFormData.getPatientId();
+        // 服务项目ID
+        Long serviceTypeId = encounterFormData.getServiceTypeId();
+        // 校验是否重复挂号
+        Integer num = outpatientRegistrationAppMapper.getNumByPatientIdAndOrganizationId(patientId, serviceTypeId);
+        if (num > 0) {
+            return R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
+        }
+
+        // 保存就诊信息
+        Encounter encounter = new Encounter();
+        BeanUtils.copyProperties(encounterFormData, encounter);
+        // 就诊ID
+        Long encounterId = iEncounterService.saveEncounter(encounter);
+        // 保存就诊位置信息
+        encounterLocationFormData.setEncounterId(encounterId);
+        EncounterLocation encounterLocation = new EncounterLocation();
+        BeanUtils.copyProperties(encounterLocationFormData, encounterLocation);
+        iEncounterLocationService.saveEncounterLocation(encounterLocation);
+        // 保存就诊参数者信息
+        encounterParticipantFormData.setEncounterId(encounterId);
+        EncounterParticipant encounterParticipant = new EncounterParticipant();
+        BeanUtils.copyProperties(encounterParticipantFormData, encounterParticipant);
+        iEncounterParticipantService.saveEncounterParticipant(encounterParticipant);
 
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"挂号"}));
     }

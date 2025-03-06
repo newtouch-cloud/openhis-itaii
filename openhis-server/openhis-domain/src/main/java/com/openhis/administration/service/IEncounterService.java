@@ -10,5 +10,12 @@ import com.openhis.administration.domain.Encounter;
  * @date 2025-02-20
  */
 public interface IEncounterService extends IService<Encounter> {
+    /**
+     * 保存就诊信息
+     * 
+     * @param encounter 就诊信息
+     * @return 保存后的信息
+     */
+    Long saveEncounter(Encounter encounter);
 
 }

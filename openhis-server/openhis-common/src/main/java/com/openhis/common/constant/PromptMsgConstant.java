@@ -58,4 +58,6 @@ public class PromptMsgConstant {
         String M00010 = "apl.common.M00010";
 
     }
+
+
 }

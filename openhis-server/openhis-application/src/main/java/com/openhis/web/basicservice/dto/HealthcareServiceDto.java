@@ -90,6 +90,12 @@ public class HealthcareServiceDto {
     private String appointmentRequiredFlag_enumText;
 
     /**
+     * 费用定价ID
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long definitionId;
+
+    /**
      * 名称
      */
     private String chargeName;

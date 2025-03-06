@@ -19,6 +19,7 @@
             T3.extra_details,
             T3.contact,
             T3.appointment_required_flag,
+            T3.definition_id,
             T3.charge_name,
             T3.price
         FROM
@@ -37,6 +38,7 @@
                     T1.extra_details,
                     T1.contact,
                     T1.appointment_required_flag,
+                    T2.id AS definition_id,
                     T2.charge_name,
                     T2.price
                 FROM

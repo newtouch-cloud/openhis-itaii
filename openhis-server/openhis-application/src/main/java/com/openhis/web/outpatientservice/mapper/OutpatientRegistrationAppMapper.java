@@ -14,9 +14,17 @@ import com.openhis.web.outpatientservice.dto.PractitionerMetadata;
  */
 @Repository
 public interface OutpatientRegistrationAppMapper {
-
+    /**
+     * 查询医生
+     */
     IPage<PractitionerMetadata> getPractitionerMetadataPage(@Param("page") Page<PractitionerMetadata> page,
         @Param("locationId") Long locationId, @Param("RoleCode") String RoleCode,
         @Param(Constants.WRAPPER) QueryWrapper<PractitionerMetadata> queryWrapper);
+
+    /**
+     * 根据病人id和科室id查询当日挂号次数
+     */
+    Integer getNumByPatientIdAndOrganizationId(@Param("patientId") Long patientId,
+        @Param("serviceTypeId") Long serviceTypeId);
 
 }

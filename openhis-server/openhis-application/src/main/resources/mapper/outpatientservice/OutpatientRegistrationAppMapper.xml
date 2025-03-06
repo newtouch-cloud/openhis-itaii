@@ -12,8 +12,7 @@
                T3.py_str,
                T3.wb_str
         FROM (
-                 SELECT
-                        T1.tenant_id,
+                 SELECT T1.tenant_id,
                         T1.ID,
                         T1.NAME,
                         T1.gender_enum,
@@ -28,6 +27,16 @@
                                 AND T2.ROLE_code = #{RoleCode})
              ) AS T3
             ${ew.customSqlSegment}
+    </select>
+
+    <select id="getNumByPatientIdAndOrganizationId" resultType="Integer">
+        SELECT COUNT
+                   (1)
+        FROM adm_encounter
+        WHERE delete_flag = '0'
+          AND patient_id = #{patientId}
+          AND service_type_id = #{serviceTypeId}
+          AND create_time > CURRENT_DATE
     </select>
 
 </mapper>

@@ -14,6 +14,17 @@ import com.openhis.administration.service.IEncounterParticipantService;
  * @date 2025-02-20
  */
 @Service
-public class EncounterParticipantServiceImpl extends ServiceImpl<EncounterParticipantMapper, EncounterParticipant> implements IEncounterParticipantService {
+public class EncounterParticipantServiceImpl extends ServiceImpl<EncounterParticipantMapper, EncounterParticipant>
+    implements IEncounterParticipantService {
+
+    /**
+     * 保存就诊参与者
+     *
+     * @param encounterParticipant 就诊参与者信息
+     */
+    @Override
+    public void saveEncounterParticipant(EncounterParticipant encounterParticipant) {
+        baseMapper.insert(encounterParticipant);
+    }
 
 }
