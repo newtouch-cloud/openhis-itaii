@@ -1,12 +1,16 @@
 package com.openhis.web.outpatientservice.appservice;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.openhis.web.outpatientservice.dto.ConditionDefinitionMetadata;
-import com.openhis.web.outpatientservice.dto.ContractMetadata;
-import com.openhis.web.outpatientservice.dto.PatientMetadata;
-
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.core.domain.R;
+import com.openhis.web.basicservice.dto.HealthcareServiceDto;
+import com.openhis.web.outpatientservice.dto.*;
+
+/**
+ * 门诊挂号 应用Service
+ */
 public interface IOutpatientRegistrationAppService {
 
     /**
@@ -36,5 +40,37 @@ public interface IOutpatientRegistrationAppService {
      */
     Page<ConditionDefinitionMetadata> getConditionDefinitionMetadataSearchKey(String searchKey, Integer pageNo,
         Integer pageSize);
+
+    /**
+     * 根据位置id筛选医生
+     * 
+     * @param locationId 位置ID
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 筛选医生
+     */
+    IPage<PractitionerMetadata> getPractitionerMetadataByLocationId(Long locationId, String searchKey, Integer pageNo,
+        Integer pageSize);
+
+    /**
+     * 根据机构id筛选服务项目
+     * 
+     * @param organizationId 机构id
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 服务项目
+     */
+    IPage<HealthcareServiceDto> getHealthcareMetadataByOrganizationId(Long organizationId, String searchKey,
+        Integer pageNo, Integer pageSize);
+
+    /**
+     * 保存挂号
+     * 
+     * @param outpatientRegistrationAddParam 就诊表单信息
+     * @return 结果
+     */
+    R<?> saveRegister(OutpatientRegistrationAddParam outpatientRegistrationAddParam);
 
 }

@@ -39,7 +39,7 @@ public class Practitioner extends HisBaseEntity {
     private String nameJson;
 
     /** 性别编码 */
-    private AdministrativeGender genderEnum;
+    private Integer genderEnum;
 
     /** 生日 */
     private Date birthDate;
