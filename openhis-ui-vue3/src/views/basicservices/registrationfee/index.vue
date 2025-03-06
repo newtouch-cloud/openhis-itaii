@@ -63,28 +63,6 @@
           >添加</el-button
         >
       </el-col>
-      <!-- <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Remove"
-          :disabled="multiple"
-          @click="handleClose"
-          v-hasPermi="['system:user:edit']"
-          >停用</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="CirclePlus"
-          :disabled="multiple"
-          @click="handleStart"
-          v-hasPermi="['system:user:remove']"
-          >启用</el-button
-        >
-      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -299,7 +277,7 @@
             <el-form-item label="地点" prop="locationId">
               <el-tree-select
                 v-model="form.locationId"
-                :data="deptOptions"
+                :data="locationOptions"
                 :props="{ value: 'id', label: 'name', children: 'children' }"
                 value-key="id"
                 placeholder="请选择地点"
@@ -363,9 +341,9 @@
         </el-row>
         <el-row :gutter="24">
           <el-col :span="16">
-            <el-form-item label="服务说明" prop="description">
+            <el-form-item label="服务说明" prop="comment">
               <el-input
-                v-model="form.description"
+                v-model="form.comment"
                 :autosize="{ minRows: 4, maxRows: 10 }"
                 type="textarea"
                 placeholder=""
@@ -429,9 +407,9 @@
         </el-row>
         <el-row :gutter="24" v-if="form.id == undefined">
           <el-col :span="16">
-            <el-form-item label="收费说明" prop="comment">
+            <el-form-item label="收费说明" prop="description">
               <el-input
-                v-model="form.comment"
+                v-model="form.description"
                 :autosize="{ minRows: 4, maxRows: 10 }"
                 type="textarea"
                 placeholder=""
@@ -464,6 +442,7 @@ import {
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
+const registrationfeeRef = ref(null); // 初始化 ref
 const {
   adm_location,
   category_code,
@@ -617,7 +596,7 @@ function reset() {
     cwTypeCode: undefined,
     fwTypeCode: undefined,
     specialtyCode: undefined,
-    locationId: 1,
+    locationId: undefined,
     offeredOrgId: undefined,
     activeFlag: undefined,
     extraDetails: undefined,
@@ -628,6 +607,7 @@ function reset() {
     description: undefined,
     ybType: undefined,
     title: undefined,
+    comment: undefined,
   };
   proxy.resetForm("registrationfeeRef");
 }
@@ -639,37 +619,12 @@ function cancel() {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
-  // 恢复规则
-  rules.value.cwTypeCode = [
-    { required: true, message: "财务类别不能为空", trigger: "blur" },
-  ];
-  rules.value.ybType = [
-    { required: true, message: "医保类别不能为空", trigger: "blur" },
-  ];
-  rules.value.price = [
-    { required: true, message: "基础价格不能为空", trigger: "blur" },
-  ];
-
-  rules.value.chargeName = [
-    { required: true, message: "名称不能为空", trigger: "blur" },
-  ];
-  rules.value.description = [
-    { required: true, message: "描述不能为空", trigger: "blur" },
-  ];
-
   open.value = true;
   title.value = "新增";
 }
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  // 移除规则
-  rules.value.chargeName = [];
-  rules.value.description = [];
-  rules.value.cwTypeCode = [];
-  rules.value.ybType = [];
-  rules.value.price = [];
-  console.log(row, "row");
   form.value = JSON.parse(JSON.stringify(row));
   form.value.fwTypeCode = form.value.typeCode;
   open.value = true;
@@ -677,6 +632,32 @@ function handleUpdate(row) {
 }
 /** 提交按钮 */
 function submitForm() {
+  if (form.value.id != undefined) {
+    // 移除规则
+    rules.value.chargeName = [];
+    rules.value.description = [];
+    rules.value.cwTypeCode = [];
+    rules.value.ybType = [];
+    rules.value.price = [];
+  } else {
+    // 恢复规则
+    rules.value.cwTypeCode = [
+      { required: true, message: "财务类别不能为空", trigger: "blur" },
+    ];
+    rules.value.ybType = [
+      { required: true, message: "医保类别不能为空", trigger: "blur" },
+    ];
+    rules.value.price = [
+      { required: true, message: "基础价格不能为空", trigger: "blur" },
+    ];
+
+    rules.value.chargeName = [
+      { required: true, message: "名称不能为空", trigger: "blur" },
+    ];
+    rules.value.description = [
+      { required: true, message: "描述不能为空", trigger: "blur" },
+    ];
+  }
   proxy.$refs["registrationfeeRef"].validate((valid) => {
     if (valid) {
       if (form.value.id != undefined) {
@@ -687,6 +668,7 @@ function submitForm() {
         editRegistrationfee(transformFormEditParam).then((response) => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
+          reset();
           getList();
         });
       } else {
@@ -694,6 +676,7 @@ function submitForm() {
         const transformedData = transformFormData(form);
         console.log(transformedData, "transformedData");
         addRegistrationfee(transformedData).then((response) => {
+          reset();
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
@@ -749,6 +732,7 @@ const transformFormData = (form) => {
     description,
     ybType,
     title,
+    comment,
   } = form.value;
 
   return {
@@ -764,6 +748,7 @@ const transformFormData = (form) => {
       contact,
       appointmentRequiredFlag,
       extraDetails,
+      comment,
     },
     chargeItemDefinitionFormData: {
       id,
@@ -799,6 +784,7 @@ const transformFormEditData = (form) => {
     description,
     ybType,
     title,
+    comment,
   } = form.value;
 
   return {
@@ -814,11 +800,13 @@ const transformFormEditData = (form) => {
       contact,
       appointmentRequiredFlag,
       extraDetails,
+      comment,
     },
   };
 };
 getregistrationfeeTypeList();
 getDeptTree();
+getLocationTree();
 getList();
 </script>
 <style scoped>

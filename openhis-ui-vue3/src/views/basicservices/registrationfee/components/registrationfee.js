@@ -56,7 +56,7 @@ export function deptTreeSelect(queryParams) {
 // 查询地点树形数据
 export function locationTreeSelect(queryParams) {
   return request({
-    url: '/basedatamanage/organization/organization',
+    url: '/basedatamanage/cabinet-location/cabinet-location',
     method: 'get',
     param: queryParams
   })
