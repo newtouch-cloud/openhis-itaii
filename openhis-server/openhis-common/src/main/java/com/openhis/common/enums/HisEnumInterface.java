@@ -5,5 +5,6 @@ package com.openhis.common.enums;
  */
 public interface HisEnumInterface {
     Integer getValue();
+    String getCode();
     String getInfo();
 }

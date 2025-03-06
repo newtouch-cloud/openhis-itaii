@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.outpatientservice.mapper.OutpatientRegistrationAppMapper">
+
+    <select id="getPractitionerMetadataPage" resultType="com.openhis.web.outpatientservice.dto.PractitionerMetadata">
+        SELECT T3.tenant_id,
+               T3.ID,
+               T3.NAME,
+               T3.gender_enum,
+               T3.py_str,
+               T3.wb_str
+        FROM (
+                 SELECT
+                        T1.tenant_id,
+                        T1.ID,
+                        T1.NAME,
+                        T1.gender_enum,
+                        T1.py_str,
+                        T1.wb_str
+                 FROM adm_practitioner AS T1
+                 WHERE T1.delete_flag = '0'
+                   AND EXISTS(SELECT 1
+                              FROM adm_practitioner_role AS T2
+                              WHERE T2.practitioner_id = T1.ID
+                                AND T2.location_id = #{locationId}
+                                AND T2.ROLE_code = #{RoleCode})
+             ) AS T3
+            ${ew.customSqlSegment}
+    </select>
+
+</mapper>

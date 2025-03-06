@@ -5,16 +5,17 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 参与者角色
+ */
 @Getter
 @AllArgsConstructor
-public enum EncounterLocationStatus implements HisEnumInterface {
-    PLANNED(1, "planned", "已安排"),
+public enum PractitionerRole implements HisEnumInterface {
+    DOCTOR(1, "doctor", "医生"),
 
-    ACTIVE(2, "active", "使用中"),
+    NURSE(2, "nurse", "护士"),
 
-    RESERVED(3, "reserved", "已保留"),
-
-    COMPLETED(4, "completed", "已用完");
+    PHARMACIST(3, "pharmacist", "药师");
 
     @EnumValue
     private final Integer value;

@@ -1,14 +1,12 @@
 package com.openhis.administration.domain;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
-import com.openhis.common.enums.EncounterLocationStatus;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -36,7 +34,7 @@ public class EncounterLocation extends HisBaseEntity {
     private Long locationId;
 
     /** 状态枚举 */
-    private EncounterLocationStatus statusEnum;
+    private Integer statusEnum;
 
     /** 物理形式枚举 */
     private Integer formEnum;
@@ -46,6 +44,5 @@ public class EncounterLocation extends HisBaseEntity {
 
     /** 结束时间 */
     private Date endTime;
-
 
 }
