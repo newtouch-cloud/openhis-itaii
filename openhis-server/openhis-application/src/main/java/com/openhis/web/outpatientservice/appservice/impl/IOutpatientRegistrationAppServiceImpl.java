@@ -7,9 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.openhis.common.constant.CommonConstants;
-import com.openhis.web.basicservice.dto.HealthcareServiceDto;
-import com.openhis.web.basicservice.mapper.HealthcareServiceBizMapper;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -18,11 +15,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.AgeCalculatorUtil;
+import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.Patient;
 import com.openhis.administration.mapper.PatientMapper;
 import com.openhis.clinical.domain.ConditionDefinition;
 import com.openhis.clinical.mapper.ConditionDefinitionMapper;
+import com.openhis.common.constant.CommonConstants;
+import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.AdministrativeGender;
 import com.openhis.common.enums.PractitionerRole;
 import com.openhis.common.enums.PublicationStatus;
@@ -32,6 +32,8 @@ import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.financial.domain.Contract;
 import com.openhis.financial.mapper.ContractMapper;
+import com.openhis.web.basicservice.dto.HealthcareServiceDto;
+import com.openhis.web.basicservice.mapper.HealthcareServiceBizMapper;
 import com.openhis.web.outpatientservice.appservice.IOutpatientRegistrationAppService;
 import com.openhis.web.outpatientservice.dto.*;
 import com.openhis.web.outpatientservice.mapper.OutpatientRegistrationAppMapper;
@@ -69,7 +71,7 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
     public Page<PatientMetadata> getPatientMetadataBySearchKey(String searchKey, Integer pageNo, Integer pageSize) {
         // 构建查询条件
         QueryWrapper<Patient> queryWrapper = HisQueryUtils.buildQueryWrapper(null, searchKey,
-            new HashSet<>(Arrays.asList("name", "py_str", "wb_str")), null);
+            new HashSet<>(Arrays.asList("id_card","name", "py_str", "wb_str")), null);
         // 设置排序
         queryWrapper.orderByDesc("update_time");
         // 患者信息
@@ -192,7 +194,8 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
      */
     @Override
     public R<?> saveRegister(OutpatientRegistrationAddParam outpatientRegistrationAddParam) {
-        return null;
+
+        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"挂号"}));
     }
 
 }
