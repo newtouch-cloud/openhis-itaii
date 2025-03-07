@@ -4,6 +4,7 @@ import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -99,17 +100,16 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      *
      * @return 当日日期
      */
-    public static final String today()
-    {
+    public static final String today() {
         return dateTimeNow(YYYYMMDD);
     }
 
     /**
      * 获取当日日期（可读）
+     * 
      * @return
      */
-    public static final String getStrYmdHmsRead()
-    {
+    public static final String getStrYmdHmsRead() {
         return dateTimeNow(YMDHMS_FOR_READ);
     }
 
@@ -183,4 +183,21 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         ZonedDateTime zdt = localDateTime.atZone(ZoneId.systemDefault());
         return Date.from(zdt.toInstant());
     }
+
+    /**
+     * 计算 m 分钟后的时间
+     *
+     * @param dateTime 开始时间
+     * @param m 计算分钟数
+     * @return m分钟后的时间
+     */
+    public static Date addDateMinute(Date dateTime, Integer m) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateTime);
+        calendar.add(Calendar.MINUTE, m);
+        return calendar.getTime();
+
+    }
+
 }
