@@ -33,9 +33,10 @@ public class OutpatientRegistrationAddParam {
     /**
      * 就诊账户管理-表单数据
      */
-
+    private AccountFormData accountFormData;
     /**
      * 费用项管理-表单数据
      */
+    private ChargeItemFormData chargeItemFormData;
 
 }

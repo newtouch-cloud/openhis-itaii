@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum AccountBillingStatus {
+public enum AccountBillingStatus implements HisEnumInterface {
 
     OPEN (1, "open", "可用"),
 

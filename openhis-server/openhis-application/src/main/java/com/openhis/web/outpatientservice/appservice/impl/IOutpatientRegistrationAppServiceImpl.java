@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.openhis.common.enums.*;
+import com.openhis.common.enums.PractitionerRole;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -17,22 +19,13 @@ import com.core.common.core.domain.R;
 import com.core.common.utils.AgeCalculatorUtil;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
-import com.openhis.administration.domain.Encounter;
-import com.openhis.administration.domain.EncounterLocation;
-import com.openhis.administration.domain.EncounterParticipant;
-import com.openhis.administration.domain.Patient;
+import com.openhis.administration.domain.*;
 import com.openhis.administration.mapper.PatientMapper;
-import com.openhis.administration.service.IEncounterLocationService;
-import com.openhis.administration.service.IEncounterParticipantService;
-import com.openhis.administration.service.IEncounterService;
+import com.openhis.administration.service.*;
 import com.openhis.clinical.domain.ConditionDefinition;
 import com.openhis.clinical.mapper.ConditionDefinitionMapper;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.AdministrativeGender;
-import com.openhis.common.enums.PractitionerRole;
-import com.openhis.common.enums.PublicationStatus;
-import com.openhis.common.enums.WhetherContainUnknown;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
@@ -74,6 +67,12 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
     @Resource
     IEncounterParticipantService iEncounterParticipantService;
 
+    @Resource
+    IAccountService iAccountService;
+
+    @Resource
+    IChargeItemService iChargeItemService;
+
     /**
      * 门诊挂号 - 查询患者信息
      *
@@ -92,12 +91,19 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
         // 患者信息
         Page<PatientMetadata> patientMetadataPage =
             HisPageUtils.selectPage(patientMapper, queryWrapper, pageNo, pageSize, PatientMetadata.class);
+        // 现有就诊过的患者id集合
+        List<Long> patientIdList =
+            iEncounterService.list().stream().map(e -> e.getPatientId()).collect(Collectors.toList());
 
         patientMetadataPage.getRecords().forEach(e -> {
             // 性别枚举
             e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
             // 计算年龄
             e.setAge(AgeCalculatorUtil.getAge(e.getBirthDate()));
+            // 初复诊
+            e.setFirstEnum_enumText(patientIdList.contains(e.getId()) ? EncounterType.FOLLOW_UP.getInfo()
+                : EncounterType.INITIAL.getInfo());
+
         });
         return patientMetadataPage;
     }
@@ -217,6 +223,10 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
         // 就诊参数者管理-表单数据
         EncounterParticipantFormData encounterParticipantFormData =
             outpatientRegistrationAddParam.getEncounterParticipantFormData();
+        // 就诊账户管理-表单数据
+        AccountFormData accountFormData = outpatientRegistrationAddParam.getAccountFormData();
+        // 费用项管理-表单数据
+        ChargeItemFormData chargeItemFormData = outpatientRegistrationAddParam.getChargeItemFormData();
 
         // 患者ID
         Long patientId = encounterFormData.getPatientId();
@@ -227,22 +237,33 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
         if (num > 0) {
             return R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
         }
-
         // 保存就诊信息
         Encounter encounter = new Encounter();
         BeanUtils.copyProperties(encounterFormData, encounter);
         // 就诊ID
-        Long encounterId = iEncounterService.saveEncounter(encounter);
+        Long encounterId = iEncounterService.saveEncounterByRegister(encounter);
         // 保存就诊位置信息
         encounterLocationFormData.setEncounterId(encounterId);
         EncounterLocation encounterLocation = new EncounterLocation();
         BeanUtils.copyProperties(encounterLocationFormData, encounterLocation);
-        iEncounterLocationService.saveEncounterLocation(encounterLocation);
+        iEncounterLocationService.saveEncounterLocationByRegister(encounterLocation);
         // 保存就诊参数者信息
         encounterParticipantFormData.setEncounterId(encounterId);
         EncounterParticipant encounterParticipant = new EncounterParticipant();
         BeanUtils.copyProperties(encounterParticipantFormData, encounterParticipant);
-        iEncounterParticipantService.saveEncounterParticipant(encounterParticipant);
+        iEncounterParticipantService.saveEncounterParticipantByRegister(encounterParticipant);
+        // 保存就诊账户信息
+        accountFormData.setEncounterId(encounterId);
+        Account account = new Account();
+        BeanUtils.copyProperties(accountFormData, account);
+        // 账户ID
+        Long accountId = iAccountService.saveAccountByRegister(account);
+        // 保存就诊费用项
+        chargeItemFormData.setEncounterId(encounterId);
+        chargeItemFormData.setAccountId(accountId);
+        ChargeItem chargeItem = new ChargeItem();
+        BeanUtils.copyProperties(chargeItemFormData, chargeItem);
+        iChargeItemService.saveChargeItemByRegister(chargeItem);
 
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"挂号"}));
     }

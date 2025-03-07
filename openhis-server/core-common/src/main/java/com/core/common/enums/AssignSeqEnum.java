@@ -3,8 +3,6 @@
  */
 package com.core.common.enums;
 
-import com.core.common.utils.StringUtils;
-
 /**
  * 采番前缀枚举
  *
@@ -17,8 +15,12 @@ public enum AssignSeqEnum {
      * 例子
      */
     TEST("1", "例子", "TE"),
-    //患者编号
-    PATIENT_NUM("1", "患者编号", "PN");
+    // 患者编号
+    PATIENT_NUM("1", "患者编号", "PN"),
+    /**
+     * 就诊编号
+     */
+    ENCOUNTER_NUM("1", "就诊编号", "EN");
 
     private final String code;
     private final String info;

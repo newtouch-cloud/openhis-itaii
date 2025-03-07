@@ -18,12 +18,12 @@ public class EncounterParticipantServiceImpl extends ServiceImpl<EncounterPartic
     implements IEncounterParticipantService {
 
     /**
-     * 保存就诊参与者
+     * 门诊挂号时保存就诊参与者
      *
      * @param encounterParticipant 就诊参与者信息
      */
     @Override
-    public void saveEncounterParticipant(EncounterParticipant encounterParticipant) {
+    public void saveEncounterParticipantByRegister(EncounterParticipant encounterParticipant) {
         baseMapper.insert(encounterParticipant);
     }
 

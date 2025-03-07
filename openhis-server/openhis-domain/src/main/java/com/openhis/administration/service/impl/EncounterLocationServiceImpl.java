@@ -18,12 +18,12 @@ public class EncounterLocationServiceImpl extends ServiceImpl<EncounterLocationM
     implements IEncounterLocationService {
 
     /**
-     * 保存就诊位置信息
+     * 门诊挂号时保存就诊位置信息
      *
      * @param encounterLocation 就诊位置信息
      */
     @Override
-    public void saveEncounterLocation(EncounterLocation encounterLocation) {
+    public void saveEncounterLocationByRegister(EncounterLocation encounterLocation) {
         baseMapper.insert(encounterLocation);
     }
 
