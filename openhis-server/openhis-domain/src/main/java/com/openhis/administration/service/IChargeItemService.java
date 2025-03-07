@@ -25,4 +25,11 @@ public interface IChargeItemService extends IService<ChargeItem> {
      * @return 更新结果
      */
     boolean updateChargeItem(ChargeItem chargeItem);
+
+    /**
+     * 门诊挂号时保存 费用项
+     * 
+     * @param chargeItem 费用项
+     */
+    void saveChargeItemByRegister(ChargeItem chargeItem);
 }

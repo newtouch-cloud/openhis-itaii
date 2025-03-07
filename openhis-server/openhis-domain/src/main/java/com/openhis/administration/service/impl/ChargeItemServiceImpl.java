@@ -55,4 +55,14 @@ public class ChargeItemServiceImpl extends ServiceImpl<ChargeItemMapper, ChargeI
             return false;
         }
     }
+
+    /**
+     * 门诊挂号时保存 费用项
+     *
+     * @param chargeItem 费用项
+     */
+    @Override
+    public void saveChargeItemByRegister(ChargeItem chargeItem) {
+        baseMapper.insert(chargeItem);
+    }
 }

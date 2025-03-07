@@ -105,4 +105,9 @@ public class Encounter extends HisBaseEntity {
      */
     private Integer displayOrder;
 
+    /**
+     * 初复诊
+     */
+    private Integer firstEnum;
+
 }

@@ -11,4 +11,11 @@ import com.openhis.administration.domain.Account;
  */
 public interface IAccountService extends IService<Account> {
 
+    /**
+     * 门诊挂号时保存账号信息
+     * 
+     * @param account 账号信息
+     */
+    Long saveAccountByRegister(Account account);
+
 }

@@ -2,10 +2,12 @@ package com.openhis.administration.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.openhis.administration.domain.Encounter;
 import com.openhis.administration.mapper.EncounterMapper;
 import com.openhis.administration.service.IEncounterService;
+import com.openhis.common.enums.EncounterType;
 
 /**
  * 就诊管理Service业务层处理
@@ -23,10 +25,18 @@ public class EncounterServiceImpl extends ServiceImpl<EncounterMapper, Encounter
      * @return 保存后的信息
      */
     @Override
-    public Long saveEncounter(Encounter encounter) {
+    public Long saveEncounterByRegister(Encounter encounter) {
         // 生产就诊编码
 
         // 生产就诊序号
+
+        // 患者ID
+        Long patientId = encounter.getPatientId();
+        // 初复诊
+        Long count = baseMapper.selectCount(new LambdaQueryWrapper<Encounter>().eq(Encounter::getPatientId, patientId));
+        if (count > 0L) {
+            encounter.setFirstEnum(EncounterType.FOLLOW_UP.getValue());
+        }
         baseMapper.insert(encounter);
         return encounter.getId();
     }

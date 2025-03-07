@@ -16,6 +16,6 @@ public interface IEncounterService extends IService<Encounter> {
      * @param encounter 就诊信息
      * @return 保存后的信息
      */
-    Long saveEncounter(Encounter encounter);
+    Long saveEncounterByRegister(Encounter encounter);
 
 }
