@@ -72,10 +72,10 @@ public class CabinetLocationController {
         // locationQueryDto.setFormEnum(LocationForm.CABINET);
         // BeanUtils.copyProperties(locationQueryDto, location);
         Location location = new Location(locationQueryDto.getId(), locationQueryDto.getBusNo(),
-            locationQueryDto.getName(), LocationStatus.ACTIVE, LocationBedStatus.U, LocationMode.INSTANCE,
-            locationQueryDto.getTypeCode(), locationQueryDto.getTypeJson(), locationQueryDto.getPyStr(),
-            locationQueryDto.getWbStr(), LocationForm.CABINET.getValue(), locationQueryDto.getOrganizationId(),
-            locationQueryDto.getDisplayOrder());
+            locationQueryDto.getName(), LocationStatus.ACTIVE.getValue(), LocationBedStatus.U.getValue(),
+            LocationMode.INSTANCE.getValue(), locationQueryDto.getTypeCode(), locationQueryDto.getTypeJson(),
+            locationQueryDto.getPyStr(), locationQueryDto.getWbStr(), LocationForm.CABINET.getValue(),
+            locationQueryDto.getOrganizationId(), locationQueryDto.getDisplayOrder());
 
         boolean saveLocationSuccess = locationService.save(location);
         return saveLocationSuccess
@@ -104,10 +104,10 @@ public class CabinetLocationController {
     public R<?> editLocation(@Validated @RequestBody LocationQueryDto locationQueryDto) {
 
         Location location = new Location(locationQueryDto.getId(), locationQueryDto.getBusNo(),
-            locationQueryDto.getName(), LocationStatus.ACTIVE, LocationBedStatus.U, LocationMode.INSTANCE,
-            locationQueryDto.getTypeCode(), locationQueryDto.getTypeJson(), locationQueryDto.getPyStr(),
-            locationQueryDto.getWbStr(), LocationForm.CABINET.getValue(), locationQueryDto.getOrganizationId(),
-            locationQueryDto.getDisplayOrder());
+            locationQueryDto.getName(), LocationStatus.ACTIVE.getValue(), LocationBedStatus.U.getValue(),
+            LocationMode.INSTANCE.getValue(), locationQueryDto.getTypeCode(), locationQueryDto.getTypeJson(),
+            locationQueryDto.getPyStr(), locationQueryDto.getWbStr(), LocationForm.CABINET.getValue(),
+            locationQueryDto.getOrganizationId(), locationQueryDto.getDisplayOrder());
 
         boolean updateLocationSuccess = locationService.updateById(location);
         return updateLocationSuccess

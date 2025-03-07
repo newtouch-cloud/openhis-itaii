@@ -1,5 +1,7 @@
 package com.openhis.administration.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.openhis.administration.domain.ChargeItem;
 
@@ -12,19 +14,11 @@ import com.openhis.administration.domain.ChargeItem;
 public interface IChargeItemService extends IService<ChargeItem> {
 
     /**
-     * 保存chargeItem相关信息
+     * 创建已计费的采购账单
      * 
-     * @return 保存结果
+     * @param chargeItemList 采购账单
      */
-    boolean saveChargeItem(ChargeItem chargeItem);
-
-    /**
-     * 更新收费项目
-     * 
-     * @param chargeItem 更新内容
-     * @return 更新结果
-     */
-    boolean updateChargeItem(ChargeItem chargeItem);
+    void createBilledPurchaseCharge(List<ChargeItem> chargeItemList);
 
     /**
      * 门诊挂号时保存 费用项

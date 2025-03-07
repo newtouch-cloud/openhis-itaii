@@ -5,6 +5,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.openhis.common.enums.LocationBedStatus;
+import com.openhis.common.enums.LocationMode;
+import com.openhis.common.enums.LocationStatus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +45,12 @@ public class ILocationAppServiceImpl implements ILocationAppService {
         locationQueryDtoPage.getRecords().forEach(e -> {
             // 物理形式枚举回显赋值
             e.setFormEnum_enumText(EnumUtils.getInfoByValue(LocationForm.class, e.getFormEnum()));
+            // 状态编码回显赋值
+            e.setStatusEnum_enumText(EnumUtils.getInfoByValue(LocationStatus.class, e.getStatusEnum()));
+            // 操作状态回显赋值
+            e.setOperationalEnum_enumText(EnumUtils.getInfoByValue(LocationBedStatus.class, e.getOperationalEnum()));
+            // 模式编码回显赋值
+            e.setModeEnum_enumText(EnumUtils.getInfoByValue(LocationMode.class, e.getModeEnum()));
         });
 
         return locationQueryDtoPage;

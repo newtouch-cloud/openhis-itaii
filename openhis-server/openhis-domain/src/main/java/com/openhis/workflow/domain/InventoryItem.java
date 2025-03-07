@@ -31,8 +31,11 @@ public class InventoryItem extends HisBaseEntity {
     /** 物品类别 */
     private Integer categoryEnum;
 
-    /** 编码 */
-    private String busNo;
+    /** 项目 */
+    private String itemTable;
+
+    /** 物品编码 */
+    private Long itemId;
 
     /** 名称 */
     private String name;

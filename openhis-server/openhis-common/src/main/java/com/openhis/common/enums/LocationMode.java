@@ -1,13 +1,14 @@
 package com.openhis.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum LocationMode {
-    INSTANCE (1, "instance", "具体"),
+public enum LocationMode implements HisEnumInterface {
+    INSTANCE(1, "instance", "具体"),
 
     KIND(2, "Kind", "种类");
 

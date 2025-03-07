@@ -74,7 +74,7 @@ public class ChargeItem extends HisBaseEntity {
     /** 费用定价ID */
     private Long definitionId;
 
-    /** applicability表主键 */
+    /** 定价子表主键 */
     private Long applicabilityId;
 
     /** 原价 */
@@ -98,11 +98,17 @@ public class ChargeItem extends HisBaseEntity {
     /** 开立时间 */
     private Date enteredDate;
 
-    /** 医疗服务类型 */
+    /** 医疗服务所在表 */
     private String serviceTable;
 
     /** 医疗服务ID */
     private Long serviceId;
+
+    /** 产品所在表 */
+    private String productTable;
+
+    /** 产品ID */
+    private Long productId;
 
     /** 索赔结果 */
     private Integer claimStateEnum;

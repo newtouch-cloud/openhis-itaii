@@ -1,5 +1,7 @@
 package com.openhis.administration.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,38 +24,13 @@ public class ChargeItemServiceImpl extends ServiceImpl<ChargeItemMapper, ChargeI
     private final ChargeItemMapper chargeItemMapper;
 
     /**
-     * 保存chargeItem相关信息
-     * 
-     * @return 保存结果
-     */
-    @Override
-    public boolean saveChargeItem(ChargeItem chargeItem) {
-        // 假设此处有业务相关处理
-        if (chargeItem.getBusNo() == null) {
-            return false;
-        }
-        return chargeItemMapper.insert(chargeItem) > 0;
-    }
-
-    /**
-     * 更新收费项目
+     * 创建已计费的采购账单
      *
-     * @param chargeItem 更新内容
-     * @return 更新结果
+     * @param chargeItemList 采购账单
      */
     @Override
-    public boolean updateChargeItem(ChargeItem chargeItem) {
-        // 更新样例 一切以实际为主
-        if (chargeItem.getId() != null) {
-            // 获取更新前收费项目，避免更新导致数据库崩溃
-            if (chargeItemMapper.selectById(chargeItem.getId()) == null) {
-                return false;
-            } else {
-                return chargeItemMapper.updateById(chargeItem) > 0;
-            }
-        } else {
-            return false;
-        }
+    public void createBilledPurchaseCharge(List<ChargeItem> chargeItemList) {
+
     }
 
     /**

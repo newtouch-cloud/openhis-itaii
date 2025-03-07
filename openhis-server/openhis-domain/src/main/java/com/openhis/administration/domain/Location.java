@@ -35,13 +35,16 @@ public class Location extends HisBaseEntity {
     private String name;
 
     /** 状态编码 */
-    private LocationStatus statusEnum;
+    // private LocationStatus statusEnum;
+    private Integer statusEnum;
 
     /** 操作状态 */
-    private LocationBedStatus operationalEnum;
+    // private LocationBedStatus operationalEnum;
+    private Integer operationalEnum;
 
     /** 模式编码 */
-    private LocationMode modeEnum;
+    // private LocationMode modeEnum;
+    private Integer modeEnum;
 
     /** 模式编码 */
     private String typeCode;
@@ -65,8 +68,8 @@ public class Location extends HisBaseEntity {
     /** 显示顺序 */
     private Integer displayOrder;
 
-    public Location(Long id, String busNo, String name, LocationStatus statusEnum, LocationBedStatus operationalEnum,
-        LocationMode modeEnum, String typeCode, String typeJson, String pyStr, String wbStr, Integer formEnum,
+    public Location(Long id, String busNo, String name, Integer statusEnum, Integer operationalEnum,
+        Integer modeEnum, String typeCode, String typeJson, String pyStr, String wbStr, Integer formEnum,
         Long organizationId, Integer displayOrder) {
         this.id = id;
         this.busNo = busNo;

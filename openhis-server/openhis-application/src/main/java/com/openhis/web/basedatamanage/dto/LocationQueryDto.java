@@ -39,15 +39,21 @@ public class LocationQueryDto {
 
     /** 状态编码 */
     @NotNull(message = "状态编码不能为空")
-    private LocationStatus statusEnum;
+//    private LocationStatus statusEnum;
+    private Integer statusEnum;
+    private String statusEnum_enumText;
 
     /** 操作状态 */
     @NotNull(message = "操作状态不能为空")
-    private LocationBedStatus operationalEnum;
+//    private LocationBedStatus operationalEnum;
+    private Integer operationalEnum;
+    private String operationalEnum_enumText;
 
     /** 模式编码 */
     @NotNull(message = "模式编码不能为空")
-    private LocationMode modeEnum;
+//    private LocationMode modeEnum;
+    private Integer modeEnum;
+    private String modeEnum_enumText;
 
     /** 模式编码 */
     private String typeCode;

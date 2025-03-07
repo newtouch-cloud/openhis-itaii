@@ -9,19 +9,16 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * 岗位分页查询条件
+ * 员工分页查询条件
  *
  * @author
  * @date 2025-02-21
  */
 @Data
 @Accessors(chain = true)
-public class PractRoleSearchParam implements Serializable {
+public class PractSearchParam implements Serializable {
 
-    /** 专业编码枚举 */
-    private Integer specialtyEnum;
-
-    /** 机构 */
-    private Long orgId;
+    /** 活动标记 */
+    private Integer activeFlag;
 
 }
