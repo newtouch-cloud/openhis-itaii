@@ -51,4 +51,9 @@ public class PatientMetadata {
      */
     private String age;
 
+    /**
+     * 初复诊
+     */
+    private String firstEnum_enumText;
+
 }

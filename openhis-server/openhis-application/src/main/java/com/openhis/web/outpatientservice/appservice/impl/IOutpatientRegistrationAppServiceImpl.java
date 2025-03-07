@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.openhis.common.enums.*;
+import com.openhis.common.enums.PractitionerRole;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -24,10 +26,6 @@ import com.openhis.clinical.domain.ConditionDefinition;
 import com.openhis.clinical.mapper.ConditionDefinitionMapper;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.AdministrativeGender;
-import com.openhis.common.enums.PractitionerRole;
-import com.openhis.common.enums.PublicationStatus;
-import com.openhis.common.enums.WhetherContainUnknown;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
@@ -93,12 +91,19 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
         // 患者信息
         Page<PatientMetadata> patientMetadataPage =
             HisPageUtils.selectPage(patientMapper, queryWrapper, pageNo, pageSize, PatientMetadata.class);
+        // 现有就诊过的患者id集合
+        List<Long> patientIdList =
+            iEncounterService.list().stream().map(e -> e.getPatientId()).collect(Collectors.toList());
 
         patientMetadataPage.getRecords().forEach(e -> {
             // 性别枚举
             e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
             // 计算年龄
             e.setAge(AgeCalculatorUtil.getAge(e.getBirthDate()));
+            // 初复诊
+            e.setFirstEnum_enumText(patientIdList.contains(e.getId()) ? EncounterType.FOLLOW_UP.getInfo()
+                : EncounterType.INITIAL.getInfo());
+
         });
         return patientMetadataPage;
     }
