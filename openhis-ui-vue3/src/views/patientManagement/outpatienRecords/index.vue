@@ -31,6 +31,7 @@
 			<el-table-column prop="idCard" label="身份证" width="180" />
 			<el-table-column prop="description" label="疾病" width="180" />
 			<el-table-column prop="patientBusNo" label="病人ID" width="180" />
+			<el-table-column prop="encounterBusNo" label="门诊号" width="180" />
 			<el-table-column prop="genderEnum_enumText" label="性别" width="80" />
 			<el-table-column prop="phone" label="电话" width="120" />
 			<el-table-column prop="encounterTime" label="就诊时间" width="180" />
