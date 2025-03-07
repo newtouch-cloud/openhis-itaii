@@ -15,7 +15,6 @@
               <el-input
                 v-model="form.busNo"
                 placeholder="请输入编码"
-                maxlength="30"
                 :disabled="form.id != undefined"
               />
             </el-form-item>
@@ -25,7 +24,6 @@
               <el-input
                 v-model="form.name"
                 placeholder="请输入器材名称"
-                maxlength="30"
               />
             </el-form-item>
           </el-col>
@@ -35,14 +33,14 @@
               prop="pyStr"
               class="custom-label-spacing"
             >
-              <el-input v-model="form.pyStr" placeholder="" maxlength="30" />
+              <el-input v-model="form.pyStr" placeholder=""/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="五笔拼音" prop="wbStr">
-              <el-input v-model="form.wbStr" placeholder="" maxlength="30" />
+              <el-input v-model="form.wbStr" placeholder=""/>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -50,13 +48,12 @@
               <el-input
                 v-model="form.categoryEnum"
                 placeholder=""
-                maxlength="30"
               />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="类型" prop="typeCode">
-              <el-input v-model="form.typeCode" placeholder="" maxlength="30" />
+              <el-input v-model="form.typeCode" placeholder=""/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -66,20 +63,19 @@
               <el-input
                 v-model="form.permittedUnitCode"
                 placeholder=""
-                maxlength="30"
               />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="医保标记" prop="ybFlag">
-              <!-- <el-input v-model="form.ybFlag" placeholder="" maxlength="30" /> -->
+              <!-- <el-input v-model="form.ybFlag" placeholder=""/> -->
               <el-checkbox v-model="form.ybFlag"></el-checkbox>
-              <!-- <el-input v-model="form.ybFlag" placeholder="" maxlength="30" /> -->
+              <!-- <el-input v-model="form.ybFlag" placeholder=""/> -->
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="医保编码" prop="conditionCode">
-              <el-input v-model="form.ybNo" placeholder="" maxlength="30" />
+              <el-input v-model="form.ybNo" placeholder=""/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -95,17 +91,15 @@
               <el-input
                 v-model="form.statusEnum"
                 placeholder=""
-                maxlength="30"
               />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="身体部位" prop="bodySiteCode">
-              <!-- <el-input v-model="form.ybFlag" placeholder="" maxlength="30" /> -->
+              <!-- <el-input v-model="form.ybFlag" placeholder=""/> -->
               <el-input
                 v-model="form.bodySiteCode"
                 placeholder=""
-                maxlength="30"
               />
             </el-form-item>
           </el-col>
@@ -116,7 +110,6 @@
               <el-input
                 v-model="form.specimenCode"
                 placeholder=""
-                maxlength="30"
               />
             </el-form-item>
           </el-col>

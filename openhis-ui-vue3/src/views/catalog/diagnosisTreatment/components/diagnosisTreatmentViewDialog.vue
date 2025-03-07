@@ -15,7 +15,6 @@
               <el-input
                 v-model="form.busNo"
                 placeholder="请输入编码"
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -25,7 +24,6 @@
               <el-input
                 v-model="form.name"
                 placeholder="请输入药品名"
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -35,7 +33,6 @@
               <el-input
                 v-model="form.name"
                 placeholder=""
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -59,14 +56,13 @@
               <el-input
                 v-model="form.name"
                 placeholder=""
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="条形码" prop="name">
-              <el-input v-model="form.name" placeholder="" maxlength="30" />
+              <el-input v-model="form.name" placeholder=""/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -92,7 +88,6 @@
               <el-input
                 v-model="form.name"
                 placeholder=""
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -102,7 +97,6 @@
               <el-input
                 v-model="form.name"
                 placeholder=""
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -129,7 +123,6 @@
               <el-input
                 v-model="form.conditionCode"
                 placeholder=""
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -139,7 +132,6 @@
               <el-input
                 v-model="form.name"
                 placeholder=""
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -151,7 +143,6 @@
               <el-input
                 v-model="form.conditionCode"
                 placeholder=""
-                maxlength="30"
                 :disabled="form.id != undefined"
               />
             </el-form-item>
@@ -201,7 +192,6 @@
               <el-input
                 v-model="form.name"
                 placeholder=""
-                maxlength="30"
                 :disabled="form.id != undefined"
                 style="width: 49%"
               />

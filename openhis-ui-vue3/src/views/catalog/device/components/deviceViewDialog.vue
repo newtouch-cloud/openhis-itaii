@@ -15,7 +15,6 @@
               <el-input
                 v-model="form.busNo"
                 placeholder="请输入编码"
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -25,19 +24,13 @@
               <el-input
                 v-model="form.name"
                 placeholder="请输入药品名"
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="拼音码(品名)" prop="name">
-              <el-input
-                v-model="form.name"
-                placeholder=""
-                maxlength="30"
-                :disabled="true"
-              />
+              <el-input v-model="form.name" placeholder="" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -56,17 +49,12 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="批准文号" prop="name">
-              <el-input
-                v-model="form.name"
-                placeholder=""
-                maxlength="30"
-                :disabled="true"
-              />
+              <el-input v-model="form.name" placeholder="" :disabled="true" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="条形码" prop="name">
-              <el-input v-model="form.name" placeholder="" maxlength="30" />
+              <el-input v-model="form.name" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -92,7 +80,6 @@
               <el-input
                 v-model="form.name"
                 placeholder=""
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -102,7 +89,6 @@
               <el-input
                 v-model="form.name"
                 placeholder=""
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -110,11 +96,12 @@
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item
-              label="最小单位"
-              prop="conditionCode"
-            >
-              <el-select v-model="queryParams.status" clearable :disabled="true">
+            <el-form-item label="最小单位" prop="conditionCode">
+              <el-select
+                v-model="queryParams.status"
+                clearable
+                :disabled="true"
+              >
                 <el-option
                   v-for="dict in sys_normal_disable"
                   :key="dict.value"
@@ -129,7 +116,6 @@
               <el-input
                 v-model="form.conditionCode"
                 placeholder=""
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -139,7 +125,6 @@
               <el-input
                 v-model="form.name"
                 placeholder=""
-                maxlength="30"
                 :disabled="true"
               />
             </el-form-item>
@@ -147,11 +132,14 @@
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="处方限量（最小单位）" prop="conditionCode" class="custom-label-spacing">
+            <el-form-item
+              label="处方限量（最小单位）"
+              prop="conditionCode"
+              class="custom-label-spacing"
+            >
               <el-input
                 v-model="form.conditionCode"
                 placeholder=""
-                maxlength="30"
                 :disabled="form.id != undefined"
               />
             </el-form-item>
@@ -186,7 +174,11 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="用药频次" prop="name" :disabled="true">
-              <el-select v-model="queryParams.status" clearable :disabled="true">
+              <el-select
+                v-model="queryParams.status"
+                clearable
+                :disabled="true"
+              >
                 <el-option
                   v-for="dict in sys_normal_disable"
                   :key="dict.value"
@@ -201,7 +193,6 @@
               <el-input
                 v-model="form.name"
                 placeholder=""
-                maxlength="30"
                 :disabled="form.id != undefined"
                 style="width: 49%"
               />
@@ -224,7 +215,11 @@
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="剂型" prop="conditionCode">
-              <el-select v-model="queryParams.status" clearable :disabled="true">
+              <el-select
+                v-model="queryParams.status"
+                clearable
+                :disabled="true"
+              >
                 <el-option
                   v-for="dict in sys_normal_disable"
                   :key="dict.value"

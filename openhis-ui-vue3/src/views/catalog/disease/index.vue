@@ -254,7 +254,6 @@
               <el-input
                 v-model="form.name"
                 placeholder="请输入名称"
-                maxlength="30"
                 :disabled="form.id != undefined"
               />
             </el-form-item>
@@ -264,7 +263,6 @@
               <el-input
                 v-model="form.conditionCode"
                 placeholder="请输入编码"
-                maxlength="30"
                 :disabled="form.id != undefined"
               />
             </el-form-item>

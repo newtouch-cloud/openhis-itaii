@@ -17,7 +17,6 @@
                   <el-input
                     v-model="form.busNo"
                     placeholder="请输入编码"
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -27,7 +26,6 @@
                   <el-input
                     v-model="form.name"
                     placeholder="请输入药品名"
-                    maxlength="30"
                   />
                 </el-form-item>
               </el-col>
@@ -36,7 +34,6 @@
                   <el-input
                     v-model="form.pyStr"
                     placeholder=""
-                    maxlength="30"
                   />
                 </el-form-item>
               </el-col>
@@ -47,13 +44,12 @@
                   <el-input
                     v-model="form.totalVolume"
                     placeholder=""
-                    maxlength="30"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="小规格含量" prop="name">
-                  <el-input v-model="form.name" placeholder="" maxlength="30" />
+                  <el-input v-model="form.name" placeholder=""/>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -61,7 +57,6 @@
                   <el-input
                     v-model="form.merchandiseName"
                     placeholder=""
-                    maxlength="30"
                   />
                 </el-form-item>
               </el-col>
@@ -72,7 +67,6 @@
                   <el-input
                     v-model="form.manufacturerId"
                     placeholder=""
-                    maxlength="30"
                   />
                 </el-form-item>
               </el-col>
@@ -81,7 +75,6 @@
                   <el-input
                     v-model="form.unitCode"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -91,7 +84,6 @@
                   <el-input
                     v-model="form.minUnitCode"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -103,7 +95,6 @@
                   <el-input
                     v-model="form.partPercent"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -113,7 +104,6 @@
                   <el-input
                     v-model="form.name"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -123,7 +113,6 @@
                   <el-input
                     v-model="form.name"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -135,18 +124,17 @@
                   <el-input
                     v-model="form.approvalNumber"
                     placeholder=""
-                    maxlength="30"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="采购单价" prop="name">
-                  <el-input v-model="form.name" placeholder="" maxlength="30" />
+                  <el-input v-model="form.name" placeholder=""/>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="采购拆零价" prop="name">
-                  <el-input v-model="form.name" placeholder="" maxlength="30" />
+                  <el-input v-model="form.name" placeholder=""/>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -222,7 +210,6 @@
                   <el-input
                     v-model="form.dose"
                     placeholder=""
-                    maxlength="30"
                     style="width: 49%"
                   />
                   <el-select
@@ -276,7 +263,7 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item label="剂量单位换算比" prop="name">
-                  <el-input v-model="form.name" placeholder="" maxlength="30" />
+                  <el-input v-model="form.name" placeholder=""/>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -345,7 +332,6 @@
                   <el-input
                     v-model="form.conditionCode"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -388,7 +374,6 @@
                   <el-input
                     v-model="form.name"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -400,7 +385,6 @@
                   <el-input
                     v-model="form.conditionCode"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -410,7 +394,6 @@
                   <el-input
                     v-model="form.restrictedScope"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -420,7 +403,6 @@
                   <el-input
                     v-model="form.restrictedFlag"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -464,7 +446,6 @@
                   <el-input
                     v-model="form.name"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>
@@ -476,7 +457,6 @@
                   <el-input
                     v-model="form.name"
                     placeholder=""
-                    maxlength="30"
                     :disabled="form.id != undefined"
                   />
                 </el-form-item>

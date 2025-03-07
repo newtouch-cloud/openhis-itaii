@@ -228,7 +228,6 @@
               <el-input
                 v-model="form.name"
                 placeholder="请输入服务名称"
-                maxlength="30"
                 :disabled="form.id != undefined"
               />
             </el-form-item>

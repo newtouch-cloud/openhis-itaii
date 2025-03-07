@@ -15,18 +15,13 @@
               <el-input
                 v-model="form.busNo"
                 placeholder="请输入编码"
-                maxlength="30"
                 :disabled="form.id != undefined"
               />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="器材名称" prop="name">
-              <el-input
-                v-model="form.name"
-                placeholder="请输入器材名称"
-                maxlength="30"
-              />
+              <el-input v-model="form.name" placeholder="请输入器材名称" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -35,69 +30,53 @@
               prop="pyStr"
               class="custom-label-spacing"
             >
-              <el-input v-model="form.pyStr" placeholder="" maxlength="30" />
+              <el-input v-model="form.pyStr" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="器材五笔拼音" prop="wbStr">
-              <el-input v-model="form.wbStr" placeholder="" maxlength="30" />
+              <el-input v-model="form.wbStr" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="器材分类" prop="categoryEnum">
-              <el-input
-                v-model="form.categoryEnum"
-                placeholder=""
-                maxlength="30"
-              />
+              <el-input v-model="form.categoryEnum" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="器材种类" prop="typeCode">
-              <el-input v-model="form.typeCode" placeholder="" maxlength="30" />
+              <el-input v-model="form.typeCode" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="包装单位" prop="unitCode">
-              <el-input v-model="form.unitCode" placeholder="" maxlength="30" />
+              <el-input v-model="form.unitCode" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="包装规格" prop="size">
-              <el-input v-model="form.size" placeholder="" maxlength="30" />
+              <el-input v-model="form.size" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="最小单位" prop="minUnitCode">
-              <el-input
-                v-model="form.minUnitCode"
-                placeholder=""
-                maxlength="30"
-              />
+              <el-input v-model="form.minUnitCode" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="拆零比" prop="partPercent">
-              <el-input
-                v-model="form.partPercent"
-                placeholder=""
-                maxlength="30"
-              />
+              <el-input v-model="form.partPercent" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="产品型号" prop="modelNumber">
-              <el-input
-                v-model="form.modelNumber"
-                placeholder=""
-                maxlength="30"
-              />
+              <el-input v-model="form.modelNumber" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -105,7 +84,6 @@
               <!-- <el-input
                 v-model="form.hvcmFlag"
                 placeholder=""
-                maxlength="30"
                 :disabled="form.id != undefined"
               /> -->
               <el-checkbox v-model="form.hvcmFlag"></el-checkbox>
@@ -115,25 +93,17 @@
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="销售单位" prop="salesUnitCode">
-              <el-input
-                v-model="form.salesUnitCode"
-                placeholder=""
-                maxlength="30"
-              />
+              <el-input v-model="form.salesUnitCode" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="批准文号" prop="approvalNumber">
-              <el-input
-                v-model="form.approvalNumber"
-                placeholder=""
-                maxlength="30"
-              />
+              <el-input v-model="form.approvalNumber" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="医保标记" prop="ybFlag">
-              <!-- <el-input v-model="form.ybFlag" placeholder="" maxlength="30" /> -->
+              <!-- <el-input v-model="form.ybFlag" placeholder="" /> -->
               <el-checkbox v-model="form.ybFlag"></el-checkbox>
             </el-form-item>
           </el-col>
@@ -141,7 +111,7 @@
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="医保编码" prop="ybNo">
-              <el-input v-model="form.ybNo" placeholder="" maxlength="30" />
+              <el-input v-model="form.ybNo" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -151,57 +121,41 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="状态" prop="statusEnum">
-              <el-input
-                v-model="form.statusEnum"
-                placeholder=""
-                maxlength="30"
-              />
+              <el-input v-model="form.statusEnum" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="生产厂家" prop="manufacturerId">
-              <el-input
-                v-model="form.manufacturerId"
-                placeholder=""
-                maxlength="30"
-              />
+              <el-input v-model="form.manufacturerId" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="供应商" prop="supplyId">
-              <el-input v-model="form.supplyId" placeholder="" maxlength="30" />
+              <el-input v-model="form.supplyId" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="适用范围" prop="jurisdiction">
-              <el-input
-                v-model="form.jurisdiction"
-                placeholder=""
-                maxlength="30"
-              />
+              <el-input v-model="form.jurisdiction" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="执行科室" prop="ruleId">
-              <el-input v-model="form.ruleId" placeholder="" maxlength="30" />
+              <el-input v-model="form.ruleId" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="器材版本" prop="version">
-              <el-input v-model="form.version" placeholder="" maxlength="30" />
+              <el-input v-model="form.version" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="主要成分" prop="substanceText">
-              <el-input
-                v-model="form.substanceText"
-                placeholder=""
-                maxlength="30"
-              />
+              <el-input v-model="form.substanceText" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -384,8 +338,12 @@ function reset() {
 function submitForm() {
   form.value.hvcmFlag ? (form.value.hvcmFlag = 1) : (form.value.hvcmFlag = 0);
   form.value.ybFlag ? (form.value.ybFlag = 1) : (form.value.ybFlag = 0);
-  form.value.ybMatchFlag ? (form.value.ybMatchFlag = 1) : (form.value.ybMatchFlag = 0);
-  form.value.allergenFlag ? (form.value.allergenFlag = 1) : (form.value.allergenFlag = 0);
+  form.value.ybMatchFlag
+    ? (form.value.ybMatchFlag = 1)
+    : (form.value.ybMatchFlag = 0);
+  form.value.allergenFlag
+    ? (form.value.allergenFlag = 1)
+    : (form.value.allergenFlag = 0);
   console.log(form.value, "form.value");
   if (form.value.id != undefined) {
     editDevice(form.value).then((response) => {
