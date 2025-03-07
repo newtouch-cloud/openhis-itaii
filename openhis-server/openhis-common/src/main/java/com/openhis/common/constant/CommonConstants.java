@@ -43,9 +43,19 @@ public class CommonConstants {
         String MED_MEDICATION_DEFINITION = "med_medication_definition";
 
         /**
+         * 药品信息
+         */
+        String MED_MEDICATION = "med_medication";
+
+        /**
          * 器材定义
          */
         String ADM_DEVICE_DEFINITION = "adm_device_definition";
+
+        /**
+         * 器材信息
+         */
+        String ADM_DEVICE = "adm_device";
 
         /**
          * 活动定义

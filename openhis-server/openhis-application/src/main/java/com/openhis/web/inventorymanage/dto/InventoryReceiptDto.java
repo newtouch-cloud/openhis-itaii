@@ -4,6 +4,7 @@
 package com.openhis.web.inventorymanage.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -14,11 +15,14 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 /**
- * 入库单据分页列表 dto
+ * 入库单据
  *
- * @author zwh
- * @date 2025-02-18
+ * @author ZhangYC
+ * @date 2025-02-20
  */
 @Data
 @Accessors(chain = true)
@@ -31,37 +35,85 @@ public class InventoryReceiptDto implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
-    /** 单据号 */
-    private String busNo;
+    /** 项目 */
+    private String itemTable;
 
-    /** 类型 */
-    private Integer typeEnum;
+    /** 数量 */
+    @NotNull
+    @Min(1)
+    private Integer itemQuantity;
 
-    /** 状态 */
-    private Integer statusEnum;
+    /** 物品编码 */
+    @NotNull
+    private Long itemId;
 
-    /** 分类 */
-    private Integer categoryEnum;
+    /** 物品计量单位 */
+    @NotNull
+    private String unitCode;
+
+    /** 请求细节 */
+    private String detailJson;
 
     /** 供应商 */
+    @NotNull
     private Long supplierId;
 
+    /** 源仓库类型 */
+    @NotNull
+    private Integer sourceTypeEnum;
+
     /** 源仓库 */
+    @NotNull
     private Long sourceLocationId;
 
+    /** 源仓位 */
+    @NotNull
+    private Long sourceLocationStoreId;
+
+    /** 目的仓库类型 */
+    @NotNull
+    private Integer purposeTypeEnum;
+
     /** 目的仓库 */
+    @NotNull
     private Long purposeLocationId;
 
-    /** 审批人 */
-    private Long approverId;
-
-    /** 审批时间 */
-    private Date approvalTime;
+    /** 目的仓位 */
+    @NotNull
+    private Long purposeLocationStoreId;
 
     /** 申请人 */
+    @NotNull
     private Long applicantId;
 
     /** 申请时间 */
     private Date applyTime;
+
+    /** 产品批号 */
+    @NotNull
+    private String lotNumber;
+
+    /** 追溯码 */
+    @NotNull
+    private String traceNo;
+
+    /** 发票号 */
+    private String invoiceNo;
+
+    /** 开始时间 */
+    @NotNull
+    private Date startTime;
+
+    /** 结束时间 */
+    @NotNull
+    private Date endTime;
+
+    /** 单价 */
+    @NotNull
+    private BigDecimal price;
+
+    /** 总价 */
+    @NotNull
+    private BigDecimal totalPrice;
 
 }

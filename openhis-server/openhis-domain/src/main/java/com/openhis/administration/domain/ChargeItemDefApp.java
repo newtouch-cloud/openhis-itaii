@@ -1,13 +1,13 @@
 package com.openhis.administration.domain;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.ActPriority;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -55,5 +55,8 @@ public class ChargeItemDefApp extends HisBaseEntity {
     /** 价格 */
     private BigDecimal amount;
 
-
+    public ChargeItemDefApp() {
+        // 默认优先级：常规
+        this.priority = ActPriority.ROUTINE.getValue();
+    }
 }

@@ -6,8 +6,10 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.EventStatus;
+import com.openhis.common.enums.SupplyType;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -73,10 +75,10 @@ public class SupplyDelivery extends HisBaseEntity {
     /** 发放时间 */
     private Date occurrenceTime;
 
-    /** 发放开始时间 */
+    /** 开始时间 */
     private Date occurrenceStartTime;
 
-    /** 发放结束时间 */
+    /** 结束时间 */
     private Date occurrenceEndTime;
 
     /** 发放周期时间 */
@@ -86,7 +88,12 @@ public class SupplyDelivery extends HisBaseEntity {
     private Long receiverId;
 
     /** 接收时间 */
-    private Date receiveDateTime;
+    private Date receiveTime;
 
-
+    public SupplyDelivery() {
+        // 默认发放状态：进行中
+        this.statusEnum = EventStatus.IN_PROGRESS.getValue();
+        // 默认发放类型：
+        this.typeEnum = SupplyType.PRODUCT_ALLOCATION.getValue();
+    }
 }

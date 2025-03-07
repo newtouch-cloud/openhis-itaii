@@ -58,4 +58,16 @@ public class PromptMsgConstant {
         String M00010 = "apl.common.M00010";
 
     }
+
+    /**
+     * 库存
+     */
+    public interface Inventory {
+
+        /**
+         * {0}添加成功
+         */
+        String M00001 = "apl.inventory.M00001";
+
+    }
 }

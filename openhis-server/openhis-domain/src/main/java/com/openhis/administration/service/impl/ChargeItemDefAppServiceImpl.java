@@ -46,7 +46,7 @@ public class ChargeItemDefAppServiceImpl extends ServiceImpl<ChargeItemDefAppMap
      */
     @Override
     public boolean addChargeItemDefApp(ChargeItemDefApp chargeItemDefApp) {
-        //此判断是为了避免插入时主键重复
+        // 此判断是为了避免插入时主键重复
         if (chargeItemDefApp.getId() != null) {
             return false;
         } else {

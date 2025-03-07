@@ -1,11 +1,16 @@
 package com.openhis.workflow.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.ActPriority;
+import com.openhis.common.enums.SupplyCategory;
+import com.openhis.common.enums.SupplyStatus;
+import com.openhis.common.enums.SupplyType;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -54,26 +59,17 @@ public class SupplyRequest extends HisBaseEntity {
     /** 患者id */
     private Long patientId;
 
-    /** 发放实体表名 */
-    private String dispenseTable;
-
-    /** 发放id */
-    private Long dispenseId;
-
     /** 项目 */
     private String itemTable;
 
     /** 数量 */
-    private Integer itemQuantity;
+    private BigDecimal itemQuantity;
 
     /** 物品编码 */
     private Long itemId;
 
     /** 物品计量单位 */
-    private String unitIdCode;
-
-    /** 物品数量 */
-    private Integer unitQuantity;
+    private String unitCode;
 
     /** 请求细节 */
     private String detailJson;
@@ -120,4 +116,35 @@ public class SupplyRequest extends HisBaseEntity {
     /** 申请时间 */
     private Date applyTime;
 
+    /** 产品批号 */
+    private String lotNumber;
+
+    /** 追溯码 */
+    private String traceNo;
+
+    /** 发票号 */
+    private String invoiceNo;
+
+    /** 开始时间 */
+    private Date startTime;
+
+    /** 结束时间 */
+    private Date endTime;
+
+    /** 单价 */
+    private BigDecimal price;
+
+    /** 总价 */
+    private BigDecimal totalPrice;
+
+    public SupplyRequest() {
+        // 默认单据类型：商品调拨
+        this.typeEnum = SupplyType.PRODUCT_ALLOCATION.getValue();
+        // 默认单据状态：待审核
+        this.statusEnum = SupplyStatus.PENDING_APPROVAL.getValue();
+        // 默认单据分类：库存供应
+        this.categoryEnum = SupplyCategory.STOCK_SUPPLY.getValue();
+        // 默认优先级：常规
+        this.priorityEnum = ActPriority.ROUTINE.getValue();
+    }
 }

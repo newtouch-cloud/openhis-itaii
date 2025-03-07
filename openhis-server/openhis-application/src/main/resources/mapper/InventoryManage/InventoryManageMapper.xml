@@ -2,4 +2,99 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.openhis.web.inventorymanage.mapper.InventoryManageMapper">
 
+    <select id="selectSupplyMedDetail" resultType="com.openhis.web.inventorymanage.dto.SupplyItemDetailDto">
+        SELECT T1.item_table,
+               T1.item_id,
+               T1.item_quantity,
+               T1.unit_code AS item_unit,
+               T1.price,
+               T1.total_price,
+               T1.approver_id,
+               T1.purpose_location_id,
+               T1.purpose_location_store_id,
+               T1.supplier_id,
+               T1.lot_number,
+               T1.trace_no,
+               T1.bus_no,
+               T1.start_time,
+               T1.end_time,
+               T1.id AS service_id,
+               T2."name",
+               T2.py_str,
+               T2.wb_str,
+               T2.unit_code,
+               T2.min_unit_code,
+               T3.id AS definition_id,
+               T4.amount AS base_amount,
+               T4.id AS applicability_id
+        FROM wor_supply_request AS T1
+            LEFT JOIN wor_supply_delivery AS T5
+                ON T1.id = T5.request_id
+            LEFT JOIN med_medication_definition AS T2
+                ON T2.id = T1.item_id
+            LEFT JOIN adm_charge_item_definition T3
+                ON T2.id = T3.instance_id
+            LEFT JOIN adm_charge_item_def_app T4
+                 ON T3.id = T4.definition_id
+                    AND T1.unit_code = T4.condition_unit_code
+        WHERE T1.bus_no = #{busNo}
+            AND T5.status_enum = #{completed}
+            AND T1.delete_flag = 0
+    </select>
+
+    <select id="selectSupplyDevDetail" resultType="com.openhis.web.inventorymanage.dto.SupplyItemDetailDto">
+        SELECT T1.item_table,
+               T1.item_id,
+               T1.item_quantity,
+               T1.unit_code AS item_unit,
+               T1.price,
+               T1.total_price,
+               T1.approver_id,
+               T1.purpose_location_id,
+               T1.purpose_location_store_id,
+               T1.supplier_id,
+               T1.lot_number,
+               T1.trace_no,
+               T1.bus_no,
+               T1.start_time,
+               T1.end_time,
+               T1.id AS service_id,
+               T2."name",
+               T2.py_str,
+               T2.wb_str,
+               T2.unit_code,
+               T2.min_unit_code,
+               T3.id AS definition_id,
+               T4.amount AS base_amount,
+               T4.id AS applicability_id
+        FROM wor_supply_request AS T1
+                 LEFT JOIN wor_supply_delivery AS T5
+                           ON T1.id = T5.request_id
+                 LEFT JOIN med_medication_definition AS T2
+                           ON T2.id = T1.item_id
+                 LEFT JOIN adm_charge_item_definition T3
+                           ON T2.id = T3.instance_id
+                 LEFT JOIN adm_charge_item_def_app T4
+                           ON T3.id = T4.definition_id
+                               AND T1.unit_code = T4.condition_unit_code
+        WHERE T1.bus_no = #{busNo}
+          AND T5.status_enum = #{completed}
+          AND T1.delete_flag = 0
+    </select>
+    <select id="selectChargeDetail" resultType="com.openhis.web.inventorymanage.dto.ItemChargeDetailDto">
+        SELECT T1.id AS definition_id,
+               T1.instance_id,
+               T1.charge_name,
+               T1.price AS sell_price,
+               T2.condition_lotnumber,
+               T2.condition_unit_code,
+               T2.amount AS unit_price
+        FROM adm_charge_item_definition AS T1
+            LEFT JOIN adm_charge_item_def_app AS T2
+                ON T1.id = T2.definition_id
+        WHERE T1.instance_id IN
+            <foreach collection="itemIdList" item="itemId" separator="," open="(" close=")">
+                #{itemId}
+            </foreach>
+    </select>
 </mapper>
