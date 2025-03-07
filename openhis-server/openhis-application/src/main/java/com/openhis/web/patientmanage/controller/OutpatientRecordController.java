@@ -52,7 +52,7 @@ public class OutpatientRecordController {
      * @param pageSize 每页大小（默认为10）
      */
     @GetMapping("/outpatient-record-page")
-    public R<?> getPatient(@RequestParam(required = false) OutpatientRecordSearchParam outpatientRecordSearchParam,
+    public R<?> getPatient(OutpatientRecordSearchParam outpatientRecordSearchParam,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
 

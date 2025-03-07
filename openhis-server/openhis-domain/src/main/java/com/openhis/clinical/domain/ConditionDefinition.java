@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.enums.ConditionDefinitionSource;
 import com.openhis.common.enums.PublicationStatus;
 
@@ -25,6 +27,7 @@ public class ConditionDefinition extends HisBaseEntity {
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 所属分类 */
@@ -58,6 +61,6 @@ public class ConditionDefinition extends HisBaseEntity {
     private Integer ybMatchFlag;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
 
 }

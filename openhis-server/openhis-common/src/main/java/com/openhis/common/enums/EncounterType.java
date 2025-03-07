@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum EncounterType {
+public enum EncounterType implements HisEnumInterface {
 
     INITIAL(1, "initial", "初诊"),
     FOLLOW_UP(2, "follow-up", "复诊");

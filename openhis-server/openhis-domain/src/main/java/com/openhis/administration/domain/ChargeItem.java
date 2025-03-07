@@ -30,7 +30,7 @@ public class ChargeItem extends HisBaseEntity {
     private Long id;
 
     /** 状态 */
-    private ChargeItemStatus statusEnum;
+    private Integer statusEnum;
 
     /** 层级 */
     private String busNo;

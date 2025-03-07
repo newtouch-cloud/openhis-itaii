@@ -18,9 +18,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class PractRoleSearchParam implements Serializable {
 
-    /** 名称 */
-    private String name;
-
     /** 专业编码枚举 */
     private Integer specialtyEnum;
 

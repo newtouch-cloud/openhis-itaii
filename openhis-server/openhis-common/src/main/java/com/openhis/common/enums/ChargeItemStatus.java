@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ChargeItemStatus {
+public enum ChargeItemStatus implements HisEnumInterface {
     PLANNED (1, "planned", "待收费"),
 
     BILLABLE(2, "billable", "待结算"),

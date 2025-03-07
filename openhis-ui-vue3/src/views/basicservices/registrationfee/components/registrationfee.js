@@ -64,8 +64,9 @@ export function locationTreeSelect(queryParams) {
 
 // 删除收费挂号项目
 export function delRegistrationfee(param) {
+  console.log(param,'aaaa')
   return request({
-    url: '/basedatamanage/organization/healthcare-service',
+    url: '/basic-service/healthcare/healthcare-service',
     method: 'delete',
     params: param
   })

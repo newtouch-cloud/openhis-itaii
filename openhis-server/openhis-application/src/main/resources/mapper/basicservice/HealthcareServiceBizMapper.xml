@@ -19,6 +19,7 @@
             T3.extra_details,
             T3.contact,
             T3.appointment_required_flag,
+            T3.definition_id,
             T3.charge_name,
             T3.price
         FROM
@@ -37,12 +38,14 @@
                     T1.extra_details,
                     T1.contact,
                     T1.appointment_required_flag,
+                    T2.id AS definition_id,
                     T2.charge_name,
                     T2.price
                 FROM
                     adm_healthcare_service AS T1
                         LEFT JOIN adm_charge_item_definition AS T2 ON T2.instance_id = T1.ID
                         AND T2.instance_table = #{tableName}
+                WHERE T1.delete_flag = '0'
                 ORDER BY
                     T1.create_time DESC
             ) AS T3

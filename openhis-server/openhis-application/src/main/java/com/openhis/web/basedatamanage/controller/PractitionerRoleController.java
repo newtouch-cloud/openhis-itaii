@@ -8,7 +8,6 @@ import java.util.HashSet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.openhis.administration.domain.Organization;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -78,24 +77,24 @@ public class PractitionerRoleController {
 
     }
 
-    /**
-     * 添加岗位信息
-     *
-     * @param practitionerRoleDto 岗位信息
-     */
-    @PostMapping("/practitioner-role")
-    public R<?> addPractitionerRole(@Validated @RequestBody PractitionerRoleDto practitionerRoleDto) {
-
-        // 新增practitionerRole信息
-        PractitionerRole practitionerRole = new PractitionerRole();
-        BeanUtils.copyProperties(practitionerRoleDto, practitionerRole);
-
-        boolean savePractitionerRoleSuccess = practitionerRoleService.save(practitionerRole);
-
-        return savePractitionerRoleSuccess
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"岗位信息"}))
-            : R.fail(PromptMsgConstant.Common.M00007, null);
-    }
+    // /**
+    // * 添加岗位信息
+    // *
+    // * @param practitionerRoleDto 岗位信息
+    // */
+    // @PostMapping("/practitioner-role")
+    // public R<?> addPractitionerRole(@Validated @RequestBody CreatePractitionerRoleDto practitionerRoleDto) {
+    //
+    // // 新增practitionerRole信息
+    // PractitionerRole practitionerRole = new PractitionerRole();
+    // BeanUtils.copyProperties(practitionerRoleDto, practitionerRole);
+    //
+    // boolean savePractitionerRoleSuccess = practitionerRoleService.save(practitionerRole);
+    //
+    // return savePractitionerRoleSuccess
+    // ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"岗位信息"}))
+    // : R.fail(PromptMsgConstant.Common.M00007, null);
+    // }
 
     /**
      * 获取岗位需要编辑的信息
@@ -106,7 +105,8 @@ public class PractitionerRoleController {
     public R<?> getPractitionerRoleById(@Validated @RequestParam Long proleId) {
 
         PractitionerRole practitionerRole = practitionerRoleService.getById(proleId);
-        return R.ok(practitionerRole, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"岗位信息"}));
+        return R.ok(practitionerRole,
+            MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"岗位信息"}));
     }
 
     /**
@@ -120,6 +120,15 @@ public class PractitionerRoleController {
         // 编辑practitionerRole信息
         PractitionerRole practitionerRole = new PractitionerRole();
         BeanUtils.copyProperties(practitionerRoleDto, practitionerRole);
+        if (practitionerRole.getRole_code() == null) {
+            return R.fail(PromptMsgConstant.Common.M00007, "角色编码不能为空");
+        }
+        if (practitionerRole.getOrgId() == null) {
+            return R.fail(PromptMsgConstant.Common.M00007, "科室不能为空");
+        }
+        if (practitionerRole.getLocationId() == null) {
+            return R.fail(PromptMsgConstant.Common.M00007, "位置不能为空");
+        }
 
         boolean editPractitionerRoleSuccess = practitionerRoleService.updateById(practitionerRole);
 

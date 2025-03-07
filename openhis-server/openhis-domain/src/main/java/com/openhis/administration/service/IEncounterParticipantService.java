@@ -11,4 +11,11 @@ import com.openhis.administration.domain.EncounterParticipant;
  */
 public interface IEncounterParticipantService extends IService<EncounterParticipant> {
 
+    /**
+     * 门诊挂号时保存就诊参与者
+     * 
+     * @param encounterParticipant 就诊参与者信息
+     */
+    void saveEncounterParticipantByRegister(EncounterParticipant encounterParticipant);
+
 }

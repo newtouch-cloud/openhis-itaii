@@ -15,6 +15,7 @@ import javax.validation.constraints.NotBlank;
  * @author lpt
  * @date 2025-02-25
  */
+
 @Data
 @Accessors(chain = true)
 public class DiseaseManageUpDto {

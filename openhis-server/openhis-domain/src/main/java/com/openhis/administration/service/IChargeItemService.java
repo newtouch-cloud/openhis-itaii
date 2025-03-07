@@ -1,11 +1,9 @@
 package com.openhis.administration.service;
 
-import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.openhis.administration.domain.ChargeItem;
-import com.openhis.workflow.domain.SupplyRequest;
 
 /**
  * 费用项管理Service接口
@@ -21,4 +19,11 @@ public interface IChargeItemService extends IService<ChargeItem> {
      * @param chargeItemList 采购账单
      */
     void createBilledPurchaseCharge(List<ChargeItem> chargeItemList);
+
+    /**
+     * 门诊挂号时保存 费用项
+     * 
+     * @param chargeItem 费用项
+     */
+    void saveChargeItemByRegister(ChargeItem chargeItem);
 }

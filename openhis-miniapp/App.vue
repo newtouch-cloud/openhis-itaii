@@ -1,3 +1,9 @@
+<!--
+ * @Description: 
+ * @Author: zhuWanLi
+ * @version: 1.0.0
+ * @Date: 2025-03-04 13:33:32
+-->
 <script>
 	export default {
 		onLaunch: function() {
@@ -14,4 +20,5 @@
 
 <style>
 	/*每个页面公共css */
+	@import "@/static/font/iconfont.css";
 </style>

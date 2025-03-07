@@ -1,5 +1,7 @@
 package com.openhis.web.basicservice.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.annotation.Dict;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -15,6 +17,7 @@ public class HealthcareServiceDto {
     /**
      * ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
@@ -27,6 +30,7 @@ public class HealthcareServiceDto {
      * 提供部门ID
      */
     @Dict(dictTable = "adm_organization",dictCode = "id",dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long offeredOrgId;
     private String offeredOrgId_dictText;
 
@@ -55,6 +59,7 @@ public class HealthcareServiceDto {
      * 地点
      */
     @Dict(dictTable = "adm_location",dictCode = "id",dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
     private String locationId_dictText;
 
@@ -83,6 +88,12 @@ public class HealthcareServiceDto {
      */
     private Integer appointmentRequiredFlag;
     private String appointmentRequiredFlag_enumText;
+
+    /**
+     * 费用定价ID
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long definitionId;
 
     /**
      * 名称

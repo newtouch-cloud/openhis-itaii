@@ -25,9 +25,9 @@ public class OutpatientRecordSearchParam {
     private String doctorName;
 
     /** 筛选开始时间 */
-    private Date beginTime;
+    private String beginTime;
 
     /** 筛选结束时间 */
-    private Date endTime;
+    private String endTime;
 
 }
