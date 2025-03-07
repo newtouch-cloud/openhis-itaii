@@ -15,10 +15,10 @@ public class OutpatientRegistrationAddParam {
      */
     private EncounterFormData encounterFormData;
 
-    /**
-     * 就诊诊断管理-表单数据
-     */
-    private EncounterDiagnosisFormData encounterDiagnosisFormData;
+    // /**
+    // * 就诊诊断管理-表单数据
+    // */
+    // private EncounterDiagnosisFormData encounterDiagnosisFormData;
 
     /**
      * 就诊位置管理-表单数据
@@ -29,5 +29,13 @@ public class OutpatientRegistrationAddParam {
      * 就诊参数者管理-表单数据
      */
     private EncounterParticipantFormData encounterParticipantFormData;
+
+    /**
+     * 就诊账户管理-表单数据
+     */
+
+    /**
+     * 费用项管理-表单数据
+     */
 
 }
