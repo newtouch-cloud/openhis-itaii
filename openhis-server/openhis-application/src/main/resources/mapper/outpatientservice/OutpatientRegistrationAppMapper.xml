@@ -39,4 +39,49 @@
           AND create_time > CURRENT_DATE
     </select>
 
+    <select id="getCurrentDayEncounter" resultType="com.openhis.web.outpatientservice.dto.CurrentDayEncounterDto">
+        SELECT T9.tenant_id,
+               T9.encounter_id,
+               T9.organization_id,
+               T9.organization_name,
+               T9.healthcare_name,
+               T9.practitioner_user_id,
+               T9.practitioner_name,
+               T9.contract_name,
+               T9.patient_id,
+               T9.patient_name,
+               T9.gender_enum,
+               T9.id_card,
+               T9.status_enum,
+               T9.register_time
+        from (
+                 SELECT T1.tenant_id       AS tenant_id,
+                        T1.id              AS encounter_id,
+                        T1.organization_id AS organization_id,
+                        T2.NAME            AS organization_name,
+                        T3.NAME            AS healthcare_name,
+                        T5.user_id         AS practitioner_user_id,
+                        T5.NAME            AS practitioner_name,
+                        T7.contract_name   AS contract_name,
+                        T8.id              AS patient_id,
+                        T8.NAME            AS patient_name,
+                        T8.gender_enum     AS gender_enum,
+                        T8.id_card         AS id_card,
+                        T1.status_enum     AS status_enum,
+                        T1.create_time     AS register_time
+                 FROM adm_encounter AS T1
+                          LEFT JOIN adm_organization AS T2 ON T1.organization_id = T2.
+                     ID
+                          LEFT JOIN adm_healthcare_service AS T3 ON T1.service_type_id = T3.
+                     ID
+                          LEFT JOIN adm_encounter_participant AS T4 ON T1.ID = T4.encounter_id
+                          LEFT JOIN adm_practitioner AS T5 ON T5.ID = T4.practitioner_id
+                          LEFT JOIN adm_account AS T6 ON T1.ID = T6.encounter_id
+                          LEFT JOIN fin_contract AS T7 ON T6.contract_no = T7.bus_no
+                          LEFT JOIN adm_patient AS T8 ON T1.patient_id = T8.ID
+                 WHERE T1.delete_flag = '0'
+                   AND T1.create_time > CURRENT_DATE) AS T9
+            ${ew.customSqlSegment}
+    </select>
+
 </mapper>

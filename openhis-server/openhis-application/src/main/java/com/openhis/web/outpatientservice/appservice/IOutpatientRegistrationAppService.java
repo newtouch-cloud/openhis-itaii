@@ -73,4 +73,14 @@ public interface IOutpatientRegistrationAppService {
      */
     R<?> saveRegister(OutpatientRegistrationAddParam outpatientRegistrationAddParam);
 
+    /**
+     * 查询当日就诊数据
+     *
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 当日就诊数据
+     */
+    IPage<CurrentDayEncounterDto> getCurrentDayEncounter(String searchKey, Integer pageNo, Integer pageSize);
+
 }
