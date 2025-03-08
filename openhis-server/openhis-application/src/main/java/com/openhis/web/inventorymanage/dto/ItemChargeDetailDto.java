@@ -3,11 +3,11 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 项目价格详情
@@ -27,11 +27,11 @@ public class ItemChargeDetailDto implements Serializable {
     /** 名称 */
     private String chargeName;
 
-    /** 批次号 */
-    private String conditionLotnumber;
+    /** 条件 */
+    private String conditionCode;
 
-    /** 条件类型 */
-    private String conditionUnitCode;
+    /** 命中值 */
+    private String conditionValue;
 
     /** 单位价格 */
     private BigDecimal unitPrice;

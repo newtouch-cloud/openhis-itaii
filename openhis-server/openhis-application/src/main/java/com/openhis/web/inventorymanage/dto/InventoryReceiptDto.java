@@ -7,6 +7,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -14,9 +17,6 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 /**
  * 入库单据
@@ -115,5 +115,13 @@ public class InventoryReceiptDto implements Serializable {
     /** 总价 */
     @NotNull
     private BigDecimal totalPrice;
+
+    /** 售价 */
+    @NotNull
+    private BigDecimal sellPrice;
+
+    /** 拆零售价 */
+    @NotNull
+    private BigDecimal minSellPrice;
 
 }

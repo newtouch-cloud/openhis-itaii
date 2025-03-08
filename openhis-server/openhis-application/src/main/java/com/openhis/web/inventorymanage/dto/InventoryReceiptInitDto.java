@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class InventoryReceiptInitDto {
 
-    //返回前台的应是dto 懒得定义请勿学习
+    // 返回前台的应是dto 懒得定义请勿学习
 
     /** 药房信息 */
     private List<Location> location;

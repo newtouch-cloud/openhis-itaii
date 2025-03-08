@@ -19,10 +19,10 @@ import lombok.experimental.Accessors;
  * @date 2025-02-20
  */
 @Data
-@TableName("adm_charge_item_def_app")
+@TableName("adm_charge_item_def_detail")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-public class ChargeItemDefApp extends HisBaseEntity {
+public class ChargeItemDefDetail extends HisBaseEntity {
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
@@ -34,20 +34,11 @@ public class ChargeItemDefApp extends HisBaseEntity {
     /** 条件规则 */
     private Long conditionRuleId;
 
-    /** 批次号 */
-    private String conditionLotnumber;
-
-    /** 医保相关价格 */
-    private String conditionYbCode;
-
-    /** 采购售卖条件 */
-    private String conditionInoutCode;
-
-    /** 条件类型 */
-    private String conditionUnitCode;
-
     /** 条件 */
     private String conditionCode;
+
+    /** 命中值 */
+    private String conditionValue;
 
     /** 优先级 */
     private Integer priority;
@@ -55,7 +46,7 @@ public class ChargeItemDefApp extends HisBaseEntity {
     /** 价格 */
     private BigDecimal amount;
 
-    public ChargeItemDefApp() {
+    public ChargeItemDefDetail() {
         // 默认优先级：常规
         this.priority = ActPriority.ROUTINE.getValue();
     }

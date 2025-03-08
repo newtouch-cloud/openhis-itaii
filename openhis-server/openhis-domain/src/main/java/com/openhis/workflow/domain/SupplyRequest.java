@@ -71,6 +71,9 @@ public class SupplyRequest extends HisBaseEntity {
     /** 物品计量单位 */
     private String unitCode;
 
+    /** 拆零单位 */
+    private String minUnitCode;
+
     /** 请求细节 */
     private String detailJson;
 
@@ -136,6 +139,12 @@ public class SupplyRequest extends HisBaseEntity {
 
     /** 总价 */
     private BigDecimal totalPrice;
+
+    /** 售价 */
+    private BigDecimal sellPrice;
+
+    /** 拆零售价 */
+    private BigDecimal minSellPrice;
 
     public SupplyRequest() {
         // 默认单据类型：商品调拨

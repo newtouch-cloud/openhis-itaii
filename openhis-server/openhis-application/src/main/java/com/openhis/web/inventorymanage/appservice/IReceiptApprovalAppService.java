@@ -5,19 +5,20 @@ package com.openhis.web.inventorymanage.appservice;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.core.common.core.domain.R;
-import com.openhis.administration.domain.ChargeItemDefApp;
 import com.openhis.web.inventorymanage.dto.ItemChargeDetailDto;
 import com.openhis.web.inventorymanage.dto.SupplyItemDetailDto;
 import com.openhis.workflow.domain.SupplyRequest;
 
 /**
- * 采购入库 service
+ * 单据审批 service
  *
  * @author zwh
  * @date 2025-03-05
  */
-public interface IInventoryManageService {
+public interface IReceiptApprovalAppService {
 
     /**
      * 校验单据是否正确
@@ -45,11 +46,20 @@ public interface IInventoryManageService {
     List<ItemChargeDetailDto> getItemChargeDetail(List<Long> itemIdList);
 
     /**
-     * 入库项价格验证
+     * 审批通过
      *
-     * @param agreedList 供应单据
-     * @param chargeDetailList 项目价格
-     * @return 价格定义子表数据
+     * @param busNo 单据号
+     * @param request 请求数据
+     * @return 操作结果
      */
-    List<ChargeItemDefApp> verifyItemCharge(List<SupplyRequest> agreedList, List<ItemChargeDetailDto> chargeDetailList);
+    R<?> approved(String busNo, HttpServletRequest request);
+
+    /**
+     * 审批驳回
+     *
+     * @param busNo 单据号
+     * @param request 请求数据
+     * @return 操作结果
+     */
+    R<?> reject(String busNo, HttpServletRequest request);
 }

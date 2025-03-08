@@ -6,7 +6,6 @@ package com.openhis.web.inventorymanage.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.openhis.common.annotation.Dict;
 import org.hibernate.validator.constraints.Length;
 
 import lombok.Data;

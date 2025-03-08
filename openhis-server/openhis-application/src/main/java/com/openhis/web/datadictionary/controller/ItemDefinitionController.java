@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.openhis.administration.domain.ChargeItemDefDetail;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -26,9 +27,8 @@ import com.core.common.utils.AssignSeqUtil;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.StringUtils;
 import com.core.common.utils.bean.BeanUtils;
-import com.openhis.administration.domain.ChargeItemDefApp;
 import com.openhis.administration.domain.ChargeItemDefinition;
-import com.openhis.administration.service.IChargeItemDefAppService;
+import com.openhis.administration.service.IChargeItemDefDetailService;
 import com.openhis.administration.service.IChargeItemDefinitionService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
@@ -55,7 +55,7 @@ public class ItemDefinitionController {
     @Autowired(required = false)
     private IChargeItemDefinitionService chargeItemDefinitionService;
     @Autowired(required = false)
-    private IChargeItemDefAppService chargeItemDefAppService;
+    private IChargeItemDefDetailService chargeItemDefAppService;
     @Autowired(required = false)
     private ChargeItemDefSearchMapper chargeItemDefSearchMapper;
     @Autowired(required = false)
@@ -185,11 +185,11 @@ public class ItemDefinitionController {
         }
 
         // 更新收费项目adm_charge_item_def_app
-        ChargeItemDefApp chargeItemDefApp = new ChargeItemDefApp();
-        BeanUtils.copyProperties(itemDefinitionDto, chargeItemDefApp);
-        chargeItemDefApp.setDefinitionId(itemDefinitionDto.getId());
-        chargeItemDefApp.setId(itemDefinitionDto.getItemId());
-        return chargeItemDefAppService.updateChargeItemDefApp(chargeItemDefApp)
+        ChargeItemDefDetail chargeItemDefDetail = new ChargeItemDefDetail();
+        BeanUtils.copyProperties(itemDefinitionDto, chargeItemDefDetail);
+        chargeItemDefDetail.setDefinitionId(itemDefinitionDto.getId());
+        chargeItemDefDetail.setId(itemDefinitionDto.getItemId());
+        return chargeItemDefAppService.updateChargeItemDefApp(chargeItemDefDetail)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"费用定价"}))
             : R.fail(PromptMsgConstant.Common.M00007, null);
     }

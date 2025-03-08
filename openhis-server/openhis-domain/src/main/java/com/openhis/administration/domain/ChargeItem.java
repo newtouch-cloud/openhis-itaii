@@ -6,9 +6,8 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
-import com.openhis.common.enums.ChargeItemStatus;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -75,7 +74,7 @@ public class ChargeItem extends HisBaseEntity {
     private Long definitionId;
 
     /** 定价子表主键 */
-    private Long applicabilityId;
+    private Long defDetailId;
 
     /** 原价 */
     private BigDecimal baseAmount;
@@ -121,6 +120,5 @@ public class ChargeItem extends HisBaseEntity {
 
     /** 机构 */
     private Integer orgId;
-
 
 }

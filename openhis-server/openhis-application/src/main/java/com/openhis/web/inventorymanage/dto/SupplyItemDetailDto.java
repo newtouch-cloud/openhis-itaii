@@ -91,6 +91,6 @@ public class SupplyItemDetailDto implements Serializable {
     /** 原价 */
     private BigDecimal baseAmount;
 
-    /** 费用定价子表ID */
-    private Long applicabilityId;
+    /** 定价子表主键 */
+    private Long defDetailId;
 }

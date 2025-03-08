@@ -25,6 +25,11 @@ public class CommonConstants {
          * 结束时间（用于分页条件查询）
          */
         String E_TIME = "ETime";
+
+        /**
+         * 逗号（用于拼接）
+         */
+        String COMMA = "%s,%s";
     }
 
     /**

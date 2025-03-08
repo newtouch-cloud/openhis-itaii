@@ -3,20 +3,6 @@
  */
 package com.openhis.web.datadictionary.assembler;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.openhis.administration.domain.ChargeItemDefApp;
-import com.openhis.administration.domain.ChargeItemDefinition;
-import com.openhis.administration.domain.DeviceDefinition;
-import com.openhis.medication.domain.MedicationDefinition;
-import com.openhis.web.datadictionary.dto.ChargeItemDefPageDto;
-import com.openhis.web.datadictionary.dto.ItemDefSearchParam;
-import com.openhis.workflow.domain.ActivityDefinition;
-
 /**
  * 费用定价dto转换器
  *
@@ -33,7 +19,7 @@ public class ItemDefinitionAssembler {
 //     * @return 【费用定价分页列表DTO】分页
 //     */
 //    public static Page<ChargeItemDefPageDto> assembleMedDefinitionDto(
-//        Page<ChargeItemDefinition> chargeItemDefinitionPage, List<ChargeItemDefApp> chargeItemDefAppList,
+//        Page<ChargeItemDefinition> chargeItemDefinitionPage, List<ChargeItemDefDetail> chargeItemDefAppList,
 //        List<MedicationDefinition> medicationDefinitionList, ItemDefSearchParam itemDefSearchParam) {
 //
 //        // 将查询到的【药品基本信息管理】列表，作成以ID为Key的Map
@@ -41,8 +27,8 @@ public class ItemDefinitionAssembler {
 //            .collect(Collectors.toMap(MedicationDefinition::getId, Function.identity()));
 //
 //        // 将查询到的【患者管理】列表，作成以ID为Key的Map
-//        Map<Long, ChargeItemDefApp> chargeItemDefAppMap =
-//            chargeItemDefAppList.stream().collect(Collectors.toMap(ChargeItemDefApp::getId, Function.identity()));
+//        Map<Long, ChargeItemDefDetail> chargeItemDefAppMap =
+//            chargeItemDefAppList.stream().collect(Collectors.toMap(ChargeItemDefDetail::getId, Function.identity()));
 //
 //        // 定义【入库单据分页列表DTO】的分页，传入【页码】、【行数】、及上面分页的【总数】
 //        Page<ChargeItemDefPageDto> returnPage = new Page<>(chargeItemDefinitionPage.getCurrent(),
@@ -52,8 +38,8 @@ public class ItemDefinitionAssembler {
 //        returnPage.setRecords(chargeItemDefinitionPage.getRecords().stream().map(entity -> {
 //            // 定义【入库单据分页列表DTO】
 //            ChargeItemDefPageDto dto = new ChargeItemDefPageDto();
-//            ChargeItemDefApp chargeItemDefApp =
-//                chargeItemDefAppMap.getOrDefault(entity.getInstanceId(), new ChargeItemDefApp());
+//            ChargeItemDefDetail chargeItemDefApp =
+//                chargeItemDefAppMap.getOrDefault(entity.getInstanceId(), new ChargeItemDefDetail());
 //            MedicationDefinition medicationDefinition =
 //                medicationDefinitionMap.getOrDefault(entity.getInstanceId(), new MedicationDefinition());
 //            // 从主表COPY需要的字段
@@ -90,7 +76,7 @@ public class ItemDefinitionAssembler {
 //     * @return 【费用定价分页列表DTO】分页
 //     */
 //    public static Page<ChargeItemDefPageDto> assembleDevDefinitionDto(
-//        Page<ChargeItemDefinition> chargeItemDefinitionPage, List<ChargeItemDefApp> chargeItemDefAppList,
+//        Page<ChargeItemDefinition> chargeItemDefinitionPage, List<ChargeItemDefDetail> chargeItemDefAppList,
 //        List<DeviceDefinition> medicationDefinitionList, ItemDefSearchParam itemDefSearchParam) {
 //
 //        // 将查询到的【药品基本信息管理】列表，作成以ID为Key的Map
@@ -98,8 +84,8 @@ public class ItemDefinitionAssembler {
 //            medicationDefinitionList.stream().collect(Collectors.toMap(DeviceDefinition::getId, Function.identity()));
 //
 //        // 将查询到的【患者管理】列表，作成以ID为Key的Map
-//        Map<Long, ChargeItemDefApp> chargeItemDefAppMap =
-//            chargeItemDefAppList.stream().collect(Collectors.toMap(ChargeItemDefApp::getId, Function.identity()));
+//        Map<Long, ChargeItemDefDetail> chargeItemDefAppMap =
+//            chargeItemDefAppList.stream().collect(Collectors.toMap(ChargeItemDefDetail::getId, Function.identity()));
 //
 //        // 定义【入库单据分页列表DTO】的分页，传入【页码】、【行数】、及上面分页的【总数】
 //        Page<ChargeItemDefPageDto> returnPage = new Page<>(chargeItemDefinitionPage.getCurrent(),
@@ -109,8 +95,8 @@ public class ItemDefinitionAssembler {
 //        returnPage.setRecords(chargeItemDefinitionPage.getRecords().stream().map(entity -> {
 //            // 定义【入库单据分页列表DTO】
 //            ChargeItemDefPageDto dto = new ChargeItemDefPageDto();
-//            ChargeItemDefApp chargeItemDefApp =
-//                chargeItemDefAppMap.getOrDefault(entity.getInstanceId(), new ChargeItemDefApp());
+//            ChargeItemDefDetail chargeItemDefApp =
+//                chargeItemDefAppMap.getOrDefault(entity.getInstanceId(), new ChargeItemDefDetail());
 //            DeviceDefinition deviceDefinition =
 //                deviceDefinitionMap.getOrDefault(entity.getInstanceId(), new DeviceDefinition());
 //            // 从主表COPY需要的字段
@@ -147,7 +133,7 @@ public class ItemDefinitionAssembler {
 //     * @return 【费用定价分页列表DTO】分页
 //     */
 //    public static Page<ChargeItemDefPageDto> assembleProDefinitionDto(
-//        Page<ChargeItemDefinition> chargeItemDefinitionPage, List<ChargeItemDefApp> chargeItemDefAppList,
+//        Page<ChargeItemDefinition> chargeItemDefinitionPage, List<ChargeItemDefDetail> chargeItemDefAppList,
 //        List<ActivityDefinition> medicationDefinitionList, ItemDefSearchParam itemDefSearchParam) {
 //
 //        // 将查询到的【药品基本信息管理】列表，作成以ID为Key的Map
@@ -155,8 +141,8 @@ public class ItemDefinitionAssembler {
 //            medicationDefinitionList.stream().collect(Collectors.toMap(ActivityDefinition::getId, Function.identity()));
 //
 //        // 将查询到的【患者管理】列表，作成以ID为Key的Map
-//        Map<Long, ChargeItemDefApp> chargeItemDefAppMap =
-//            chargeItemDefAppList.stream().collect(Collectors.toMap(ChargeItemDefApp::getId, Function.identity()));
+//        Map<Long, ChargeItemDefDetail> chargeItemDefAppMap =
+//            chargeItemDefAppList.stream().collect(Collectors.toMap(ChargeItemDefDetail::getId, Function.identity()));
 //
 //        // 定义【入库单据分页列表DTO】的分页，传入【页码】、【行数】、及上面分页的【总数】
 //        Page<ChargeItemDefPageDto> returnPage = new Page<>(chargeItemDefinitionPage.getCurrent(),
@@ -166,8 +152,8 @@ public class ItemDefinitionAssembler {
 //        returnPage.setRecords(chargeItemDefinitionPage.getRecords().stream().map(entity -> {
 //            // 定义【入库单据分页列表DTO】
 //            ChargeItemDefPageDto dto = new ChargeItemDefPageDto();
-//            ChargeItemDefApp chargeItemDefApp =
-//                chargeItemDefAppMap.getOrDefault(entity.getInstanceId(), new ChargeItemDefApp());
+//            ChargeItemDefDetail chargeItemDefApp =
+//                chargeItemDefAppMap.getOrDefault(entity.getInstanceId(), new ChargeItemDefDetail());
 //            ActivityDefinition deviceDefinition =
 //                activityDefinitionMap.getOrDefault(entity.getInstanceId(), new ActivityDefinition());
 //            // 从主表COPY需要的字段
