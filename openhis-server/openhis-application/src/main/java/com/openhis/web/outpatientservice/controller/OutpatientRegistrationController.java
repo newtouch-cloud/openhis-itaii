@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
@@ -19,8 +21,6 @@ import com.openhis.web.outpatientservice.dto.OutpatientRegistrationInitDto;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.validation.Valid;
 
 /**
  * 门诊挂号 controller
@@ -132,6 +132,21 @@ public class OutpatientRegistrationController {
     @PostMapping(value = "/save")
     public R<?> saveRegister(@Valid @RequestBody OutpatientRegistrationAddParam outpatientRegistrationAddParam) {
         return iOutpatientRegistrationAppService.saveRegister(outpatientRegistrationAddParam);
+    }
+
+    /**
+     * 查询当日就诊数据
+     * 
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 当日就诊数据
+     */
+    @GetMapping(value = "/current-day-encounter")
+    public R<?> getCurrentDayEncounter(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return R.ok(iOutpatientRegistrationAppService.getCurrentDayEncounter(searchKey, pageNo, pageSize));
     }
 
 }

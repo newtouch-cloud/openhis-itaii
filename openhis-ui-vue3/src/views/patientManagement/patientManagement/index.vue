@@ -413,6 +413,20 @@ function cancel() {
   open.value = false;
   reset();
 }
+// 获取完整地址字符串
+function getAddress(form) {
+  const addressParts = [
+    form.value.addressProvince,
+    form.value.addressCity,
+    form.value.addressDistrict,
+    form.value.addressStreet,
+    form.value.address,
+  ];
+  // 使用 reduce 方法拼接地址
+  return addressParts.reduce((acc, part) => {
+    return part ? acc + part : acc;
+  }, "");
+}
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["patientRef"].validate(valid => {
@@ -420,7 +434,7 @@ function submitForm() {
       if (form.value.busNo != undefined) {
 		const newAddress = form.value.addressProvince+form.value.addressCity +  form.value.addressDistrict + form.value.addressStreet + form.value.address
 		if (addressCom.value !== newAddress) {
-    		form.value.address = newAddress;
+    		form.value.address = getAddress(form);
 		}
         updatePatient(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
@@ -428,7 +442,8 @@ function submitForm() {
           getList();
         });
       } else {
-		form.value.address = form.value.addressProvince+form.value.addressCity +  form.value.addressDistrict + form.value.addressStreet + form.value.address
+		form.value.address = getAddress(form);
+		// form.value.address = form.value.addressProvince+form.value.addressCity +  form.value.addressDistrict + form.value.addressStreet + form.value.address
         addPatient(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;

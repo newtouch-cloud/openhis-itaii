@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.openhis.web.outpatientservice.dto.CurrentDayEncounterDto;
 import com.openhis.web.outpatientservice.dto.PractitionerMetadata;
 
 /**
@@ -26,5 +27,15 @@ public interface OutpatientRegistrationAppMapper {
      */
     Integer getNumByPatientIdAndOrganizationId(@Param("patientId") Long patientId,
         @Param("serviceTypeId") Long serviceTypeId);
+
+    /**
+     * 查询当日就诊数据
+     * 
+     * @param page 分页参数
+     * @param queryWrapper 查询条件
+     * @return 当日就诊数据
+     */
+    IPage<CurrentDayEncounterDto> getCurrentDayEncounter(@Param("page") Page<CurrentDayEncounterDto> page,
+        @Param(Constants.WRAPPER) QueryWrapper<CurrentDayEncounterDto> queryWrapper);
 
 }

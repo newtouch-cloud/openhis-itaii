@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.openhis.common.enums.*;
-import com.openhis.common.enums.PractitionerRole;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -26,6 +24,8 @@ import com.openhis.clinical.domain.ConditionDefinition;
 import com.openhis.clinical.mapper.ConditionDefinitionMapper;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.*;
+import com.openhis.common.enums.PractitionerRole;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
@@ -266,6 +266,32 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
         iChargeItemService.saveChargeItemByRegister(chargeItem);
 
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"挂号"}));
+    }
+
+    /**
+     * 查询当日就诊数据
+     *
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 当日就诊数据
+     */
+    @Override
+    public IPage<CurrentDayEncounterDto> getCurrentDayEncounter(String searchKey, Integer pageNo, Integer pageSize) {
+        // 构建查询条件
+        QueryWrapper<CurrentDayEncounterDto> queryWrapper = HisQueryUtils.buildQueryWrapper(null, searchKey,
+            new HashSet<>(Arrays.asList("patient_name", "organization_name", "practitioner_name", "healthcare_name")),
+            null);
+
+        IPage<CurrentDayEncounterDto> currentDayEncounter =
+            outpatientRegistrationAppMapper.getCurrentDayEncounter(new Page<>(pageNo, pageSize), queryWrapper);
+        currentDayEncounter.getRecords().forEach(e -> {
+            // 性别
+            e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
+            // 就诊状态
+            e.setStatusEnum_enumText(EnumUtils.getInfoByValue(EncounterStatus.class, e.getStatusEnum()));
+        });
+        return currentDayEncounter;
     }
 
 }
