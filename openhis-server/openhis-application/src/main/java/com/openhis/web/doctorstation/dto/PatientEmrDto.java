@@ -1,7 +1,7 @@
 /*
  * Copyright ©2023 CJB-CNIT Team. All rights reserved
  */
-package com.openhis.web.emr.dto;
+package com.openhis.web.doctorstation.dto;
 
 import javax.validation.constraints.NotNull;
 

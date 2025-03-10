@@ -3,15 +3,13 @@
  */
 package com.openhis.web.doctorstation.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
 import com.openhis.web.doctorstation.appservice.IDoctorStationEmrAppService;
-import com.openhis.web.doctorstation.dto.DoctorStationInitDto;
-import com.openhis.web.doctorstation.dto.PatientInfoDto;
+import com.openhis.web.doctorstation.dto.EmrTemplateDto;
+import com.openhis.web.doctorstation.dto.PatientEmrDto;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,31 +26,66 @@ public class DoctorStationEmrController {
     private final IDoctorStationEmrAppService iDoctorStationEmrAppService;
 
     /**
-     * 医生站基础数据初始化
-     * 
-     * @return 基础数据
+     * 添加病人病历信息
+     *
+     * @param patientEmrDto 电子病历信息dto
+     * @return 操作结果
      */
-    @GetMapping(value = "/init")
-    public R<?> init() {
-        // DoctorStationInitDto doctorStationInitDto = new DoctorStationInitDto();
-        return R.ok(new DoctorStationInitDto());
+    @PostMapping("/emr")
+    public R<?> addPatientEmr(@Validated @RequestBody PatientEmrDto patientEmrDto) {
+        return iDoctorStationEmrAppService.addPatientEmr(patientEmrDto);
     }
 
     /**
-     * 查询就诊患者信息
-     * 
-     * @param patientInfoDto 查询条件 (前端传 statusEnum 区分就诊状态tab)
-     * @param searchKey 模糊查询关键字
-     * @param pageNo 当前页
-     * @param pageSize 每页多少条
-     * @return 就诊患者信息
+     * 获取患者历史病历
+     *
+     * @param patientEmrDto 查询条件
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @return 分页数据列表
      */
-    @GetMapping(value = "/patient-info")
-    public R<?> getPatientInfo(PatientInfoDto patientInfoDto,
-        @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
+    @GetMapping("/emr-page")
+    public R<?> getPatientEmrHistory(PatientEmrDto patientEmrDto,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-        return R.ok(iDoctorStationEmrAppService.getPatientInfo(patientInfoDto, searchKey, pageNo, pageSize));
+        return iDoctorStationEmrAppService.getPatientEmrHistory(patientEmrDto, pageNo, pageSize);
+    }
+
+    /**
+     * 保存病历模板
+     *
+     * @param emrTemplateDto 病历模板信息
+     * @return 操作结果
+     */
+    @PostMapping("emr-template")
+    public R<?> addEmrTemplate(@RequestBody @Validated EmrTemplateDto emrTemplateDto) {
+        return iDoctorStationEmrAppService.addEmrTemplate(emrTemplateDto);
+    }
+
+    /**
+     * 获取电子病历模板列表
+     *
+     * @param emrTemplateDto 查询参数
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @return
+     */
+    @GetMapping("emr-template-page")
+    public R<?> getEmrTemplate(EmrTemplateDto emrTemplateDto,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return iDoctorStationEmrAppService.getEmrTemplate(emrTemplateDto, pageNo, pageSize);
+    }
+
+    /**
+     * 删除病历模板
+     *
+     * @param id 模板id
+     * @return 操作结果
+     */
+    @DeleteMapping("emr-template")
+    public R<?> deleteEmrTemplate(@RequestParam Long id) {
+        return iDoctorStationEmrAppService.deleteEmrTemplate(id);
     }
 
 }
