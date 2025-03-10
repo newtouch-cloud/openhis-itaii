@@ -63,13 +63,14 @@ export function getHealthcareMetadata(query) {
   })
 }
 
-// // 门诊挂号查询
-// export function getOutpatientRegistrationCategory() {
-//   return request({
-//     url: '/outpatient-service/registerinformation-init',
-//     method: 'get'
-//   })
-// }
+// 门诊挂号查询
+export function getOutpatientRegistrationCurrent(query) {
+  return request({
+    url: '/outpatient-service/register/current-day-encounter',
+    method: 'get',
+    params: query
+  })
+}
 
 // 新增门诊挂号信息
 export function addOutpatientRegistration(data) {

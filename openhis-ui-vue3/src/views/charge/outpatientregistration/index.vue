@@ -507,6 +507,116 @@
         </el-card>
       </el-col>
     </el-row>
+    <el-row>
+      <el-col :span="24" class="card-box">
+        <el-card>
+          <template #header>
+            <span style="vertical-align: middle">当日已挂号</span></template
+          >
+          <el-table v-loading="loading" :data="outpatientRegistrationList">
+            <!-- <el-table-column
+              label="租户ID"
+              align="center"
+              key="tenantId"
+              prop="tenantId"
+            />
+            <el-table-column
+              label="就诊ID"
+              align="center"
+              key="encounterId"
+              prop="encounterId"
+            />
+            <el-table-column
+              label="科室ID"
+              align="center"
+              key="organizationId"
+              prop="organizationId"
+              :show-overflow-tooltip="true"
+            /> -->
+            <el-table-column
+              label="科室名称"
+              align="center"
+              key="organizationName"
+              prop="organizationName"
+              :show-overflow-tooltip="true"
+            />
+            <el-table-column
+              label="挂号类型 "
+              align="center"
+              key="healthcareName"
+              prop="healthcareName"
+              :show-overflow-tooltip="true"
+            />
+            <!-- <el-table-column
+              label="专家账号"
+              align="center"
+              key="practitionerUserId"
+              prop="practitionerUserId"
+            /> -->
+            <el-table-column
+              label="专家"
+              align="center"
+              key="practitionerName"
+              prop="practitionerName"
+            />
+            <el-table-column
+              label="费用性质"
+              align="center"
+              key="contractName"
+              prop="contractName"
+            />
+            <!-- <el-table-column
+              label="患者id"
+              align="center"
+              key="patientId"
+              prop="patientId"
+            /> -->
+            <el-table-column
+              label="患者姓名"
+              align="center"
+              key="patientName"
+              prop="patientName"
+              width="120"
+            />
+            <el-table-column
+              label="患者性别"
+              align="center"
+              key="genderEnum_enumText"
+              prop="genderEnum_enumText"
+            />
+            <el-table-column
+              label="证件号"
+              align="center"
+              key="idCard"
+              prop="idCard"
+            />
+            <el-table-column
+              label="就诊状态"
+              align="center"
+              key="statusEnum_enumText"
+              prop="statusEnum_enumText"
+            />
+            <el-table-column
+              label="挂号日期/时间"
+              align="center"
+              key="registerTime"
+              prop="registerTime"
+            >
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.registerTime) }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+          <pagination
+            v-show="total > 0"
+            :total="total"
+            v-model:page="queryParams.pageNo"
+            v-model:limit="queryParams.pageSize"
+            @pagination="getList"
+          />
+        </el-card>
+      </el-col>
+    </el-row>
     <patient-info-dialog
       ref="patientInfoRef"
       :patientInfoData="patientInfoList"
@@ -526,7 +636,8 @@ import {
   getLocationTree,
   getPractitionerMetadata,
   getHealthcareMetadata,
-  addOutpatientRegistration
+  addOutpatientRegistration,
+  getOutpatientRegistrationCurrent,
 } from "./components/outpatientregistration";
 import patientInfoDialog from "./components/patientInfoDialog";
 import PatientAddDialog from "./components/patientAddDialog";
@@ -568,10 +679,10 @@ const data = reactive({
   queryParams: {
     pageNo: 1,
     pageSize: 50,
-    searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
-    statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
-    ybMatchFlag: undefined, // 是否医保匹配（包括 1：是，0：否）
-    status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    // searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
+    // statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    // ybMatchFlag: undefined, // 是否医保匹配（包括 1：是，0：否）
+    // status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
   },
   rules: {
     // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
@@ -652,12 +763,16 @@ function setchargeItem() {
 }
 /**  查询患者信息 */
 function getList() {
-  // loading.value = true;
-  // getOutpatientRegistrationList(queryParams.value).then((res) => {
-  //   loading.value = false;
-  //   outpatientRegistrationList.value = res.data.records;
-  //   total.value = res.data.total;
-  // });
+  loading.value = true;
+  getOutpatientRegistrationCurrent(queryParams.value).then((res) => {
+    loading.value = false;
+    outpatientRegistrationList.value = res.data.records;
+    console.log(
+      outpatientRegistrationList.value,
+      "outpatientRegistrationList.value"
+    );
+    total.value = res.data.total;
+  });
 }
 
 /** 查询费用性质 */
@@ -667,12 +782,12 @@ function getContract() {
   });
 }
 
-/** 查询诊断信息 */
-function getConditionDefinition() {
-  getConditionDefinitionMetadata().then((response) => {
-    console.log("getConditionDefinitionMetadata", "response", response.data);
-  });
-}
+// /** 查询诊断信息 */
+// function getConditionDefinition() {
+//   getConditionDefinitionMetadata().then((response) => {
+//     console.log("getConditionDefinitionMetadata", "response", response.data);
+//   });
+// }
 
 /** 查询就诊位置 */
 function getLocationInfo() {
@@ -766,11 +881,6 @@ function reset() {
   };
   proxy.resetForm("outpatientRegistrationRef");
 }
-/** 取消按钮 */
-function cancel() {
-  open.value = false;
-  reset();
-}
 
 /** 新增按钮操作 */
 function handleAdd() {
@@ -819,10 +929,8 @@ function transformFormData(form) {
 getInitData();
 getList();
 getContract();
-getConditionDefinition();
+// getConditionDefinition();
 getLocationInfo();
-// getPractitioner();
-// getHealthcare();
 </script>
 <style scoped>
 .el-form--inline .el-form-item {
