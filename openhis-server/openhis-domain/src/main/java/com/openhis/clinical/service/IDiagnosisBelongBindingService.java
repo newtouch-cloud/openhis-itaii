@@ -1,6 +1,7 @@
 package com.openhis.clinical.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.core.common.core.domain.R;
 import com.openhis.clinical.domain.DiagnosisBelongBinding;
 
 /**

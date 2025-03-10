@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
  * @date 2025-02-20
  */
 @Data
-@TableName("diagnosis_belong_binding")
+@TableName("cli_diagnosis_belong_binding")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 public class DiagnosisBelongBinding extends HisBaseEntity {

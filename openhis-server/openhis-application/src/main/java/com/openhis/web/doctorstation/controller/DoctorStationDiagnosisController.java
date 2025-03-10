@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
 import com.openhis.common.enums.BindingType;
+import com.openhis.web.doctorstation.appservice.IDoctorStationDiagnosisAppService;
+import com.openhis.web.doctorstation.dto.DiagnosisBelongBindingDto;
 import com.openhis.web.doctorstation.dto.DiagnosisBelongBindingInitDto;
 
 import lombok.AllArgsConstructor;
@@ -26,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 public class DoctorStationDiagnosisController {
+
+    private final IDoctorStationDiagnosisAppService iDoctorStationDiagnosisAppService;
 
     /**
      * 诊断归属绑定基础数据
@@ -45,7 +48,27 @@ public class DoctorStationDiagnosisController {
         return R.ok(diagnosisBelongBindingInitDto);
     }
 
+    /**
+     * 新增诊断归属绑定
+     * 
+     * @param diagnosisBelongBindingDto 诊断归属绑定
+     * @return 结果
+     */
+    @PostMapping("/diagnosis-belong-binding")
+    public R<?> addDiagnosisBelongBinding(@Validated @RequestBody DiagnosisBelongBindingDto diagnosisBelongBindingDto) {
+        return iDoctorStationDiagnosisAppService.addDiagnosisBelongBinding(diagnosisBelongBindingDto);
+    }
 
-
+    /**
+     * 编辑诊断归属绑定
+     *
+     * @param diagnosisBelongBindingDto 诊断归属绑定
+     * @return 结果
+     */
+    @PutMapping("/diagnosis-belong-binding")
+    public R<?>
+        updateDiagnosisBelongBinding(@Validated @RequestBody DiagnosisBelongBindingDto diagnosisBelongBindingDto) {
+        return iDoctorStationDiagnosisAppService.updateDiagnosisBelongBinding(diagnosisBelongBindingDto);
+    }
 
 }
