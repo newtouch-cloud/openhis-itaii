@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.web.doctorstation.dto.PatientInfoDto;
 
 /**
- * 医生站-电子病历 应用Mapper
+ * 医生站-主页面 应用Mapper
  */
 @Repository
 public interface DoctorStationMainAppMapper {

@@ -3,14 +3,13 @@
  */
 package com.openhis.web.doctorstation.controller;
 
-import com.openhis.web.doctorstation.appservice.IDoctorStationMainAppService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.core.common.core.domain.R;
-import com.openhis.web.doctorstation.appservice.IDoctorStationEmrAppService;
+import com.openhis.web.doctorstation.appservice.IDoctorStationMainAppService;
 import com.openhis.web.doctorstation.dto.DoctorStationInitDto;
 import com.openhis.web.doctorstation.dto.PatientInfoDto;
 
@@ -53,6 +52,39 @@ public class DoctorStationMainController {
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         return R.ok(iDoctorStationMainAppService.getPatientInfo(patientInfoDto, searchKey, pageNo, pageSize));
+    }
+
+    /**
+     * 医生接诊
+     * 
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    @GetMapping(value = "/receive-encounter")
+    public R<?> receiveEncounter(@RequestParam Long encounterId) {
+        return iDoctorStationMainAppService.receiveEncounter(encounterId);
+    }
+
+    /**
+     * 患者暂离
+     *
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    @GetMapping(value = "/leave-encounter")
+    public R<?> leaveEncounter(@RequestParam Long encounterId) {
+        return iDoctorStationMainAppService.leaveEncounter(encounterId);
+    }
+
+    /**
+     * 就诊完成
+     *
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    @GetMapping(value = "/complete-encounter")
+    public R<?> completeEncounter(@RequestParam Long encounterId) {
+        return iDoctorStationMainAppService.completeEncounter(encounterId);
     }
 
 }

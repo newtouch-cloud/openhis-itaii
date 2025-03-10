@@ -1,10 +1,12 @@
 package com.openhis.web.doctorstation.appservice;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.core.common.core.domain.R;
 import com.openhis.web.doctorstation.dto.PatientInfoDto;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * 医生站-电子病历 应用Service
+ * 医生站-主页面 应用Service
  */
 public interface IDoctorStationMainAppService {
 
@@ -19,5 +21,29 @@ public interface IDoctorStationMainAppService {
      */
     IPage<PatientInfoDto> getPatientInfo(PatientInfoDto patientInfoDto, String searchKey, Integer pageNo,
         Integer pageSize);
+
+    /**
+     * 医生接诊
+     *
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    R<?> receiveEncounter(Long encounterId);
+
+    /**
+     * 患者暂离
+     *
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    R<?> leaveEncounter(Long encounterId);
+
+    /**
+     * 就诊完成
+     *
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    R<?> completeEncounter(Long encounterId);
 
 }

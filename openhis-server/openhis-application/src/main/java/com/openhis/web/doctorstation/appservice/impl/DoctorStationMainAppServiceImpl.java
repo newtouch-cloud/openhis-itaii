@@ -5,32 +5,34 @@ import java.util.HashSet;
 
 import javax.annotation.Resource;
 
-import com.openhis.web.doctorstation.appservice.IDoctorStationMainAppService;
-import com.openhis.web.doctorstation.mapper.DoctorStationMainAppMapper;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.core.domain.R;
 import com.core.common.utils.AgeCalculatorUtil;
-import com.openhis.common.enums.AdministrativeGender;
-import com.openhis.common.enums.ClinicalStatus;
-import com.openhis.common.enums.EncounterStatus;
-import com.openhis.common.enums.ParticipantType;
+import com.openhis.administration.domain.Encounter;
+import com.openhis.administration.mapper.EncounterMapper;
+import com.openhis.common.enums.*;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
-import com.openhis.web.doctorstation.appservice.IDoctorStationEmrAppService;
+import com.openhis.web.doctorstation.appservice.IDoctorStationMainAppService;
 import com.openhis.web.doctorstation.dto.PatientInfoDto;
-import com.openhis.web.doctorstation.mapper.DoctorStationEmrAppMapper;
+import com.openhis.web.doctorstation.mapper.DoctorStationMainAppMapper;
 
 /**
- * 医生站-电子病历 应用实现类
+ * 医生站-主页面 应用实现类
  */
 @Service
 public class DoctorStationMainAppServiceImpl implements IDoctorStationMainAppService {
 
     @Resource
     DoctorStationMainAppMapper doctorStationMainAppMapper;
+
+    @Resource
+    EncounterMapper encounterMapper;
 
     /**
      * 查询就诊患者信息
@@ -58,6 +60,51 @@ public class DoctorStationMainAppServiceImpl implements IDoctorStationMainAppSer
             e.setStatusEnum_enumText(EnumUtils.getInfoByValue(EncounterStatus.class, e.getStatusEnum()));
         });
         return patientInfo;
+    }
+
+    /**
+     * 医生接诊
+     *
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    @Override
+    public R<?> receiveEncounter(Long encounterId) {
+        int update = encounterMapper.update(null,
+            new LambdaUpdateWrapper<Encounter>().eq(Encounter::getId, encounterId)
+                .set(Encounter::getStatusEnum, EncounterStatus.IN_PROGRESS.getValue())
+                .set(Encounter::getSubjectStatusEnum, EncounterSubjectStatus.RECEIVING_CARE.getValue()));
+        return update > 0 ? R.ok() : R.fail();
+    }
+
+    /**
+     * 患者暂离
+     *
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    @Override
+    public R<?> leaveEncounter(Long encounterId) {
+        int update = encounterMapper.update(null,
+            new LambdaUpdateWrapper<Encounter>().eq(Encounter::getId, encounterId)
+                .set(Encounter::getStatusEnum, EncounterStatus.ON_HOLD.getValue())
+                .set(Encounter::getSubjectStatusEnum, EncounterSubjectStatus.ON_LEAVE.getValue()));
+        return update > 0 ? R.ok() : R.fail();
+    }
+
+    /**
+     * 就诊完成
+     *
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    @Override
+    public R<?> completeEncounter(Long encounterId) {
+        int update = encounterMapper.update(null,
+            new LambdaUpdateWrapper<Encounter>().eq(Encounter::getId, encounterId)
+                .set(Encounter::getStatusEnum, EncounterStatus.DISCHARGED.getValue())
+                .set(Encounter::getSubjectStatusEnum, EncounterSubjectStatus.DEPARTED.getValue()));
+        return update > 0 ? R.ok() : R.fail();
     }
 
 }
