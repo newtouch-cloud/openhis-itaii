@@ -9,7 +9,7 @@
           <el-form
             :model="form"
             :rules="rules"
-            ref="medicationRef"
+            ref="outpatientregistrationRef"
             label-width="110px"
           >
             <el-row :gutter="24">
@@ -59,7 +59,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="1">
-                <el-form-item prop="name" label-width="0px">
+                <el-form-item prop="allergenFlag" label-width="0px">
                   <el-checkbox
                     v-model="form.allergenFlag"
                     label="(终端)扫码"
@@ -138,11 +138,11 @@
               <el-col :span="4">
                 <el-form-item
                   label="医保余额："
-                  prop="pyStr"
+                  prop="balanceAmount"
                   class="custom-label-spacing"
                 >
                   <el-input
-                    v-model="form.pyStr"
+                    v-model="form.balanceAmount"
                     placeholder=""
                     :disabled="true"
                   />
@@ -165,12 +165,58 @@
             <el-row :gutter="24">
               <el-col :span="5">
                 <el-form-item
+                  label="医保名称："
+                  prop="ybName"
+                  class="custom-label-spacing"
+                >
+                  <el-input
+                    v-model="form.ybName"
+                    placeholder=""
+                    :disabled="true"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="医保区域：" prop="ybAreaNo">
+                  <el-select
+                    v-model="form.ybAreaNo"
+                    placeholder="医保区域"
+                    clearable
+                    style="width: 240px"
+                    :disabled="true"
+                  >
+                    <el-option
+                      v-for="dict in med_chrgitm_type"
+                      :key="dict.value"
+                      :label="dict.label"
+                      :value="dict.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="5">
+                <el-form-item
+                  label="欠费限制额度："
+                  prop="limitAccount"
+                  class="custom-label-spacing"
+                >
+                  <el-input
+                    v-model="form.limitAccount"
+                    placeholder=""
+                    :disabled="true"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="24">
+              <el-col :span="5">
+                <el-form-item
                   label="费用性质："
-                  prop="busNo"
+                  prop="contractNo"
                   class="custom-label-spacing"
                 >
                   <el-select
-                    v-model="form.busNo"
+                    v-model="form.contractNo"
                     placeholder="费用性质"
                     clearable
                     style="width: 240px"
@@ -212,7 +258,7 @@
                 </el-form-item>
               </el-col> -->
               <el-col :span="6">
-                <el-form-item label="就诊原因：" prop="name">
+                <el-form-item label="就诊原因：" prop="ybType">
                   <el-select
                     v-model="form.ybType"
                     placeholder="就诊原因"
@@ -240,11 +286,11 @@
               <el-col :span="4">
                 <el-form-item
                   label="优先级："
-                  prop="priorityLevel"
+                  prop="priorityEnum"
                   class="custom-label-spacing"
                 >
                   <el-select
-                    v-model="form.priorityLevel"
+                    v-model="form.priorityEnum"
                     placeholder="优先级"
                     clearable
                     style="width: 240px"
@@ -319,14 +365,15 @@
               <el-col :span="6">
                 <el-form-item
                   label="挂号类型"
-                  prop="healthcareType"
+                  prop="serviceTypeId"
                   class="custom-label-spacing"
                 >
                   <el-select
-                    v-model="form.healthcareType"
+                    v-model="form.serviceTypeId"
                     placeholder="挂号类型"
                     clearable
                     style="width: 240px"
+                    @change="setchargeItem"
                   >
                     <el-option
                       v-for="healthcare in healthcareList"
@@ -338,9 +385,9 @@
                 </el-form-item>
               </el-col>
               <el-col :span="5">
-                <el-form-item label="医生：" prop="doctorId">
+                <el-form-item label="医生：" prop="practitionerId">
                   <el-select
-                    v-model="form.doctorId"
+                    v-model="form.practitionerId"
                     placeholder="医生"
                     clearable
                     style="width: 240px"
@@ -436,6 +483,26 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row :gutter="24" justify="end">
+              <el-col :span="5" style="text-align: right">
+                <el-button
+                  type="warning"
+                  plain
+                  icon="CircleClose"
+                  @click="handleClear"
+                  v-hasPermi="['system:user:export']"
+                  >清空</el-button
+                >
+                <el-button
+                  type="primary"
+                  plain
+                  icon="Plus"
+                  @click="handleAdd"
+                  v-hasPermi="['system:user:add']"
+                  >添加</el-button
+                >
+              </el-col>
+            </el-row>
           </el-form>
         </el-card>
       </el-col>
@@ -459,6 +526,7 @@ import {
   getLocationTree,
   getPractitionerMetadata,
   getHealthcareMetadata,
+  addOutpatientRegistration
 } from "./components/outpatientregistration";
 import patientInfoDialog from "./components/patientInfoDialog";
 import PatientAddDialog from "./components/patientAddDialog";
@@ -555,29 +623,41 @@ function handleAddPatient() {
 function setForm(formData) {
   console.log(formData, "formData");
   form.value = { ...form.value, ...formData };
+  form.value.patientId = formData.id;
 }
 // 设定表单
 function setInfo() {
   const doctorData = doctorList.value.filter(
-    (doctor) => doctor.id === form.value.doctorId
+    (doctor) => doctor.id === form.value.practitionerId
   );
   form.value.doctorName = doctorData.length > 0 ? doctorData[0].name : "";
   console.log(doctorData, "datayisheng");
   const healthcareData = healthcareList.value.filter(
-    (healthcare) => healthcare.id === form.value.healthcareType
+    (healthcare) => healthcare.id === form.value.serviceTypeId
   );
   form.value.locationId_dictText =
     healthcareData.length > 0 ? healthcareData[0].name : "";
   form.value.price = healthcareData.length > 0 ? healthcareData[0].price : "";
 }
-/** 查询病种目录列表 */
+
+// 设定费用项管理表单
+function setchargeItem() {
+  const healthcareData = healthcareList.value.filter(
+    (healthcare) => healthcare.id === form.value.serviceTypeId
+  );
+  form.value.definitionId =
+    healthcareData.length > 0 ? healthcareData[0].definitionId : "";
+  form.value.totalPrice =
+    healthcareData.length > 0 ? healthcareData[0].price : "";
+}
+/**  查询患者信息 */
 function getList() {
-  loading.value = true;
-  getOutpatientRegistrationList(queryParams.value).then((res) => {
-    loading.value = false;
-    outpatientRegistrationList.value = res.data.records;
-    total.value = res.data.total;
-  });
+  // loading.value = true;
+  // getOutpatientRegistrationList(queryParams.value).then((res) => {
+  //   loading.value = false;
+  //   outpatientRegistrationList.value = res.data.records;
+  //   total.value = res.data.total;
+  // });
 }
 
 /** 查询费用性质 */
@@ -631,10 +711,18 @@ function getHealthcare(data) {
   const param = {
     organizationId: data.organizationId,
   };
+  // 设定表单中的机构ID
+  form.value.organizationId = data.organizationId;
+
   getHealthcareMetadata(param).then((response) => {
     healthcareList.value = response.data.records;
     console.log("getHealthcareMetadata", "response", response.data);
   });
+}
+
+/** 清空条件按钮操作 */
+function handleClear() {
+  reset();
 }
 
 /** 搜索按钮操作 */
@@ -658,14 +746,23 @@ function reset() {
     busNo: undefined,
     ybType: undefined,
     phone: undefined,
-    allergenFlag: undefined,
     locationId: undefined,
-    healthcareType: undefined,
-    doctorId: undefined,
+    serviceTypeId: undefined,
+    practitionerId: undefined,
     locationId_dictText: undefined,
     doctorName: undefined,
     price: undefined,
-    priorityLevel: undefined,
+    priorityEnum: undefined,
+    patientId: undefined,
+    organizationId: undefined,
+    contractNo: undefined,
+    typeCode: 1, // 个人现金账户 目前固定传1
+    ybName: undefined,
+    ybAreaNo: undefined,
+    limitAccount: undefined,
+    definitionId: undefined,
+    serviceId: undefined,
+    totalPrice: undefined,
   };
   proxy.resetForm("outpatientRegistrationRef");
 }
@@ -677,9 +774,46 @@ function cancel() {
 
 /** 新增按钮操作 */
 function handleAdd() {
-  reset();
-  open.value = true;
-  title.value = "新增";
+  const transformedData = transformFormData(form.value);
+  console.log(transformedData, "transformedData门诊挂号");
+  addOutpatientRegistration(transformedData).then((response) => {
+    reset();
+    proxy.$modal.msgSuccess("新增成功");
+    getList();
+  });
+}
+
+// 设置新增参数
+function transformFormData(form) {
+  return {
+    encounterFormData: {
+      patientId: form.patientId,
+      priorityEnum: form.priorityEnum,
+      serviceTypeId: form.serviceTypeId,
+      organizationId: form.organizationId,
+    },
+    encounterLocationFormData: {
+      locationId: form.locationId,
+    },
+    encounterParticipantFormData: {
+      practitionerId: form.practitionerId,
+    },
+    accountFormData: {
+      patientId: form.patientId,
+      typeCode: 1, // 默认值为 "1"
+      name: form.ybName,
+      balanceAmount: form.balanceAmount,
+      ybAreaNo: form.ybAreaNo,
+      contractNo: form.contractNo,
+      limitAccount: form.limitAccount,
+    },
+    chargeItemFormData: {
+      patientId: form.patientId,
+      definitionId: form.definitionId,
+      serviceId: form.serviceTypeId,
+      totalPrice: form.totalPrice, // 默认值为 99.99
+    },
+  };
 }
 
 getInitData();

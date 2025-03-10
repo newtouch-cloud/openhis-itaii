@@ -63,13 +63,22 @@ export function getHealthcareMetadata(query) {
   })
 }
 
-// // 门诊挂号目录分类查询
+// // 门诊挂号查询
 // export function getOutpatientRegistrationCategory() {
 //   return request({
 //     url: '/outpatient-service/registerinformation-init',
 //     method: 'get'
 //   })
 // }
+
+// 新增门诊挂号信息
+export function addOutpatientRegistration(data) {
+  return request({
+    url: '/outpatient-service/register/save',
+    method: 'post',
+    data: data
+  })
+}
 
 // 新增病人信息
 export function addPatient(data) {

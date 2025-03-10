@@ -657,6 +657,12 @@ function submitForm() {
       { required: true, message: "描述不能为空", trigger: "blur" },
     ];
   }
+
+  // const nameData = name || chargeName;
+  // 服务名称
+  form.value.name = getName();
+  // 收费名称
+  form.value.chargeName = getName();
   proxy.$refs["registrationfeeRef"].validate((valid) => {
     if (valid) {
       if (form.value.id != undefined) {
@@ -685,6 +691,39 @@ function submitForm() {
   });
 }
 
+// 获取完整地址字符串
+function getName() {
+  console.log(service_type_code.value, "service_type_code.value");
+  // 服务类型
+  const serviceTypeText = proxy.selectDictLabel(service_type_code.value, form.value.fwTypeCode);
+  // 服务分类
+  const categoryCodeText = proxy.selectDictLabel(category_code.value, form.value.categoryCode);
+  // 服务专业
+  const specialtyCodeText = proxy.selectDictLabel(specialty_code.value, form.value.specialtyCode);
+  console.log(
+    serviceTypeText,
+    "serviceTypeText",
+    categoryCodeText,
+    specialtyCodeText
+  );
+  const nameParts = [
+    serviceTypeText,
+    form.value.addressCity,
+    categoryCodeText,
+    specialtyCodeText,
+  ];
+
+  // 使用 reduce 方法拼接地址，非空字段之间用 '-' 连接
+  return nameParts.reduce((acc, part) => {
+    if (part) {
+      if (acc) {
+        acc += ' - '; // 在非空字段之间添加 '-'
+      }
+      acc += part;
+    }
+    return acc;
+  }, "");
+}
 /** 详细按钮操作 */
 function handleView(row) {
   reset();
