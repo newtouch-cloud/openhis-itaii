@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 医生站-医嘱 controller
+ * 医生站-医嘱/处方 controller
  */
 @RestController
 @RequestMapping("/doctor-station/advice")

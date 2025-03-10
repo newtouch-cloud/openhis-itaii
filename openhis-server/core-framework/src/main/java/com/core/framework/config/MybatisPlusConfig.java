@@ -105,6 +105,7 @@ public class MybatisPlusConfig {
                     "adm_supplier",
                     "cli_condition",
                     "cli_condition_definition",
+                    "cli_diagnosis_belong_binding",
                     "cli_procedure",
                     "cli_procedure_performer",
                     "doc_emr",

@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ConditionDefinitionSource {
+public enum ConditionDefinitionSource implements HisEnumInterface {
     DISEASE_AND_DIAGNOSIS(1, "01", "疾病与诊断"),
     CHRONIC_DISEASE_DIAGNOSIS_CATALOG(2, "02", "特慢病诊断目录"),
     DIAGNOSIS_BY_DISEASE_CATALOG(3, "03", "按病种目录付费诊断"),
