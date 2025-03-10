@@ -69,4 +69,11 @@ public interface IOutpatientSkinTestRecordService {
      */
     int  editSkinTestRecord(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto);
 
+    /**
+     * 护士核对皮试结果后，确认签名（服务申请管理与过敏与不耐受的相关字段更新）
+     *
+     * @param outpatientSkinTestRecordDto 皮试记录信息
+     */
+    int nurseSignChkPs(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto);
+
 }

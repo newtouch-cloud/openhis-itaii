@@ -1,6 +1,5 @@
 package com.openhis.web.outpatientmanage.appservice.impl;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -8,8 +7,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.openhis.workflow.service.IServiceRequestService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.utils.DateUtils;
 import com.core.common.utils.SecurityUtils;
 import com.core.common.utils.StringUtils;
@@ -17,12 +20,11 @@ import com.openhis.administration.domain.Practitioner;
 import com.openhis.administration.domain.PractitionerRole;
 import com.openhis.administration.mapper.PractitionerMapper;
 import com.openhis.administration.mapper.PractitionerRoleMapper;
+import com.openhis.administration.service.IPractitionerRoleService;
+import com.openhis.administration.service.IPractitionerService;
 import com.openhis.clinical.domain.AllergyIntolerance;
-import com.openhis.workflow.domain.ServiceRequest;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.clinical.mapper.AllergyIntoleranceMapper;
+import com.openhis.clinical.service.IAllergyIntoleranceService;
 import com.openhis.common.enums.ClinicalStatus;
 import com.openhis.common.enums.VerificationStatus;
 import com.openhis.common.utils.EnumUtils;
@@ -31,6 +33,7 @@ import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordSearchParam;
 import com.openhis.web.outpatientmanage.mapper.OutpatientManageMapper;
 import com.openhis.web.patientmanage.dto.PatientListDto;
+import com.openhis.workflow.domain.ServiceRequest;
 import com.openhis.workflow.mapper.ServiceRequestMapper;
 
 /**
@@ -45,18 +48,29 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
     @Resource
     OutpatientManageMapper outpatientManageMapper;
 
-    @Resource
+    @Autowired
     ServiceRequestMapper serviceRequestMapper;
 
-    @Resource
-    AllergyIntoleranceMapper allergyIntoleranceMapper;
-
-    @Resource
+    @Autowired
     PractitionerMapper practitionerMapper;
 
-    @Resource
+    @Autowired
     PractitionerRoleMapper practitionerRoleMapper;
 
+    @Autowired
+    IAllergyIntoleranceService AllergyIntoleranceService;
+
+    @Autowired
+    IPractitionerRoleService practitionerRoleService;
+
+    @Autowired
+    IPractitionerService practitionerService;
+
+    @Autowired
+    AllergyIntoleranceMapper allergyIntoleranceMapper;
+
+    @Autowired
+    IServiceRequestService serviceRequestService;
 
     /**
      * 获取皮试项目检查状态列表
@@ -170,7 +184,7 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
             return 0;
         }
         Date endTime;
-        //判断结束时间，为空以开始时间基础加10分钟
+        // 判断结束时间，为空以开始时间基础加10分钟
         if (StringUtils.isEmpty(outpatientSkinTestRecordDto.getOccurrenceEndTime())) {
             // 结束时间为空，开始时间加10min设置
             endTime =
@@ -185,55 +199,101 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
         serviceRequest.setOccurrenceEndTime(endTime);
 
         // 获取系统登录的userId，找到practitionerId
-        Practitioner practitioner;
-        QueryWrapper<Practitioner> queryWrapperP = new QueryWrapper<>();
-        queryWrapperP.eq("user_id", SecurityUtils.getLoginUser().getUserId()); // 设置查询条件为user_id等于指定值
-        practitioner = practitionerMapper.selectOne(queryWrapperP);
+        Practitioner practitioner =
+            practitionerService.getPractitionerByUserId(SecurityUtils.getLoginUser().getUserId());
         // 设置执行人ID
         serviceRequest.setPerformerId(practitioner.getId());
 
         // 以执行人ID，获取执行人的身份类别
-        PractitionerRole practitionerRole;
-        QueryWrapper<PractitionerRole> queryWrapperPR = new QueryWrapper<>();
-        queryWrapperP.eq("practitioner_id", practitioner.getId());
-        practitionerRole = practitionerRoleMapper.selectOne(queryWrapperPR);
+        PractitionerRole practitionerRole = practitionerRoleService.getPractitionerRoleById(practitioner.getId());
         // 设置执行人身份类别
         serviceRequest.setPerformerTypeCode(practitionerRole.getRoleCode());
 
         // 以id为主条件更新服务申请管理表
         UpdateWrapper<ServiceRequest> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", serviceRequest.getId())
-            .set("performer_type_code", serviceRequest.getPerformerTypeCode())
+        updateWrapper.eq("id", serviceRequest.getId()).set("performer_type_code", serviceRequest.getPerformerTypeCode())
             .set("performer_id", serviceRequest.getPerformerId())
             .set("occurrence_start_time", serviceRequest.getOccurrenceStartTime())
             .set("occurrence_end_time", serviceRequest.getOccurrenceEndTime());
 
-        int count = serviceRequestMapper.update(null, updateWrapper);
+        int countUpdate = serviceRequestMapper.update(null, updateWrapper);
 
-        //过敏与不耐受表更新
+        // 过敏与不耐受表更新
         AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
-        //设置服务申请ID
-        allergyIntolerance.setRequestId(outpatientSkinTestRecordDto.getId());
-        //设置临床状态（皮试结果）
-        allergyIntolerance.setClinicalStatusEnum(outpatientSkinTestRecordDto.getClinicalStatusEnum());
-        //设置验证状态（皮试检查的状态）
-        allergyIntolerance.setVerificationStatusEnum(outpatientSkinTestRecordDto.getVerificationStatusEnum());
-        //设置患者id
-        allergyIntolerance.setPatientId(outpatientSkinTestRecordDto.getPatientId());
-        //设置记录者id
-        allergyIntolerance.setPractitionerId(practitioner.getId());
-        //设置记录日期(当下日期)
-        allergyIntolerance.setRecordedDate(DateUtils.getNowDate());
-        //设置备注
-        allergyIntolerance.setNote(outpatientSkinTestRecordDto.getNote());
+        allergyIntolerance
+            // 设置服务申请ID
+            .setRequestId(outpatientSkinTestRecordDto.getId())
+            // 设置临床状态（皮试结果）
+            .setClinicalStatusEnum(outpatientSkinTestRecordDto.getClinicalStatusEnum())
+            // 设置验证状态（皮试检查的状态）
+            .setVerificationStatusEnum(outpatientSkinTestRecordDto.getVerificationStatusEnum())
+            // 设置患者id
+            .setPatientId(outpatientSkinTestRecordDto.getPatientId())
+            // 设置记录者id
+            .setPractitionerId(practitioner.getId())
+            // 设置记录日期(当下日期)
+            .setRecordedDate(DateUtils.getNowDate())
+            // 设置备注
+            .setNote(outpatientSkinTestRecordDto.getNote());
+
+        // 当皮试结果是为阳性的时候，设置过敏时间
+        if (allergyIntolerance.getClinicalStatusEnum() == 0) {
+            // 设置过敏时间(当下日期)
+            allergyIntolerance.setOnsetDateTime(DateUtils.getNowDate());
+        }
 
         // 以服务申请ID为主条件更新过敏与不耐受表
         UpdateWrapper<AllergyIntolerance> updateWrapperAI = new UpdateWrapper<>();
-        updateWrapperAI.eq("request_id",allergyIntolerance.getRequestId());
-//        boolean result = allergyIntoleranceMapper.saveOrUpdate(allergyIntolerance, updateWrapper);
-
+        updateWrapperAI.eq("request_id", allergyIntolerance.getRequestId());
+        boolean result = AllergyIntoleranceService.saveOrUpdate(allergyIntolerance, updateWrapperAI);
+        // 更新或插入失败
+        if (!result || countUpdate <= 0) {
+            return 0;
+        }
 
         return 1;
+    }
+
+    @Override
+    public int nurseSignChkPs(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
+
+        // 过敏与不耐受表更新
+        AllergyIntolerance allergyIntolerance =
+            allergyIntoleranceMapper.selectById(outpatientSkinTestRecordDto.getId());
+
+        // 检查的状态不会死是确定和反驳的时候，不更新
+        if (!(allergyIntolerance.getVerificationStatusEnum() == 2
+            && allergyIntolerance.getVerificationStatusEnum() == 3)) {
+
+            return 0;
+        }
+
+        // 更新服务申请管理表的
+        ServiceRequest serviceRequest = new ServiceRequest();
+        // 获取系统登录的userId，找到practitionerId
+        Practitioner practitioner =
+            practitionerService.getPractitionerByUserId(SecurityUtils.getLoginUser().getUserId());
+        // 设置核对人ID
+        serviceRequest.setPerformerCheckId(practitioner.getId());
+        // 以id为主条件更新服务申请管理表
+        UpdateWrapper<ServiceRequest> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", serviceRequest.getId()).set("performer_check_id", serviceRequest.getPerformerCheckId());
+
+        boolean resultUpdateRequestService=serviceRequestService.update(updateWrapper);
+
+        // 更新过敏与不耐受表的断言者
+        //设置核对人
+        allergyIntolerance.setCheckPractitionerId(practitioner.getId());
+        // 以服务申请ID为主条件更新服务申请管理表
+        UpdateWrapper<AllergyIntolerance> updateWrapperAI = new UpdateWrapper<>();
+        updateWrapperAI.eq("request_id", allergyIntolerance.getRequestId()).set("check_practitioner_id", allergyIntolerance.getCheckPractitionerId());
+        boolean resultUpdateAllergyIntolerance = serviceRequestService.update(updateWrapper);
+
+        if(resultUpdateRequestService && resultUpdateAllergyIntolerance){
+            return 1;
+        }
+
+        return 0;
     }
 
 }

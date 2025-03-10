@@ -1,5 +1,6 @@
 package com.openhis.web.outpatientmanage.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class OutpatientSkinTestRecordController {
 
-    private final IOutpatientSkinTestRecordService OutpatientSkinTestRecordService;
+    @Autowired
+    private IOutpatientSkinTestRecordService OutpatientSkinTestRecordService;
 
     /**
      * 获取皮试项目检查状态列表
@@ -60,13 +62,17 @@ public class OutpatientSkinTestRecordController {
     }
 
     /**
-     * 护士签名核对皮试记录
+     * 皮试记录护士核对签名
      *
      * @param outpatientSkinTestRecordDto 皮试记录信息
      */
     @PutMapping("/outpatient-record-signcheck")
     public R<?> nurseSignChkPs(@Validated @RequestBody OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
-        return R.ok("这里别忘记替换");
+
+        if (OutpatientSkinTestRecordService.nurseSignChkPs(outpatientSkinTestRecordDto) <= 0) {
+            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00003, null));
+        }
+        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"皮试记录护士核对签名"}));
     }
 
     /**
