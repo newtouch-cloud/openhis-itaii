@@ -199,7 +199,7 @@
         :model="form"
         :rules="rules"
         ref="supplierRef"
-        label-width="90px"
+        label-width="110px"
       >
         <el-row>
           <el-col :span="12">
