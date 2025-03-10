@@ -29,7 +29,7 @@ public class PractitionerRole extends HisBaseEntity {
     private String name;
 
     /** 角色编码 */
-    private String role_code;
+    private String roleCode;
 
     /** 活动标识 */
     private Integer activeFlag;
