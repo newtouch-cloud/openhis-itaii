@@ -41,7 +41,7 @@ import com.openhis.web.outpatientservice.mapper.OutpatientRegistrationAppMapper;
  * 门诊挂号 应用实现类
  */
 @Service
-public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistrationAppService {
+public class OutpatientRegistrationAppServiceImpl implements IOutpatientRegistrationAppService {
 
     @Resource
     PatientMapper patientMapper;
@@ -283,8 +283,8 @@ public class IOutpatientRegistrationAppServiceImpl implements IOutpatientRegistr
             new HashSet<>(Arrays.asList("patient_name", "organization_name", "practitioner_name", "healthcare_name")),
             null);
 
-        IPage<CurrentDayEncounterDto> currentDayEncounter =
-            outpatientRegistrationAppMapper.getCurrentDayEncounter(new Page<>(pageNo, pageSize), queryWrapper);
+        IPage<CurrentDayEncounterDto> currentDayEncounter = outpatientRegistrationAppMapper
+            .getCurrentDayEncounter(new Page<>(pageNo, pageSize), ParticipantType.ADMITTER.getCode(), queryWrapper);
         currentDayEncounter.getRecords().forEach(e -> {
             // 性别
             e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));

@@ -32,10 +32,12 @@ public interface OutpatientRegistrationAppMapper {
      * 查询当日就诊数据
      * 
      * @param page 分页参数
+     * @param participantType 参与者类型
      * @param queryWrapper 查询条件
      * @return 当日就诊数据
      */
     IPage<CurrentDayEncounterDto> getCurrentDayEncounter(@Param("page") Page<CurrentDayEncounterDto> page,
+        @Param("participantType") String participantType,
         @Param(Constants.WRAPPER) QueryWrapper<CurrentDayEncounterDto> queryWrapper);
 
 }
