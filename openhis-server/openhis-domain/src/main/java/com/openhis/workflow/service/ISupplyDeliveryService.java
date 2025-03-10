@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.core.common.core.domain.R;
+import com.core.common.core.domain.model.LoginUser;
 import com.openhis.workflow.domain.SupplyDelivery;
 import com.openhis.workflow.domain.SupplyRequest;
 
@@ -20,7 +21,7 @@ public interface ISupplyDeliveryService extends IService<SupplyDelivery> {
      * 根据单据，发放物品
      *
      * @param supplyRequestList 单据信息
-     * @param supplyRequestList 单据信息
+     * @param now 当前时间
      */
     List<SupplyDelivery> createCompletedSupplyDelivery(List<SupplyRequest> supplyRequestList, Date now);
 }

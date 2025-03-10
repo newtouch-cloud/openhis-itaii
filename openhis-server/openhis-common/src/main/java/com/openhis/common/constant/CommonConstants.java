@@ -66,6 +66,11 @@ public class CommonConstants {
          * 活动定义
          */
         String WOR_ACTIVITY_DEFINITION = "wor_activity_definition";
+
+        /**
+         * 发放请求
+         */
+        String WOR_SUPPLY_REQUEST = "wor_supply_request";
     }
 
     /**

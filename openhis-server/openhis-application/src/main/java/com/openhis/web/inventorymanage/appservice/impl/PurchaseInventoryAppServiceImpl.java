@@ -20,12 +20,12 @@ import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.SupplyCategory;
 import com.openhis.common.enums.SupplyType;
-import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.inventorymanage.appservice.IPurchaseInventoryAppService;
 import com.openhis.web.inventorymanage.dto.InventoryReceiptDto;
 import com.openhis.web.inventorymanage.dto.InventoryReceiptPageDto;
 import com.openhis.web.inventorymanage.dto.InventorySearchParam;
+import com.openhis.web.inventorymanage.mapper.PurchaseInventoryMapper;
 import com.openhis.workflow.domain.SupplyRequest;
 import com.openhis.workflow.mapper.SupplyRequestMapper;
 import com.openhis.workflow.service.ISupplyRequestService;
@@ -41,6 +41,9 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
 
     @Autowired
     private SupplyRequestMapper supplyRequestMapper;
+
+    @Autowired
+    private PurchaseInventoryMapper purchaseInventoryMapper;
 
     @Autowired
     private ISupplyRequestService supplyRequestService;
@@ -59,7 +62,6 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
     public R<?> getPage(InventorySearchParam inventorySearchParam, Integer pageNo, Integer pageSize, String searchKey,
         HttpServletRequest request) {
 
-        // 按照单据号groupBy
         // 设置模糊查询的字段名
         HashSet<String> searchFields = new HashSet<>();
         searchFields.add(CommonConstants.FieldName.BusNo);
@@ -68,8 +70,8 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
         QueryWrapper<SupplyRequest> queryWrapper =
             HisQueryUtils.buildQueryWrapper(inventorySearchParam, searchKey, searchFields, request);
         // 查询入库单据分页列表
-        Page<InventoryReceiptPageDto> inventoryReceiptPage =
-            HisPageUtils.selectPage(supplyRequestMapper, queryWrapper, pageNo, pageSize, InventoryReceiptPageDto.class);
+        Page<InventoryReceiptPageDto> inventoryReceiptPage = purchaseInventoryMapper.selectInventoryReceiptPage(
+            new Page<>(pageNo, pageSize), queryWrapper, SupplyType.PURCHASE_INVENTORY.getValue());
         return R.ok(inventoryReceiptPage);
     }
 

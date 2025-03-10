@@ -1,5 +1,6 @@
 package com.openhis.workflow.service.impl;
 
+import com.openhis.administration.domain.ChargeItem;
 import com.openhis.workflow.domain.SupplyRequest;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,11 @@ public class InventoryItemServiceImpl extends ServiceImpl<InventoryItemMapper, I
      */
     @Override
     public void stockIn(List<InventoryItem> inventoryItemList) {
-
+        for (InventoryItem inventoryItem : inventoryItemList) {
+            // 此判断是为了避免插入时主键重复
+            if (inventoryItem.getId() == null) {
+                baseMapper.insert(inventoryItem);
+            }
+        }
     }
 }

@@ -34,20 +34,11 @@ public class InventoryReceiptPageDto implements Serializable {
     /** 单据号 */
     private String busNo;
 
-    /** 类型 */
-    private Integer typeEnum;
-
     /** 状态 */
     private Integer statusEnum;
 
-    /** 分类 */
-    private Integer categoryEnum;
-
     /** 供应商 */
     private Long supplierId;
-
-    /** 源仓库 */
-    private Long sourceLocationId;
 
     /** 目的仓库 */
     private Long purposeLocationId;

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.inventorymanage.mapper.PurchaseInventoryMapper">
+
+    <select id="selectInventoryReceiptPage"
+            resultType="com.openhis.web.inventorymanage.dto.InventoryReceiptPageDto">
+        SELECT id,
+               bus_no,
+               status_enum,
+               supplier_id,
+               purpose_location_id,
+               approver_id,
+               approval_time,
+               applicant_id,
+               apply_time,
+               purpose_location_id
+        FROM wor_supply_request
+        WHERE type_enum = #{purchaseInventory}
+        GROUP BY id,
+                 bus_no,
+                 status_enum,
+                 supplier_id,
+                 purpose_location_id,
+                 approver_id,
+                 approval_time,
+                 applicant_id,
+                 apply_time,
+                 purpose_location_id
+        ORDER BY bus_no desc
+        ${ew.customSqlSegment}
+    </select>
+</mapper>

@@ -32,7 +32,7 @@ import com.openhis.web.inventorymanage.appservice.IReceiptApprovalAppService;
 import com.openhis.web.inventorymanage.assembler.InventoryManageAssembler;
 import com.openhis.web.inventorymanage.dto.ItemChargeDetailDto;
 import com.openhis.web.inventorymanage.dto.SupplyItemDetailDto;
-import com.openhis.web.inventorymanage.mapper.InventoryManageMapper;
+import com.openhis.web.inventorymanage.mapper.ReceiptApprovalMapper;
 import com.openhis.workflow.domain.InventoryItem;
 import com.openhis.workflow.domain.SupplyDelivery;
 import com.openhis.workflow.domain.SupplyRequest;
@@ -62,7 +62,7 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
     @Autowired
     private TokenService tokenService;
     @Autowired
-    private InventoryManageMapper inventoryManageMapper;
+    private ReceiptApprovalMapper receiptApprovalMapper;
 
     /**
      * 校验单据是否正确
@@ -97,9 +97,9 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
         List<SupplyItemDetailDto> supplyItemDetailList;
         // 判断供应项是药品还是耗材
         if (CommonConstants.TableName.MED_MEDICATION_DEFINITION.equals(itemTable)) {
-            supplyItemDetailList = inventoryManageMapper.selectSupplyMedDetail(busNo, EventStatus.COMPLETED.getValue());
+            supplyItemDetailList = receiptApprovalMapper.selectSupplyMedDetail(busNo, EventStatus.COMPLETED.getValue());
         } else if (CommonConstants.TableName.ADM_DEVICE.equals(itemTable)) {
-            supplyItemDetailList = inventoryManageMapper.selectSupplyDevDetail(busNo, EventStatus.COMPLETED.getValue());
+            supplyItemDetailList = receiptApprovalMapper.selectSupplyDevDetail(busNo, EventStatus.COMPLETED.getValue());
         } else {
             return null;
         }
@@ -116,7 +116,7 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
     public List<ItemChargeDetailDto> getItemChargeDetail(List<Long> itemIdList) {
         // todo：未来会移到charge相关的service中
         if (!itemIdList.isEmpty()) {
-            return inventoryManageMapper.selectChargeDetail(itemIdList);
+            return receiptApprovalMapper.selectChargeDetail(itemIdList);
         }
         return null;
     }
@@ -169,13 +169,11 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
         if (!supplyItemDetailList.isEmpty()) {
             // 将供应项目的详细信息装配为库存项目和采购账单
             Pair<List<ChargeItem>, List<InventoryItem>> listPair =
-                InventoryManageAssembler.assembleChargeAndInventory(supplyItemDetailList, now);
-            if (listPair != null) {
-                // 创建已结算的采购财务流水
-                chargeItemService.createBilledPurchaseCharge(listPair.getLeft());
-                // 入库
-                inventoryItemService.stockIn(listPair.getRight());
-            }
+                InventoryManageAssembler.assembleChargeAndInventory(supplyItemDetailList, now, loginUser);
+            // 创建已结算的采购财务流水
+            chargeItemService.createBilledPurchaseCharge(listPair.getLeft());
+            // 入库
+            inventoryItemService.stockIn(listPair.getRight());
         }
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, null));
     }

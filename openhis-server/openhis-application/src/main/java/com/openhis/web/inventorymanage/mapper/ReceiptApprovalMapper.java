@@ -14,13 +14,13 @@ import com.openhis.web.inventorymanage.dto.SupplyItemDetailDto;
 import com.openhis.workflow.domain.SupplyRequest;
 
 /**
- * 库存管理查询用 mapper
+ * 单据审批查询用 mapper
  *
  * @author zwh
  * @date 2025-02-25
  */
 @Repository
-public interface InventoryManageMapper extends BaseMapper<SupplyRequest> {
+public interface ReceiptApprovalMapper extends BaseMapper<SupplyRequest> {
 
     /**
      * 获取药品供应单据详细信息

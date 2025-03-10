@@ -7,6 +7,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
+import liquibase.pro.packaged.S;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,6 +25,10 @@ import lombok.experimental.Accessors;
 public class SupplyItemDetailDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    /** ID */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long supplyId;
 
     /** 项目 */
     private String itemTable;
@@ -93,4 +101,7 @@ public class SupplyItemDetailDto implements Serializable {
 
     /** 定价子表主键 */
     private Long defDetailId;
+
+    /** 项目类型 */
+    private String itemCategory;
 }

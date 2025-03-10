@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.openhis.web.inventorymanage.mapper.InventoryManageMapper">
+<mapper namespace="com.openhis.web.inventorymanage.mapper.ReceiptApprovalMapper">
 
     <select id="selectSupplyMedDetail" resultType="com.openhis.web.inventorymanage.dto.SupplyItemDetailDto">
-        SELECT T1.item_table,
+        SELECT T1.id AS supply_id
+               T1.item_table,
                T1.item_id,
                T1.item_quantity,
                T1.unit_code AS item_unit,
@@ -26,9 +27,10 @@
                T2.wb_str,
                T2.unit_code,
                T2.min_unit_code,
+               T2.category_code AS item_category,
                T3.id AS definition_id,
                T4.amount AS base_amount,
-               T4.id AS applicability_id
+               T4.id AS def_detail_id
         FROM wor_supply_request AS T1
             LEFT JOIN wor_supply_delivery AS T5
                 ON T1.id = T5.request_id

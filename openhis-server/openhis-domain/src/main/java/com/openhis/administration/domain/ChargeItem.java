@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
 
+import liquibase.pro.packaged.S;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -62,7 +63,7 @@ public class ChargeItem extends HisBaseEntity {
     private Long quantityValue;
 
     /** 单位 */
-    private Long quantityUnit;
+    private String quantityUnit;
 
     /** 单价 */
     private BigDecimal unitPrice;

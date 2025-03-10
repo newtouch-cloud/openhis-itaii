@@ -21,8 +21,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ChargeItemServiceImpl extends ServiceImpl<ChargeItemMapper, ChargeItem> implements IChargeItemService {
 
-    private final ChargeItemMapper chargeItemMapper;
-
     /**
      * 创建已计费的采购账单
      *
@@ -30,7 +28,12 @@ public class ChargeItemServiceImpl extends ServiceImpl<ChargeItemMapper, ChargeI
      */
     @Override
     public void createBilledPurchaseCharge(List<ChargeItem> chargeItemList) {
-
+        for (ChargeItem chargeItem : chargeItemList) {
+            // 此判断是为了避免插入时主键重复
+            if (chargeItem.getId() == null) {
+                baseMapper.insert(chargeItem);
+            }
+        }
     }
 
     /**
