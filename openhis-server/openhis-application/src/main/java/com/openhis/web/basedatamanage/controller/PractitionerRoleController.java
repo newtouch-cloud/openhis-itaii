@@ -120,7 +120,7 @@ public class PractitionerRoleController {
         // 编辑practitionerRole信息
         PractitionerRole practitionerRole = new PractitionerRole();
         BeanUtils.copyProperties(practitionerRoleDto, practitionerRole);
-        if (practitionerRole.getRole_code() == null) {
+        if (practitionerRole.getRoleCode() == null) {
             return R.fail(PromptMsgConstant.Common.M00007, "角色编码不能为空");
         }
         if (practitionerRole.getOrgId() == null) {
