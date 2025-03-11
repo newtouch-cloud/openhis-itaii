@@ -46,6 +46,12 @@
             <if test="OutpatientSkinTestRecordSearchParam != null and OutpatientSkinTestRecordSearchParam.encounterBusNo != null and OutpatientSkinTestRecordSearchParam.encounterBusNo != ''">
                 AND e.bus_no LIKE CONCAT('%',#{OutpatientSkinTestRecordSearchParam.encounterBusNo}, '%')
             </if>
+
+            <!-- 病人号 查询条件-->
+            <if test="OutpatientSkinTestRecordSearchParam != null and OutpatientSkinTestRecordSearchParam.patientBusNo != null and OutpatientSkinTestRecordSearchParam.patientBusNo != ''">
+                AND pt.bus_no LIKE CONCAT('%',#{OutpatientSkinTestRecordSearchParam.patientBusNo}, '%')
+            </if>
+
             <!-- 处方号 查询条件-->
             <if test="OutpatientSkinTestRecordSearchParam != null and OutpatientSkinTestRecordSearchParam.prescriptionNo != null and OutpatientSkinTestRecordSearchParam.prescriptionNo != ''">
                 AND sr.prescription_no LIKE CONCAT('%',#{OutpatientSkinTestRecordSearchParam.prescriptionNo}, '%')
@@ -95,6 +101,11 @@
             <!-- 门诊号 查询条件-->
             <if test="OutpatientSkinTestRecordSearchParam != null and OutpatientSkinTestRecordSearchParam.encounterBusNo != null and OutpatientSkinTestRecordSearchParam.encounterBusNo != ''">
                 AND e.bus_no LIKE CONCAT('%',#{OutpatientSkinTestRecordSearchParam.encounterBusNo}, '%')
+            </if>
+
+            <!-- 病人号 查询条件-->
+            <if test="OutpatientSkinTestRecordSearchParam != null and OutpatientSkinTestRecordSearchParam.patientBusNo != null and OutpatientSkinTestRecordSearchParam.patientBusNo != ''">
+                AND pt.bus_no LIKE CONCAT('%',#{OutpatientSkinTestRecordSearchParam.patientBusNo}, '%')
             </if>
 
             <!-- 处方号 查询条件-->
