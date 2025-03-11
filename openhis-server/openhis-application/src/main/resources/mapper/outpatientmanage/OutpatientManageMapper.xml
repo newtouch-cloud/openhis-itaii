@@ -7,6 +7,7 @@
             parameterType="com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordSearchParam"
             resultType="com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordDto">
         SELECT
+        sr.id, --服务申请管理ID
         sr.prescription_no, --处方号
         e.bus_no as encounterBusNo, --就诊号
         pt.name AS patientName, --病人姓名
