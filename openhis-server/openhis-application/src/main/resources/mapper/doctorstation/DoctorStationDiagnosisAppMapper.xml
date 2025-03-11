@@ -4,5 +4,37 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.openhis.web.doctorstation.mapper.DoctorStationDiagnosisAppMapper">
 
+    <select id="getDiagnosisBelongBindingPage" resultType="com.openhis.web.doctorstation.dto.DiagnosisBelongBindingDto">
+        SELECT T5.tenant_id,
+               T5.ID,
+               T5.object_id,
+               T5.definition_id,
+               T5.binding_enum,
+               T5.definition_name,
+               T5.object_name
+        from (
+                 SELECT T1.tenant_id,
+                        T1.ID,
+                        T1.object_id,
+                        T1.definition_id,
+                        T1.binding_enum,
+                        T2.NAME AS definition_name,
+                        CASE
+                            WHEN T1.binding_enum = #{bindingType1} THEN
+                                T3.user_name
+                            WHEN T1.binding_enum = #{bindingType2} THEN
+                                T4.NAME
+                            END AS object_name
+                 FROM cli_diagnosis_belong_binding AS T1
+                          LEFT JOIN cli_condition_definition AS T2 ON T1.definition_id = T2.ID
+                     AND T2.delete_flag = '0'
+                          LEFT JOIN sys_user AS T3 ON T1.binding_enum = #{bindingType1}
+                     AND T1.object_id = T3.user_id
+                          LEFT JOIN adm_organization AS T4 ON T1.binding_enum = #{bindingType2}
+                     AND T1.object_id = T4.ID
+                 WHERE T1.delete_flag = '0'
+                 ORDER BY object_name) AS T5
+            ${ew.customSqlSegment}
+    </select>
 
 </mapper>

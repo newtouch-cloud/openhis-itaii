@@ -1,6 +1,5 @@
 package com.openhis.clinical.service.impl;
 
-import com.core.common.core.domain.R;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

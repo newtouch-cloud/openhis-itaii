@@ -71,4 +71,33 @@ public class DoctorStationDiagnosisController {
         return iDoctorStationDiagnosisAppService.updateDiagnosisBelongBinding(diagnosisBelongBindingDto);
     }
 
+    /**
+     * 查询诊断归属绑定列表
+     * 
+     * @param diagnosisBelongBindingDto 查询条件dto
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 诊断归属绑定列表
+     */
+    @GetMapping(value = "/diagnosis-belong-binding-page")
+    public R<?> getDiagnosisBelongBindingPage(DiagnosisBelongBindingDto diagnosisBelongBindingDto,
+        @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return iDoctorStationDiagnosisAppService.getDiagnosisBelongBindingPage(diagnosisBelongBindingDto, searchKey,
+            pageNo, pageSize);
+    }
+
+    /**
+     * 删除诊断归属绑定
+     * 
+     * @param id ID
+     * @return 结果
+     */
+    @DeleteMapping("/diagnosis-belong-binding")
+    public R<?> delDiagnosisBelongBinding(@RequestParam Long id) {
+        return iDoctorStationDiagnosisAppService.delDiagnosisBelongBinding(id);
+    }
+
 }
