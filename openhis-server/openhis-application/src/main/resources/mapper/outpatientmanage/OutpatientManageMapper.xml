@@ -59,7 +59,7 @@
 
             <!-- 手机号 查询条件-->
             <if test="OutpatientSkinTestRecordSearchParam != null and OutpatientSkinTestRecordSearchParam.phone != null and OutpatientSkinTestRecordSearchParam.phone != ''">
-                AND pt.phone LIKE CONCAT('%',#{OutpatientRecordSearchParam.phone}, '%')
+                AND pt.phone LIKE CONCAT('%',#{OutpatientSkinTestRecordSearchParam.phone}, '%')
             </if>
 
             <!-- 时间筛选 -->
@@ -115,7 +115,7 @@
 
             <!-- 手机号 查询条件-->
             <if test="OutpatientSkinTestRecordSearchParam != null and OutpatientSkinTestRecordSearchParam.phone != null and OutpatientSkinTestRecordSearchParam.phone != ''">
-                AND pt.phone LIKE CONCAT('%',#{OutpatientRecordSearchParam.phone}, '%')
+                AND pt.phone LIKE CONCAT('%',#{OutpatientSkinTestRecordSearchParam.phone}, '%')
             </if>
 
             <!-- 时间筛选 -->
