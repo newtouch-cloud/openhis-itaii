@@ -10,7 +10,6 @@ import java.util.Date;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
-import liquibase.pro.packaged.S;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -92,6 +91,9 @@ public class SupplyItemDetailDto implements Serializable {
 
     /** 最小单位 */
     private String minUnitCode;
+
+    /** 拆零比 */
+    private BigDecimal partPercent;
 
     /** 费用定价ID */
     private Long definitionId;

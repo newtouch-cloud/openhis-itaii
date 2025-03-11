@@ -71,9 +71,6 @@ public class SupplyRequest extends HisBaseEntity {
     /** 物品计量单位 */
     private String unitCode;
 
-    /** 拆零单位 */
-    private String minUnitCode;
-
     /** 请求细节 */
     private String detailJson;
 

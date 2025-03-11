@@ -3,6 +3,7 @@
  */
 package com.openhis.web.inventorymanage.assembler;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -111,6 +112,22 @@ public class InventoryManageAssembler {
                 .setBaseUnitCode(supplyItemDetailDto.getUnitCode())
                 // 最小单位
                 .setMinUnitCode(supplyItemDetailDto.getMinUnitCode());
+
+            if (supplyItemDetailDto.getItemUnit().equals(supplyItemDetailDto.getUnitCode())) {
+                inventoryItem
+                    // 包装数量
+                    .setBaseQuantity(supplyItemDetailDto.getItemQuantity())
+                    // 拆零数量（拆零比×包装数量）
+                    .setMinQuantity(
+                        supplyItemDetailDto.getPartPercent().multiply(supplyItemDetailDto.getItemQuantity()));
+            } else if (supplyItemDetailDto.getItemUnit().equals(supplyItemDetailDto.getMinUnitCode())) {
+                inventoryItem
+                    // 拆零数量
+                    .setMinQuantity(supplyItemDetailDto.getItemQuantity())
+                    // 包装数量（拆零数量÷拆零比）
+                    .setBaseQuantity(supplyItemDetailDto.getItemQuantity().divide(supplyItemDetailDto.getPartPercent(),
+                        RoundingMode.HALF_UP));
+            }
 
             chargeItemList.add(chargeItem);
             inventoryItemList.add(inventoryItem);

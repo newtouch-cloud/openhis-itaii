@@ -14,34 +14,35 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum SupplyStatus {
+public enum SupplyStatus implements HisEnumInterface {
 
     /**
      * 待审核
      */
-    PENDING_APPROVAL(1, "待审核"),
+    PENDING_APPROVAL(1, "1", "待审核"),
 
     /**
      * 审核中
      */
-    APPROVAL(2, "审核中"),
+    APPROVAL(2, "2", "审核中"),
 
     /**
      * 同意
      */
-    AGREE(3, "同意"),
+    AGREE(3, "3", "同意"),
 
     /**
      * 驳回
      */
-    REJECT(4, "驳回"),
+    REJECT(4, "4", "驳回"),
 
     /**
      * 已撤回
      */
-    WITHDRAW(9, "已撤回");
+    WITHDRAW(9, "5", "已撤回");
 
     private Integer value;
+    private String code;
     private String info;
 
     public static SupplyStatus getByValue(Integer value) {

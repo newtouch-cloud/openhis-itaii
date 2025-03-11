@@ -222,20 +222,37 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
             // 生成请求的命中值
             String lotUnitCondition =
                 String.format(CommonConstants.Common.COMMA, supplyRequest.getLotNumber(), supplyRequest.getUnitCode());
-            String lotMinUnitCondition = String.format(CommonConstants.Common.COMMA, supplyRequest.getLotNumber(),
-                supplyRequest.getMinUnitCode());
 
             for (ItemChargeDetailDto detail : details) {
-                // 判断请求中的命中值是否命中了定价的条件
-                boolean isConditionMatched = lotUnitCondition.equals(detail.getConditionValue())
-                    || lotMinUnitCondition.equals(detail.getConditionValue());
 
-                // 如果未命中或命中价格不同，则新增数据
-                if (isConditionMatched || !lotUnitCondition.equals(detail.getConditionValue())) {
-                    resultList.add(this.addChargeItemDefApp(lotMinUnitCondition, supplyRequest.getMinSellPrice(),
-                        detail.getDefinitionId()));
-                    resultList.add(this.addChargeItemDefApp(lotUnitCondition, supplyRequest.getSellPrice(),
-                        detail.getDefinitionId()));
+                // 将字符串按逗号分割
+                String[] parts = detail.getConditionValue().split(",", 2);
+
+                // 判断是否有至少两部分，且单位部分与入库单位相等
+                if (parts.length > 1 && parts[1].trim().equals(supplyRequest.getUnitCode())) {
+                    // 判断请求中的命中值是否命中了定价的条件
+                    boolean isConditionMatched = lotUnitCondition.equals(detail.getConditionValue());
+
+                    // 如果未命中或命中价格不同，则新增数据
+                    if (!isConditionMatched || supplyRequest.getPrice().compareTo(detail.getUnitPrice()) != 0) {
+                        // 判断入库单位是大单位还是小单位
+                        if (supplyRequest.getUnitCode().equals(detail.getUnitCode())) {
+                            resultList.add(this.addChargeItemDefApp(
+                                String.format(CommonConstants.Common.COMMA, supplyRequest.getLotNumber(),
+                                    detail.getMinUnitCode()),
+                                supplyRequest.getMinSellPrice(), detail.getDefinitionId()));
+                            resultList.add(this.addChargeItemDefApp(lotUnitCondition, supplyRequest.getSellPrice(),
+                                detail.getDefinitionId()));
+                        } else {
+                            resultList
+                                .add(this.addChargeItemDefApp(
+                                    String.format(CommonConstants.Common.COMMA, supplyRequest.getLotNumber(),
+                                        detail.getUnitCode()),
+                                    supplyRequest.getMinSellPrice(), detail.getDefinitionId()));
+                            resultList.add(this.addChargeItemDefApp(lotUnitCondition, supplyRequest.getMinSellPrice(),
+                                detail.getDefinitionId()));
+                        }
+                    }
                 }
             }
         }

@@ -41,4 +41,10 @@ public class ItemChargeDetailDto implements Serializable {
 
     /** 基础价格 */
     private BigDecimal sellPrice;
+
+    /** 药品单位 */
+    private String unitCode;
+
+    /** 最小单位 */
+    private String minUnitCode;
 }
