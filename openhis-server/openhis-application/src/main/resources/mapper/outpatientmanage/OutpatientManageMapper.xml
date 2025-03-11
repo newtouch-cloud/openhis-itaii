@@ -28,8 +28,8 @@
         LEFT JOIN adm_patient pt ON pt.id = sr.patient_id
         LEFT JOIN wor_activity_definition ad ON ad.id = sr.activity_id
         LEFT JOIN med_medication_request mr ON mr.prescription_no = sr.prescription_no
-        LEFT JOIN med_medication_definition md ON md.id = mr.medication_id
-        LEFT JOIN med_medication m ON m.medication_def_id = md.id
+        LEFT JOIN med_medication m ON m.id = mr.medication_id
+        LEFT JOIN med_medication_definition md ON md.id = m.medication_def_id
         LEFT JOIN cli_allergy_intolerance ai ON ai.request_id = sr.id
         <where>
             ad.bus_no = 'ps001' -- 皮试检查的编号，todo：编号未定，后期修改
@@ -76,8 +76,8 @@
         LEFT JOIN adm_patient pt ON pt.id = sr.patient_id
         LEFT JOIN wor_activity_definition ad ON ad.id = sr.activity_id
         LEFT JOIN med_medication_request mr ON mr.prescription_no = sr.prescription_no
-        LEFT JOIN med_medication_definition md ON md.id = mr.medication_id
-        LEFT JOIN med_medication m ON m.medication_def_id = md.id
+        LEFT JOIN med_medication m ON m.id = mr.medication_id
+        LEFT JOIN med_medication_definition md ON md.id = m.medication_def_id
         LEFT JOIN cli_allergy_intolerance ai ON ai.request_id = sr.id
         <where>
             ad.bus_no = 'ps001' -- 皮试检查的编号，todo：编号未定，后期修改
