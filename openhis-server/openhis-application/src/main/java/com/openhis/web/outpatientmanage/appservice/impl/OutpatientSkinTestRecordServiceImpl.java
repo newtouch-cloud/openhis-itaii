@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.core.common.exception.CustomException;
 import com.openhis.workflow.service.IServiceRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -201,13 +202,18 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
         // 获取系统登录的userId，找到practitionerId
         Practitioner practitioner =
             practitionerService.getPractitionerByUserId(SecurityUtils.getLoginUser().getUserId());
+        if(practitioner ==null){
+            return 0;
+        }
         // 设置执行人ID
         serviceRequest.setPerformerId(practitioner.getId());
 
         // 以执行人ID，获取执行人的身份类别
         PractitionerRole practitionerRole = practitionerRoleService.getPractitionerRoleById(practitioner.getId());
-        // 设置执行人身份类别
-        serviceRequest.setPerformerTypeCode(practitionerRole.getRoleCode());
+        if(practitionerRole != null){
+            // 设置执行人身份类别
+            serviceRequest.setPerformerTypeCode(practitionerRole.getRoleCode());
+        }
 
         // 以id为主条件更新服务申请管理表
         UpdateWrapper<ServiceRequest> updateWrapper = new UpdateWrapper<>();
@@ -261,7 +267,7 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
         AllergyIntolerance allergyIntolerance =
             allergyIntoleranceMapper.selectById(outpatientSkinTestRecordDto.getId());
 
-        // 检查的状态不会死是确定和反驳的时候，不更新
+        // 检查的状态不为确定和反驳的时候，不更新
         if (!(allergyIntolerance.getVerificationStatusEnum() == 2
             && allergyIntolerance.getVerificationStatusEnum() == 3)) {
 
@@ -273,6 +279,10 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
         // 获取系统登录的userId，找到practitionerId
         Practitioner practitioner =
             practitionerService.getPractitionerByUserId(SecurityUtils.getLoginUser().getUserId());
+        //找不到找到practitionerId时，不更新
+        if(practitioner == null){
+            return 0;
+        }
         // 设置核对人ID
         serviceRequest.setPerformerCheckId(practitioner.getId());
         // 以id为主条件更新服务申请管理表
