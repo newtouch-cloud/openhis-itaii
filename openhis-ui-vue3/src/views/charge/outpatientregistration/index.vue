@@ -105,9 +105,9 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="5">
-                <el-form-item label="卡号：" prop="searchKey">
+                <el-form-item label="卡号：" prop="card">
                   <el-input
-                    v-model="form.searchKey"
+                    v-model="form.card"
                     placeholder=""
                     :disabled="true"
                   />
@@ -220,6 +220,7 @@
                     placeholder="费用性质"
                     clearable
                     style="width: 240px"
+                    ref="contractNameRef"
                   >
                     <el-option
                       v-for="item in contractList"
@@ -230,43 +231,17 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <!-- <el-col :span="6">
-                <el-form-item
-                  label="就诊位置："
-                  prop="locationId"
-                  class="custom-label-spacing"
-                >
-                  <el-tree-select
-                    v-model="form.locationId"
-                    :data="locationOptions"
-                    :props="{
-                      value: 'id',
-                      label: 'name',
-                      children: 'children',
-                    }"
-                    value-key="id"
-                    placeholder="请选择就诊位置"
-                    check-strictly
-                    :expand-on-click-node="false"
-                    :filter-node-method="filterNode"
-                    ref="locationTreeRef"
-                    node-key="value"
-                    highlight-current
-                    default-expand-all
-                    @node-click="handleNodeClick"
-                  />
-                </el-form-item>
-              </el-col> -->
               <el-col :span="6">
-                <el-form-item label="就诊原因：" prop="ybType">
+                <el-form-item label="就诊原因：" prop="jzyy">
                   <el-select
-                    v-model="form.ybType"
+                    v-model="form.jzyy"
                     placeholder="就诊原因"
                     clearable
                     style="width: 240px"
+                    ref="jzyyRef"
                   >
                     <el-option
-                      v-for="dict in med_chrgitm_type"
+                      v-for="dict in jzyyList"
                       :key="dict.value"
                       :label="dict.label"
                       :value="dict.value"
@@ -280,7 +255,11 @@
                   prop="phone"
                   class="custom-label-spacing"
                 >
-                  <el-input v-model="form.phone" placeholder="" />
+                  <el-input
+                    v-model="form.phone"
+                    placeholder=""
+                    ref="phoneRef"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="4">
@@ -294,6 +273,7 @@
                     placeholder="优先级"
                     clearable
                     style="width: 240px"
+                    ref="prioritySelectRef"
                   >
                     <el-option
                       v-for="item in priorityLevelOptionOptions"
@@ -304,7 +284,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="4">
+              <!-- <el-col :span="4">
                 <el-form-item
                   label=""
                   prop="pyStr"
@@ -315,7 +295,7 @@
                     label="减免"
                   ></el-checkbox>
                 </el-form-item>
-              </el-col>
+              </el-col> -->
             </el-row>
             <el-row :gutter="24">
               <!-- <el-col :span="5">
@@ -337,7 +317,7 @@
               </el-col> -->
               <el-col :span="5">
                 <el-form-item
-                  label="就诊位置："
+                  label="就诊科室："
                   prop="locationId"
                   class="custom-label-spacing"
                 >
@@ -350,7 +330,7 @@
                       children: 'children',
                     }"
                     value-key="id"
-                    placeholder="请选择就诊位置"
+                    placeholder="请选择就诊科室"
                     check-strictly
                     :expand-on-click-node="false"
                     :filter-node-method="filterNode"
@@ -374,6 +354,7 @@
                     clearable
                     style="width: 240px"
                     @change="setchargeItem"
+                    ref="serviceTypeRef"
                   >
                     <el-option
                       v-for="healthcare in healthcareList"
@@ -392,6 +373,7 @@
                     clearable
                     style="width: 240px"
                     @change="setInfo"
+                    ref="doctorRef"
                   >
                     <el-option
                       v-for="doctor in doctorList"
@@ -413,6 +395,7 @@
                     placeholder="特病病种"
                     clearable
                     style="width: 240px"
+                    ref="ybTypeRef"
                   >
                     <el-option
                       v-for="dict in med_chrgitm_type"
@@ -661,6 +644,16 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const priorityLevelOptionOptions = ref(undefined); // 优先级
+const jzyyList = ref([{ value: "1", label: "其他" }]);
+// 键盘事件用
+const contractNameRef = ref(null);
+const jzyyRef = ref(null);
+const phoneRef = ref(null);
+const prioritySelectRef = ref(null);
+const locationTreeRef = ref(null);
+const serviceTypeRef = ref(null);
+const doctorRef = ref(null);
+const ybTypeRef = ref(null);
 
 // 使用 ref 定义查询所得用户信息数据
 const patientInfoList = ref(undefined);
@@ -690,6 +683,61 @@ const data = reactive({
     //   { required: true, message: "编码不能为空", trigger: "blur" },
     // ],
   },
+});
+
+// 其他输入框和选择框的 ref
+const inputs = [
+  contractNameRef,
+  jzyyRef,
+  phoneRef,
+  prioritySelectRef,
+  locationTreeRef,
+  serviceTypeRef,
+  doctorRef,
+  ybTypeRef,
+];
+
+// 键盘事件处理函数
+const handleKeyDown = (event) => {
+  const { key } = event;
+
+  // 获取当前焦点的元素
+  const currentIndex = inputs.findIndex((input) => {
+    if (input.value && input.value.$el) {
+      return input.value.$el.contains(document.activeElement);
+    }
+    return input.value === document.activeElement;
+  });
+
+  if (key === "ArrowDown" || key === "ArrowRight" || key === "Tab") {
+    event.preventDefault();
+    const nextIndex = (currentIndex + 1) % inputs.length;
+    const nextInput = inputs[nextIndex].value;
+    if (nextInput && nextInput.focus) {
+      nextInput.focus();
+    } else if (nextInput && nextInput.$el) {
+      nextInput.$el.querySelector("input").focus();
+    }
+  } else if (key === "ArrowUp" || key === "ArrowLeft") {
+    event.preventDefault();
+    const prevIndex = (currentIndex - 1 + inputs.length) % inputs.length;
+    const prevInput = inputs[prevIndex].value;
+    if (prevInput && prevInput.focus) {
+      prevInput.focus();
+    } else if (prevInput && prevInput.$el) {
+      prevInput.$el.querySelector("input").focus();
+    }
+  }
+};
+
+// 添加事件监听器
+onMounted(() => {
+  window.addEventListener("keydown", handleKeyDown);
+});
+
+// 移除事件监听器
+onUnmounted(() => {
+  window.removeEventListener("keydown", handleKeyDown);
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -735,6 +783,13 @@ function setForm(formData) {
   console.log(formData, "formData");
   form.value = { ...form.value, ...formData };
   form.value.patientId = formData.id;
+  // 使用 nextTick 确保 DOM 更新完成后设置焦点
+  nextTick(() => {
+    const prioritySelect = prioritySelectRef.value?.$el?.querySelector("input");
+    if (prioritySelect) {
+      prioritySelect.focus();
+    }
+  });
 }
 // 设定表单
 function setInfo() {
@@ -777,8 +832,10 @@ function getList() {
 
 /** 查询费用性质 */
 function getContract() {
+  form.value.jzyy = jzyyList.value[0]; // 设置默认值为第一项
   getContractList().then((response) => {
     contractList.value = response.data;
+    form.value.contractNo = response.data[0].busNo;
   });
 }
 
@@ -789,7 +846,7 @@ function getContract() {
 //   });
 // }
 
-/** 查询就诊位置 */
+/** 查询就诊科室 */
 function getLocationInfo() {
   getLocationTree().then((response) => {
     locationOptions.value = response.data.records;
@@ -878,6 +935,7 @@ function reset() {
     definitionId: undefined,
     serviceId: undefined,
     totalPrice: undefined,
+    jzyy: 1,
   };
   proxy.resetForm("outpatientRegistrationRef");
 }

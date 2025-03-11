@@ -5,6 +5,7 @@
         :data="patientInfoList"
         @selection-change="handleSelectionChange"
         width="90%"
+         @cell-dblclick="handleCellDblClick"
       >
         <el-table-column type="selection" width="50" align="center" />
         <el-table-column
@@ -160,7 +161,14 @@ function submitForm() {
   }
   visible.value = false;
 }
-
+// 双击数据时触发的方法
+function handleCellDblClick(row, column, cell, event) {
+  emits("submit", row);
+  visible.value = false;
+      // 获取整条数据
+      console.log('双击的行数据:', row);
+      // 根据需求进行进一步操作
+}
 defineExpose({
   show,
 });
