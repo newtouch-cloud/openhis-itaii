@@ -13,6 +13,7 @@
         pt.name AS patientName, --病人姓名
         pt.bus_no AS patientBusNo, --病人ID（前台显示用）
         sr.patient_id, --病人ID
+        ad.name AS medicationInformation, --药品信息
         md.bus_no || ' ' || md.name || ' 规格：' || COALESCE(m.total_volume, '') AS medicationDetail,--药品
         m.lot_number AS medicationLotNumber, --药品批次号
         mr.status_enum, --药品状态
