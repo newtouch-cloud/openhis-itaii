@@ -41,7 +41,7 @@
 		      <el-button type="success" plain icon="EditPen" @click="handleUpdate" v-hasPermi="['system:menu:add']">修改</el-button>
 		   </el-col>
 		   <el-col :span="1.5">
-		      <el-button type="danger" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:menu:add']">取消修改</el-button>
+		      <!-- <el-button type="danger" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:menu:add']">取消修改</el-button> -->
 		   </el-col>
 		   <el-col :span="1.5">
 		      <!-- <el-button type="warning" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:menu:add']">保存</el-button> -->
@@ -50,26 +50,26 @@
 		</el-row>
 
         <el-table :data="skinRecordList" border style="width: 100%">
-		    <el-table-column prop="idCard" label="处方号" width="150" />
-		    <el-table-column prop="busNo" label="门诊号" width="150" />
-			<el-table-column prop="name" label="病人" width="120" />
-			<el-table-column prop="genderEnum" label="药品信息" width="150" />
-			<el-table-column prop="maritalStatusEnum" label="药品" width="160" />
-			<el-table-column prop="nationalityCode" label="药品批号" width="160" />
-			<el-table-column prop="age" label="状态" width="80" />
-			<el-table-column prop="phone" label="皮试结果" width="120" />
-			<el-table-column prop="address" label="执行护士" width="130" />
-			<el-table-column prop="workCompany" label="核对护士" width="130" />
-			<el-table-column prop="organizationName" label="开始时间" width="180" />
-			<el-table-column prop="organizationName" label="结束时间" width="180" />
+		    <el-table-column prop="prescriptionNo" label="处方号" width="150" />
+		    <el-table-column prop="encounterBusNo" label="门诊号" width="150" />
+			<el-table-column prop="patientName" label="病人" width="120" />
+			<el-table-column prop="medicationInformation" label="药品信息" width="150" />
+			<el-table-column prop="medicationDetail" label="药品" width="160" />
+			<el-table-column prop="medicationLotNumber" label="药品批号" width="160" />
+			<el-table-column prop="verificationStatusEnum_enumText" label="状态" width="80" />
+			<el-table-column prop="clinicalStatusEnum_enumText" label="皮试结果" width="120" />
+			<el-table-column prop="performerId_dictText" label="执行护士" width="130" />
+			<el-table-column prop="performerCheckId_dictText" label="核对护士" width="130" />
+		    <el-table-column prop="occurrenceStartTime" label="开始时间" width="180" />
+			<el-table-column prop="occurrenceEndTime" label="结束时间" width="180" />
 			<el-table-column prop="organizationName" label="开单医生" width="180" />
-			<el-table-column prop="organizationName" label="发药状态" width="180" />
-			<el-table-column prop="organizationName" label="备注" width="180" />
+			<el-table-column prop="medicationStatusEnum" label="发药状态" width="180" />
+			<el-table-column prop="note" label="备注" width="180" />
             <el-table-column label="操作" align="center" width="210" fixed="right" class-name="small-padding fixed-width">
 			   <template #default="scope">
 			      <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:menu:edit']">修改</el-button>
-			      <el-button link type="primary" icon="Finished" @click="submitForm(scope.row)" v-hasPermi="['system:menu:add']">确认</el-button>
-			      <el-button link type="primary" icon="Finished" @click="sign(scope.row)" v-hasPermi="['system:menu:add']">签名</el-button>
+			      <el-button link type="primary" icon="EditPen" @click="sign(scope.row)" v-hasPermi="['system:menu:add']">签名</el-button>
+			      <!-- <el-button link type="primary" icon="Finished" @click="submitForm(scope.row)" v-hasPermi="['system:menu:add']">保存</el-button> -->
 			   </template>
 			</el-table-column>
 		  </el-table>
@@ -78,50 +78,50 @@
 			<el-form ref="skinRecordRef" :model="form" :rules="rules" label-width="100px">
 				<el-row>
 					<el-col :span="7">
-						<el-form-item label="处方号" prop="name">
-					  		<el-input v-model="form.name" clearable  disabled/>
+						<el-form-item label="处方号" prop="prescriptionNo">
+					  		<el-input v-model="form.prescriptionNo" disabled/>
 					  	</el-form-item>
 					</el-col>
 					<el-col :span="7">
-						<el-form-item label="门诊号" prop="name">
-					  		<el-input v-model="form.name" clearable  disabled/>
+						<el-form-item label="门诊号" prop="encounterBusNo">
+					  		<el-input v-model="form.encounterBusNo" disabled/>
 					  	</el-form-item>
 					</el-col>
 					<el-col :span="7">
-						<el-form-item label="病人" prop="name">
-					  		<el-input v-model="form.name" clearable  disabled/>
+						<el-form-item label="病人" prop="patientName">
+					  		<el-input v-model="form.patientName"  disabled/>
 					  	</el-form-item>
 					</el-col>
 				</el-row><br>
 				<el-row>
 					<el-col :span="8">
-						<el-form-item label="药品信息" prop="name">
-					  		<el-input v-model="form.name" clearable  disabled/>
+						<el-form-item label="药品信息" prop="medicationInformation">
+					  		<el-input v-model="form.medicationInformation" clearable  disabled/>
 					  	</el-form-item>
 					</el-col>
 					<el-col :span="10">
-						<el-form-item label="药品" prop="name">
-					  		<el-input v-model="form.name"  disabled/>
+						<el-form-item label="药品" prop="medicationDetail">
+					  		<el-input v-model="form.medicationDetail"  disabled/>
 					  	</el-form-item>
 					</el-col>
 				</el-row><br>
 				<el-row>
 					<el-col :span="7">
-						<el-form-item label="药品批号" prop="name">
-					  		<el-input v-model="form.name" clearable  disabled/>
+						<el-form-item label="药品批号" prop="medicationLotNumber">
+					  		<el-input v-model="form.medicationLotNumber" disabled/>
 					  	</el-form-item>
 					</el-col>
 					<el-col :span="6">
-						<el-form-item label="状态" prop="name">
-							<el-select v-model="form.linkRelationCode" placeholder="联系人关系" clearable >
+						<el-form-item label="状态" prop="verificationStatusEnum">
+							<el-select v-model="form.verificationStatusEnum" placeholder="请选择状态" clearable >
 						      <el-option v-for="item in statusList"
 						         :key="item.value" :label="item.info" :value="item.value" />
 						   </el-select>
 					  	</el-form-item>
 					</el-col>
 					<el-col :span="7">
-						<el-form-item label="皮试结果" prop="name">
-							<el-select v-model="form.linkRelationCode" placeholder="" clearable :disabled="isViewMode">
+						<el-form-item label="皮试结果" prop="clinicalStatusEnum">
+							<el-select v-model="form.clinicalStatusEnum" placeholder="请选择皮试结果" clearable :disabled="isViewMode">
 						      <el-option v-for="item in skinResultList"
 						         :key="item.value" :label="item.info" :value="item.value" />
 						   </el-select>
@@ -130,49 +130,49 @@
 				</el-row><br>
 				<el-row>
 					<el-col :span="7">
-						<el-form-item label="执行护士" prop="name">
-					  		<el-input v-model="form.name" clearable  disabled/>
+						<el-form-item label="执行护士" prop="performerId_dictText">
+					  		<el-input v-model="form.performerId_dictText"  disabled/>
 					  	</el-form-item>
 					</el-col>
 					<el-col :span="7">
-						<el-form-item label="核对护士" prop="name">
-					  		<el-input v-model="form.name" clearable  disabled/>
-					  	</el-form-item>
-					</el-col>
-				</el-row><br>
-				<el-row>
-					<el-col :span="7">
-						<el-form-item label="开始时间" prop="name">
-							<el-date-picker v-model="form.startTime" type="datetime" placeholder="开始时间" />
-					  	</el-form-item>
-					</el-col>
-					<el-col :span="7">
-						<el-form-item label="结束时间" prop="name">
-							<el-date-picker v-model="form.endTime" type="datetime" placeholder="结束时间" />
+						<el-form-item label="核对护士" prop="performerCheckId_dictText">
+					  		<el-input v-model="form.performerCheckId_dictText"  disabled/>
 					  	</el-form-item>
 					</el-col>
 					<el-col :span="7">
 						<el-form-item label="开单医生" prop="name">
-					  		<el-input v-model="form.name" clearable  disabled/>
+					  		<el-input v-model="form.name"  disabled/>
+					  	</el-form-item>
+					</el-col>
+				</el-row><br>
+				<el-row>
+					<el-col :span="8">
+						<el-form-item label="开始时间" prop="occurrenceStartTime">
+							<el-date-picker v-model="form.occurrenceStartTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="开始时间" :default-time="defaultTime"/>
+					  	</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="结束时间" prop="occurrenceEndTime">
+							<el-date-picker v-model="form.occurrenceEndTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="结束时间" :default-time="defaultTime"/>
 					  	</el-form-item>
 					</el-col>
 				</el-row><br>
 				<el-row>
 					<el-col :span="7">
-						<el-form-item label="发药状态" prop="name">
-							<el-input v-model="form.name" clearable  disabled/>
+						<el-form-item label="发药状态" prop="medicationStatusEnum">
+							<el-input v-model="form.medicationStatusEnum"  disabled/>
 					  	</el-form-item>
 					</el-col>
 					<el-col :span="12">
-						<el-form-item label="备注" prop="name">
-							<el-input v-model="form.name" clearable />
+						<el-form-item label="备注" prop="note">
+							<el-input v-model="form.note" clearable />
 					  	</el-form-item>
 					</el-col>
 				</el-row>
 			</el-form>
 			<template #footer>
             <div class="dialog-footer">
-               <el-button type="primary" @click="saveForm">确 定</el-button>
+               <el-button type="primary" @click="saveForm">确认项目</el-button>
                <el-button @click="cancel">取 消</el-button>
             </div>
          </template>
@@ -184,8 +184,9 @@
 
 <script  setup name="skinRecord">
 import { ref, computed } from 'vue';
+import { ElMessage } from 'element-plus'
 
-import { listSkinRecord } from './component/api'; 
+import { listSkinRecord,listStatus,listSkinResult,updateNurseSign,updateSkinTestRecord } from './component/api'; 
 
 const showSearch = ref(true);
 const total = ref(1);
@@ -212,27 +213,36 @@ const { queryParams,form } = toRefs(data);
 /** 表单重置 */
 function reset() {
   form.value = {
-    name: undefined,
-    nameJson: undefined,
-    menuName: undefined,
-    age: undefined,
-    genderEnum: 0,
-    idType: undefined,
-	idCard: undefined,
-	phone: undefined,
-	prfsEnum: undefined,
-	address: undefined,
-	tempFlag: undefined,
+    prescriptionNo: 0,
+    encounterBusNo: undefined,
+	patientName: undefined,
+	medicationInformation: undefined,
+    medicationDetail: undefined,
+    medicationLotNumber: undefined,
+    status: undefined,
+    clinicalStatusEnum: 0,
+    performerId_dictText: undefined,
+	performerCheckId_dictText: undefined,
+	occurrenceStartTime: undefined,
+	occurrenceEndTime: undefined,
+	medicationStatusEnum: undefined,
+	note: undefined,
   };
   proxy.resetForm("skinRecordRef");
 }
 
-/** 查询门诊记录列表 */
+/** 查询门诊皮试列表 */
 function getList() {
   listSkinRecord(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
-    jobLogList.value = response.rows;
-    total.value = response.total;
-    loading.value = false;
+	console.log("1234",response);
+    skinRecordList.value = response.data.records;
+    total.value = response.data.total;
+  });
+  listStatus().then(response => {
+	statusList.value = response.data
+  });
+  listSkinResult().then(response => {
+	skinResultList.value = response.data
   });
 }
 
@@ -251,27 +261,53 @@ function cancel() {
   open.value = false;
   reset();
 }
-function handleUpdate() {
+function handleUpdate(row) {
 	open.value = true;
+	form.value = row;
 }
 function sign(row){
-	row.sign = nurse;
+	console.log("564564",row);
+	updateNurseSign(row).then(response => {
+          proxy.$modal.msgSuccess("签名成功");
+          open.value = false;
+          getList();
+        });
 }
 
 function saveForm() {
-  const index = skinRecordList.value.findIndex(item => item.id === form.id);
-  if (index !== -1) {
-    tableData.value[index].name = form.name;
-    tableData.value[index].age = form.age;
-  }
-  open.value = false;
+	if (form.value.startTime > form.value.endTime) {
+		ElMessage({
+		message: '开始时间不能大于结束时间',
+		type: 'error',
+		})
+	}else{
+		// const index = skinRecordList.value.findIndex(item => item.id === form.id);
+		// const statusInfo = statusList.value.find(item => item.value === form.value.verificationStatusEnum)?.info || '';
+		// const clinicalStatusInfo = skinResultList.value.find(item => item.value === form.value.clinicalStatusEnum)?.info || '';
+		// if (index !== -1) {
+		// 	//暂存数据
+		// 	skinRecordList.value[index].verificationStatusEnum_enumText = statusInfo;
+		// 	skinRecordList.value[index].clinicalStatusEnum_enumText = clinicalStatusInfo;
+		// 	skinRecordList.value[index].occurrenceStartTime = form.occurrenceStartTime;
+		// 	skinRecordList.value[index].occurrenceEndTime = form.occurrenceEndTime;
+		// 	skinRecordList.value[index].note = form.note;
+		// 	console.log(skinRecordList.value[index]);
+		// }
+		console.log("564564",form.value);
+		updateSkinTestRecord(form.value).then(response => {
+          proxy.$modal.msgSuccess("更新成功");
+          open.value = false;
+          getList();
+        });
+		open.value = false;
+	} 
 }
 
 function submitForm() {
   proxy.$refs["patientRef"].validate(valid => {
     if (valid) {
-        updatePatient(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功");
+        updateSkinTestRecord(form.value).then(response => {
+          proxy.$modal.msgSuccess("更新成功");
           open.value = false;
           getList();
         });
@@ -279,6 +315,6 @@ function submitForm() {
   });
 }
 
-// getList();
+getList();
 
 </script>
