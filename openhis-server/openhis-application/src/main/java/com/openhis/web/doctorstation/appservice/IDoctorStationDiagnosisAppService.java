@@ -24,4 +24,24 @@ public interface IDoctorStationDiagnosisAppService {
      */
     R<?> updateDiagnosisBelongBinding(DiagnosisBelongBindingDto diagnosisBelongBindingDto);
 
+    /**
+     * 查询诊断归属绑定列表
+     *
+     * @param diagnosisBelongBindingDto 查询条件dto
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 诊断归属绑定列表
+     */
+    R<?> getDiagnosisBelongBindingPage(DiagnosisBelongBindingDto diagnosisBelongBindingDto, String searchKey,
+        Integer pageNo, Integer pageSize);
+
+    /**
+     * 删除诊断归属绑定
+     *
+     * @param id ID
+     * @return 结果
+     */
+    R<?> delDiagnosisBelongBinding(Long id);
+
 }

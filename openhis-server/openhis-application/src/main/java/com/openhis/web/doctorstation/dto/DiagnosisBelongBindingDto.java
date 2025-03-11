@@ -24,11 +24,22 @@ public class DiagnosisBelongBindingDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long objectId;
 
+    /**
+     * 对象名称
+     */
+    private String objectName;
+
     /** 诊断定义ID */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long definitionId;
 
+    /**
+     * 诊断(病种)名称
+     */
+    private String definitionName;
+
     /** 绑定类型 */
     private Integer bindingEnum;
+    private String bindingEnum_enumText;
 
 }
