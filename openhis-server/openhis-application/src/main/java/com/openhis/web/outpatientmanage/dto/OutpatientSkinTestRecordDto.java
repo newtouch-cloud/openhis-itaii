@@ -43,6 +43,12 @@ public class OutpatientSkinTestRecordDto {
     private Long performerId;
     private String performerId_dictText;
 
+    /** 开单医生 */
+    @Dict(dictCode = "id", dictTable = "adm_practitioner", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long doctorId;
+    private String doctorId_dictText;
+
     /** 核对人 */
     @Dict(dictCode = "id", dictTable = "adm_practitioner", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
