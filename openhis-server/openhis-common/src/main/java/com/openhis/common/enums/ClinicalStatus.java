@@ -15,7 +15,8 @@ import lombok.Getter;
 public enum ClinicalStatus implements HisEnumInterface  {
     ACTIVE(1, "active", "阳性"),
     INACTIVE(2, "inactive", "阴性"),
-    RESOLVED(3, "resolved", "已解决");
+    RESOLVED(3, "resolved", "已解决"),
+    UNKNOWN(4, "unknown", "未知");
 
     @EnumValue
     private final Integer value;

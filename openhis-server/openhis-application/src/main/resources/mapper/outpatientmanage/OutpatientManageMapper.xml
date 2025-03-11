@@ -19,8 +19,8 @@
         mr.status_enum, --药品状态
         sr.performer_id, --执行护士
         sr.performer_check_id,--核对人
-        sr.occurrence_start_time, --预计执行时间
-        sr.occurrence_end_time,--预计结束时间
+        to_char(sr.occurrence_start_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrenceStartTime, --预计执行时间
+        to_char(sr.occurrence_end_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrenceEndTime, --预计结束时间
         ai.clinical_status_enum, --皮试结果
         ai.verification_status_enum, --皮试检查项目状态
         ep.practitioner_id as doctorId, --开单医生
