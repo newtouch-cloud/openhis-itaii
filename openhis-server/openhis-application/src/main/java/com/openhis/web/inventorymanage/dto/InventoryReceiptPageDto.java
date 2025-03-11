@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -36,20 +37,24 @@ public class InventoryReceiptPageDto implements Serializable {
 
     /** 状态 */
     private Integer statusEnum;
+    private String statusEnum_enumText;
 
     /** 供应商 */
     private Long supplierId;
 
     /** 目的仓库 */
+    @Dict(dictCode = "id", dictText = "name", dictTable = "adm_location")
     private Long purposeLocationId;
 
     /** 审批人 */
+    @Dict(dictCode = "id", dictText = "name", dictTable = "adm_practitioner")
     private Long approverId;
 
     /** 审批时间 */
     private Date approvalTime;
 
     /** 申请人 */
+    @Dict(dictCode = "id", dictText = "name", dictTable = "adm_practitioner")
     private Long applicantId;
 
     /** 申请时间 */

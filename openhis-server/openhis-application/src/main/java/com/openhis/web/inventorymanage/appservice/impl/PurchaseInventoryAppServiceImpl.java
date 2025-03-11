@@ -7,6 +7,9 @@ import java.util.HashSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.core.common.utils.AgeCalculatorUtil;
+import com.openhis.common.enums.*;
+import com.openhis.common.utils.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +21,6 @@ import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.SupplyCategory;
-import com.openhis.common.enums.SupplyType;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.inventorymanage.appservice.IPurchaseInventoryAppService;
 import com.openhis.web.inventorymanage.dto.InventoryReceiptDto;
@@ -38,9 +39,6 @@ import com.openhis.workflow.service.ISupplyRequestService;
  */
 @Service
 public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppService {
-
-    @Autowired
-    private SupplyRequestMapper supplyRequestMapper;
 
     @Autowired
     private PurchaseInventoryMapper purchaseInventoryMapper;
@@ -72,6 +70,11 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
         // 查询入库单据分页列表
         Page<InventoryReceiptPageDto> inventoryReceiptPage = purchaseInventoryMapper.selectInventoryReceiptPage(
             new Page<>(pageNo, pageSize), queryWrapper, SupplyType.PURCHASE_INVENTORY.getValue());
+
+        inventoryReceiptPage.getRecords().forEach(e -> {
+            // 单据状态
+            e.setStatusEnum_enumText(EnumUtils.getInfoByValue(SupplyStatus.class, e.getStatusEnum()));
+        });
         return R.ok(inventoryReceiptPage);
     }
 

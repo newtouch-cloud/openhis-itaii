@@ -70,6 +70,7 @@
                T2.wb_str,
                T2.unit_code,
                T2.min_unit_code,
+               T2.part_percent,
                T3.id AS definition_id,
                T4.amount AS base_amount,
                T4.id AS applicability_id
@@ -94,10 +95,14 @@
                T1.price AS sell_price,
                T2.condition_lotnumber,
                T2.condition_unit_code,
-               T2.amount AS unit_price
+               T2.amount AS unit_price,
+               T3.unit_code,
+               T3.min_unit_code
         FROM adm_charge_item_definition AS T1
             LEFT JOIN adm_charge_item_def_app AS T2
                 ON T1.id = T2.definition_id
+            LEFT JOIN med_medication_definition AS T3
+                ON T1.instance_id = T3.id
         WHERE T1.instance_id IN
             <foreach collection="itemIdList" item="itemId" separator="," open="(" close=")">
                 #{itemId}
