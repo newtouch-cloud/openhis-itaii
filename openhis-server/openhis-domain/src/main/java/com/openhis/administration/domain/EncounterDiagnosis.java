@@ -1,13 +1,10 @@
 package com.openhis.administration.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -51,6 +48,5 @@ public class EncounterDiagnosis extends HisBaseEntity {
 
     /** 最高诊断依据标记 */
     private Integer highDiseEvidFlag;
-
 
 }

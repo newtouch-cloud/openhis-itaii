@@ -1,7 +1,10 @@
 package com.openhis.web.doctorstation.appservice;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
+import com.openhis.web.doctorstation.dto.ConditionDefinitionMetadata;
 import com.openhis.web.doctorstation.dto.DiagnosisBelongBindingDto;
+import com.openhis.web.doctorstation.dto.SaveDiagnosisParam;
 
 /**
  * 医生站-诊断 应用Service
@@ -43,5 +46,24 @@ public interface IDoctorStationDiagnosisAppService {
      * @return 结果
      */
     R<?> delDiagnosisBelongBinding(Long id);
+
+    /**
+     * 查询诊断信息
+     *
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 诊断信息
+     */
+    Page<ConditionDefinitionMetadata> getConditionDefinitionMetadataSearchKey(String searchKey, Integer pageNo,
+        Integer pageSize);
+
+    /**
+     * 医生保存诊断
+     *
+     * @param saveDiagnosisParam 诊断信息
+     * @return 结果
+     */
+    R<?> saveDoctorDiagnosis(SaveDiagnosisParam saveDiagnosisParam);
 
 }

@@ -1,17 +1,12 @@
 package com.openhis.clinical.domain;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
-import com.openhis.common.enums.ConditionCategory;
-import com.openhis.common.enums.ConditionClinicalStatus;
-import com.openhis.common.enums.ConditionSeverity;
-import com.openhis.common.enums.ConditionVerificationStatus;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -33,16 +28,16 @@ public class Condition extends HisBaseEntity {
     private Long id;
 
     /** 验证状态 */
-    private ConditionVerificationStatus verificationStatusEnum;
+    private Integer verificationStatusEnum;
 
     /** 临床特征 */
-    private ConditionClinicalStatus clinicalStatusEnum;
+    private Integer clinicalStatusEnum;
 
     /** 分类 */
-    private ConditionCategory categoryEnum;
+    private Integer categoryEnum;
 
     /** 严重程度 */
-    private ConditionSeverity severityEnum;
+    private Integer severityEnum;
 
     /** 疾病或诊断编码 */
     private String busNo;
@@ -92,5 +87,7 @@ public class Condition extends HisBaseEntity {
     /** 医保编码 */
     private String ybNo;
 
+    /** 诊断定义Id */
+    private Long definitionId;
 
 }

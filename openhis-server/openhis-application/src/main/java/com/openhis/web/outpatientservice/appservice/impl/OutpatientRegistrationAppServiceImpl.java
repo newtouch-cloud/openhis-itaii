@@ -20,8 +20,6 @@ import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.*;
 import com.openhis.administration.mapper.PatientMapper;
 import com.openhis.administration.service.*;
-import com.openhis.clinical.domain.ConditionDefinition;
-import com.openhis.clinical.mapper.ConditionDefinitionMapper;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.*;
@@ -48,9 +46,6 @@ public class OutpatientRegistrationAppServiceImpl implements IOutpatientRegistra
 
     @Resource
     ContractMapper contractMapper;
-
-    @Resource
-    ConditionDefinitionMapper conditionDefinitionMapper;
 
     @Resource
     OutpatientRegistrationAppMapper outpatientRegistrationAppMapper;
@@ -128,37 +123,6 @@ public class OutpatientRegistrationAppServiceImpl implements IOutpatientRegistra
             }
             return metadata;
         }).collect(Collectors.toList());
-    }
-
-    /**
-     * 查询诊断信息
-     *
-     * @param searchKey 模糊查询关键字
-     * @param pageNo 当前页
-     * @param pageSize 每页多少条
-     * @return 诊断信息
-     */
-    @Override
-    public Page<ConditionDefinitionMetadata> getConditionDefinitionMetadataSearchKey(String searchKey, Integer pageNo,
-        Integer pageSize) {
-        // 构建查询条件
-        ConditionDefinition conditionDefinition = new ConditionDefinition();
-        // 查询状态是有效的
-        conditionDefinition.setStatusEnum(PublicationStatus.ACTIVE.getValue());
-        QueryWrapper<ConditionDefinition> queryWrapper = HisQueryUtils.buildQueryWrapper(conditionDefinition, searchKey,
-            new HashSet<>(Arrays.asList("name", "py_str", "wb_str")), null);
-        // 设置排序
-        queryWrapper.orderByDesc("update_time");
-        // 诊断信息
-        Page<ConditionDefinitionMetadata> conditionDefinitionMetadataPage = HisPageUtils
-            .selectPage(conditionDefinitionMapper, queryWrapper, pageNo, pageSize, ConditionDefinitionMetadata.class);
-        conditionDefinitionMetadataPage.getRecords().forEach(e -> {
-            // 医保标记
-            e.setYbFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbFlag()));
-            // 医保对码标记
-            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbMatchFlag()));
-        });
-        return conditionDefinitionMetadataPage;
     }
 
     /**

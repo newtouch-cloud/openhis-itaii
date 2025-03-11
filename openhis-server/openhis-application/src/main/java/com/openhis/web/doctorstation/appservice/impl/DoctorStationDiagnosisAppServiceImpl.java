@@ -2,6 +2,7 @@ package com.openhis.web.doctorstation.appservice.impl;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -14,14 +15,28 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
+import com.openhis.administration.domain.EncounterDiagnosis;
+import com.openhis.administration.service.IEncounterDiagnosisService;
+import com.openhis.clinical.domain.Condition;
+import com.openhis.clinical.domain.ConditionDefinition;
 import com.openhis.clinical.domain.DiagnosisBelongBinding;
+import com.openhis.clinical.mapper.ConditionDefinitionMapper;
+import com.openhis.clinical.service.IConditionService;
 import com.openhis.clinical.service.IDiagnosisBelongBindingService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.BindingType;
+import com.openhis.common.enums.ConditionDefinitionSource;
+import com.openhis.common.enums.PublicationStatus;
+import com.openhis.common.enums.WhetherContainUnknown;
 import com.openhis.common.utils.EnumUtils;
+import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.doctorstation.appservice.IDoctorStationDiagnosisAppService;
+import com.openhis.web.doctorstation.dto.ConditionDefinitionMetadata;
 import com.openhis.web.doctorstation.dto.DiagnosisBelongBindingDto;
+import com.openhis.web.doctorstation.dto.SaveDiagnosisChildParam;
+import com.openhis.web.doctorstation.dto.SaveDiagnosisParam;
 import com.openhis.web.doctorstation.mapper.DoctorStationDiagnosisAppMapper;
 
 /**
@@ -35,6 +50,15 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
 
     @Resource
     DoctorStationDiagnosisAppMapper doctorStationDiagnosisAppMapper;
+
+    @Resource
+    ConditionDefinitionMapper conditionDefinitionMapper;
+
+    @Resource
+    IConditionService iConditionService;
+
+    @Resource
+    IEncounterDiagnosisService iEncounterDiagnosisService;
 
     /**
      * 新增诊断归属绑定
@@ -117,6 +141,86 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
         boolean res = iDiagnosisBelongBindingService.removeById(id);
         return res ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"诊断归属绑定"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00006, null));
+    }
+
+    /**
+     * 查询诊断信息
+     *
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 诊断信息
+     */
+    @Override
+    public Page<ConditionDefinitionMetadata> getConditionDefinitionMetadataSearchKey(String searchKey, Integer pageNo,
+        Integer pageSize) {
+        // 构建查询条件
+        ConditionDefinition conditionDefinition = new ConditionDefinition();
+        // 查询状态是有效的
+        conditionDefinition.setStatusEnum(PublicationStatus.ACTIVE.getValue());
+        QueryWrapper<ConditionDefinition> queryWrapper = HisQueryUtils.buildQueryWrapper(conditionDefinition, searchKey,
+            new HashSet<>(Arrays.asList("name", "py_str", "wb_str")), null);
+        // 设置排序
+        queryWrapper.orderByDesc("update_time");
+        // 诊断信息
+        Page<ConditionDefinitionMetadata> conditionDefinitionMetadataPage = HisPageUtils
+            .selectPage(conditionDefinitionMapper, queryWrapper, pageNo, pageSize, ConditionDefinitionMetadata.class);
+        conditionDefinitionMetadataPage.getRecords().forEach(e -> {
+            // 所属分类
+            e.setSourceEnum_enumText(EnumUtils.getInfoByValue(ConditionDefinitionSource.class, e.getSourceEnum()));
+            // 中医诊断/西医诊断
+            if (ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_DIAGNOSIS.getValue().equals(e.getSourceEnum())
+                || ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_SYNDROME_CATALOG.getValue()
+                    .equals(e.getSourceEnum())) {
+                e.setTypeName(CommonConstants.BusinessName.TCM_DIAGNOSIS);
+            } else {
+                e.setTypeName(CommonConstants.BusinessName.WESTERN_MEDICINE_DIAGNOSIS);
+            }
+            // 医保标记
+            e.setYbFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbFlag()));
+            // 医保对码标记
+            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbMatchFlag()));
+        });
+        return conditionDefinitionMetadataPage;
+    }
+
+    /**
+     * 医生保存诊断
+     *
+     * @param saveDiagnosisParam 诊断信息
+     * @return 结果
+     */
+    @Override
+    public R<?> saveDoctorDiagnosis(SaveDiagnosisParam saveDiagnosisParam) {
+        // 患者id
+        Long patientId = saveDiagnosisParam.getPatientId();
+        // 就诊ID
+        Long encounterId = saveDiagnosisParam.getEncounterId();
+        // 诊断定义集合
+        List<SaveDiagnosisChildParam> diagnosisChildList = saveDiagnosisParam.getDiagnosisChildList();
+        // 保存诊断管理
+        Condition condition;
+        for (SaveDiagnosisChildParam saveDiagnosisChildParam : diagnosisChildList) {
+            condition = new Condition();
+            condition.setVerificationStatusEnum(saveDiagnosisChildParam.getVerificationStatusEnum());
+            condition.setPatientId(patientId);
+            condition.setDefinitionId(saveDiagnosisChildParam.getDefinitionId());
+            condition.setYbNo(saveDiagnosisChildParam.getYbNo());
+            // 返回诊断id
+            Long conditionId = iConditionService.saveConditionByDoctor(condition);
+            saveDiagnosisChildParam.setConditionId(conditionId);
+        }
+        // 保存就诊诊断
+        EncounterDiagnosis encounterDiagnosis;
+        for (SaveDiagnosisChildParam saveDiagnosisChildParam : diagnosisChildList) {
+            encounterDiagnosis = new EncounterDiagnosis();
+            encounterDiagnosis.setEncounterId(encounterId);
+            encounterDiagnosis.setConditionId(saveDiagnosisChildParam.getConditionId());
+            encounterDiagnosis.setMaindiseFlag(saveDiagnosisChildParam.getMaindiseFlag());
+            iEncounterDiagnosisService.save(encounterDiagnosis);
+        }
+
+        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"诊断"}));
     }
 
 }

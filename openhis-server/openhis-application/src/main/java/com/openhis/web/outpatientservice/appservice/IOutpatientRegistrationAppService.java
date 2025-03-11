@@ -31,17 +31,6 @@ public interface IOutpatientRegistrationAppService {
     List<ContractMetadata> getContractMetadata();
 
     /**
-     * 查询诊断信息
-     * 
-     * @param searchKey 模糊查询关键字
-     * @param pageNo 当前页
-     * @param pageSize 每页多少条
-     * @return 诊断信息
-     */
-    Page<ConditionDefinitionMetadata> getConditionDefinitionMetadataSearchKey(String searchKey, Integer pageNo,
-        Integer pageSize);
-
-    /**
      * 根据位置id筛选医生
      * 
      * @param locationId 位置ID

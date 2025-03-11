@@ -11,4 +11,12 @@ import com.openhis.clinical.domain.Condition;
  */
 public interface IConditionService extends IService<Condition> {
 
+    /**
+     * 医生门诊就诊时保存诊断
+     * 
+     * @param condition 诊断信息
+     * @return 主键ID
+     */
+    Long saveConditionByDoctor(Condition condition);
+
 }

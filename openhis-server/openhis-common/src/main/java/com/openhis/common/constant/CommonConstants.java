@@ -84,4 +84,20 @@ public class CommonConstants {
         String BusNo = "bus_no";
     }
 
+    /**
+     * 业务常量
+     */
+    public interface BusinessName {
+
+        /**
+         * 西医诊断
+         */
+        String WESTERN_MEDICINE_DIAGNOSIS = "西医诊断";
+
+        /**
+         * 中医诊断
+         */
+        String TCM_DIAGNOSIS = "中医诊断";
+    }
+
 }
