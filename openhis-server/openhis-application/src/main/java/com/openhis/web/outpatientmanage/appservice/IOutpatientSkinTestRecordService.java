@@ -28,11 +28,6 @@ public interface IOutpatientSkinTestRecordService {
     List<PatientListDto> getSkinTestResult();
 
     /**
-     * 获取药品状态列表
-     */
-    List<PatientListDto> getMedicationStatus();
-
-    /**
      * 分页查询门诊皮试记录,可选条件
      *
      * @param outpatientSkinTestRecordSearchParam 查询条件
