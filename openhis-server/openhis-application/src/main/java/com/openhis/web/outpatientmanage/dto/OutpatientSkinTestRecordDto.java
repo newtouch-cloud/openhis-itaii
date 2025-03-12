@@ -72,6 +72,7 @@ public class OutpatientSkinTestRecordDto {
 
     /** 药品状态 */
     private Integer medicationStatusEnum;
+    private String medicationStatusEnum_enumText;
 
     /** 皮试结果 */
     private Integer clinicalStatusEnum;

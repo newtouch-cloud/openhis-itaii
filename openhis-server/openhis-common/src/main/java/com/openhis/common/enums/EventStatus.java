@@ -11,7 +11,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum EventStatus {
+public enum EventStatus implements HisEnumInterface {
 
     /**
      * 草稿

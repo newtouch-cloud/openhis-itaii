@@ -55,7 +55,7 @@ public class OutpatientSkinTestRecordController {
     @PutMapping("/outpatient-record-skintest")
     public R<?> editSkinTestRecord(@Validated @RequestBody OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
 
-        if (OutpatientSkinTestRecordService.editSkinTestRecord(outpatientSkinTestRecordDto) <= 0) {
+        if (!OutpatientSkinTestRecordService.editSkinTestRecord(outpatientSkinTestRecordDto)) {
             return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
         }
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"皮试项目检查"}));
@@ -69,7 +69,7 @@ public class OutpatientSkinTestRecordController {
     @PutMapping("/outpatient-record-signcheck")
     public R<?> nurseSignChkPs(@Validated @RequestBody OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
 
-        if (OutpatientSkinTestRecordService.nurseSignChkPs(outpatientSkinTestRecordDto) <= 0) {
+        if (!OutpatientSkinTestRecordService.nurseSignChkPs(outpatientSkinTestRecordDto)) {
             return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00003, null));
         }
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"皮试记录护士核对签名"}));
