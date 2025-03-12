@@ -1,18 +1,20 @@
 package com.openhis.common.aspectj;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.core.common.core.domain.R;
-import com.openhis.common.annotation.Dict;
+import java.lang.reflect.Field;
+import java.util.List;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Field;
-import java.util.List;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.core.domain.R;
+import com.openhis.common.annotation.Dict;
 
 @Aspect
 @Component
@@ -21,19 +23,19 @@ public class DictAspect {
     @Autowired
     private JdbcTemplate jdbcTemplate; // 使用 JdbcTemplate 执行 SQL
 
-    @Around("@annotation(org.springframework.web.bind.annotation.GetMapping) || " +
-            "@annotation(org.springframework.web.bind.annotation.PostMapping)")
+    @Around("@annotation(org.springframework.web.bind.annotation.GetMapping) || "
+        + "@annotation(org.springframework.web.bind.annotation.PostMapping)")
     public Object aroundController(ProceedingJoinPoint joinPoint) throws Throwable {
         Object result = joinPoint.proceed(); // 执行原方法
 
         if (result instanceof R) {
             // 如果返回值是 R<?>，提取其中的数据
-            R<?> response = (R<?>) result;
+            R<?> response = (R<?>)result;
             Object data = response.getData(); // 获取 R<?> 中的实际数据
 
             if (data instanceof Page) {
                 // 如果数据是 Page 类型，处理分页数据
-                Page<?> page = (Page<?>) data;
+                Page<?> page = (Page<?>)data;
                 List<?> records = page.getRecords();
                 if (!records.isEmpty()) {
                     for (Object obj : records) {
@@ -42,7 +44,7 @@ public class DictAspect {
                 }
             } else if (data instanceof List) {
                 // 如果数据是 List 类型，处理列表数据
-                List<?> list = (List<?>) data;
+                List<?> list = (List<?>)data;
                 if (!list.isEmpty()) {
                     for (Object obj : list) {
                         processDict(obj); // 处理每个 DTO 对象
@@ -99,11 +101,21 @@ public class DictAspect {
         if (StringUtils.isEmpty(dictTable)) {
             // 场景 1：默认查询 sys_dict_data 表
             sql = "SELECT dict_label FROM sys_dict_data WHERE dict_type = ? AND dict_value::varchar = ? LIMIT 1";
-            return jdbcTemplate.queryForObject(sql, String.class, dictCode, dictValue);
+            try {
+                return jdbcTemplate.queryForObject(sql, String.class, dictCode, dictValue);
+            } catch (DataAccessException e) {
+                // 如果查询结果为空，返回 空字符串
+                return "";
+            }
         } else {
             // 场景 2：查询指定表
             sql = String.format("SELECT %s FROM %s WHERE %s::varchar = ? LIMIT 1", dictText, dictTable, dictCode);
-            return jdbcTemplate.queryForObject(sql, String.class, dictValue);
+            try {
+                return jdbcTemplate.queryForObject(sql, String.class, dictValue);
+            } catch (DataAccessException e) {
+                // 如果查询结果为空，返回 空字符串
+                return "";
+            }
         }
     }
 }
