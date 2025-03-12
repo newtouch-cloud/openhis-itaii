@@ -10,7 +10,7 @@ import com.openhis.web.inventorymanage.dto.InventoryReceiptDto;
 import com.openhis.web.inventorymanage.dto.InventorySearchParam;
 
 /**
- * 采购入库 service
+ * 采购入库 appService
  *
  * @author zwh
  * @date 2025-03-08
@@ -47,12 +47,12 @@ public interface IPurchaseInventoryAppService {
     R<?> addOrEditInventoryReceipt(InventoryReceiptDto inventoryReceiptDto);
 
     /**
-     * 删除方法
+     * 删除单据
      *
-     * @param supplyRequestId 主表id
+     * @param supplyRequestId 供应请求id
      * @return 操作结果
      */
-    R<?> deleteInventoryReceipt(Long supplyRequestId);
+    R<?> deleteReceipt(Long supplyRequestId);
 
     /**
      * 提交审批

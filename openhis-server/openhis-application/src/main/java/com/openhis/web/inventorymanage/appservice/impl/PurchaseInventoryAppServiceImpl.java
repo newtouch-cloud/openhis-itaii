@@ -7,9 +7,6 @@ import java.util.HashSet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.core.common.utils.AgeCalculatorUtil;
-import com.openhis.common.enums.*;
-import com.openhis.common.utils.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +18,10 @@ import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.SupplyCategory;
+import com.openhis.common.enums.SupplyStatus;
+import com.openhis.common.enums.SupplyType;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.inventorymanage.appservice.IPurchaseInventoryAppService;
 import com.openhis.web.inventorymanage.dto.InventoryReceiptDto;
@@ -28,7 +29,6 @@ import com.openhis.web.inventorymanage.dto.InventoryReceiptPageDto;
 import com.openhis.web.inventorymanage.dto.InventorySearchParam;
 import com.openhis.web.inventorymanage.mapper.PurchaseInventoryMapper;
 import com.openhis.workflow.domain.SupplyRequest;
-import com.openhis.workflow.mapper.SupplyRequestMapper;
 import com.openhis.workflow.service.ISupplyRequestService;
 
 /**
@@ -128,13 +128,13 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
     }
 
     /**
-     * 删除方法
+     * 删除单据
      *
-     * @param supplyRequestId 主表id
+     * @param supplyRequestId 供应请求id
      * @return 操作结果
      */
     @Override
-    public R<?> deleteInventoryReceipt(Long supplyRequestId) {
+    public R<?> deleteReceipt(Long supplyRequestId) {
         // 删除单据
         boolean result = supplyRequestService.removeById(supplyRequestId);
         return result ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, null))

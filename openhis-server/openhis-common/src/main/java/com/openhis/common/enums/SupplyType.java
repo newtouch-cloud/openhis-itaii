@@ -29,7 +29,12 @@ public enum SupplyType {
     /**
      * 汇总发药
      */
-    DISPENSING_AGGREGATION(3, "汇总发药");
+    DISPENSING_AGGREGATION(3, "汇总发药"),
+
+    /**
+     * 商品盘点
+     */
+    PRODUCT_INVENTORY(4, "商品盘点");
 
     private Integer value;
     private String info;

@@ -4,29 +4,43 @@
 
     <select id="selectInventoryReceiptPage"
             resultType="com.openhis.web.inventorymanage.dto.InventoryReceiptPageDto">
-        SELECT id,
-               bus_no,
-               status_enum,
-               supplier_id,
-               purpose_location_id,
-               approver_id,
-               approval_time,
-               applicant_id,
-               apply_time,
-               purpose_location_id
-        FROM wor_supply_request
-        WHERE type_enum = #{purchaseInventory}
-        GROUP BY id,
-                 bus_no,
-                 status_enum,
-                 supplier_id,
-                 purpose_location_id,
-                 approver_id,
-                 approval_time,
-                 applicant_id,
-                 apply_time,
-                 purpose_location_id
-        ORDER BY bus_no desc
+        SELECT T2.id,
+               T2.bus_no,
+               T2.status_enum,
+               T2.supplier_id,
+               T2.purpose_location_id,
+               T2.approver_id,
+               T2.approval_time,
+               T2.applicant_id,
+               T2.apply_time,
+               T2.purpose_location_id,
+               T2.tenant_id
+        FROM (SELECT T1.id,
+                     T1.bus_no,
+                     T1.status_enum,
+                     T1.supplier_id,
+                     T1.purpose_location_id,
+                     T1.approver_id,
+                     T1.approval_time,
+                     T1.applicant_id,
+                     T1.apply_time,
+                     T1.purpose_location_id,
+                     T1.tenant_id
+              FROM wor_supply_request AS T1
+              WHERE type_enum = #{purchaseInventory}
+              GROUP BY T1.id,
+                       T1.bus_no,
+                       T1.status_enum,
+                       T1.supplier_id,
+                       T1.purpose_location_id,
+                       T1.approver_id,
+                       T1.approval_time,
+                       T1.applicant_id,
+                       T1.apply_time,
+                       T1.purpose_location_id,
+                       T1.tenant_id
+              ORDER BY T1.bus_no desc
+            ) AS T2
         ${ew.customSqlSegment}
     </select>
 </mapper>

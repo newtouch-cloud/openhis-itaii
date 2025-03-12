@@ -31,15 +31,27 @@ public class ReceiptApprovalController {
     private IReceiptApprovalAppService receiptApprovalAppService;
 
     /**
-     * 审批通过
+     * 入库单据审批通过
      *
      * @param busNo 单据号
      * @param request 请求数据
      * @return 操作结果
      */
-    @PostMapping("/approved")
+    @PostMapping("/purchase-inventory")
+    public R<?> purchaseInventoryApproved(@RequestParam String busNo, HttpServletRequest request) {
+        return receiptApprovalAppService.purchaseInventoryApproved(busNo, request);
+    }
+
+    /**
+     * 商品盘点单据审批通过
+     *
+     * @param busNo 单据号
+     * @param request 请求数据
+     * @return 操作结果
+     */
+    @PostMapping("/receipt-approved")
     public R<?> approved(@RequestParam String busNo, HttpServletRequest request) {
-        return receiptApprovalAppService.approved(busNo, request);
+        return receiptApprovalAppService.purchaseInventoryApproved(busNo, request);
     }
 
     /**

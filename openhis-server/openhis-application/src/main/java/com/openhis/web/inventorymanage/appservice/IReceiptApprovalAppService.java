@@ -13,7 +13,7 @@ import com.openhis.web.inventorymanage.dto.SupplyItemDetailDto;
 import com.openhis.workflow.domain.SupplyRequest;
 
 /**
- * 单据审批 service
+ * 单据审批 appService
  *
  * @author zwh
  * @date 2025-03-05
@@ -46,13 +46,13 @@ public interface IReceiptApprovalAppService {
     List<ItemChargeDetailDto> getItemChargeDetail(List<Long> itemIdList);
 
     /**
-     * 审批通过
+     * 入库单据审批通过
      *
      * @param busNo 单据号
      * @param request 请求数据
      * @return 操作结果
      */
-    R<?> approved(String busNo, HttpServletRequest request);
+    R<?> purchaseInventoryApproved(String busNo, HttpServletRequest request);
 
     /**
      * 审批驳回

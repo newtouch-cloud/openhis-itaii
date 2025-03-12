@@ -86,6 +86,9 @@ public class SupplyRequest extends HisBaseEntity {
     /** 理由 */
     private String reason;
 
+    /** 理由类型 */
+    private String reasonCode;
+
     /** 源仓库类型 */
     private Integer sourceTypeEnum;
 

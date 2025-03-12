@@ -91,14 +91,14 @@ public class PurchaseInventoryController {
     }
 
     /**
-     * 删除方法
+     * 删除单据
      *
-     * @param supplyRequestId 主表id
+     * @param supplyRequestId 供应请求id
      * @return 操作结果
      */
     @DeleteMapping("/inventory-receipt")
     public R<?> deleteInventoryReceipt(@RequestParam Long supplyRequestId) {
-        return purchaseInventoryAppService.deleteInventoryReceipt(supplyRequestId);
+        return purchaseInventoryAppService.deleteReceipt(supplyRequestId);
     }
 
     /**
