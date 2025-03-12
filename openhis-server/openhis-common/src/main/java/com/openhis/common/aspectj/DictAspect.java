@@ -81,13 +81,13 @@ public class DictAspect {
                     String dictLabel = queryDictLabel(dictTable, dictCode, dictText, fieldValue.toString());
                     if (dictLabel != null) {
                         try {
-                            // 动态生成 _TEXT 字段名
+                            // 动态生成 _dictText 字段名
                             String textFieldName = field.getName() + "_dictText";
                             Field textField = dto.getClass().getDeclaredField(textFieldName);
                             textField.setAccessible(true);
-                            textField.set(dto, dictLabel); // 设置 _TEXT 字段的值
+                            textField.set(dto, dictLabel); // 设置 _dictText 字段的值
                         } catch (NoSuchFieldException e) {
-                            // 如果 _TEXT 字段不存在，忽略错误
+                            // 如果 _dictText 字段不存在，忽略错误
                             e.printStackTrace();
                         }
                     }
