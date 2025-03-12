@@ -47,6 +47,16 @@ public class OutpatientSkinTestRecordController {
         return R.ok(OutpatientSkinTestRecordService.getSkinTestResult());
     }
 
+
+    /**
+     * 获取药品状态列表
+     */
+    @GetMapping("/list-medicationstatus")
+    public R<?> getMedicationStatus() {
+
+        return R.ok(OutpatientSkinTestRecordService.getMedicationStatus());
+    }
+
     /**
      * 护士确认执行皮试后，更新皮试记录信息
      *
