@@ -26,6 +26,7 @@ import com.openhis.clinical.domain.AllergyIntolerance;
 import com.openhis.clinical.mapper.AllergyIntoleranceMapper;
 import com.openhis.clinical.service.IAllergyIntoleranceService;
 import com.openhis.common.enums.ClinicalStatus;
+import com.openhis.common.enums.EventStatus;
 import com.openhis.common.enums.VerificationStatus;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.web.outpatientmanage.appservice.IOutpatientSkinTestRecordService;
@@ -59,7 +60,7 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
     PractitionerRoleMapper practitionerRoleMapper;
 
     @Autowired
-    IAllergyIntoleranceService AllergyIntoleranceService;
+    IAllergyIntoleranceService allergyIntoleranceService;
 
     @Autowired
     IPractitionerRoleService practitionerRoleService;
@@ -110,6 +111,24 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
     }
 
     /**
+     * 获取药品状态列表
+     */
+    @Override
+    public List<PatientListDto> getMedicationStatus() {
+        // 获取药品状态列表
+        List<EventStatus> statusList = Arrays.asList(EventStatus.values());
+        List<PatientListDto> dtos = new ArrayList<>();
+        // 取得更新值
+        for (EventStatus status : statusList) {
+            PatientListDto dto = new PatientListDto();
+            dto.setValue(status.getValue());
+            dto.setInfo(status.getInfo());
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+
+    /**
      * 分页查询门诊皮试记录,可选条件
      *
      * @param outpatientSkinTestRecordSearchParam 查询条件
@@ -136,6 +155,9 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
             // 皮试检查项目状态枚举类回显赋值
             e.setVerificationStatusEnum_enumText(
                 EnumUtils.getInfoByValue(VerificationStatus.class, e.getVerificationStatusEnum()));
+            // 药品状态状态枚举类回显赋值
+            e.setMedicationStatusEnum_enumText(
+                EnumUtils.getInfoByValue(EventStatus.class, e.getMedicationStatusEnum()));
         });
         return outpatientSkinTestRecordPage;
     }
@@ -173,11 +195,12 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
      * @param outpatientSkinTestRecordDto 皮试记录信息
      */
     @Override
-    public int editSkinTestRecord(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
-        // 判断核对人是否不为空
-        if (outpatientSkinTestRecordDto.getPerformerCheckId() != null) {
-            // 签名后不能修改
-            return 0;
+    public boolean editSkinTestRecord(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
+        // 判断核对人是否不为空,药品状态不是已发药
+        if (outpatientSkinTestRecordDto.getPerformerCheckId() != null
+            || outpatientSkinTestRecordDto.getMedicationStatusEnum() != EventStatus.COMPLETED.getValue()) {
+            // 签名后不能修改，未发药不能修改
+            return false;
         }
 
         // 更新服务申请管理表
@@ -187,7 +210,7 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
 
         // 判断开始时间为空，不允许更新表
         if (StringUtils.isEmpty(outpatientSkinTestRecordDto.getOccurrenceStartTime())) {
-            return 0;
+            return false;
         }
         Date endTime;
         // 判断结束时间，为空以开始时间基础加10分钟
@@ -208,7 +231,7 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
         Practitioner practitioner =
             practitionerService.getPractitionerByUserId(SecurityUtils.getLoginUser().getUserId());
         if (practitioner == null) {
-            return 0;
+            return false;
         }
         // 设置执行人ID
         serviceRequest.setPerformerId(practitioner.getId());
@@ -249,26 +272,20 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
             // 设置备注
             .setNote(outpatientSkinTestRecordDto.getNote());
 
-        // 当皮试结果是为阳性的时候，设置过敏时间
-        if (allergyIntolerance.getClinicalStatusEnum() == 0) {
-            // 设置过敏时间(当下日期)
-            allergyIntolerance.setOnsetDateTime(DateUtils.getNowDate());
-        }
-
         // 以服务申请ID为主条件更新过敏与不耐受表
         UpdateWrapper<AllergyIntolerance> updateWrapperAI = new UpdateWrapper<>();
         updateWrapperAI.eq("request_id", allergyIntolerance.getRequestId());
-        boolean result = AllergyIntoleranceService.saveOrUpdate(allergyIntolerance, updateWrapperAI);
+        boolean result = allergyIntoleranceService.saveOrUpdate(allergyIntolerance, updateWrapperAI);
         // 更新或插入失败
         if (!result || countUpdate <= 0) {
-            return 0;
+            return false;
         }
 
-        return 1;
+        return true;
     }
 
     @Override
-    public int nurseSignChkPs(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
+    public boolean nurseSignChkPs(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
 
         // 过敏与不耐受表更新
         QueryWrapper<AllergyIntolerance> queryWrapper = new QueryWrapper<>();
@@ -276,9 +293,10 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
         AllergyIntolerance allergyIntolerance = allergyIntoleranceMapper.selectOne(queryWrapper);
 
         // 检查的状态是确定和反驳的时候，不更新
-        if (allergyIntolerance == null || (allergyIntolerance.getVerificationStatusEnum() != 2
-            && allergyIntolerance.getVerificationStatusEnum() != 3)) {
-            return 0;
+        if (allergyIntolerance == null
+            || (allergyIntolerance.getVerificationStatusEnum() != VerificationStatus.CONFIRMED.getValue()
+                && allergyIntolerance.getVerificationStatusEnum() != VerificationStatus.REFUTED.getValue())) {
+            return false;
         }
 
         // 更新服务申请管理表的
@@ -288,30 +306,42 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
             practitionerService.getPractitionerByUserId(SecurityUtils.getLoginUser().getUserId());
         // 找不到找到practitionerId时，不更新
         if (practitioner == null) {
-            return 0;
+            return false;
         }
         // 设置核对人ID
         serviceRequest.setPerformerCheckId(practitioner.getId());
+        // 把服务请求的状态设置为已完成
+        serviceRequest.setStatusEnum(EventStatus.COMPLETED.getValue());
         // 以id为主条件更新服务申请管理表
         UpdateWrapper<ServiceRequest> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", outpatientSkinTestRecordDto.getId()).set("performer_check_id",
-            serviceRequest.getPerformerCheckId());
+        updateWrapper.eq("id", outpatientSkinTestRecordDto.getId())
+            .set("performer_check_id", serviceRequest.getPerformerCheckId())
+            .set("status_enum", serviceRequest.getStatusEnum());
 
         boolean resultUpdateRequestService = serviceRequestService.update(null, updateWrapper);
 
         // 设置断言人
         allergyIntolerance.setCheckPractitionerId(practitioner.getId());
-        // 以服务申请ID为主条件更新服务申请管理表
-        UpdateWrapper<AllergyIntolerance> updateWrapperAI = new UpdateWrapper<>();
-        updateWrapperAI.eq("request_id", outpatientSkinTestRecordDto.getId()).set("check_practitioner_id",
-            allergyIntolerance.getCheckPractitionerId());
-        boolean resultUpdateAllergyIntolerance = serviceRequestService.update(updateWrapper);
 
-        if (resultUpdateRequestService && resultUpdateAllergyIntolerance) {
-            return 1;
+        // 当皮试结果是为阳性的时候，设置过敏时间
+        if (allergyIntolerance.getClinicalStatusEnum() == ClinicalStatus.ACTIVE.getValue()) {
+            // 设置过敏时间(皮实结束时间)
+            allergyIntolerance
+                .setOnsetDateTime(DateUtils.parseDate(outpatientSkinTestRecordDto.getOccurrenceEndTime()));
         }
 
-        return 0;
+        // 以服务申请ID为主条件更新服务申请管理表
+        UpdateWrapper<AllergyIntolerance> updateWrapperAI = new UpdateWrapper<>();
+        updateWrapperAI.eq("request_id", outpatientSkinTestRecordDto.getId())
+            .set("check_practitioner_id", allergyIntolerance.getCheckPractitionerId())
+            .set("onset_date_time", allergyIntolerance.getOnsetDateTime());
+        boolean resultUpdateAllergyIntolerance = allergyIntoleranceService.update(null, updateWrapperAI);
+
+        if (resultUpdateRequestService && resultUpdateAllergyIntolerance) {
+            return true;
+        }
+
+        return false;
     }
 
 }

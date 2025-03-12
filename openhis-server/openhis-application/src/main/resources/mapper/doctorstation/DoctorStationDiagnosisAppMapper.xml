@@ -58,4 +58,62 @@
             )
     </select>
 
+    <select id="getDoctorCommonUseList" resultType="com.openhis.web.doctorstation.dto.ConditionDefinitionMetadata">
+        SELECT T1.ID,
+               T1.source_enum,
+               T1.condition_code,
+               T1.NAME,
+               T1.yb_flag,
+               T1.yb_no,
+               T1.yb_match_flag
+        FROM cli_condition_definition AS T1
+                 JOIN (SELECT definition_id
+                       FROM cli_condition
+                       WHERE delete_flag = '0'
+                         AND definition_id IS NOT NULL
+                         AND recorder_id = #{userId}
+                       GROUP BY definition_id LIMIT 10) AS T2 ON T1.ID = T2.definition_id
+        WHERE T1.delete_flag = '0'
+          AND T1.status_enum = #{statusEnum}
+    </select>
+
+    <select id="getUserPersonalList" resultType="com.openhis.web.doctorstation.dto.ConditionDefinitionMetadata">
+        SELECT T1.ID,
+               T1.source_enum,
+               T1.condition_code,
+               T1.NAME,
+               T1.yb_flag,
+               T1.yb_no,
+               T1.yb_match_flag
+        FROM cli_condition_definition AS T1
+                 JOIN (SELECT definition_id
+                       FROM cli_diagnosis_belong_binding
+                       WHERE delete_flag = '0'
+                         AND binding_enum = #{bindingEnum}
+                         AND object_id = #{userId}) AS T2 ON T1.ID = T2.definition_id
+        WHERE T1.delete_flag = '0'
+          AND T1.status_enum = #{statusEnum}
+    </select>
+
+    <select id="getOrganizationList" resultType="com.openhis.web.doctorstation.dto.ConditionDefinitionMetadata">
+        SELECT T1.ID,
+        T1.source_enum,
+        T1.condition_code,
+        T1.NAME,
+        T1.yb_flag,
+        T1.yb_no,
+        T1.yb_match_flag
+        FROM cli_condition_definition AS T1
+        JOIN (SELECT definition_id
+        FROM cli_diagnosis_belong_binding
+        WHERE delete_flag = '0'
+        AND binding_enum = #{bindingEnum}
+        <if test="currentUserOrganizationId != null">
+            AND object_id = #{currentUserOrganizationId}
+        </if>
+        ) AS T2 ON T1.ID = T2.definition_id
+        WHERE T1.delete_flag = '0'
+        AND T1.status_enum = #{statusEnum}
+    </select>
+
 </mapper>

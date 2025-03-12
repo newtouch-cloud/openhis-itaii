@@ -41,4 +41,36 @@ public interface DoctorStationDiagnosisAppMapper {
     List<ConditionDefinitionMetadata> getPatientHistoryList(@Param("statusEnum") Integer statusEnum,
         @Param("patientId") Long patientId);
 
+    /**
+     * 查询医生常用诊断
+     *
+     * @param statusEnum 状态
+     * @param userId 当前登录账号id
+     * @return 医生常用诊断
+     */
+    List<ConditionDefinitionMetadata> getDoctorCommonUseList(@Param("statusEnum") Integer statusEnum,
+        @Param("userId") Long userId);
+
+    /**
+     * 查询用户个人诊断
+     * 
+     * @param statusEnum 状态
+     * @param bindingEnum 绑定类型
+     * @param userId 当前登录账号id
+     * @return 用户个人诊断
+     */
+    List<ConditionDefinitionMetadata> getUserPersonalList(@Param("statusEnum") Integer statusEnum,
+        @Param("bindingEnum") Integer bindingEnum, @Param("userId") Long userId);
+
+    /**
+     * 查询科室诊断
+     * 
+     * @param statusEnum 状态
+     * @param bindingEnum 绑定类型
+     * @param currentUserOrganizationId 当前登录账号所属的科室ID
+     * @return 科室诊断
+     */
+    List<ConditionDefinitionMetadata> getOrganizationList(@Param("statusEnum") Integer statusEnum,
+        @Param("bindingEnum") Integer bindingEnum, @Param("currentUserOrganizationId") Long currentUserOrganizationId);
+
 }

@@ -54,7 +54,6 @@ public class DoctorStationDiagnosisController {
                     status.getInfo()))
                 .collect(Collectors.toList());
         diagnosisBelongBindingInitDto.setVerificationStatusOptions(verificationStatusOptions);
-
         return R.ok(diagnosisBelongBindingInitDto);
     }
 

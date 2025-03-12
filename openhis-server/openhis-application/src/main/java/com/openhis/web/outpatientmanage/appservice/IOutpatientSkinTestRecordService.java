@@ -2,16 +2,12 @@ package com.openhis.web.outpatientmanage.appservice;
 
 import java.util.List;
 
-import com.core.common.core.domain.R;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordSearchParam;
 import com.openhis.web.patientmanage.dto.PatientListDto;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 门诊管理 应用实现类
@@ -30,6 +26,11 @@ public interface IOutpatientSkinTestRecordService {
      * 获取皮试结果列表
      */
     List<PatientListDto> getSkinTestResult();
+
+    /**
+     * 获取药品状态列表
+     */
+    List<PatientListDto> getMedicationStatus();
 
     /**
      * 分页查询门诊皮试记录,可选条件
@@ -67,13 +68,13 @@ public interface IOutpatientSkinTestRecordService {
      *
      * @param outpatientSkinTestRecordDto 皮试记录信息
      */
-    int  editSkinTestRecord(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto);
+    boolean editSkinTestRecord(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto);
 
     /**
      * 护士核对皮试结果后，确认签名（服务申请管理与过敏与不耐受的相关字段更新）
      *
      * @param outpatientSkinTestRecordDto 皮试记录信息
      */
-    int nurseSignChkPs(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto);
+    boolean nurseSignChkPs(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto);
 
 }
