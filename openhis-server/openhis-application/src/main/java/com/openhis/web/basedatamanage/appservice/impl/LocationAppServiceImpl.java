@@ -21,7 +21,7 @@ import com.openhis.web.basedatamanage.appservice.ILocationAppService;
 import com.openhis.web.basedatamanage.dto.LocationQueryDto;
 
 @Service
-public class ILocationAppServiceImpl implements ILocationAppService {
+public class LocationAppServiceImpl implements ILocationAppService {
 
     @Resource
     ILocationService locationService;

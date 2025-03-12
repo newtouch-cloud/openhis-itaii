@@ -111,24 +111,6 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
     }
 
     /**
-     * 获取药品状态列表
-     */
-    @Override
-    public List<PatientListDto> getMedicationStatus() {
-        // 获取药品状态列表
-        List<EventStatus> statusList = Arrays.asList(EventStatus.values());
-        List<PatientListDto> dtos = new ArrayList<>();
-        // 取得更新值
-        for (EventStatus status : statusList) {
-            PatientListDto dto = new PatientListDto();
-            dto.setValue(status.getValue());
-            dto.setInfo(status.getInfo());
-            dtos.add(dto);
-        }
-        return dtos;
-    }
-
-    /**
      * 分页查询门诊皮试记录,可选条件
      *
      * @param outpatientSkinTestRecordSearchParam 查询条件

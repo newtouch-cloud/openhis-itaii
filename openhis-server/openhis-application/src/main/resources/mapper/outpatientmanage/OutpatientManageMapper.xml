@@ -23,7 +23,7 @@
         to_char(sr.occurrence_end_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrenceEndTime, --预计结束时间
         ai.clinical_status_enum, --皮试结果
         ai.verification_status_enum, --皮试检查项目状态
-        ep.practitioner_id as doctorId, --开单医生
+        mr.practitioner_id as doctorId, --开单医生
         ai.note --备注
         FROM
         wor_service_request sr
