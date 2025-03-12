@@ -60,8 +60,10 @@
 			<el-table-column prop="note" label="备注" width="180" />
             <el-table-column label="操作" align="center" width="210" fixed="right" class-name="small-padding fixed-width">
 			   <template #default="scope">
-			      <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" :disabled="!!scope.row.performerCheckId_dictText">修改</el-button>
-			      <el-button link type="primary" icon="EditPen" @click="sign(scope.row)" :disabled="!!scope.row.performerCheckId_dictText">签名</el-button>
+			      <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" 
+				  :disabled="!!scope.row.performerCheckId_dictText">修改</el-button>
+			      <el-button link type="primary" icon="EditPen" @click="sign(scope.row)" 
+				  :disabled="!!scope.row.performerCheckId_dictText">签名</el-button>
 			      <!-- <el-button link type="primary" icon="Finished" @click="submitForm(scope.row)" v-hasPermi="['system:menu:add']">保存</el-button> -->
 			   </template>
 			</el-table-column>

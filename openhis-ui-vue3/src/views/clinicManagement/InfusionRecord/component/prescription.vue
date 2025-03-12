@@ -203,7 +203,7 @@ function printPrescription() {
 
 </script>
 
-<style>
+<style scoped>
 .prescription-header{
     font-size: 15px;
     margin-top: -20px;

@@ -44,7 +44,23 @@
 			 	 	<el-button icon="Refresh" @click="resetQuery">打印输液卡</el-button>
 		   		</el-form-item>
 			</el-form>
-			<el-row :gutter="20" style="display: flex; flex-wrap: wrap;" v-if="medicineData.length > 0">
+			<el-table :data="outpatienRecordsList" border style="width: 100%">
+			<el-table-column prop="name" label="院注次数" width="180" />
+			<el-table-column prop="idCard" label="已确认次数" width="180" />
+			<el-table-column prop="description" label="开立时间" width="180" />
+			<el-table-column prop="patientBusNo" label="开单医生" width="180" />
+			<el-table-column prop="encounterBusNo" label="科别" width="180" />
+			<el-table-column prop="genderEnum_enumText" label="性别" width="80" />
+			<el-table-column prop="phone" label="医嘱" width="160" />
+			<el-table-column prop="encounterTime" label="组" width="180" />
+			<el-table-column prop="subjectStatusEnum_enumText" label="频次" width="120" />
+			<el-table-column prop="organizationName" label="每次量" width="180" />
+			<el-table-column prop="doctorName" label="用法" width="180" />
+			<!-- <el-table-column prop="address" label="会诊医院" width="180" />
+			<el-table-column prop="workCompany" label="会诊医生工作单位" width="180" />
+			<el-table-column prop="organizationName" label="协同服务" width="180" /> -->
+		</el-table>
+			<!-- <el-row :gutter="20" style="display: flex; flex-wrap: wrap;" v-if="medicineData.length > 0">
     			<el-col v-for="(item, index) in medicineData" :key="index" style="flex: 0 0 auto;"  >
 					<el-card style="width: 480px;margin-top: 15px;">
 						<template #header>
@@ -98,7 +114,7 @@
 						</template>
 					</el-card>
     			</el-col>
-			</el-row>
+			</el-row> -->
 		</div>
 		<div>
 			<el-dialog title="处方信息" v-model="showPrescription" width="60vw" :before-close="handleClose">
