@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
+import com.core.common.utils.SecurityUtils;
 import com.openhis.administration.domain.EncounterDiagnosis;
 import com.openhis.administration.service.IEncounterDiagnosisService;
 import com.openhis.clinical.domain.Condition;
@@ -219,14 +220,29 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
             doctorStationDiagnosisAppMapper.getPatientHistoryList(PublicationStatus.ACTIVE.getValue(), patientId);
         this.handleConditionDefinitionMetadata(patientHistoryList);
         conditionDefinitionBusinessClass.setPatientHistoryList(patientHistoryList);
-        //
-
+        // 医生常用诊断
+        Long userId = SecurityUtils.getLoginUser().getUserId(); // 当前登录账号ID
+        List<ConditionDefinitionMetadata> doctorCommonUseList =
+            doctorStationDiagnosisAppMapper.getDoctorCommonUseList(PublicationStatus.ACTIVE.getValue(), userId);
+        this.handleConditionDefinitionMetadata(doctorCommonUseList);
+        conditionDefinitionBusinessClass.setDoctorCommonUseList(doctorCommonUseList);
+        // 用户个人诊断
+        List<ConditionDefinitionMetadata> userPersonalList = doctorStationDiagnosisAppMapper
+            .getUserPersonalList(PublicationStatus.ACTIVE.getValue(), BindingType.PERSONAL.getValue(), userId);
+        this.handleConditionDefinitionMetadata(userPersonalList);
+        conditionDefinitionBusinessClass.setUserPersonalList(userPersonalList);
+        // 科室诊断
+        // TODO: currentUserOrganizationId(当前登录账号所属的科室ID) 待补充
+        List<ConditionDefinitionMetadata> organizationList = doctorStationDiagnosisAppMapper
+            .getOrganizationList(PublicationStatus.ACTIVE.getValue(), BindingType.DEFINITION.getValue(), null);
+        this.handleConditionDefinitionMetadata(organizationList);
+        conditionDefinitionBusinessClass.setOrganizationList(organizationList);
         return R.ok(conditionDefinitionBusinessClass);
     }
 
     /**
      * 处理诊断定义元数据
-     * 
+     *
      * @param conditionDefinitionMetadataList 诊断定义元数据集合
      */
     private void handleConditionDefinitionMetadata(List<ConditionDefinitionMetadata> conditionDefinitionMetadataList) {
