@@ -33,10 +33,7 @@ import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.doctorstation.appservice.IDoctorStationDiagnosisAppService;
-import com.openhis.web.doctorstation.dto.ConditionDefinitionMetadata;
-import com.openhis.web.doctorstation.dto.DiagnosisBelongBindingDto;
-import com.openhis.web.doctorstation.dto.SaveDiagnosisChildParam;
-import com.openhis.web.doctorstation.dto.SaveDiagnosisParam;
+import com.openhis.web.doctorstation.dto.*;
 import com.openhis.web.doctorstation.mapper.DoctorStationDiagnosisAppMapper;
 
 /**
@@ -165,22 +162,7 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
         // 诊断信息
         Page<ConditionDefinitionMetadata> conditionDefinitionMetadataPage = HisPageUtils
             .selectPage(conditionDefinitionMapper, queryWrapper, pageNo, pageSize, ConditionDefinitionMetadata.class);
-        conditionDefinitionMetadataPage.getRecords().forEach(e -> {
-            // 所属分类
-            e.setSourceEnum_enumText(EnumUtils.getInfoByValue(ConditionDefinitionSource.class, e.getSourceEnum()));
-            // 中医诊断/西医诊断
-            if (ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_DIAGNOSIS.getValue().equals(e.getSourceEnum())
-                || ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_SYNDROME_CATALOG.getValue()
-                    .equals(e.getSourceEnum())) {
-                e.setTypeName(CommonConstants.BusinessName.TCM_DIAGNOSIS);
-            } else {
-                e.setTypeName(CommonConstants.BusinessName.WESTERN_MEDICINE_DIAGNOSIS);
-            }
-            // 医保标记
-            e.setYbFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbFlag()));
-            // 医保对码标记
-            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbMatchFlag()));
-        });
+        this.handleConditionDefinitionMetadata(conditionDefinitionMetadataPage.getRecords());
         return conditionDefinitionMetadataPage;
     }
 
@@ -219,8 +201,51 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
             encounterDiagnosis.setMaindiseFlag(saveDiagnosisChildParam.getMaindiseFlag());
             iEncounterDiagnosisService.save(encounterDiagnosis);
         }
-
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"诊断"}));
+    }
+
+    /**
+     * 查询诊断定义业务分类数据
+     *
+     * @param patientId 患者id
+     * @return 诊断定义业务分类数据
+     */
+    @Override
+    public R<?> getConditionDefinitionBusinessClass(Long patientId) {
+        // 诊断定义业务分类信息
+        ConditionDefinitionBusinessClass conditionDefinitionBusinessClass = new ConditionDefinitionBusinessClass();
+        // 病人历史诊断
+        List<ConditionDefinitionMetadata> patientHistoryList =
+            doctorStationDiagnosisAppMapper.getPatientHistoryList(PublicationStatus.ACTIVE.getValue(), patientId);
+        this.handleConditionDefinitionMetadata(patientHistoryList);
+        conditionDefinitionBusinessClass.setPatientHistoryList(patientHistoryList);
+        //
+
+        return R.ok(conditionDefinitionBusinessClass);
+    }
+
+    /**
+     * 处理诊断定义元数据
+     * 
+     * @param conditionDefinitionMetadataList 诊断定义元数据集合
+     */
+    private void handleConditionDefinitionMetadata(List<ConditionDefinitionMetadata> conditionDefinitionMetadataList) {
+        conditionDefinitionMetadataList.forEach(e -> {
+            // 所属分类
+            e.setSourceEnum_enumText(EnumUtils.getInfoByValue(ConditionDefinitionSource.class, e.getSourceEnum()));
+            // 中医诊断/西医诊断
+            if (ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_DIAGNOSIS.getValue().equals(e.getSourceEnum())
+                || ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_SYNDROME_CATALOG.getValue()
+                    .equals(e.getSourceEnum())) {
+                e.setTypeName(CommonConstants.BusinessName.TCM_DIAGNOSIS);
+            } else {
+                e.setTypeName(CommonConstants.BusinessName.WESTERN_MEDICINE_DIAGNOSIS);
+            }
+            // 医保标记
+            e.setYbFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbFlag()));
+            // 医保对码标记
+            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbMatchFlag()));
+        });
     }
 
 }

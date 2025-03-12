@@ -137,4 +137,15 @@ public class DoctorStationDiagnosisController {
         return iDoctorStationDiagnosisAppService.saveDoctorDiagnosis(saveDiagnosisParam);
     }
 
+    /**
+     * 查询诊断定义业务分类数据
+     * 
+     * @param patientId 患者id
+     * @return 诊断定义业务分类数据
+     */
+    @GetMapping(value = "/get-condition-definition-class")
+    public R<?> getConditionDefinitionBusinessClass(@RequestParam Long patientId) {
+        return iDoctorStationDiagnosisAppService.getConditionDefinitionBusinessClass(patientId);
+    }
+
 }

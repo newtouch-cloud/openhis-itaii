@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import javax.annotation.Resource;
 
+import com.core.common.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -49,6 +50,9 @@ public class DoctorStationMainAppServiceImpl implements IDoctorStationMainAppSer
         // 构建查询条件
         QueryWrapper<PatientInfoDto> queryWrapper = HisQueryUtils.buildQueryWrapper(patientInfoDto, searchKey,
             new HashSet<>(Arrays.asList("patient_name", "id_card", "phone")), null);
+        // TODO: userId(当前登录账号ID) 和 currentUserOrganizationId(当前登录账号所属的科室ID) 待补充
+        // 当前登录账号ID
+        Long userId = SecurityUtils.getLoginUser().getUserId();
         IPage<PatientInfoDto> patientInfo = doctorStationMainAppMapper.getPatientInfo(new Page<>(pageNo, pageSize),
             ParticipantType.ADMITTER.getCode(), ClinicalStatus.INACTIVE.getValue(), null, null, queryWrapper);
         patientInfo.getRecords().forEach(e -> {

@@ -66,4 +66,12 @@ public interface IDoctorStationDiagnosisAppService {
      */
     R<?> saveDoctorDiagnosis(SaveDiagnosisParam saveDiagnosisParam);
 
+    /**
+     * 查询诊断定义业务分类数据
+     *
+     * @param patientId 患者id
+     * @return 诊断定义业务分类数据
+     */
+    R<?> getConditionDefinitionBusinessClass(Long patientId);
+
 }

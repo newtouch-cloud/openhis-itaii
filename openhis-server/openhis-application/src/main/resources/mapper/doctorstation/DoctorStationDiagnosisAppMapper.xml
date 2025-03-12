@@ -37,4 +37,25 @@
             ${ew.customSqlSegment}
     </select>
 
+    <select id="getPatientHistoryList" resultType="com.openhis.web.doctorstation.dto.ConditionDefinitionMetadata">
+        SELECT T1.ID,
+               T1.source_enum,
+               T1.condition_code,
+               T1.NAME,
+               T1.yb_flag,
+               T1.yb_no,
+               T1.yb_match_flag
+        FROM cli_condition_definition AS T1
+        WHERE T1.delete_flag = '0'
+          AND T1.status_enum = #{statusEnum}
+          AND EXISTS(
+                SELECT 1
+                FROM cli_condition AS T2
+                WHERE T2.delete_flag = '0'
+                  AND T2.definition_id IS NOT NULL
+                  AND T2.patient_id = #{patientId}
+                  AND T2.definition_id = T1.ID
+            )
+    </select>
+
 </mapper>
