@@ -51,3 +51,24 @@ export function getMedicationCategory() {
     method: 'get'
   })
 }
+
+
+// 停用病种目录
+export function stopMedication(ids) {
+  console.log(ids)
+  return request({
+    url: '/datadictionary/medication/information-stop',
+    method: 'put',
+    data: ids
+  })
+}
+
+// 启用病种目录
+export function startMedication(ids) {
+  console.log(ids)
+  return request({
+    url: '/datadictionary/medication/information-start',
+    method: 'put',
+    data: ids
+  })
+}

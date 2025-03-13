@@ -90,7 +90,7 @@ const data = reactive({
   form: {},
   queryParams: {
     pageNo: 1,
-    pageSize: 50,
+    pageSize: 10,
     searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
   },
   rules: {},

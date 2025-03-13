@@ -329,7 +329,7 @@ const data = reactive({
   form: {},
   queryParams: {
     pageNo: 1,
-    pageSize: 50,
+    pageSize: 10,
     searchKey: undefined, // 疾病名称
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
     sourceEnum: undefined, // 来源（包括 1：病种目录分类，2：自定义）

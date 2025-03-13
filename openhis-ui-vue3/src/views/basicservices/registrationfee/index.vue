@@ -479,7 +479,7 @@ const data = reactive({
   form: {},
   queryParams: {
     pageNo: 1,
-    pageSize: 50,
+    pageSize: 10,
     searchKey: undefined, // 供应商名称
     busNo: undefined, // 编码
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）

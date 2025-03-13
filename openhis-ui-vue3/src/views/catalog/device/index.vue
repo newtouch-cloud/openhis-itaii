@@ -385,11 +385,11 @@
       :item="currentData"
       @submit="getList()"
     />
-    <device-view-dialog
+    <!-- <device-view-dialog
       ref="deviceViewRef"
       :item="viewData"
       :viewFlg="viewFlg"
-    />
+    /> -->
   </div>
 </template>
 
@@ -433,7 +433,7 @@ const data = reactive({
   form: {},
   queryParams: {
     pageNo: 1,
-    pageSize: 50,
+    pageSize: 10,
     searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
     typeEnum: undefined, // 类型（包括 1：中药，2：成药）
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）

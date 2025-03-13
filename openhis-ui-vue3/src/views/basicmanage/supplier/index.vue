@@ -221,7 +221,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <!-- <el-row>
           <el-col :span="12">
             <el-form-item label="拼音" prop="pyStr">
               <el-input v-model="form.pyStr" maxlength="11" />
@@ -232,7 +232,7 @@
               <el-input v-model="form.wbStr" maxlength="11" />
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
         <el-row>
           <el-col :span="12">
             <el-form-item label="类型" prop="typeEnum">
@@ -318,7 +318,7 @@ const data = reactive({
   form: {},
   queryParams: {
     pageNo: 1,
-    pageSize: 50,
+    pageSize: 10,
     searchKey: undefined, // 供应商名称
     busNo: undefined, // 编码
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
@@ -327,8 +327,8 @@ const data = reactive({
   rules: {
     busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
     name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    pyStr: [{ required: true, message: "拼音不能为空", trigger: "blur" }],
-    wbStr: [{ required: true, message: "五笔拼音不能为空", trigger: "blur" }],
+    // pyStr: [{ required: true, message: "拼音不能为空", trigger: "blur" }],
+    // wbStr: [{ required: true, message: "五笔拼音不能为空", trigger: "blur" }],
     typeEnum: [{ required: true, message: "类型不能为空", trigger: "blur" }],
     address: [{ required: true, message: "地址不能为空", trigger: "blur" }],
     phone: [{ required: true, message: "联系人电话不能为空", trigger: "blur" }],
@@ -356,8 +356,9 @@ function getList() {
   console.log(queryParams.value, "queryParams.value");
   getSupplierList(queryParams.value).then((res) => {
     loading.value = false;
-    console.log(res, "res");
+    console.log(res, "res",res.data.records);
     supplierList.value = res.data.records;
+    console.log(supplierList.value, "supplierList.value");
     total.value = res.data.total;
     console.log(total.value, "total.value");
   });
