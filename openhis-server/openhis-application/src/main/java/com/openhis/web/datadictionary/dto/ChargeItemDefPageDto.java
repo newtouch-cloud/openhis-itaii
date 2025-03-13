@@ -47,11 +47,11 @@ public class ChargeItemDefPageDto {
     /** 拆零比 */
     private BigDecimal partPercent;
 
-    /** 指导价 */
-    private BigDecimal conditionYbCode;
+    /** 条件 */
+    private String conditionCode;
 
-    /** 批次号 */
-    private String conditionLotnumber;
+    /** 命中值 */
+    private String conditionValue;
 
     /** 价格 */
     private BigDecimal price;

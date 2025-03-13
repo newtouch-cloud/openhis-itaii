@@ -1,4 +1,4 @@
-package com.openhis.web.outpatientservice.dto;
+package com.openhis.web.chargemanage.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * 就诊位置 表单数据

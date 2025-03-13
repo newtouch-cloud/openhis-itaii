@@ -5,7 +5,7 @@
     <select id="selectInventoryReceiptPage"
             resultType="com.openhis.web.inventorymanage.dto.InventoryReceiptPageDto">
         SELECT T2.id,
-               T2.bus_no,
+               T2.bus_no AS supply_bus_no,
                T2.status_enum,
                T2.supplier_id,
                T2.purpose_location_id,

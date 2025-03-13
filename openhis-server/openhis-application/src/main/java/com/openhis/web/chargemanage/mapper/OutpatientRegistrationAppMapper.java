@@ -1,4 +1,4 @@
-package com.openhis.web.outpatientservice.mapper;
+package com.openhis.web.chargemanage.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -7,8 +7,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.openhis.web.outpatientservice.dto.CurrentDayEncounterDto;
-import com.openhis.web.outpatientservice.dto.PractitionerMetadata;
+import com.openhis.web.chargemanage.dto.CurrentDayEncounterDto;
+import com.openhis.web.chargemanage.dto.PractitionerMetadata;
 
 /**
  * 门诊挂号 应用Mapper

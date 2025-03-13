@@ -16,8 +16,8 @@
         T5.update_time,
         T5.item_id,
         T5.condition_rule_id,
-        T5.condition_lotnumber,
-        T5.condition_yb_code,
+        T5.condition_value,
+        T5.condition_code,
         T5.priority,
         T5.amount,
         T5.item_no,
@@ -48,8 +48,8 @@
         T1.update_time,
         T2.id AS item_id,
         T2.condition_rule_id,
-        T2.condition_lotnumber,
-        T2.condition_yb_code,
+        T2.condition_value,
+        T2.condition_code,
         T2.priority,
         T2.amount,
         T3.bus_no AS item_no,
@@ -62,7 +62,7 @@
         T4.lot_number
         FROM
         adm_charge_item_definition T1
-        LEFT JOIN adm_charge_item_def_app T2
+        LEFT JOIN adm_charge_item_def_detail T2
         ON T1.id = T2.definition_id
         LEFT JOIN med_medication_definition T3
         ON T1.instance_id = T3.id
@@ -86,8 +86,8 @@
         T5.update_time,
         T5.item_id,
         T5.condition_rule_id,
-        T5.condition_lotnumber,
-        T5.condition_yb_code,
+        T5.condition_value,
+        T5.condition_code,
         T5.priority,
         T5.amount,
         T5.item_no,
@@ -117,8 +117,8 @@
         T1.update_time,
         T2.id AS item_id,
         T2.condition_rule_id,
-        T2.condition_lotnumber,
-        T2.condition_yb_code,
+        T2.condition_value,
+        T2.condition_code,
         T2.priority,
         T2.amount,
         T3.bus_no AS item_no,
@@ -130,7 +130,7 @@
         T4.lot_number
         FROM
         adm_charge_item_definition T1
-        LEFT JOIN adm_charge_item_def_app T2
+        LEFT JOIN adm_charge_item_def_detail T2
         ON T1.id = T2.definition_id
         LEFT JOIN adm_device_definition T3
         ON T1.instance_id = T3.id
@@ -154,8 +154,8 @@
         T5.update_time,
         T5.item_id,
         T5.condition_rule_id,
-        T5.condition_lotnumber,
-        T5.condition_yb_code,
+        T5.condition_value,
+        T5.condition_code,
         T5.priority,
         T5.amount,
         T5.item_no,
@@ -183,8 +183,8 @@
         T1.update_time,
         T2.id AS item_id,
         T2.condition_rule_id,
-        T2.condition_lotnumber,
-        T2.condition_yb_code,
+        T2.condition_value,
+        T2.condition_code,
         T2.priority,
         T2.amount,
         T3.bus_no AS item_no,
@@ -194,7 +194,7 @@
         T1.yb_type AS category_code
         FROM
         adm_charge_item_definition T1
-        LEFT JOIN adm_charge_item_def_app T2
+        LEFT JOIN adm_charge_item_def_detail T2
         ON T1.id = T2.definition_id
         LEFT JOIN wor_activity_definition T3
         ON T1.instance_id = T3.id

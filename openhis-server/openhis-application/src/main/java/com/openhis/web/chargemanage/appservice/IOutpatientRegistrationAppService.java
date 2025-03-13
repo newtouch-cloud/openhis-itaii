@@ -1,4 +1,4 @@
-package com.openhis.web.outpatientservice.appservice;
+package com.openhis.web.chargemanage.appservice;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.openhis.web.basicservice.dto.HealthcareServiceDto;
-import com.openhis.web.outpatientservice.dto.*;
+import com.openhis.web.chargemanage.dto.*;
 
 /**
  * 门诊挂号 应用Service

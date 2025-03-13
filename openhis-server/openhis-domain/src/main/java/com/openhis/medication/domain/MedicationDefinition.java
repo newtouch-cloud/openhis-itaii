@@ -111,4 +111,10 @@ public class MedicationDefinition extends HisBaseEntity {
     /** 儿童用药标志 */
     private Integer childrenFlag;
 
+    /** 最小库存警戒数量(常规单位) */
+    private BigDecimal itemMinQuantity;
+
+    /** 最大库存警戒数量(常规单位) */
+    private BigDecimal itemMaxQuantity;
+
 }

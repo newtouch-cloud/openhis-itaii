@@ -1,7 +1,6 @@
-package com.openhis.web.outpatientservice.dto;
+package com.openhis.web.chargemanage.dto;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;

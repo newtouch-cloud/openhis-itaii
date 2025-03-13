@@ -79,9 +79,39 @@ public class CommonConstants {
     public interface FieldName {
 
         /**
-         * 业务编码
+         * 单据号
          */
-        String BusNo = "bus_no";
+        String SupplyBusNo = "supply_bus_no";
+
+        /**
+         * 患者院内编码
+         */
+        String PatientBusNo = "patient_bus_no";
+
+        /**
+         * 就诊号
+         */
+        String EncounterBusNo = "encounter_bus_no";
+
+        /**
+         * 身份证号
+         */
+        String idCard = "id_card";
+
+        /**
+         * 拼音码
+         */
+        String PatientPyStr = "patient_py_str";
+
+        /**
+         * 五笔码
+         */
+        String PatientWbStr = "patient_wb_str";
+
+        /**
+         * 患者姓名
+         */
+        String PatientName = "patient_name";
     }
 
     /**

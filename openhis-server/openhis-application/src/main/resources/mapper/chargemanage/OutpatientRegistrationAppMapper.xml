@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.openhis.web.outpatientservice.mapper.OutpatientRegistrationAppMapper">
+<mapper namespace="com.openhis.web.chargemanage.mapper.OutpatientRegistrationAppMapper">
 
-    <select id="getPractitionerMetadataPage" resultType="com.openhis.web.outpatientservice.dto.PractitionerMetadata">
+    <select id="getPractitionerMetadataPage" resultType="com.openhis.web.chargemanage.dto.PractitionerMetadata">
         SELECT T3.tenant_id,
                T3.ID,
                T3.NAME,
@@ -39,7 +39,7 @@
           AND create_time > CURRENT_DATE
     </select>
 
-    <select id="getCurrentDayEncounter" resultType="com.openhis.web.outpatientservice.dto.CurrentDayEncounterDto">
+    <select id="getCurrentDayEncounter" resultType="com.openhis.web.chargemanage.dto.CurrentDayEncounterDto">
         SELECT T9.tenant_id,
                T9.encounter_id,
                T9.organization_id,

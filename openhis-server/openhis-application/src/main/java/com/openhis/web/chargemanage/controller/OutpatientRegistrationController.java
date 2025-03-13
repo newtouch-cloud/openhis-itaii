@@ -1,7 +1,7 @@
 /*
  * Copyright ©2023 CJB-CNIT Team. All rights reserved
  */
-package com.openhis.web.outpatientservice.controller;
+package com.openhis.web.chargemanage.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,9 +15,9 @@ import com.core.common.core.domain.R;
 import com.openhis.common.enums.LocationForm;
 import com.openhis.common.enums.PriorityLevel;
 import com.openhis.web.basedatamanage.appservice.ILocationAppService;
-import com.openhis.web.outpatientservice.appservice.IOutpatientRegistrationAppService;
-import com.openhis.web.outpatientservice.dto.OutpatientRegistrationAddParam;
-import com.openhis.web.outpatientservice.dto.OutpatientRegistrationInitDto;
+import com.openhis.web.chargemanage.appservice.IOutpatientRegistrationAppService;
+import com.openhis.web.chargemanage.dto.OutpatientRegistrationAddParam;
+import com.openhis.web.chargemanage.dto.OutpatientRegistrationInitDto;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
  * 门诊挂号 controller
  */
 @RestController
-@RequestMapping("/outpatient-service/register")
+@RequestMapping("/charge-manage/register")
 @Slf4j
 @AllArgsConstructor
 public class OutpatientRegistrationController {

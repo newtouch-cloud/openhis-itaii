@@ -1,4 +1,4 @@
-package com.openhis.web.outpatientservice.appservice.impl;
+package com.openhis.web.chargemanage.appservice.impl;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -31,9 +31,9 @@ import com.openhis.financial.domain.Contract;
 import com.openhis.financial.mapper.ContractMapper;
 import com.openhis.web.basicservice.dto.HealthcareServiceDto;
 import com.openhis.web.basicservice.mapper.HealthcareServiceBizMapper;
-import com.openhis.web.outpatientservice.appservice.IOutpatientRegistrationAppService;
-import com.openhis.web.outpatientservice.dto.*;
-import com.openhis.web.outpatientservice.mapper.OutpatientRegistrationAppMapper;
+import com.openhis.web.chargemanage.appservice.IOutpatientRegistrationAppService;
+import com.openhis.web.chargemanage.dto.*;
+import com.openhis.web.chargemanage.mapper.OutpatientRegistrationAppMapper;
 
 /**
  * 门诊挂号 应用实现类

@@ -38,12 +38,12 @@
                 ON T2.id = T1.item_id
             LEFT JOIN adm_charge_item_definition T3
                 ON T2.id = T3.instance_id
-            LEFT JOIN adm_charge_item_def_app T4
+            LEFT JOIN adm_charge_item_def_detail T4
                  ON T3.id = T4.definition_id
                     AND T1.unit_code = T4.condition_unit_code
         WHERE T1.bus_no = #{busNo}
             AND T5.status_enum = #{completed}
-            AND T1.delete_flag = 0
+            AND T1.delete_flag = '0'
     </select>
 
     <select id="selectSupplyDevDetail" resultType="com.openhis.web.inventorymanage.dto.SupplyItemDetailDto">
@@ -81,12 +81,12 @@
                            ON T2.id = T1.item_id
                  LEFT JOIN adm_charge_item_definition T3
                            ON T2.id = T3.instance_id
-                 LEFT JOIN adm_charge_item_def_app T4
+                 LEFT JOIN adm_charge_item_def_detail T4
                            ON T3.id = T4.definition_id
                                AND T1.unit_code = T4.condition_unit_code
         WHERE T1.bus_no = #{busNo}
           AND T5.status_enum = #{completed}
-          AND T1.delete_flag = 0
+          AND T1.delete_flag = '0'
     </select>
     <select id="selectChargeDetail" resultType="com.openhis.web.inventorymanage.dto.ItemChargeDetailDto">
         SELECT T1.id AS definition_id,
@@ -99,7 +99,7 @@
                T3.unit_code,
                T3.min_unit_code
         FROM adm_charge_item_definition AS T1
-            LEFT JOIN adm_charge_item_def_app AS T2
+            LEFT JOIN adm_charge_item_def_detail AS T2
                 ON T1.id = T2.definition_id
             LEFT JOIN med_medication_definition AS T3
                 ON T1.instance_id = T3.id

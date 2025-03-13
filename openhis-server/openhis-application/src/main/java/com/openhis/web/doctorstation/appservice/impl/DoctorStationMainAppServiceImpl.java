@@ -5,7 +5,6 @@ import java.util.HashSet;
 
 import javax.annotation.Resource;
 
-import com.core.common.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -14,6 +13,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.AgeCalculatorUtil;
+import com.core.common.utils.SecurityUtils;
 import com.openhis.administration.domain.Encounter;
 import com.openhis.administration.mapper.EncounterMapper;
 import com.openhis.common.enums.*;

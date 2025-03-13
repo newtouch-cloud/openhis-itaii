@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.web.inventorymanage.dto.InventoryReceiptPageDto;
-import com.openhis.workflow.domain.SupplyRequest;
+import com.openhis.web.inventorymanage.dto.InventorySearchParam;
 
 /**
  * 采购入库查询用 mapper
@@ -30,6 +30,6 @@ public interface PurchaseInventoryMapper {
      * @return 入库单据分页列表
      */
     Page<InventoryReceiptPageDto> selectInventoryReceiptPage(@Param("page") Page<InventoryReceiptPageDto> page,
-        @Param(Constants.WRAPPER) QueryWrapper<SupplyRequest> queryWrapper,
+        @Param(Constants.WRAPPER) QueryWrapper<InventorySearchParam> queryWrapper,
         @Param("purchaseInventory") Integer purchaseInventory);
 }

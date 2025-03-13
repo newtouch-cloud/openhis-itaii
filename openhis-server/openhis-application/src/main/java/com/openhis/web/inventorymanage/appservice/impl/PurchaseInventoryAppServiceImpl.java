@@ -62,10 +62,10 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
 
         // 设置模糊查询的字段名
         HashSet<String> searchFields = new HashSet<>();
-        searchFields.add(CommonConstants.FieldName.BusNo);
+        searchFields.add(CommonConstants.FieldName.SupplyBusNo);
 
         // 构建查询条件
-        QueryWrapper<SupplyRequest> queryWrapper =
+        QueryWrapper<InventorySearchParam> queryWrapper =
             HisQueryUtils.buildQueryWrapper(inventorySearchParam, searchKey, searchFields, request);
         // 查询入库单据分页列表
         Page<InventoryReceiptPageDto> inventoryReceiptPage = purchaseInventoryMapper.selectInventoryReceiptPage(

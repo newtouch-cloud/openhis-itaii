@@ -84,7 +84,7 @@ public class MybatisPlusConfig {
             private static final Set<String> TENANT_TABLES = new HashSet<>(Arrays.asList(
                     "adm_account",
                     "adm_charge_item",
-                    "adm_charge_item_def_app",
+                    "adm_charge_item_def_detail",
                     "adm_charge_item_definition",
                     "adm_device",
                     "adm_device_definition",

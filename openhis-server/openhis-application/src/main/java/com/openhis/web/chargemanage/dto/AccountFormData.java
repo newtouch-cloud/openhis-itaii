@@ -1,4 +1,4 @@
-package com.openhis.web.outpatientservice.dto;
+package com.openhis.web.chargemanage.dto;
 
 import java.math.BigDecimal;
 

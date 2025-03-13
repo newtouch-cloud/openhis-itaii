@@ -1,24 +1,27 @@
-package com.openhis.web.outpatientservice.dto;
+package com.openhis.web.chargemanage.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 /**
- * 参与者 元数据
+ * 患者信息 元数据
  */
 @Data
 @Accessors(chain = true)
-public class PractitionerMetadata {
+public class PatientMetadata {
     /**
      * ID
      */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
-    /** 姓名 */
+    /**
+     * 患者姓名
+     */
     private String name;
 
     /**
@@ -27,10 +30,30 @@ public class PractitionerMetadata {
     private Integer genderEnum;
     private String genderEnum_enumText;
 
-    /** 拼音码 */
-    private String pyStr;
+    /**
+     * 身份证号
+     */
+    private String idCard;
 
-    /** 五笔码 */
-    private String wbStr;
+    /**
+     * 电话
+     */
+    private String phone;
+
+    /**
+     * 生日
+     */
+
+    private Date birthDate;
+
+    /**
+     * 年龄
+     */
+    private String age;
+
+    /**
+     * 初复诊
+     */
+    private String firstEnum_enumText;
 
 }
