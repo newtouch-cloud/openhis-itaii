@@ -3,30 +3,10 @@
  */
 package com.openhis.web.datadictionary.controller;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
-import com.core.common.utils.MessageUtils;
-import com.core.common.utils.bean.BeanUtils;
-import com.openhis.administration.domain.Supplier;
-import com.openhis.administration.mapper.SupplierMapper;
-import com.openhis.administration.service.ISupplierService;
-import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.AccountStatus;
-import com.openhis.common.enums.SupplierType;
-import com.openhis.common.utils.EnumUtils;
-import com.openhis.common.utils.HisPageUtils;
-import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.datadictionary.appservice.ISupplierManagementAppService;
 import com.openhis.web.datadictionary.dto.*;
-import com.openhis.web.inventorymanage.appservice.IPurchaseInventoryAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -58,13 +38,7 @@ public class SupplierManagementController {
      */
     @GetMapping("/information-init")
     public R<?> getSupplierInit() {
-        // SupplierInitDto supplierInitDto = new SupplierInitDto();
-        // // 获取厂商/产地种类
-        // List<SupplierInitDto.supplierTypeOption> supplierTypeOption = Stream.of(SupplierType.values())
-        // .map(status -> new SupplierInitDto.supplierTypeOption(status.getValue(), status.getInfo()))
-        // .collect(Collectors.toList());
-        // supplierInitDto.setSupplierTypeOptions(supplierTypeOption);
-        return R.ok(supplierManagementAppService.getSupplierInit());
+        return supplierManagementAppService.getSupplierInit();
     }
 
     /**
@@ -82,21 +56,8 @@ public class SupplierManagementController {
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
-        // // 构建查询条件
-        // QueryWrapper<Supplier> queryWrapper = HisQueryUtils.buildQueryWrapper(supplierSearchParam,
-        // searchKey, new HashSet<>(Arrays.asList("bus_no", "name", "py_str", "wb_str")), request);
-        // // 设置排序
-        // queryWrapper.orderByAsc("bus_no");
-        // // 分页查询
-        // Page<SupplierDto> supplierPage =
-        // HisPageUtils.selectPage(supplierMapper, queryWrapper, pageNo, pageSize, SupplierDto.class);
-        // // 枚举类回显赋值
-        // supplierPage.getRecords().forEach(e ->
-        // e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()))
-        // );
-        // 返回【病种目录列表DTO】分页
-        return R.ok(
-            supplierManagementAppService.getSupplierList(supplierSearchParam, searchKey, pageNo, pageSize, request));
+        // 返回分页
+        return  supplierManagementAppService.getSupplierList(supplierSearchParam, searchKey, pageNo, pageSize, request);
     }
 
     /**
@@ -106,7 +67,7 @@ public class SupplierManagementController {
      */
     @PostMapping("/add-supplier")
     public R<?> addSupplyRequest(@Validated @RequestBody SupplierUpDto supplierUpDto) {
-        return R.ok(supplierManagementAppService.addSupplyRequest(supplierUpDto));
+        return supplierManagementAppService.addSupplyRequest(supplierUpDto);
     }
 
     /**
@@ -118,7 +79,7 @@ public class SupplierManagementController {
     public R<?> editSupplyRequest(@Validated @RequestBody SupplierUpDto supplierUpDto) {
 
         // 更新供应商信息信息
-        return R.ok(supplierManagementAppService.addSupplyRequest(supplierUpDto));
+        return supplierManagementAppService.addSupplyRequest(supplierUpDto);
     }
 
     /**
@@ -129,7 +90,7 @@ public class SupplierManagementController {
      */
     @GetMapping(value = "/get-supplier-detail/{id}")
     public R<?> getSupplierDetail(@PathVariable("id") Long id) {
-        return R.ok(supplierManagementAppService.getSupplierDetail(id));
+        return supplierManagementAppService.getSupplierDetail(id);
     }
 
     /**
@@ -141,7 +102,7 @@ public class SupplierManagementController {
     @PutMapping("/information-stop")
     public R<?> editSupplierStop(@RequestBody List<Long> ids) {
         // 更新厂商/产地信息
-        return R.ok(supplierManagementAppService.editSupplierStop(ids));
+        return supplierManagementAppService.editSupplierStop(ids);
     }
 
     /**
@@ -153,6 +114,6 @@ public class SupplierManagementController {
     @PutMapping("/information-start")
     public R<?> editSupplierStart(@RequestBody List<Long> ids) {
         // 更新厂商/产地信息
-        return R.ok(supplierManagementAppService.editSupplierStart(ids));
+        return supplierManagementAppService.editSupplierStart(ids);
     }
 }

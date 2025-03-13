@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.core.common.utils.ChineseConvertUtils;
 import com.openhis.administration.domain.Supplier;
 import com.openhis.administration.mapper.SupplierMapper;
 import com.openhis.administration.service.ISupplierService;
@@ -107,6 +108,10 @@ public class SupplierManagementAppServiceImpl implements ISupplierManagementAppS
 
         Supplier supplierInfo = new Supplier();
         BeanUtils.copyProperties(supplierUpDto, supplierInfo);
+        // 设置拼音首拼
+        supplierInfo.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(supplierInfo.getName()));
+        // 设置五笔首拼
+        supplierInfo.setWbStr(ChineseConvertUtils.toWBFirstLetter(supplierInfo.getName()));
         return supplierService.addSupplier(supplierInfo)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"厂商/供应商信息"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
@@ -122,7 +127,10 @@ public class SupplierManagementAppServiceImpl implements ISupplierManagementAppS
 
         Supplier supplier = new Supplier();
         BeanUtils.copyProperties(supplierUpDto, supplier);
-
+        // 设置拼音首拼
+        supplier.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(supplier.getName()));
+        // 设置五笔首拼
+        supplier.setWbStr(ChineseConvertUtils.toWBFirstLetter(supplier.getName()));
         // 更新供应商信息信息
         return supplierService.updateById(supplier)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"厂商/供应商信息"}))

@@ -47,11 +47,11 @@ public class SupplierUpDto {
     private String address;
 
     /** 拼音码 */
-    @NotBlank(message = "拼音码不能为空")
+    // @NotBlank(message = "拼音码不能为空")
     private String pyStr;
 
     /** 五笔码 */
-    @NotBlank(message = "五笔码不能为空")
+    // @NotBlank(message = "五笔码不能为空")
     private String wbStr;
 
     /** 联系人电话 */
