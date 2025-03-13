@@ -37,20 +37,8 @@ public class ReceiptApprovalController {
      * @param request 请求数据
      * @return 操作结果
      */
-    @PostMapping("/purchase-inventory")
+    @PostMapping("/purchase-inventory-approved")
     public R<?> purchaseInventoryApproved(@RequestParam String busNo, HttpServletRequest request) {
-        return receiptApprovalAppService.purchaseInventoryApproved(busNo, request);
-    }
-
-    /**
-     * 商品盘点单据审批通过
-     *
-     * @param busNo 单据号
-     * @param request 请求数据
-     * @return 操作结果
-     */
-    @PostMapping("/receipt-approved")
-    public R<?> approved(@RequestParam String busNo, HttpServletRequest request) {
         return receiptApprovalAppService.purchaseInventoryApproved(busNo, request);
     }
 

@@ -30,8 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, SupplyRequest>
     implements ISupplyRequestService {
 
-    private final SupplyRequestMapper supplyRequestMapper;
-
     /**
      * 通过单据号查询单据信息
      *
@@ -40,8 +38,7 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
      */
     @Override
     public List<SupplyRequest> getSupplyByBusNo(String busNo) {
-        return supplyRequestMapper
-            .selectList(new LambdaQueryWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
+        return baseMapper.selectList(new LambdaQueryWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
     }
 
     /**
