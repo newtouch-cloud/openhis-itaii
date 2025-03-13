@@ -151,9 +151,6 @@ public class MedicationRequest extends HisBaseEntity {
     /** 单次最大剂量 */
     private BigDecimal maxDose;
 
-    /** 发药id */
-    private Long dispenseId;
-
     /** 首次用量 */
     private BigDecimal firstDose;
 

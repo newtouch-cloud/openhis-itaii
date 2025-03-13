@@ -1,8 +1,8 @@
 package com.openhis.administration.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.openhis.administration.domain.Organization;
 import com.openhis.administration.mapper.OrganizationMapper;
@@ -19,29 +19,30 @@ import com.openhis.common.enums.AccountStatus;
 public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Organization>
     implements IOrganizationService {
 
-    @Autowired
-    private OrganizationMapper organizationMapper;
-
+    /**
+     * 机构启用
+     *
+     * @param orgId 机构信息id
+     * @return 操作结果
+     */
     @Override
-    public boolean activeChange(Long orgId) {
-        if (orgId != null) {
-            Organization organization = organizationMapper.selectById(orgId);
-            if (organization != null) {
-                Integer activeFlag  = organization.getActiveFlag();
-                switch (activeFlag ) {
-                    case 1:
-                        organization.setActiveFlag(AccountStatus.INACTIVE.getValue());
-                        break;
-                    case 2:
-                        organization.setActiveFlag(AccountStatus.ACTIVE.getValue());
-                        break;
-                    default:
-                        return false;
-                }
-                organizationMapper.updateById(organization);
-                return true;
-            }
-        }
-        return false;
+    public boolean activeOrg(Long orgId) {
+        int updateCount = baseMapper.update(null, new LambdaUpdateWrapper<Organization>().eq(Organization::getId, orgId)
+            .set(Organization::getActiveFlag, AccountStatus.ACTIVE.getValue()));
+        return updateCount > 0;
     }
+
+    /**
+     * 机构停用
+     *
+     * @param orgId 机构信息id
+     * @return 操作结果
+     */
+    @Override
+    public boolean inactiveOrg(Long orgId) {
+        int updateCount = baseMapper.update(null, new LambdaUpdateWrapper<Organization>().eq(Organization::getId, orgId)
+            .set(Organization::getActiveFlag, AccountStatus.INACTIVE.getValue()));
+        return updateCount > 0;
+    }
+
 }

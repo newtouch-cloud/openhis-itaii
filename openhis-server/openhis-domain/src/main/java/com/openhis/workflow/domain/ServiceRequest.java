@@ -55,7 +55,7 @@ public class ServiceRequest extends HisBaseEntity {
     /** 是否执行 */
     private Integer performFlag;
 
-    /** 请求code */
+    /** 诊疗定义id */
     private Long activityId;
 
     /** 数量 */
