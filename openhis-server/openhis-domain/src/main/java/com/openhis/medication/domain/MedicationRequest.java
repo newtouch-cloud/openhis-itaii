@@ -133,9 +133,6 @@ public class MedicationRequest extends HisBaseEntity {
     /** 输液标志 */
     private Integer infusionFlag;
 
-    /** 输液速度 */
-    private Integer speed;
-
     /** 用法 */
     private String methodCode;
 
@@ -169,5 +166,7 @@ public class MedicationRequest extends HisBaseEntity {
     /** 发药人 */
     private Long dispenserId;
 
-
+    /** 输液速度 */
+    private Integer speed;
+    
 }
