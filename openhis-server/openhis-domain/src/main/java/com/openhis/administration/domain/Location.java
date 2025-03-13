@@ -4,9 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
-import com.openhis.common.enums.LocationBedStatus;
-import com.openhis.common.enums.LocationMode;
-import com.openhis.common.enums.LocationStatus;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -68,22 +65,22 @@ public class Location extends HisBaseEntity {
     /** 显示顺序 */
     private Integer displayOrder;
 
-    public Location(Long id, String busNo, String name, Integer statusEnum, Integer operationalEnum,
-        Integer modeEnum, String typeCode, String typeJson, String pyStr, String wbStr, Integer formEnum,
-        Long organizationId, Integer displayOrder) {
-        this.id = id;
-        this.busNo = busNo;
-        this.name = name;
-        this.statusEnum = statusEnum;
-        this.operationalEnum = operationalEnum;
-        this.modeEnum = modeEnum;
-        this.typeCode = typeCode;
-        this.typeJson = typeJson;
-        this.pyStr = pyStr;
-        this.wbStr = wbStr;
-        this.formEnum = formEnum;
-        this.organizationId = organizationId;
-        this.displayOrder = displayOrder;
-    }
+    // public Location(Long id, String busNo, String name, Integer statusEnum, Integer operationalEnum,
+    // Integer modeEnum, String typeCode, String typeJson, String pyStr, String wbStr, Integer formEnum,
+    // Long organizationId, Integer displayOrder) {
+    // this.id = id;
+    // this.busNo = busNo;
+    // this.name = name;
+    // this.statusEnum = statusEnum;
+    // this.operationalEnum = operationalEnum;
+    // this.modeEnum = modeEnum;
+    // this.typeCode = typeCode;
+    // this.typeJson = typeJson;
+    // this.pyStr = pyStr;
+    // this.wbStr = wbStr;
+    // this.formEnum = formEnum;
+    // this.organizationId = organizationId;
+    // this.displayOrder = displayOrder;
+    // }
 
 }
