@@ -27,7 +27,6 @@ public class Organization extends HisBaseEntity {
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 编码 */

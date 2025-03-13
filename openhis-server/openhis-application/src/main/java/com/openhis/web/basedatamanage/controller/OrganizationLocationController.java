@@ -3,30 +3,18 @@
  */
 package com.openhis.web.basedatamanage.controller;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
-import com.core.common.utils.MessageUtils;
 import com.openhis.administration.domain.Location;
-import com.openhis.administration.domain.OrganizationLocation;
-import com.openhis.administration.mapper.OrganizationLocationMapper;
 import com.openhis.administration.service.ILocationService;
-import com.openhis.administration.service.IOrganizationLocationService;
 import com.openhis.administration.service.IOrganizationService;
-import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.utils.HisPageUtils;
-import com.openhis.common.utils.HisQueryUtils;
+import com.openhis.web.basedatamanage.appservice.IOrganizationLocationAppService;
 import com.openhis.web.basedatamanage.dto.OrgLocInitDto;
 import com.openhis.web.basedatamanage.dto.OrgLocQueryDto;
 import com.openhis.web.basedatamanage.dto.OrgLocQueryParam;
@@ -47,16 +35,13 @@ import lombok.extern.slf4j.Slf4j;
 public class OrganizationLocationController {
 
     @Autowired
-    private final IOrganizationLocationService organizationLocationService;
-
-    @Autowired
     private IOrganizationService organizationService;
 
     @Autowired
     private ILocationService locationService;
 
     @Autowired
-    private OrganizationLocationMapper organizationLocationMapper;
+    private IOrganizationLocationAppService iOrganizationLocationAppService;
 
     /**
      * 机构位置关系初始化
@@ -88,40 +73,8 @@ public class OrganizationLocationController {
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
+        return iOrganizationLocationAppService.getOrgLocPage(orgLocQueryParam, searchKey, pageNo, pageSize, request);
 
-        // 构建查询条件
-        QueryWrapper<OrganizationLocation> queryWrapper = HisQueryUtils.buildQueryWrapper(orgLocQueryParam, searchKey,
-            new HashSet<>(Arrays.asList("name", "py_str", "wb_str")), request);
-
-        // 设置排序
-        queryWrapper.orderByDesc("create_time");
-
-        // 执行分页查询并转换为 orgLocQueryDtoPage
-        Page<OrgLocQueryDto> orgLocQueryDtoPage =
-            HisPageUtils.selectPage(organizationLocationMapper, queryWrapper, pageNo, pageSize, OrgLocQueryDto.class);
-
-        return R.ok(orgLocQueryDtoPage,
-            MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"机构信息"}));
-
-    }
-
-    /**
-     * 添加机构位置关系信息
-     *
-     * @param orgLocQueryDto 机构位置关系信息
-     */
-    @PostMapping("/org-loc")
-    public R<?> addOrgLoc(@Validated @RequestBody OrgLocQueryDto orgLocQueryDto) {
-
-        // 新增organizationLocation信息
-        OrganizationLocation orgLoc = new OrganizationLocation();
-        BeanUtils.copyProperties(orgLocQueryDto, orgLoc);
-
-        boolean saveOrgLocSuccess = organizationLocationService.save(orgLoc);
-
-        return saveOrgLocSuccess
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"机构位置关系信息"}))
-            : R.fail(PromptMsgConstant.Common.M00007, null);
     }
 
     /**
@@ -131,9 +84,7 @@ public class OrganizationLocationController {
      */
     @GetMapping("/org-loc-getById")
     public R<?> getOrgLocById(@Validated @RequestParam Long orgLocId) {
-
-        OrganizationLocation orgLoc = organizationLocationService.getById(orgLocId);
-        return R.ok(orgLoc, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"机构位置关系信息"}));
+        return iOrganizationLocationAppService.getOrgLocById(orgLocId);
     }
 
     /**
@@ -142,16 +93,8 @@ public class OrganizationLocationController {
      * @param orgLocQueryDto 机构位置关系信息
      */
     @PutMapping("/org-loc")
-    public R<?> editOrgLoc(@Validated @RequestBody OrgLocQueryDto orgLocQueryDto) {
-
-        // 编辑organizationLocation信息
-        OrganizationLocation orgLoc = new OrganizationLocation();
-        BeanUtils.copyProperties(orgLocQueryDto, orgLoc);
-
-        boolean editOrgLocSuccess = organizationLocationService.updateById(orgLoc);
-        return editOrgLocSuccess
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"机构位置关系信息"}))
-            : R.fail(PromptMsgConstant.Common.M00007, null);
+    public R<?> addOrEditOrgLoc(@Validated @RequestBody OrgLocQueryDto orgLocQueryDto) {
+        return iOrganizationLocationAppService.addOrEditOrgLoc(orgLocQueryDto);
     }
 
     /**
@@ -161,12 +104,7 @@ public class OrganizationLocationController {
      */
     @DeleteMapping("/org-loc")
     public R<?> delOrgLoc(@RequestParam Long orgLocId) {
-
-        boolean delOrgLocSuccess = organizationLocationService.removeById(orgLocId);
-
-        return delOrgLocSuccess
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"机构位置关系信息"}))
-            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00006, new Object[] {"机构位置关系信息"}));
+        return iOrganizationLocationAppService.deleteOrgLoc(orgLocId);
     }
 
 }

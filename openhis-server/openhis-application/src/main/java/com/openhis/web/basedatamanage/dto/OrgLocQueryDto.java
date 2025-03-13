@@ -5,8 +5,8 @@ package com.openhis.web.basedatamanage.dto;
 
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -20,16 +20,19 @@ import lombok.experimental.Accessors;
 public class OrgLocQueryDto {
 
     /** ID */
-    @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 机构编码 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long organizationId;
 
     /** 位置编码 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
 
     /** 默认药房 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long defLocationId;
 
     /** 药品类别 */
