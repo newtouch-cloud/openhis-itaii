@@ -5,17 +5,20 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.openhis.common.enums.LocationBedStatus;
-import com.openhis.common.enums.LocationMode;
-import com.openhis.common.enums.LocationStatus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.core.domain.R;
+import com.core.common.utils.MessageUtils;
 import com.openhis.administration.domain.Location;
 import com.openhis.administration.service.ILocationService;
+import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.LocationBedStatus;
 import com.openhis.common.enums.LocationForm;
+import com.openhis.common.enums.LocationMode;
+import com.openhis.common.enums.LocationStatus;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.web.basedatamanage.appservice.ILocationAppService;
 import com.openhis.web.basedatamanage.dto.LocationQueryDto;
@@ -27,7 +30,7 @@ public class LocationAppServiceImpl implements ILocationAppService {
     ILocationService locationService;
 
     @Override
-    public Page<LocationQueryDto> getLocationTree(Integer formKey, Integer pageNo, Integer pageSize) {
+    public R<?> getLocationTree(Integer formKey, Integer pageNo, Integer pageSize) {
 
         QueryWrapper<Location> queryWrapper = new QueryWrapper<>();
         if (formKey != null) {
@@ -53,7 +56,8 @@ public class LocationAppServiceImpl implements ILocationAppService {
             e.setModeEnum_enumText(EnumUtils.getInfoByValue(LocationMode.class, e.getModeEnum()));
         });
 
-        return locationQueryDtoPage;
+        return R.ok(locationQueryDtoPage,
+            MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"位置信息查询"}));
     }
 
     /**
@@ -96,6 +100,66 @@ public class LocationAppServiceImpl implements ILocationAppService {
             }
         }
         return tree;
+    }
+
+    /**
+     * 位置信息详情
+     *
+     * @param locationId 位置信息id
+     * @return 位置信息详情
+     */
+    @Override
+    public R<?> getLocationById(Long locationId) {
+        Location location = locationService.getById(locationId);
+        return R.ok(location, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"位置信息查询"}));
+    }
+
+    /**
+     * 添加/编辑位置信息
+     *
+     * @param locationQueryDto 位置信息
+     * @return 操作结果
+     */
+    @Override
+    public R<?> addOrEditInventoryReceipt(LocationQueryDto locationQueryDto) {
+
+        // 初始化位置信息
+        Location location = new Location();
+        BeanUtils.copyProperties(locationQueryDto, location);
+
+        if (locationQueryDto.getId() != null) {
+            // 更新位置信息
+            locationService.updateById(location);
+        } else {
+            // 插入位置信息
+            location
+                // 状态编码：有效
+                .setStatusEnum(LocationStatus.ACTIVE.getValue())
+                // 操作状态：空闲
+                .setOperationalEnum(LocationBedStatus.U.getValue())
+                // 模式编码：具体
+                .setModeEnum(LocationMode.INSTANCE.getValue())
+                // 模式编码：库房
+                .setFormEnum(LocationForm.CABINET.getValue());
+            locationService.save(location);
+        }
+        // 返回位置信息id
+        return R.ok(location.getId(),
+            MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"位置信息添加编辑"}));
+    }
+
+    /**
+     * 删除位置信息
+     *
+     * @param locationId 位置信息id
+     * @return 操作结果
+     */
+    @Override
+    public R<?> deleteLocation(Long locationId) {
+        // 删除位置信息
+        boolean result = locationService.removeById(locationId);
+        return result ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"位置信息删除"}))
+            : R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00006, new Object[] {"位置信息删除"}));
     }
 
 }

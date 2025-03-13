@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import com.openhis.common.enums.AccountStatus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -107,6 +108,8 @@ public class OrganizationAppServiceImpl implements IOrganizationAppService {
             // 更新机构信息
             organizationService.updateById(organization);
         } else {
+            // 活动标识：有效
+            organization.setActiveFlag(AccountStatus.ACTIVE.getValue());
             // 生成待发送的机构信息
             organizationService.save(organization);
         }
