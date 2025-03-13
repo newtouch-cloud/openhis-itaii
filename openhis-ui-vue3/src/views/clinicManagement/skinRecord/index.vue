@@ -38,11 +38,24 @@
 		    <el-table-column prop="encounterBusNo" label="门诊号" width="150" />
 		    <el-table-column prop="patientBusNo" label="病人ID" width="150" />
 			<el-table-column prop="patientName" label="病人" width="120" />
+			<el-table-column label="发药状态" width="180">
+				<template #default="scope">
+					<span :class="getStatusColor(scope.row.medicationStatusEnum_enumText)">
+					{{ scope.row.medicationStatusEnum_enumText }}
+					</span>
+				</template>
+			</el-table-column>
 			<el-table-column prop="medicationInformation" label="药品信息" width="150" />
 			<el-table-column prop="medicationDetail" label="药品" width="160" />
 			<el-table-column prop="medicationLotNumber" label="药品批号" width="160" />
 			<el-table-column prop="verificationStatusEnum_enumText" label="状态" width="80" />
-			<el-table-column prop="clinicalStatusEnum_enumText" label="皮试结果" width="120" />
+			<el-table-column prop="clinicalStatusEnum_enumText" label="皮试结果" width="120" >
+				<template #default="scope">
+					<span :class="getClinicalStatus(scope.row.clinicalStatusEnum_enumText)">
+					{{ scope.row.clinicalStatusEnum_enumText }}
+					</span>
+				</template>
+			</el-table-column>
 			<el-table-column prop="performerId_dictText" label="执行护士" width="130" />
 			<el-table-column prop="performerCheckId_dictText" label="核对护士" width="130" />
 		    <el-table-column prop="occurrenceStartTime" key="occurrenceStartTime" label="开始时间" width="180" >
@@ -56,14 +69,13 @@
               </template>
 			</el-table-column>
 			<el-table-column prop="doctorId_dictText" label="开单医生" width="180" />
-			<el-table-column prop="medicationStatusEnum" label="发药状态" width="180" />
 			<el-table-column prop="note" label="备注" width="180" />
             <el-table-column label="操作" align="center" width="210" fixed="right" class-name="small-padding fixed-width">
 			   <template #default="scope">
 			      <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" 
-				  :disabled="!!scope.row.performerCheckId_dictText">修改</el-button>
+				  :disabled="!!scope.row.performerCheckId_dictText ">修改</el-button>
 			      <el-button link type="primary" icon="EditPen" @click="sign(scope.row)" 
-				  :disabled="!!scope.row.performerCheckId_dictText">签名</el-button>
+				  :disabled="!!scope.row.performerCheckId_dictText || scope.row.medicationStatusEnum_enumText == '未完成'">签名</el-button>
 			      <!-- <el-button link type="primary" icon="Finished" @click="submitForm(scope.row)" v-hasPermi="['system:menu:add']">保存</el-button> -->
 			   </template>
 			</el-table-column>
@@ -192,6 +204,14 @@ const statusList = ref([]);
 
 const open = ref(false);
 
+const getStatusColor = (status) => {
+  return status !== '已完成' ? 'status-red' : '';
+};
+
+const getClinicalStatus = (status) => {
+  return status === '阳性' ? 'status-red' : '';
+};
+
 
 const { proxy } = getCurrentInstance();
 
@@ -264,9 +284,18 @@ function cancel() {
   reset();
 }
 function handleUpdate(row) {
-	reset();
-	open.value = true;
-	form.value = row;
+	if (row.medicationStatusEnum_enumText === '已完成') {
+    // 如果状态是“已完成”，允许编辑
+    reset();
+    open.value = true;
+    form.value = row;
+  } else {
+    // 如果状态不是“已完成”，提示用户
+	ElMessageBox.alert('请先领药', '提示', {
+      type: 'error',
+      center: true // 确保对话框居中
+    });
+  }
 }
 function sign(row){
 	console.log("564564",row);
@@ -329,4 +358,7 @@ getList();
 </script>
 
 <style scoped>
+.status-red {
+  color: red; /* 设置字体颜色为红色 */
+}
 </style>

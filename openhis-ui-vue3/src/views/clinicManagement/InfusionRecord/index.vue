@@ -1,6 +1,5 @@
 <template>
-    <div class="app-container1">
-
+    <div class="app-container">
 		<div class="left">
 			<el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
            		<el-form-item label="入院日期" prop="patientname">
@@ -44,77 +43,38 @@
 			 	 	<el-button icon="Refresh" @click="resetQuery">打印输液卡</el-button>
 		   		</el-form-item>
 			</el-form>
-			<el-table :data="outpatienRecordsList" border style="width: 100%">
-			<el-table-column prop="name" label="院注次数" width="180" />
-			<el-table-column prop="idCard" label="已确认次数" width="180" />
-			<el-table-column prop="description" label="开立时间" width="180" />
-			<el-table-column prop="patientBusNo" label="开单医生" width="180" />
-			<el-table-column prop="encounterBusNo" label="科别" width="180" />
-			<el-table-column prop="genderEnum_enumText" label="性别" width="80" />
-			<el-table-column prop="phone" label="医嘱" width="160" />
-			<el-table-column prop="encounterTime" label="组" width="180" />
-			<el-table-column prop="subjectStatusEnum_enumText" label="频次" width="120" />
-			<el-table-column prop="organizationName" label="每次量" width="180" />
-			<el-table-column prop="doctorName" label="用法" width="180" />
-			<!-- <el-table-column prop="address" label="会诊医院" width="180" />
-			<el-table-column prop="workCompany" label="会诊医生工作单位" width="180" />
-			<el-table-column prop="organizationName" label="协同服务" width="180" /> -->
-		</el-table>
-			<!-- <el-row :gutter="20" style="display: flex; flex-wrap: wrap;" v-if="medicineData.length > 0">
-    			<el-col v-for="(item, index) in medicineData" :key="index" style="flex: 0 0 auto;"  >
-					<el-card style="width: 480px;margin-top: 15px;">
-						<template #header>
-							<div class="card-header">
-								<span>1组<br>克林霉素磷酸酯注射液 4ml:0.6g(按C18H33ClN2O5S计) 静滴 1.00克/次 1.00支qd1天</span>
-							</div>
-						</template>
-						<div style="margin-top: -3%;border-bottom: 1px dashed #F0F0F0; ">
-							<div style="display: flex;">
-								<p>病人 男 25岁10月10天</p>
-								<p>
-									<span span style="margin-left: 15px;border-left: 1px solid #DEDEDE;"></span>
-									<span style="margin-left: 15px;">床号：</span>
-									<span>123456</span>
-								</p>
-								<p>
-									<span span style="margin-left: 15px;border-left: 1px solid #DEDEDE;"></span>
-									<span style="margin-left: 15px;">频次：</span>
-									<span>qd</span>
-								</p>
-							</div>
-							<p style="margin-top: 0;">
-								<span style="color: black;">门诊号：</span>{{ item.name }}
-								<span style="margin-left: 20px;">
-									<el-date-picker style="width: 180px;" v-model="item.time" type="datetime" placeholder="时间选择" :default-time="defaultTime"/>
-								</span>
-							</p>
-						</div>
-						
-						<div style="text-align: center;">
-							<div style="border-bottom: 1px solid #CFCFCF;margin-top: 10px;padding-bottom: 5px;">
-								药品规格<div style="height: 10px;"></div>用法&nbsp;&nbsp;&nbsp;计量&nbsp;&nbsp;&nbsp;速度&nbsp;&nbsp;&nbsp;数量
-							</div>
-							<div style="margin-top: 10px;">{{ item.age }}</div>
-						</div><br>
-						<div style="line-height: 15px;align-items: center;">
-							<span>
-								备注:
-							</span>
-							<span>
-								<el-input v-model="item.notes" clearable style="width: 210px;"/>
-							</span>
-							<span style="margin-left: 30px;color: red;">
-								{{ item.nurse }}
-							</span>
-						</div>
-						
-						<template #footer="scope">
-							<el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:menu:edit']">确认</el-button>
-							<el-button link type="primary" icon="View" @click="handleSee(scope.row)" v-hasPermi="['system:menu:add']">打印</el-button>
-						</template>
-					</el-card>
-    			</el-col>
-			</el-row> -->
+			<div>
+				<p style="margin: 0px 0px 10px 0px;">院注医嘱</p>
+			<el-table :data="outpatienRecordsList" border style="width: 100%;height: 300px;">
+				<el-table-column prop="name" label="院注次数" width="180" />
+				<el-table-column prop="idCard" label="已确认次数" width="180" />
+				<el-table-column prop="description" label="开立时间" width="180" />
+				<el-table-column prop="patientBusNo" label="开单医生" width="180" />
+				<el-table-column prop="encounterBusNo" label="科别" width="180" />
+				<el-table-column prop="genderEnum_enumText" label="性别" width="80" />
+				<el-table-column prop="phone" label="医嘱" width="160" />
+				<el-table-column prop="encounterTime" label="组" width="180" />
+				<el-table-column prop="subjectStatusEnum_enumText" label="频次" width="120" />
+				<el-table-column prop="organizationName" label="每次量" width="180" />
+				<el-table-column prop="doctorName" label="用法" width="180" />
+			</el-table>
+			</div>
+			<div>
+				<p style="margin: 13px 0px 10px 0px;">院注执行历史</p>
+				<el-table :data="outpatienRecordsList" border style="width: 100%;max-height: 250px;">
+					<el-table-column prop="name" label="院注次数" width="180" />
+					<el-table-column prop="idCard" label="已确认次数" width="180" />
+					<el-table-column prop="description" label="开立时间" width="180" />
+					<el-table-column prop="patientBusNo" label="开单医生" width="180" />
+					<el-table-column prop="encounterBusNo" label="科别" width="180" />
+					<el-table-column prop="genderEnum_enumText" label="性别" width="80" />
+					<el-table-column prop="phone" label="医嘱" width="160" />
+					<el-table-column prop="encounterTime" label="组" width="180" />
+					<el-table-column prop="subjectStatusEnum_enumText" label="频次" width="120" />
+					<el-table-column prop="organizationName" label="每次量" width="180" />
+					<el-table-column prop="doctorName" label="用法" width="180" />
+				</el-table>
+			</div>
 		</div>
 		<div>
 			<el-dialog title="处方信息" v-model="showPrescription" width="60vw" :before-close="handleClose">
@@ -243,12 +203,10 @@ function handleCurrentChange(row) {
 </script>
 
 <style scoped>
-.app-container1 {
-	padding: 20px;
+.app-container {
   	display: flex;
 }
 .left {
-	/* background-color: #f3f1f19f; */
   	width: 27%;
 }
 .right {
