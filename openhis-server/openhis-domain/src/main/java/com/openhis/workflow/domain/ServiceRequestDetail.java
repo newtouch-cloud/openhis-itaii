@@ -31,6 +31,9 @@ public class ServiceRequestDetail extends HisBaseEntity {
     /** 申请主表id */
     private Long serviceReqId;
 
+    /** 类型编码 */
+    private String typeCode;
+
     /** 订单相关表 */
     private String orderDetailTable;
 
