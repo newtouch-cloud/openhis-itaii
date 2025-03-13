@@ -117,4 +117,10 @@ public class MedicationDefinition extends HisBaseEntity {
     /** 最大库存警戒数量(常规单位) */
     private BigDecimal itemMaxQuantity;
 
+    /** 默认门诊单位 */
+    private String defEncounterUnitCode;
+
+    /** 默认住院单位 */
+    private String defInhospitalUnitCode;
+
 }

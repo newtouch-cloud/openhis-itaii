@@ -34,8 +34,11 @@ public class OrganizationLocation extends HisBaseEntity {
     /** 位置编码 */
     private Long locationId;
 
-    /** 默认药房 */
+    /** 默认发药药房 */
     private Long defLocationId;
+
+    /** 默认执行科室 */
+    private Long defOrganizationId;
 
     /** 药品类别 */
     private String medCategoryCode;
