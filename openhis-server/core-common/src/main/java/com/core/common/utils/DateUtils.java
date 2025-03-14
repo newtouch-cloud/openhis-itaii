@@ -4,6 +4,8 @@ import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -199,5 +201,36 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return calendar.getTime();
 
     }
+
+    /**
+     * 获取传入日期的开始时间/结束日期
+     *
+     * @param strDate yyyy-MM-dd格式的字符串日期
+     * @param flag  true：今天的开始时间，false：返回今天的结束时间
+     * @return 今天的日期 00:00:00，或者今天的日期 23:59:59
+     */
+    public static LocalDateTime startDayOrEndDay(String strDate,boolean flag) {
+
+        String startTimeStr = "00:00:00";
+        String endTimeStr = "23:59:59";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
+        try {
+            // 解析日期字符串
+            LocalDateTime date = LocalDateTime.parse(strDate, formatter);
+            // 解析开始时间字符串
+            LocalDateTime startTime = LocalDateTime.parse(startTimeStr, formatter);
+            // 解析结束时间字符串
+            LocalDateTime endTime = LocalDateTime.parse(endTimeStr, formatter);
+            if(flag){
+                return startTime;
+            }else{
+                return endTime;
+            }
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }
