@@ -20,6 +20,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class PractitionerRoleDto {
 
+    /** ID */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+
     /** 名称 */
     @NotBlank(message = "角色名称不能为空")
     private String name;

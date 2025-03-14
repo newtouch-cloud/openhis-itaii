@@ -21,6 +21,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class PractitionerDto {
 
+    /** ID */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+
     /** 姓名 */
     @NotBlank(message = "姓名不能为空")
     private String name;
