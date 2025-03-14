@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.openhis.administration.domain.ChargeItem;
 import com.openhis.administration.mapper.ChargeItemMapper;
@@ -44,5 +45,19 @@ public class ChargeItemServiceImpl extends ServiceImpl<ChargeItemMapper, ChargeI
     @Override
     public void saveChargeItemByRegister(ChargeItem chargeItem) {
         baseMapper.insert(chargeItem);
+    }
+
+    /**
+     * 更改就诊患者账户类型
+     *
+     * @param encounterId 就诊患者
+     * @param accountId 账户id
+     * @return 更新结果
+     */
+    @Override
+    public boolean updateAccountType(Long encounterId, Long accountId) {
+        int update = baseMapper.update(null, new LambdaUpdateWrapper<ChargeItem>()
+            .eq(ChargeItem::getEncounterId, encounterId).set(ChargeItem::getAccountId, accountId));
+        return update > 0;
     }
 }

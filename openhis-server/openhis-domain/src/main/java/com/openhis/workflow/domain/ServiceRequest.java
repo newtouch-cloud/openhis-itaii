@@ -6,8 +6,8 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -27,6 +27,9 @@ public class ServiceRequest extends HisBaseEntity {
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
+
+    /** 服务编码 */
+    private String busNo;
 
     /** 处方号 */
     private String prescriptionNo;
@@ -102,6 +105,5 @@ public class ServiceRequest extends HisBaseEntity {
 
     /** 历史请求 */
     private Long relevantHistoryId;
-
 
 }

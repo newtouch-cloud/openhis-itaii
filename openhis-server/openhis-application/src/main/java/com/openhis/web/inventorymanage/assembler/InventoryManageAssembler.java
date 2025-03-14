@@ -72,7 +72,7 @@ public class InventoryManageAssembler {
                 // 收费状态：已结算
                 .setStatusEnum(ChargeItemStatus.BILLED.getValue())
                 // 收费类型：采购
-                .setContextEnum(ChargeItemContext.PRESCRIPTION.getValue())
+                .setContextEnum(ChargeItemContext.PURCHASE.getValue())
                 // 发生时间
                 .setOccurrenceTime(now)
                 // 开立人

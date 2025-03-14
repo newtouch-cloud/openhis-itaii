@@ -18,4 +18,19 @@ public interface IAccountService extends IService<Account> {
      */
     Long saveAccountByRegister(Account account);
 
+    /**
+     * 获取就诊患者的自费账户id
+     * 
+     * @param encounterId 就诊id
+     * @return 账户id
+     */
+    Long getSelfPayAccount(Long encounterId);
+
+    /**
+     * 获取就诊患者的医保账户id
+     *
+     * @param encounterId 就诊id
+     * @return 账户id
+     */
+    Long getMedicalInsuranceAccount(Long encounterId);
 }

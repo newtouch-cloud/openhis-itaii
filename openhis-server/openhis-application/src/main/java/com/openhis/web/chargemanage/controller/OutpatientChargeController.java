@@ -6,10 +6,7 @@ package com.openhis.web.chargemanage.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
 import com.openhis.web.chargemanage.appservice.IOutpatientChargeAppService;
@@ -50,5 +47,38 @@ public class OutpatientChargeController {
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
         return R.ok(outpatientChargeAppService.getEncounterPatientPage(encounterPatientPageParam, searchKey, pageNo,
             pageSize, request));
+    }
+
+    /**
+     * 根据就诊id查询患者处方列表
+     *
+     * @param encounterId 就诊id
+     * @return 患者处方列表
+     */
+    @GetMapping(value = "/patient-prescription")
+    public R<?> getEncounterPatientPrescription(@RequestParam Long encounterId) {
+        return R.ok(outpatientChargeAppService.getEncounterPatientPrescription(encounterId));
+    }
+
+    /**
+     * 医保转自费
+     *
+     * @param encounterId 就诊id
+     * @return 操作结果
+     */
+    @PutMapping("/self-pay")
+    public R<?> changeToSelfPay(@RequestParam Long encounterId) {
+        return outpatientChargeAppService.changeToSelfPay(encounterId);
+    }
+
+    /**
+     * 自费转医保
+     *
+     * @param encounterId 就诊id
+     * @return 操作结果
+     */
+    @PutMapping("/medical-insurance")
+    public R<?> changeToMedicalInsurance(@RequestParam Long encounterId) {
+        return outpatientChargeAppService.changeToMedicalInsurance(encounterId);
     }
 }

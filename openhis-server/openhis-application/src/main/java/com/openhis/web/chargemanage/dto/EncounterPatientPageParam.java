@@ -55,4 +55,9 @@ public class EncounterPatientPageParam implements Serializable {
      * 开始时间
      */
     private Date startTime;
+
+    /**
+     * 收费状态
+     */
+    private Integer statusEnum;
 }

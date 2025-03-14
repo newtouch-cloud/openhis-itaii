@@ -13,7 +13,8 @@
                T3.birth_date,
                T3.id_card,
                T3.patient_py_str,
-               T3.patient_wb_str
+               T3.patient_wb_str,
+               T3.status_enum
         FROM (
                  SELECT T1.id     AS encounter_id,
                         T1.bus_no AS encounter_bus_no,
@@ -25,13 +26,52 @@
                         T2.birth_date,
                         T2.id_card,
                         T2.py_str AS patient_py_str,
-                        T2.wb_str AS patient_wb_str
+                        T2.wb_str AS patient_wb_str,
+                        T3.status_enum
                  FROM adm_encounter AS T1
                     LEFT JOIN adm_patient AS T2
                         ON T1.patient_id = T2.id
+                    LEFT JOIN adm_charge_item AS T3
+                        ON T3.encounter_id = T1.id
                  WHERE T1.delete_flag = '0'
                  ORDER BY T1.encounter_bus_no DESC
              ) AS T3
         ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectEncounterPatientPrescription"
+            resultType="com.openhis.web.chargemanage.dto.EncounterPatientPrescriptionDto">
+        SELECT T1.encounter_id,
+               T1.context_enum,
+               T1.status_enum,
+               T1.requesting_org_id,
+               T1.quantity_value,
+               T1.quantity_unit,
+               T1.unit_price,
+               T1.total_price,
+               T1.prescription_no,
+               T1.enterer_id,
+               T1.entered_date,
+               T1.account_id,
+            CASE WHEN T1.context_enum = #{activity} THEN T2."name"
+                 WHEN T1.context_enum = #{medication} THEN T3."name"
+                 WHEN T1.context_enum = #{device} THEN T4."name"
+            END AS item_name,
+            CASE WHEN T1.context_enum = #{activity} THEN T2.id
+                 WHEN T1.context_enum = #{medication} THEN T3.id
+                 WHEN T1.context_enum = #{device} THEN T4.id
+            END AS item_id
+        FROM adm_charge_item AS T1
+            LEFT JOIN wor_activity_definition AS T2
+                ON T1.context_enum = #{activity}
+                    AND T1.product_id = T2.id
+            LEFT JOIN med_medication_definition AS T3
+                ON T1.context_enum = #{medication}
+                    AND T1.product_id = T3.id
+            LEFT JOIN adm_device_definition AS T4
+                ON T1.context_enum = #{device}
+                    AND T1.product_id = T4.id
+        WHERE T1.encounter_id = #{encounterId}
+            AND T1.delete_flag = '0'
     </select>
 </mapper>

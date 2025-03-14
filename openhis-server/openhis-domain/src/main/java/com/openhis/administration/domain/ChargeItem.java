@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
 
-import liquibase.pro.packaged.S;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -34,6 +33,9 @@ public class ChargeItem extends HisBaseEntity {
 
     /** 层级 */
     private String busNo;
+
+    /** 处方号 */
+    private String prescriptionNo;
 
     /** 患者ID */
     private Long patientId;
@@ -121,5 +123,8 @@ public class ChargeItem extends HisBaseEntity {
 
     /** 机构 */
     private Integer orgId;
+
+    /** 退费ID */
+    private Long refundId;
 
 }

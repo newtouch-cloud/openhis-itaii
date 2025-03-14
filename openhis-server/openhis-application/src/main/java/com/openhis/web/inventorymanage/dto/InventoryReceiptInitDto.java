@@ -9,6 +9,7 @@ import com.openhis.administration.domain.Location;
 import com.openhis.administration.domain.Supplier;
 import com.openhis.medication.domain.MedicationDetail;
 
+import com.openhis.web.basedatamanage.dto.LocationQueryDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

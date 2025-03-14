@@ -5,6 +5,7 @@ package com.openhis.web.inventorymanage.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.openhis.web.inventorymanage.dto.InventoryReceiptInitDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

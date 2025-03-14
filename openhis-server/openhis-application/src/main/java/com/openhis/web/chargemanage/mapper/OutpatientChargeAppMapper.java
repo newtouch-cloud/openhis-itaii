@@ -3,6 +3,8 @@
  */
 package com.openhis.web.chargemanage.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +13,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.web.chargemanage.dto.EncounterPatientPageDto;
 import com.openhis.web.chargemanage.dto.EncounterPatientPageParam;
+import com.openhis.web.chargemanage.dto.EncounterPatientPrescriptionDto;
 
 /**
  * 门诊收费 appMapper
@@ -30,4 +33,16 @@ public interface OutpatientChargeAppMapper {
      */
     Page<EncounterPatientPageDto> selectEncounterPatientPage(@Param("page") Page<EncounterPatientPageDto> page,
         @Param(Constants.WRAPPER) QueryWrapper<EncounterPatientPageParam> queryWrapper);
+
+    /**
+     * 根据就诊id查询患者处方列表
+     *
+     * @param encounterId 就诊id
+     * @param activity 项目
+     * @param medication 药品
+     * @param device 耗材
+     * @return 患者处方列表
+     */
+    List<EncounterPatientPrescriptionDto> selectEncounterPatientPrescription(@Param("encounterId") Long encounterId,
+        @Param("activity") Integer activity, @Param("medication") Integer medication, @Param("device") Integer device);
 }

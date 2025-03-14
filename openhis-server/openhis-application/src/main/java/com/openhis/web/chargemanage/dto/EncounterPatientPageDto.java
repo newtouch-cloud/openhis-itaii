@@ -91,4 +91,8 @@ public class EncounterPatientPageDto implements Serializable {
      * 年龄
      */
     private String age;
+
+    /** 收费状态 */
+    private Integer statusEnum;
+    private String statusEnum_enumText;
 }

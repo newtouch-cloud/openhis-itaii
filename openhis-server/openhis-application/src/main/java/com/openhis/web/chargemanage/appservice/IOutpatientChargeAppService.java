@@ -3,10 +3,10 @@
  */
 package com.openhis.web.chargemanage.appservice;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.core.common.core.domain.R;
 import com.openhis.web.chargemanage.dto.EncounterPatientPageParam;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 门诊收费 service
@@ -28,4 +28,28 @@ public interface IOutpatientChargeAppService {
      */
     R<?> getEncounterPatientPage(EncounterPatientPageParam encounterPatientPageParam, String searchKey, Integer pageNo,
         Integer pageSize, HttpServletRequest request);
+
+    /**
+     * 根据就诊id查询患者处方列表
+     *
+     * @param encounterId 就诊id
+     * @return 患者处方列表
+     */
+    R<?> getEncounterPatientPrescription(Long encounterId);
+
+    /**
+     * 医保转自费
+     *
+     * @param encounterId 就诊id
+     * @return 操作结果
+     */
+    R<?> changeToSelfPay(Long encounterId);
+
+    /**
+     * 自费转医保
+     *
+     * @param encounterId 就诊id
+     * @return 操作结果
+     */
+    R<?> changeToMedicalInsurance(Long encounterId);
 }

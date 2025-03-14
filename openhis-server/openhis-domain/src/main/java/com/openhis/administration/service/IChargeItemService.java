@@ -26,4 +26,13 @@ public interface IChargeItemService extends IService<ChargeItem> {
      * @param chargeItem 费用项
      */
     void saveChargeItemByRegister(ChargeItem chargeItem);
+
+    /**
+     * 更改就诊患者账户类型
+     *
+     * @param encounterId 就诊患者
+     * @param accountId 账户id
+     * @return 更新结果
+     */
+    boolean updateAccountType(Long encounterId, Long accountId);
 }

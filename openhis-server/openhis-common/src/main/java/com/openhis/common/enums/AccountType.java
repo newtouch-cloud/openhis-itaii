@@ -7,43 +7,34 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 收费项目类型
+ * 账户类型
  *
  * @author zwh
- * @date 2025-03-10
+ * @date 2025-03-14
  */
 @Getter
 @AllArgsConstructor
-public enum ChargeItemContext {
+public enum AccountType implements HisEnumInterface {
 
     /**
-     * 采购
+     * 自费
      */
-    PURCHASE(1, "采购"),
+    SELF_PAY(1, "1", "自费"),
 
     /**
-     * 药品
+     * 医保
      */
-    MEDICATION(2, "药品"),
-
-    /**
-     * 耗材
-     */
-    DEVICE(3, "耗材"),
-
-    /**
-     * 项目
-     */
-    ACTIVITY(4, "项目");
+    MEDICAL_INSURANCE(2, "2", "医保");
 
     private Integer value;
+    private String code;
     private String info;
 
-    public static ChargeItemContext getByValue(Integer value) {
+    public static AccountType getByValue(Integer value) {
         if (value == null) {
             return null;
         }
-        for (ChargeItemContext val : values()) {
+        for (AccountType val : values()) {
             if (val.getValue().equals(value)) {
                 return val;
             }
