@@ -130,4 +130,15 @@ public class CommonConstants {
         String TCM_DIAGNOSIS = "中医诊断";
     }
 
+    /**
+     * sql条件常量
+     */
+    public interface SqlCondition {
+        /**
+         * 关于库存的表名str
+         */
+        String ABOUT_INVENTORY_TABLE_STR =
+            "'med_medication_definition', 'adm_device_definition', 'wor_activity_definition'";
+    }
+
 }

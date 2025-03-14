@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 命中条件枚举
+ */
 @Getter
 @AllArgsConstructor
-public enum ActivityDefCategory implements HisEnumInterface {
-    MEDICAL_SERVICE_ITEM(1, "medical_service_item", "医疗服务项"),
+public enum ConditionCode implements HisEnumInterface {
 
-    TREATMENT_SURGERY(2, "treatment_surgery", "手术与治疗");
+    UNIT_PRODUCT_BATCH_NUM(1, "unit_product_batch_num", "单位,产品批号");
 
     @EnumValue
     private final Integer value;

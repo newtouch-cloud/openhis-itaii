@@ -4,5 +4,116 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.openhis.web.doctorstation.mapper.DoctorStationAdviceAppMapper">
 
+    <select id="getAdviceBaseInfo" resultType="com.openhis.web.doctorstation.dto.AdviceBaseDto">
+        SELECT abi.tenant_id,
+               abi.advice_type,
+               abi.advice_definition_id,
+               abi.advice_name,
+               abi.advice_bus_no,
+               abi.py_str,
+               abi.wb_str,
+               abi.yb_no,
+               abi.product_name,
+               abi.unit_code,
+               abi.min_unit_code,
+               abi.volume,
+               abi.method_code,
+               abi.rate_code,
+               abi.dose,
+               abi.dose_unit_code,
+               abi.supplier,
+               abi.manufacturer,
+               abi.charge_item_definition_id,
+               abi.advice_table_name
+        from (
+                 SELECT T1.tenant_id,
+                        '1'                   AS advice_type,
+                        T1.ID                 AS advice_definition_id,
+                        T1.NAME               AS advice_name,
+                        T1.bus_no             AS advice_bus_no,
+                        T1.py_str             AS py_str,
+                        T1.wb_str             AS wb_str,
+                        T1.yb_no              AS yb_no,
+                        T1.merchandise_name   AS product_name,
+                        T1.unit_code          AS unit_code,
+                        T1.min_unit_code      AS min_unit_code,
+                        T2.total_volume       AS volume,
+                        T2.method_code        AS method_code,
+                        T2.rate_code          AS rate_code,
+                        CAST(T2.dose AS TEXT) AS dose,
+                        T2.dose_unit_code     AS dose_unit_code,
+                        T3.NAME               AS supplier,
+                        T4.NAME               AS manufacturer,
+                        T5.id                 AS charge_item_definition_id,
+                        T5.instance_table     AS advice_table_name
+                 FROM med_medication_definition AS t1
+                          LEFT JOIN med_medication AS T2 ON T2.medication_def_id = T1.ID
+                     AND T2.delete_flag = '0'
+                          LEFT JOIN adm_supplier AS T3 ON T3.ID = T1.supply_id
+                     AND T3.delete_flag = '0'
+                          LEFT JOIN adm_supplier AS T4 ON T4.ID = T1.manufacturer_id
+                     AND T4.delete_flag = '0'
+                          LEFT JOIN adm_charge_item_definition AS T5 ON T5.instance_id = T1.ID
+                     AND T5.delete_flag = '0'
+                     AND T5.instance_table = #{medicationTableName}
+                 WHERE T1.delete_flag = '0'
+                 UNION ALL
+                 SELECT T1.tenant_id,
+                        '2'               AS advice_type,
+                        T1.ID             AS advice_definition_id,
+                        T1.NAME           AS advice_name,
+                        T1.bus_no         AS advice_bus_no,
+                        T1.py_str         AS py_str,
+                        T1.wb_str         AS wb_str,
+                        T1.yb_no          AS yb_no,
+                        ''                AS product_name,
+                        T1.unit_code      AS unit_code,
+                        T1.min_unit_code  AS min_unit_code,
+                        T1.SIZE           AS volume,
+                        ''                AS method_code,
+                        ''                AS rate_code,
+                        ''                AS dose,
+                        ''                AS dose_unit_code,
+                        T2.NAME           AS supplier,
+                        T3.NAME           AS manufacturer,
+                        T4.id             AS charge_item_definition_id,
+                        T4.instance_table AS advice_table_name
+                 FROM adm_device_definition AS T1
+                          LEFT JOIN adm_supplier AS T2 ON T2.ID = T1.supply_id
+                     AND T2.delete_flag = '0'
+                          LEFT JOIN adm_supplier AS T3 ON T3.ID = T1.manufacturer_id
+                     AND T3.delete_flag = '0'
+                          LEFT JOIN adm_charge_item_definition AS T4 ON T4.instance_id = T1.ID
+                     AND T4.delete_flag = '0'
+                     AND T4.instance_table = #{deviceTableName}
+                 WHERE T1.delete_flag = '0'
+                 UNION ALL
+                 SELECT T1.tenant_id,
+                        '3'               AS advice_type,
+                        T1.ID             AS advice_definition_id,
+                        T1.NAME           AS advice_name,
+                        T1.bus_no         AS advice_bus_no,
+                        T1.py_str         AS py_str,
+                        T1.wb_str         AS wb_str,
+                        T1.yb_no          AS yb_no,
+                        ''                AS product_name,
+                        ''                AS unit_code,
+                        ''                AS min_unit_code,
+                        ''                AS volume,
+                        ''                AS method_code,
+                        ''                AS rate_code,
+                        ''                AS dose,
+                        ''                AS dose_unit_code,
+                        ''                AS supplier,
+                        ''                AS manufacturer,
+                        T2.ID             AS charge_item_definition_id,
+                        T2.instance_table AS advice_table_name
+                 FROM wor_activity_definition AS T1
+                          LEFT JOIN adm_charge_item_definition AS T2 ON T2.instance_id = T1.ID
+                     AND T2.delete_flag = '0'
+                     AND T2.instance_table = #{activityTableName}
+                 WHERE T1.delete_flag = '0') AS abi
+            ${ew.customSqlSegment}
+    </select>
 
 </mapper>
