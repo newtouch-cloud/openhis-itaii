@@ -22,10 +22,10 @@
 							<el-button link type="primary" icon="Edit" @click="handlePrescription(scope.row)" v-hasPermi="['system:menu:edit']">处方</el-button>
 					</template>
 				</el-table-column> -->
-				<el-table-column prop="busNo" label="处方号" width="150" />
-				<el-table-column prop="doctorName" label="姓名" width="100" />
-				<el-table-column prop="name" label="性别" width="80" /> 
-				<el-table-column prop="name" label="年龄" width="80" />
+				<el-table-column prop="prescriptionNo" label="处方号" width="150" />
+				<el-table-column prop="patientName" label="姓名" width="100" />
+				<el-table-column prop="genderEnum_enumText" label="性别" width="80" /> 
+				<el-table-column prop="ageString" label="年龄" width="80" />
 				<el-table-column prop="status" label="身份证号" width="140" />
 		  </el-table>
 		  <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" 
@@ -41,28 +41,33 @@
 		   		<el-form-item>
 		      		<el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
 		      		<el-button icon="Refresh" @click="resetQuery">重置</el-button>
-			 	 	<el-button icon="Refresh" @click="resetQuery">打印输液卡</el-button>
+			 	 	<el-button  type="primary" icon="SuccessFilled" @click="handleSubmit">确认执行</el-button>
+			 	 	<el-button  type="primary" plain icon="Printer" @click="resetQuery">打印患者卡</el-button>
+			 	 	<el-button  type="primary" plain icon="Printer" @click="resetQuery">打印瓶签</el-button>
+			 	 	<el-button  type="primary" plain icon="Printer" @click="resetQuery">打印输液单</el-button>
 		   		</el-form-item>
 			</el-form>
 			<div>
 				<p style="margin: 0px 0px 10px 0px;">院注医嘱</p>
-				<el-table :data="outpatienRecordsList" border style="width: 100%;height: 300px;">
-					<el-table-column prop="name" label="院注次数" width="180" />
-					<el-table-column prop="idCard" label="已确认次数" width="180" />
-					<el-table-column prop="description" label="开立时间" width="180" />
-					<el-table-column prop="patientBusNo" label="开单医生" width="180" />
-					<el-table-column prop="encounterBusNo" label="科别" width="180" />
-					<el-table-column prop="genderEnum_enumText" label="性别" width="80" />
-					<el-table-column prop="phone" label="医嘱" width="160" />
-					<el-table-column prop="encounterTime" label="组" width="180" />
-					<el-table-column prop="subjectStatusEnum_enumText" label="频次" width="120" />
-					<el-table-column prop="organizationName" label="每次量" width="180" /> 
-					<el-table-column prop="doctorName" label="用法" width="180" />
+				<el-table :data="infusionList" border style="width: 100%;height: 300px;" @selection-change="handleSelectionChange">
+         			<el-table-column type="selection" width="55" align="center" />
+					<el-table-column prop="executionCount" label="组" width="60" />
+					<el-table-column prop="executionCount" label="已执行次数" width="100" />
+					<el-table-column prop="doctorId_dictText" label="开单医生" width="100" />
+					<el-table-column prop="medicationInformation" label="药品信息" width="180" />
+					<el-table-column prop="medicationAntity" label="药品数量" width="80" />
+					<el-table-column prop="rateCode" label="用药频次" width="80" />
+					<el-table-column prop="dose" label="单词剂量" width="160" />
+					<el-table-column prop="speed" label="输液速度" width="80" />
+					<el-table-column prop="orgId_dictText" label="发放科室" width="120" />
+					<el-table-column prop="medicationStatusEnum_enumText" label="药品状态" width="100" />
+					<el-table-column prop="flagText" label="是否皮试" width="60" /> 
+					<el-table-column prop="clinicalStatusEnum_enumText" label="皮试结果" width="60" />
 				</el-table>
 			</div>
 			<div>
 				<p style="margin: 13px 0px 10px 0px;">院注执行历史</p>
-				<el-table :data="outpatienRecordsList" border style="width: 100%;max-height: 250px;">
+				<el-table :data="historyRecordsList" border style="width: 100%;max-height: 250px;">
 					<el-table-column prop="name" label="执行时间" width="150" />
 					<el-table-column prop="genderEnum_enumText" label="执行人" width="80" />
 					<el-table-column prop="name" label="患者姓名" width="100" />
@@ -88,69 +93,19 @@
 
 <script  setup name="InfusionRecord">
 import { ref, computed } from 'vue';
-import prescriptioncard from './component/prescription.vue'
+import { listPatients,updateInfusionRecord } from './component/api'; 
+// import prescriptioncard from './component/prescription.vue'
 
 const showSearch = ref(true);
 const showPrescription = ref(false);
 const total = ref(1);
 const currentRow = ref(null);
-// const notes = ref('');
-// const time = ref('');
 const dateRange = ref([]);
-const patientList = ref([
-  {
-    "busNo": "PX20250308001",
-    "name": "张三",
-    "genderEnum": "2025-03-08 10:30",
-    "status": "待审核",
-    "doctorName": "李医生"
-  },
-  {
-    "busNo": "PX20250308002",
-    "name": "李四",
-    "genderEnum": "2025-03-08 11:15",
-    "status": "已审核",
-    "doctorName": "王医生"
-  }
-]);
-const medicineData = ref([
-  {
-    idCard: '1组克林霉素磷酸酯注射液 4ml:0.6g(按C18H33ClN2O5S计) 静滴 1.00克/次 1.00支qd1天', // 药品信息
-    busNo: '黄诗韧  男  25岁10月10天',             // 患者信息
-    name: 'M2503040009100252',              // 门诊号
-    genderEnum: '12341',              // 床号（假设 1 表示男，2 表示女）
-    maritalStatusEnum: 'qd',       // 频次（假设 3 表示每天三次）
-    nationalityCode: '2025-03-01 10:00', // 时间
-    age: '克林霉素磷酸酯注射液4ml:0.6g(按C18H33ClN2O5S计) 静滴 1.00克 1.00支克林霉素磷酸酯注射液4ml:0.6g(按C18H33ClN2O5S计) 静滴 1.00克 1.00支', // 药品规格(用法，计量，速度，数量)
-    phone: '备注信息',             // 备注
-    address: '会诊医院A',
-	nurse:'李护士'
-  },
-  {
-    idCard: '1组克林霉素磷酸酯注射液 4ml:0.6g(按C18H33ClN2O5S计) 静滴 1.00克/次 1.00支qd1天', // 药品信息
-    busNo: '黄诗韧  男  25岁10月10天',             // 患者信息
-    name: 'M2503040009100252',              // 门诊号
-    genderEnum: '12341',              // 床号（假设 1 表示男，2 表示女）
-    maritalStatusEnum: 'qd',       // 频次（假设 3 表示每天三次）
-    nationalityCode: '2025-03-01 10:00', // 时间
-    age: '克林霉素磷酸酯注射液4ml:0.6g(按C18H33ClN2O5S计) 静滴 1.00克 1.00支', // 药品规格(用法，计量，速度，数量)
-    phone: '备注信息',             // 备注
-    address: '会诊医院A',
-	nurse:'李护士'
-  },
-  {
-    idCard: '1组克林霉素磷酸酯注射液 4ml:0.6g(按C18H33ClN2O5S计) 静滴 1.00克/次 1.00支qd1天', // 药品信息
-    busNo: '黄诗韧  男  25岁10月10天',             // 患者信息
-    name: 'M2503040009100252',              // 门诊号
-    genderEnum: '12341',              // 床号（假设 1 表示男，2 表示女）
-    maritalStatusEnum: 'qd',       // 频次（假设 3 表示每天三次）
-    nationalityCode: '2025-03-01 10:00', // 时间
-    age: '克林霉素磷酸酯注射液4ml:0.6g(按C18H33ClN2O5S计) 静滴 1.00克 1.00支', // 药品规格(用法，计量，速度，数量)
-    phone: '备注信息',             // 备注
-    address: '会诊医院A',
-	nurse:'李护士'
-  }
-]);
+const historyRecordsList = ref([])
+const patientList = ref([]);
+const infusionList = ref([]);
+
+const ids = ref([]);
 
 const { proxy } = getCurrentInstance();
 
@@ -172,6 +127,13 @@ function getList() {
 //     total.value = response.total;
 //     loading.value = false;
 //   });
+	listPatients().then(response => {
+		console.log('Full response:', response); // 打印完整响应
+		patientList.value = response.data;
+		total.value = response.total;
+	}).catch(error => {
+		console.error('Error:', error); // 捕获并打印错误
+	});
 }
 
 /** 搜索按钮操作 */
@@ -186,18 +148,22 @@ function resetQuery() {
   handleQuery();
 }
 
-function handlePrescription(row){
-	showPrescription.value = true;
+function handleSubmit(){
+	updateInfusionRecord(form.value).then(response => {
+		proxy.$modal.msgSuccess("执行成功");
+		open.value = false;
+		getList();
+    });
 }
 
-function handleRowClick(row){
-	console.log("handleRowClick",row);
-	
+function handleSelectionChange(selection) {
+  ids.value = selection.map(item => item.dictId);
+
 }
+
 function handleCurrentChange(row) {
       currentRow.value = row; // 更新当前选中行的数据
       console.log("当前选中行的数据：", currentRow.value);
-	  medicineData.value = [];
     }
 
 getList();
@@ -215,7 +181,10 @@ getList();
 	margin-left: 2%;
   	width: 72%;
 }
-.el-table__row--current {
-  background-color: cyan ; /* 青色背景 */
-}
+/* .el-table__row--current {
+  background-color: rgb(70, 211, 28) ; 
+} */
+/* .el-table__body tr.current-row>td.el-table__cell {
+    background-color: #9b804e;
+} */
 </style>
