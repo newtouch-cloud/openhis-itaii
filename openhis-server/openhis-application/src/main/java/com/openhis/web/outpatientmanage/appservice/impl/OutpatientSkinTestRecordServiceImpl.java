@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
+import com.openhis.web.outpatientmanage.dto.OutpatientInfusionInitDto;
+import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestInitDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,40 +78,27 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
     @Autowired
     IServiceRequestService serviceRequestService;
 
-    /**
-     * 获取皮试项目检查状态列表
-     */
-    @Override
-    public List<PatientListDto> getSkinTestStatus() {
-        // 获取皮试状态列表
-        List<VerificationStatus> statusList = Arrays.asList(VerificationStatus.values());
-        List<PatientListDto> dtos = new ArrayList<>();
-        // 取得更新值
-        for (VerificationStatus status : statusList) {
-            PatientListDto dto = new PatientListDto();
-            dto.setValue(status.getValue());
-            dto.setInfo(status.getInfo());
-            dtos.add(dto);
-        }
-        return dtos;
-    }
 
     /**
-     * 获取皮试项目检查状态列表
+     * 获取门诊皮试记录初期数据列表
+     *
+     * @return 获取门诊皮试记录初期数据列表
      */
-    @Override
-    public List<PatientListDto> getSkinTestResult() {
-        // 获取皮试状态列表
-        List<ClinicalStatus> statusList = Arrays.asList(ClinicalStatus.values());
-        List<PatientListDto> dtos = new ArrayList<>();
-        // 取得更新值
-        for (ClinicalStatus status : statusList) {
-            PatientListDto dto = new PatientListDto();
-            dto.setValue(status.getValue());
-            dto.setInfo(status.getInfo());
-            dtos.add(dto);
-        }
-        return dtos;
+    @Override public OutpatientSkinTestInitDto getOutpatientSkinTestInit() {
+        OutpatientSkinTestInitDto initDto = new OutpatientSkinTestInitDto();
+        //获取皮试状态
+        List<OutpatientInfusionInitDto.statusEnumOption> statusEnumOptions1 = Stream.of(VerificationStatus.values())
+            .map(status -> new OutpatientInfusionInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+        initDto.setVerificationStatus(statusEnumOptions1);
+
+        // 获取皮试结果
+        List<OutpatientInfusionInitDto.statusEnumOption> statusEnumOptions2 = Stream.of(ClinicalStatus.values())
+            .map(status -> new OutpatientInfusionInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+        initDto.setClinicalStatus(statusEnumOptions2);
+
+        return initDto;
     }
 
     /**

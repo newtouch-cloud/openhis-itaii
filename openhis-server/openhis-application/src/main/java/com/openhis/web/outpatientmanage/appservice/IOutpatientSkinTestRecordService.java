@@ -2,6 +2,8 @@ package com.openhis.web.outpatientmanage.appservice;
 
 import java.util.List;
 
+import com.openhis.web.outpatientmanage.dto.OutpatientInfusionInitDto;
+import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestInitDto;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,15 +19,13 @@ import com.openhis.web.patientmanage.dto.PatientListDto;
  */
 public interface IOutpatientSkinTestRecordService {
 
-    /**
-     * 获取皮试项目检查状态列表
-     */
-    List<PatientListDto> getSkinTestStatus();
 
     /**
-     * 获取皮试结果列表
+     * 获取门诊皮试记录初期数据列表
+     *
+     * @return 获取门诊皮试记录初期数据列表
      */
-    List<PatientListDto> getSkinTestResult();
+    OutpatientSkinTestInitDto getOutpatientSkinTestInit();
 
     /**
      * 分页查询门诊皮试记录,可选条件
@@ -71,5 +71,6 @@ public interface IOutpatientSkinTestRecordService {
      * @param outpatientSkinTestRecordDto 皮试记录信息
      */
     boolean nurseSignChkPs(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto);
+
 
 }

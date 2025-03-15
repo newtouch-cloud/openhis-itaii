@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025/3/5
  */
 @RestController
-@RequestMapping("/outpatientmanage")
+@RequestMapping("/outpatientmanage/skintest")
 @Slf4j
 @AllArgsConstructor
 public class OutpatientSkinTestRecordController {
@@ -29,22 +29,16 @@ public class OutpatientSkinTestRecordController {
     @Autowired
     private IOutpatientSkinTestRecordService OutpatientSkinTestRecordService;
 
-    /**
-     * 获取皮试项目检查状态列表
-     */
-    @GetMapping("/list-skinteststatus")
-    public R<?> getSkinTestStatus() {
-
-        return R.ok(OutpatientSkinTestRecordService.getSkinTestStatus());
-    }
 
     /**
-     * 获取皮试结果列表
+     * 门诊皮试记录初期数据
+     *
+     * @return
      */
-    @GetMapping("/list-skintestresult")
-    public R<?> getSkinTestResult() {
+    @GetMapping("/init")
+    public R<?> getOutpatientSkinTestInit() {
 
-        return R.ok(OutpatientSkinTestRecordService.getSkinTestResult());
+        return R.ok(OutpatientSkinTestRecordService.getOutpatientSkinTestInit());
     }
 
     /**
