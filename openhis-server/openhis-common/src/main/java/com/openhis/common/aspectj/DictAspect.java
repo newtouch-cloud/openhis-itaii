@@ -63,33 +63,38 @@ public class DictAspect {
         if (dto == null) {
             return;
         }
-
         // 获取 DTO 类的所有字段
         for (Field field : dto.getClass().getDeclaredFields()) {
-            // 检查字段是否带有 @Dict 注解
-            if (field.isAnnotationPresent(Dict.class)) {
+            field.setAccessible(true); // 设置字段可访问
+            Object fieldValue = field.get(dto); // 获取字段值
+
+            if (fieldValue == null) {
+                continue; // 如果字段值为空，跳过
+            }
+            // 如果字段是 List 类型，递归处理其中的每个元素
+            if (fieldValue instanceof List) {
+                List<?> list = (List<?>)fieldValue;
+                for (Object item : list) {
+                    processDict(item); // 递归处理 List 中的每个元素
+                }
+            } else if (field.isAnnotationPresent(Dict.class)) {
+                // 如果字段带有 @Dict 注解，处理字典值
                 Dict dictAnnotation = field.getAnnotation(Dict.class);
-                field.setAccessible(true); // 设置字段可访问
-                Object fieldValue = field.get(dto); // 获取字段值
-
-                if (fieldValue != null) {
-                    String dictCode = dictAnnotation.dictCode();
-                    String dictText = dictAnnotation.dictText();
-                    String dictTable = dictAnnotation.dictTable();
-
-                    // 查询字典值
-                    String dictLabel = queryDictLabel(dictTable, dictCode, dictText, fieldValue.toString());
-                    if (dictLabel != null) {
-                        try {
-                            // 动态生成 _dictText 字段名
-                            String textFieldName = field.getName() + "_dictText";
-                            Field textField = dto.getClass().getDeclaredField(textFieldName);
-                            textField.setAccessible(true);
-                            textField.set(dto, dictLabel); // 设置 _dictText 字段的值
-                        } catch (NoSuchFieldException e) {
-                            // 如果 _dictText 字段不存在，忽略错误
-                            e.printStackTrace();
-                        }
+                String dictCode = dictAnnotation.dictCode();
+                String dictText = dictAnnotation.dictText();
+                String dictTable = dictAnnotation.dictTable();
+                // 查询字典值
+                String dictLabel = queryDictLabel(dictTable, dictCode, dictText, fieldValue.toString());
+                if (dictLabel != null) {
+                    try {
+                        // 动态生成 _dictText 字段名
+                        String textFieldName = field.getName() + "_dictText";
+                        Field textField = dto.getClass().getDeclaredField(textFieldName);
+                        textField.setAccessible(true);
+                        textField.set(dto, dictLabel); // 设置 _dictText 字段的值
+                    } catch (NoSuchFieldException e) {
+                        // 如果 _dictText 字段不存在，忽略错误
+                        e.printStackTrace();
                     }
                 }
             }
