@@ -3,6 +3,7 @@ package com.openhis.web.outpatientmanage.appservice.impl;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,11 +73,6 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
      */
     public OutpatientInfusionInitDto getOutpatientInfusionInit() {
         OutpatientInfusionInitDto initDto = new OutpatientInfusionInitDto();
-        // 获取药品状态
-        List<OutpatientInfusionInitDto.statusEnumOption> statusEnumOptions = Stream.of(EventStatus.values())
-            .map(status -> new OutpatientInfusionInitDto.statusEnumOption(status.getValue(), status.getInfo()))
-            .collect(Collectors.toList());
-        initDto.setMedicationStatus(statusEnumOptions);
 
         // 获取皮试结果
         List<OutpatientInfusionInitDto.statusEnumOption> statusEnumOptions2 = Stream.of(ClinicalStatus.values())
@@ -126,7 +122,8 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
         String searchKey;
         LocalDateTime beginTime;
         LocalDateTime endTime;
-        if (outpatientInfusionSearchParam == null) {
+        if (outpatientInfusionSearchParam == null || outpatientInfusionSearchParam.getBeginTime() == null
+            || outpatientInfusionSearchParam.getEndTime() == null) {
             searchKey = null;
             beginTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), true);
             endTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), false);
@@ -138,9 +135,9 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
 
         // 构建查询条件
         QueryWrapper<OutpatientInfusionPatientDto> queryWrapper = HisQueryUtils.buildQueryWrapper(null, searchKey,
-            new HashSet<>(Arrays.asList("patient_busNo", "encounter_busNo", "patient_name")), null);
+            new HashSet<>(Arrays.asList("patient_bus_no", "encounter_bus_no", "patient_name")), null);
         // based_on_id 是为空的
-        queryWrapper.eq("based_on_id",null);
+        queryWrapper.eq("based_on_id", null);
         // 状态是未完成的
         queryWrapper.in("status_enum", EventStatus.IN_PROGRESS.getValue(), EventStatus.NOT_DONE.getValue());
         // 添加时间段查询条件
@@ -179,7 +176,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
         QueryWrapper<OutpatientInfusionRecordDto> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("patient_id", outpatientInfusionPatientDto.getPatientId());
         // based_on_id 是为空的
-        queryWrapper.eq("based_on_id",null);
+        queryWrapper.eq("based_on_id", null);
         // 状态是未完成的
         queryWrapper.in("status_enum", EventStatus.IN_PROGRESS.getValue(), EventStatus.NOT_DONE.getValue());
         // 从数据库获取输液记录列表
@@ -249,8 +246,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
                 updateWrapper.eq("id", outpatientInfusionRecordDto.getServiceId())
                     .set("status_enum", EventStatus.COMPLETED.getValue())
                     .set("performer_type_code", practitionerRole.getRoleCode())
-                    .set("performer_id", practitioner.getId())
-                    .set("occurrence_start_time", DateUtils.getNowDate())
+                    .set("performer_id", practitioner.getId()).set("occurrence_start_time", DateUtils.getNowDate())
                     .set("occurrence_end_time", DateUtils.getNowDate());
                 int countUpdate = serviceRequestMapper.update(null, updateWrapper);
                 if (countUpdate < 0) {
@@ -286,17 +282,33 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     /**
      * 显示门诊输液执行记录查询
      *
+     * @param beginTime 开始时间
+     * @param endTime 结束时间
      * @return 门诊输液记录列表
      */
     @Override
-    public List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord() {
+    public List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(String beginTime, String endTime) {
+
+        LocalDateTime beginDateTime;
+        LocalDateTime endDateTime;
+        //筛选时间不传,默认当天记录
+        if (beginTime == null || endTime == null) {
+            beginDateTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), true);
+            endDateTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), false);
+        } else {
+            beginDateTime = DateUtils.startDayOrEndDay(beginTime, true);
+            endDateTime = DateUtils.startDayOrEndDay(endTime, false);
+        }
+
         // 创建查询包装器
         QueryWrapper<OutpatientInfusionRecordDto> queryWrapper = new QueryWrapper<>();
         // based_on_id 不为空
         queryWrapper.isNotNull("based_on_id");
         // 状态是已完成
         queryWrapper.eq("status_enum", EventStatus.COMPLETED.getValue());
-
+        // 时间筛选
+        queryWrapper.ge("begin_time", beginDateTime);
+        queryWrapper.le("end_time", endDateTime);
         // 从数据库获取输液记录列表
         List<OutpatientInfusionRecordDto> infusionPerformList =
             outpatientManageMapper.getOutpatientInfusionRecord(queryWrapper);

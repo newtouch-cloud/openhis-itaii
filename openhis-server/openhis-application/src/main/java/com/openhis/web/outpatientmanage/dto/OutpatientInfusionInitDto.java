@@ -17,8 +17,6 @@ import java.util.List;
 @Accessors(chain = true)
 public class OutpatientInfusionInitDto {
 
-    //发药状态
-    private List<statusEnumOption> medicationStatus;
     //皮试结果
     private List<statusEnumOption>  clinicalStatus;
     //当天位执行的输液记录

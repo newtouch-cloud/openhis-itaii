@@ -148,6 +148,7 @@
         SELECT DISTINCT
         sr.id AS service_id, --服务申请管理ID
         sr.prescription_no, --处方号
+        sr.tenant_id,
         e.bus_no as encounter_busNo, --就诊号
         pt.birth_date , --病人生日
         pt.bus_no AS patient_busNo, --病人ID（前台显示用）
@@ -184,13 +185,14 @@
         T1.activity_id,
         T1.prescription_no,
         T1.encounter_id,
-        T1.encounter_busNo,
+        T1.encounter_bus_No,
         T1.patient_name,
-        T1.patient_busNo,
+        T1.patient_bus_No,
         T1.patient_id,
         T1.medication_information,
         T1.medication_antity,
-        T1.medication_statusEnum,
+        T1.medication_status_Enum,
+        T1.group_id,
         T1.clinical_status_enum,
         T1.flag_text,
         T1.speed,
@@ -207,18 +209,20 @@
         SELECT
         sr.id AS service_id, --服务申请管理ID
         sr.bus_no, -- 服务请求编码
-        (SELECT COUNT(*) FROM wor_service_request WHERE based_on_id = SPLIT_PART(sr.bus_no, '.', 1)) AS execution_count, -- 执行次数
-        sr.based_on_id, --请求基于什么的ID
+        (SELECT COUNT(*) FROM wor_service_request wsr WHERE wsr.based_on_id = sr.based_on_id) AS execution_count,
+        sr.based_on_id, -- 请求基于什么的ID
         sr.activity_id,--请求code,输液
         sr.prescription_no, --处方号
         sr.encounter_id , --就诊ID
+        sr.tenant_id,
         e.bus_no AS encounter_busNo, --就诊ID（前台显示用）
         pt.name AS patient_name, --病人姓名
         pt.bus_no AS patient_busNo, --病人ID（前台显示用）
         sr.patient_id, --病人ID
         ad.name AS medication_information, --药品信息
         mr.antity AS medication_antity,--药品数量
-        mr.status_enum AS medication_statusEnum, --药品状态
+        mr.status_enum AS medication_status_Enum, --药品状态
+        mr.group_id, --注射药品组号
         ai.clinical_status_enum, --皮试检查结果
         CASE mr.skin_test_flag--皮试标志
         WHEN 1 THEN '是'
@@ -249,7 +253,7 @@
 
         </where>
         ORDER BY
-        mr.create_time,e.bus_no,pt.bus_no
+        mr.create_time desc,e.bus_no,pt.bus_no
         ) AS T1
         ${ew.customSqlSegment}
     </select>

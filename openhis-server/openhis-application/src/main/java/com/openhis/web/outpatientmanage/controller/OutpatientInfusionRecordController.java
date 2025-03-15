@@ -1,5 +1,7 @@
 package com.openhis.web.outpatientmanage.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +17,6 @@ import com.openhis.workflow.service.IServiceRequestService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 /**
  * 门诊输液记录
@@ -76,24 +76,24 @@ public class OutpatientInfusionRecordController {
         return R.ok(outpatientInfusionRecordService.getPatientInfusionRecord(outpatientInfusionPatientDto));
     }
 
-    /**
-     * 执行单个患者门诊输液
-     *
-     * @param outpatientInfusionRecordDto 患者输液信息
-     * @return 门诊输液记录列表
-     */
-    @PutMapping("/infusion-perform")
-    public R<?>
-        editPatientInfusionRecord(@Validated @RequestBody OutpatientInfusionRecordDto outpatientInfusionRecordDto) {
-        // 获取执行次数
-        Long exeCount =
-            serviceRequestService.countServiceRequestByBasedOnId(outpatientInfusionRecordDto.getServiceId());
-        boolean res = outpatientInfusionRecordService.editPatientInfusionRecord(outpatientInfusionRecordDto, exeCount);
-        if (!res) {
-            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
-        }
-        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"患者门诊输液执行"}));
-    }
+    // /**
+    // * 执行单个患者门诊输液
+    // *
+    // * @param outpatientInfusionRecordDto 患者输液信息
+    // * @return 门诊输液记录列表
+    // */
+    // @PutMapping("/infusion-perform")
+    // public R<?>
+    // editPatientInfusionRecord(@Validated @RequestBody OutpatientInfusionRecordDto outpatientInfusionRecordDto) {
+    // // 获取执行次数
+    // Long exeCount =
+    // serviceRequestService.countServiceRequestByBasedOnId(outpatientInfusionRecordDto.getServiceId());
+    // boolean res = outpatientInfusionRecordService.editPatientInfusionRecord(outpatientInfusionRecordDto, exeCount);
+    // if (!res) {
+    // return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+    // }
+    // return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"患者门诊输液执行"}));
+    // }
 
     /**
      * 批量执行患者门诊输液
@@ -132,13 +132,16 @@ public class OutpatientInfusionRecordController {
 
     /**
      * 显示门诊输液执行记录查询
-     * 
+     *
+     * @param beginTime 开始时间
+     * @param endTime 结束时间
      * @return 门诊输液记录列表
      */
     @GetMapping(value = "/infusion-perform-Record")
-    public R<?> getPatientInfusionPerformRecord() {
+    public R<?> getPatientInfusionPerformRecord(@RequestParam(required = false) String beginTime,
+        @RequestParam(required = false) String endTime) {
 
-        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord());
+        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(beginTime,endTime));
     }
 
 }

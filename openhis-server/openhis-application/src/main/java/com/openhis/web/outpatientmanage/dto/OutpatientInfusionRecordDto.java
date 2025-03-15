@@ -60,6 +60,10 @@ public class OutpatientInfusionRecordDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long executionCount;
 
+    /** 分组id */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long groupId;
+
     /** 执行护士 */
     @Dict(dictCode = "id", dictTable = "adm_practitioner", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)

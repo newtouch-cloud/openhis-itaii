@@ -1,22 +1,16 @@
 package com.openhis.web.patientmanage.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
-import com.openhis.common.enums.AdministrativeGender;
-import com.openhis.common.enums.EncounterSubjectStatus;
-import com.openhis.common.utils.EnumUtils;
-import com.openhis.web.patientmanage.dto.OutpatientRecordDto;
+import com.openhis.web.patientmanage.appservice.IOutpatientRecordService;
 import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
-import com.openhis.web.patientmanage.mapper.PatientManageMapper;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -28,20 +22,21 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/patientmanage/records")
 @Slf4j
+@AllArgsConstructor
 public class OutpatientRecordController {
 
-    @Autowired(required = false)
-    PatientManageMapper patientManageMapper;
+    @Autowired
+    IOutpatientRecordService outpatientRecordService;
 
     /**
-     * 获取医生名字列表
+     * 门诊输液记录初期数据
+     *
+     * @return
      */
-    @GetMapping("/list-doctornames")
+    @GetMapping("/init")
     public R<?> getDoctorNames() {
         // 获取医生名字列表
-        List<String> listDoctorNames = patientManageMapper.getDoctorNames();
-
-        return R.ok(listDoctorNames);
+        return R.ok(outpatientRecordService.getOutpatientRecordInit());
     }
 
     /**
@@ -56,25 +51,7 @@ public class OutpatientRecordController {
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
 
-        // 跳过的记录数
-        Integer offset = (pageNo - 1) * pageSize;
-        // 连表查询患者信息
-        List<OutpatientRecordDto> listOutpatientRecords =
-            patientManageMapper.getOutpatientRecord(outpatientRecordSearchParam, pageSize, offset);
-        // 查询总记录数
-        long total = patientManageMapper.countOutpatientRecords(outpatientRecordSearchParam);
-        // 创建Page对象并设置属性
-        Page<OutpatientRecordDto> outpatientRecordPage = new Page<>(pageNo, pageSize, total);
-        outpatientRecordPage.setRecords(listOutpatientRecords);
-        outpatientRecordPage.getRecords().forEach(e -> {
-            // 性别枚举类回显赋值
-            e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
-            // 就诊对象状态枚举类回显赋值
-            e.setSubjectStatusEnum_enumText(
-                EnumUtils.getInfoByValue(EncounterSubjectStatus.class, e.getSubjectStatusEnum()));
-        });
-
-        return R.ok(outpatientRecordPage);
+        return R.ok(outpatientRecordService.getPatient(outpatientRecordSearchParam, pageNo, pageSize));
     }
 
 }

@@ -14,10 +14,11 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 public class OutpatientSkinTestInitDto {
+
     //皮试检查项目状态
-    private List<OutpatientInfusionInitDto.statusEnumOption> VerificationStatus;
+    private List<OutpatientSkinTestInitDto.statusEnumOption> verificationStatus;
     //皮试结果
-    private List<OutpatientInfusionInitDto.statusEnumOption>  clinicalStatus;
+    private List<OutpatientSkinTestInitDto.statusEnumOption>  clinicalStatus;
 
     /**
      * 状态

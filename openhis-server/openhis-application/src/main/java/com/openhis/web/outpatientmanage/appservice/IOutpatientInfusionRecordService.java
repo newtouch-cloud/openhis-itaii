@@ -68,8 +68,10 @@ public interface IOutpatientInfusionRecordService {
     /**
      * 显示门诊输液执行记录查询
      *
+     * @param beginTime 开始时间
+     * @param endTime 结束时间
      * @return 门诊输液记录列表
      */
-    List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord();
+    List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(String beginTime,String endTime);
 
 }

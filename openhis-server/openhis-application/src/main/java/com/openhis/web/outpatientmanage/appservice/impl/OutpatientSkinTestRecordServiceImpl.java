@@ -1,7 +1,5 @@
 package com.openhis.web.outpatientmanage.appservice.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +35,6 @@ import com.openhis.web.outpatientmanage.appservice.IOutpatientSkinTestRecordServ
 import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordSearchParam;
 import com.openhis.web.outpatientmanage.mapper.OutpatientManageMapper;
-import com.openhis.web.patientmanage.dto.PatientListDto;
 import com.openhis.workflow.domain.ServiceRequest;
 import com.openhis.workflow.mapper.ServiceRequestMapper;
 import com.openhis.workflow.service.IServiceRequestService;
@@ -87,14 +84,14 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
     @Override public OutpatientSkinTestInitDto getOutpatientSkinTestInit() {
         OutpatientSkinTestInitDto initDto = new OutpatientSkinTestInitDto();
         //获取皮试状态
-        List<OutpatientInfusionInitDto.statusEnumOption> statusEnumOptions1 = Stream.of(VerificationStatus.values())
-            .map(status -> new OutpatientInfusionInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+        List<OutpatientSkinTestInitDto.statusEnumOption> statusEnumOptions1 = Stream.of(VerificationStatus.values())
+            .map(status -> new OutpatientSkinTestInitDto.statusEnumOption(status.getValue(), status.getInfo()))
             .collect(Collectors.toList());
         initDto.setVerificationStatus(statusEnumOptions1);
 
         // 获取皮试结果
-        List<OutpatientInfusionInitDto.statusEnumOption> statusEnumOptions2 = Stream.of(ClinicalStatus.values())
-            .map(status -> new OutpatientInfusionInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+        List<OutpatientSkinTestInitDto.statusEnumOption> statusEnumOptions2 = Stream.of(ClinicalStatus.values())
+            .map(status -> new OutpatientSkinTestInitDto.statusEnumOption(status.getValue(), status.getInfo()))
             .collect(Collectors.toList());
         initDto.setClinicalStatus(statusEnumOptions2);
 
@@ -148,18 +145,6 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
         OutpatientSkinTestRecordSearchParam outpatientSkinTestRecordSearchParam, Integer pageSize, Integer offset) {
         return outpatientManageMapper.getOutpatientSkinTestRecord(outpatientSkinTestRecordSearchParam, pageSize,
             offset);
-    }
-
-    /**
-     * 统计门诊皮试记录数的方法
-     *
-     * @param outpatientSkinTestRecordSearchParam 门诊皮试记录查询参数
-     * @return 分页查询
-     */
-    @Override
-    public long
-        countOutpatientSkinTestRecords(OutpatientSkinTestRecordSearchParam outpatientSkinTestRecordSearchParam) {
-        return outpatientManageMapper.countOutpatientSkinTestRecords(outpatientSkinTestRecordSearchParam);
     }
 
     /**
