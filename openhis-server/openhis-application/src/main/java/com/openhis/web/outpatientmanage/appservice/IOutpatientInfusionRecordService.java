@@ -48,8 +48,6 @@ public interface IOutpatientInfusionRecordService {
      */
     List<OutpatientInfusionRecordDto> getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto);
 
-
-
     /**
      * 执行单个患者门诊输液
      *
@@ -58,5 +56,20 @@ public interface IOutpatientInfusionRecordService {
      * @return 修改成功/失败
      */
     boolean editPatientInfusionRecord(OutpatientInfusionRecordDto outpatientInfusionRecordDto,Long exeCount);
+
+    /**
+     * 执行输液后,修改执行结束时间
+     *
+     * @param outpatientInfusionRecordDto 患者输液信息
+     * @return 修改成功/失败
+     */
+    boolean editPatientInfusionTime(OutpatientInfusionRecordDto outpatientInfusionRecordDto);
+
+    /**
+     * 显示门诊输液执行记录查询
+     *
+     * @return 门诊输液记录列表
+     */
+    List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord();
 
 }

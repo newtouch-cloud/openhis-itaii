@@ -57,7 +57,8 @@ public class OutpatientInfusionRecordDto {
     private String genderEnum_enumText;
 
     /** 已执行数量 */
-    private Integer executionCount;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long executionCount;
 
     /** 执行护士 */
     @Dict(dictCode = "id", dictTable = "adm_practitioner", dictText = "name")

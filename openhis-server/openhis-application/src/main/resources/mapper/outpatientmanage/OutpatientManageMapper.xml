@@ -140,6 +140,7 @@
         T1.patient_busNo,
         T1.patient_id,
         T1.patient_name,
+        T1.id_card,
         T1.gender_enum,
         T1.create_time
         from
@@ -152,6 +153,7 @@
         pt.bus_no AS patient_busNo, --病人ID（前台显示用）
         sr.patient_id, --病人ID
         pt.name AS patient_name, --病人姓名
+        pt.name AS id_card, --病人身份证号
         pt.gender_enum AS gender_enum, --病人性别
         mr.create_time AS create_time --开单时间
         FROM
@@ -177,6 +179,7 @@
         SELECT
         T1.service_id,
         T1.bus_no,
+        T1.execution_count,
         T1.based_on_id,
         T1.activity_id,
         T1.prescription_no,
@@ -203,7 +206,8 @@
         (
         SELECT
         sr.id AS service_id, --服务申请管理ID
-        sr.bus_no, --服务请求编码
+        sr.bus_no, -- 服务请求编码
+        (SELECT COUNT(*) FROM wor_service_request WHERE based_on_id = SPLIT_PART(sr.bus_no, '.', 1)) AS execution_count, -- 执行次数
         sr.based_on_id, --请求基于什么的ID
         sr.activity_id,--请求code,输液
         sr.prescription_no, --处方号
@@ -242,7 +246,6 @@
             ad.bus_no = 'sy001' -- 皮试检查的编号，todo：编号未定，后期修改
             AND mr.infusion_flag = 1
             AND md.infusion_flag = 1
-            AND sr.status_enum in (2,3) --服务状态未完成
 
         </where>
         ORDER BY

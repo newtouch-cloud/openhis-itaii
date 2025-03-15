@@ -44,6 +44,9 @@ public class OutpatientInfusionPatientDto {
     /** 病人生日 */
     private Date birthDate;
 
+    /** 病人身份证号 */
+    private String idCard;
+
     /** 病人年龄 */
     private String ageString;
 
