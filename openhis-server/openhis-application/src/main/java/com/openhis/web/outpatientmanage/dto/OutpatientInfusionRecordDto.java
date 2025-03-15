@@ -1,0 +1,112 @@
+package com.openhis.web.outpatientmanage.dto;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
+
+/**
+ * 门诊输液记录Dto
+ *
+ * @author liuhr
+ * @date 2025/3/12
+ */
+@Data
+@Accessors(chain = true)
+public class OutpatientInfusionRecordDto {
+
+    /** 服务申请管理表ID */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long serviceId;
+
+    /** 请求基于什么的ID */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long basedOnId;
+
+    /** 服务请求编码 */
+    private String busNo;
+
+    /** 请求code，输液 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long activityId;
+
+    /** 处方号 */
+    private String prescriptionNo;
+
+    /** 就诊ID（前台显示用） */
+    private String encounterBusNo;
+
+    /** 就诊ID */
+    private Long encounterId;
+
+    /** 病人ID（前台显示用） */
+    private String patientBusNo;
+
+    /** 病人ID */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long patientId;
+
+    /** 病人姓名 */
+    private String patientName;
+
+    /** 病人性别 */
+    private Integer genderEnum;
+    private String genderEnum_enumText;
+
+    /** 已执行数量 */
+    private Integer executionCount;
+
+    /** 执行护士 */
+    @Dict(dictCode = "id", dictTable = "adm_practitioner", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long performerId;
+    private String performerId_dictText;
+
+    /** 开单医生 */
+    @Dict(dictCode = "id", dictTable = "adm_practitioner", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long doctorId;
+    private String doctorId_dictText;
+
+    /** 发放科室 */
+    @Dict(dictCode = "id", dictTable = "adm_organization", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orgId;
+    private String orgId_dictText;
+
+    /** 预计执行时间 */
+    private String occurrenceStartTime;
+
+    /** 预计结束时间 */
+    private String occurrenceEndTime;
+
+    /** 药品信息 */
+    private String medicationInformation;
+
+    /** 药品数量 */
+    private BigDecimal medicationAntity;
+
+    /** 用药频次 */
+    private String rateCode;
+
+    /** 单次剂量带剂量单位 */
+    private String dose;
+
+    /** 输液速度 */
+    private Integer speed;
+
+    /** 药品状态 */
+    private Integer medicationStatusEnum;
+    private String medicationStatusEnum_enumText;
+
+    /** 皮试标志（是/否） */
+    private String flagText;
+
+    /** 皮试结果 */
+    private Integer clinicalStatusEnum;
+    private String clinicalStatusEnum_enumText;
+
+}

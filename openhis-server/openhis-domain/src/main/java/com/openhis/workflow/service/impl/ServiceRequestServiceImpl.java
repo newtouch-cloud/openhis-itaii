@@ -1,5 +1,7 @@
 package com.openhis.workflow.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,4 +19,19 @@ import com.openhis.workflow.service.IServiceRequestService;
 public class ServiceRequestServiceImpl extends ServiceImpl<ServiceRequestMapper, ServiceRequest>
     implements IServiceRequestService {
 
+    @Autowired
+    private ServiceRequestMapper serviceRequestMapper;
+
+    /**
+     * 查询服务申请管理中basedOnId相同的个数
+     *
+     * @param basedOnId 请求基于什么的ID
+     * @return basedOnId相同的个数
+     */
+    @Override
+    public Long countServiceRequestByBasedOnId(Long basedOnId) {
+        QueryWrapper<ServiceRequest> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("based_on_id", basedOnId);
+        return serviceRequestMapper.selectCount(queryWrapper);
+    }
 }
