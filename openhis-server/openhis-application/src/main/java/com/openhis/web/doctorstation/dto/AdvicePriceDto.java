@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -32,5 +33,10 @@ public class AdvicePriceDto {
 
     /** 价格 */
     private BigDecimal price;
+
+    /** 单位 */
+    @Dict(dictCode = "unit_code")
+    private String unitCode;
+    private String unitCode_dictText;
 
 }

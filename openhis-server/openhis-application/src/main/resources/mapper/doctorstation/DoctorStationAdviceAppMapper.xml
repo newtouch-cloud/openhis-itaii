@@ -116,4 +116,66 @@
             ${ew.customSqlSegment}
     </select>
 
+    <select id="getAdviceInventory" resultType="com.openhis.web.doctorstation.dto.AdviceInventoryDto">
+        SELECT
+        T1.item_id,
+        T1.item_table,
+        T1.base_quantity,
+        T1.base_unit_code,
+        T1.min_quantity,
+        T1.min_unit_code,
+        T1.lot_number,
+        T2.NAME AS location_name
+        FROM
+        wor_inventory_item AS T1
+        LEFT JOIN adm_location AS T2 ON T2.ID = T1.location_id
+        AND T2.delete_flag = '0'
+        WHERE
+        T1.delete_flag = '0'
+        <if test="locationId != null">
+            AND T1.location_id = #{locationId}
+        </if>
+        <if test="adviceDefinitionIdList != null and !adviceDefinitionIdList.isEmpty()">
+            AND T1.item_id IN
+            <foreach collection="adviceDefinitionIdList" item="itemId" open="(" separator="," close=")">
+                #{itemId}
+            </foreach>
+        </if>
+        AND T1.item_table IN ( ${SqlCondition} )
+    </select>
+
+    <select id="getChildCharge" resultType="com.openhis.web.doctorstation.dto.AdvicePriceDto">
+        SELECT definition_id,
+        condition_value,
+        condition_code,
+        amount AS price
+        FROM adm_charge_item_def_detail
+        WHERE delete_flag = '0'
+        AND condition_code = #{conditionCode}
+        <if test="chargeItemDefinitionIdList != null and !chargeItemDefinitionIdList.isEmpty()">
+            AND definition_id IN
+            <foreach collection="chargeItemDefinitionIdList" item="itemId" open="(" separator="," close=")">
+                #{itemId}
+            </foreach>
+        </if>
+        ORDER BY priority DESC
+    </select>
+
+    <select id="getMainCharge" resultType="com.openhis.web.doctorstation.dto.AdvicePriceDto">
+        SELECT
+        id AS definition_id,
+        charge_name,
+        price
+        FROM
+        adm_charge_item_definition
+        WHERE
+        delete_flag = '0'
+        <if test="chargeItemDefinitionIdList != null and !chargeItemDefinitionIdList.isEmpty()">
+            AND id IN
+            <foreach collection="chargeItemDefinitionIdList" item="itemId" open="(" separator="," close=")">
+                #{itemId}
+            </foreach>
+        </if>
+    </select>
+
 </mapper>
