@@ -6,12 +6,13 @@ package com.core.common.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.core.common.constant.CacheConstants;
-import com.core.common.core.redis.RedisCache;
-import com.core.common.exception.UtilException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.core.common.constant.CacheConstants;
+import com.core.common.core.redis.RedisCache;
+import com.core.common.exception.UtilException;
 
 /**
  * 排番组件
@@ -264,4 +265,19 @@ public final class AssignSeqUtil {
         // 番号返回
         return (int)seq;
     }
+
+    /**
+     * 格式化字符串，支持动态调整数字部分的位数。
+     *
+     * @param baseStr 基础字符串
+     * @param num 数字部分的值
+     * @param numDigits 数字部分的位数
+     * @return 格式化后的字符串,基串.0001的格式,后面几位数自己动态设置
+     */
+    public static String formatString(String baseStr, Long num, int numDigits) {
+        // 使用 String.format 动态生成格式化字符串
+        String formatPattern = "%s.%0" + numDigits + "d";
+        return String.format(formatPattern, baseStr, num);
+    }
+
 }
