@@ -62,4 +62,11 @@ public interface OutpatientManageMapper {
     List<OutpatientInfusionRecordDto>
         getOutpatientInfusionRecord(@Param(Constants.WRAPPER) QueryWrapper<OutpatientInfusionRecordDto> queryWrapper);
 
+    /**
+     * 获取医生名字列表
+     *
+     * @return 医生名字列表
+     */
+    List<String> getDoctorNames();
+
 }

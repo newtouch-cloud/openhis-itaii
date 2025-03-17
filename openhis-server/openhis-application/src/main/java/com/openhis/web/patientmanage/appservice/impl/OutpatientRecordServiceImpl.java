@@ -15,6 +15,8 @@ import com.openhis.web.patientmanage.dto.OutpatientRecordInitDto;
 import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
 import com.openhis.web.patientmanage.mapper.PatientManageMapper;
 
+import javax.annotation.Resource;
+
 /**
  * 门诊记录查询 应用实现
  *
@@ -24,7 +26,7 @@ import com.openhis.web.patientmanage.mapper.PatientManageMapper;
 @Service
 public class OutpatientRecordServiceImpl implements IOutpatientRecordService {
 
-    @Autowired
+    @Resource
     PatientManageMapper patientManageMapper;
 
     /**
