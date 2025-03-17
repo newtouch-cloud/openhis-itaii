@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025-02-21
  */
 @RestController
-@RequestMapping("/basedatamanage/cabinet-location")
+@RequestMapping("/base-data-manage/cabinet-location")
 @Slf4j
 @AllArgsConstructor
 public class CabinetLocationController {

@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025-02-25
  */
 @RestController
-@RequestMapping("/basedatamanage/org-loc")
+@RequestMapping("/base-data-manage/org-loc")
 @Slf4j
 @AllArgsConstructor
 public class OrganizationLocationController {

@@ -46,7 +46,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025-02-20
  */
 @RestController
-@RequestMapping("/datadictionary/device")
+@RequestMapping("/data-dictionary/device")
 @Slf4j
 @AllArgsConstructor
 public class DeviceManageController {

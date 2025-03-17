@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +33,9 @@ public class LocationAppServiceImpl implements ILocationAppService {
     @Override
     public R<?> getLocationTree(Integer formKey, Integer pageNo, Integer pageSize) {
 
-        QueryWrapper<Location> queryWrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<Location> queryWrapper = new LambdaQueryWrapper<>();
         if (formKey != null) {
-            queryWrapper.eq("form_enum", formKey);
+            queryWrapper.eq(Location::getFormEnum, formKey);
         }
 
         // 查询位置列表

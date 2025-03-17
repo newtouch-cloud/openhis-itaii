@@ -40,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025-02-20
  */
 @RestController
-@RequestMapping("/datadictionary/disease")
+@RequestMapping("/data-dictionary/disease")
 @Slf4j
 @AllArgsConstructor
 public class DiseaseManageController {
