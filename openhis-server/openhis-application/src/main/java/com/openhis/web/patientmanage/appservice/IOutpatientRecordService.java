@@ -3,6 +3,7 @@ package com.openhis.web.patientmanage.appservice;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.core.domain.R;
 import com.openhis.web.patientmanage.dto.OutpatientRecordDto;
 import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
 
@@ -30,5 +31,5 @@ public interface IOutpatientRecordService {
      *
      * @return 医生名字列表
      */
-    List<String> getDoctorNames();
+    R<?> getDoctorNames();
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.core.common.core.domain.R;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -63,8 +64,8 @@ public class OutpatientRecordServiceImpl implements IOutpatientRecordService {
      *
      * @return 医生名字列表
      */
-    public List<String> getDoctorNames() {
-        return patientManageMapper.getDoctorNames();
+    public R<?> getDoctorNames() {
+        return R.ok(patientManageMapper.getDoctorNames());
     }
 
 }

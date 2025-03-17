@@ -36,7 +36,7 @@ public class OutpatientRecordController {
     @GetMapping("/init")
     public R<?> getDoctorNames() {
         // 获取医生名字列表
-        return R.ok(outpatientRecordService.getDoctorNames());
+        return outpatientRecordService.getDoctorNames();
     }
 
     /**
