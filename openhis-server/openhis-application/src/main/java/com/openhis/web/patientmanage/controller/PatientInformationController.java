@@ -5,8 +5,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
-import com.core.common.utils.MessageUtils;
-import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.web.patientmanage.appservice.IPatientInformationService;
 import com.openhis.web.patientmanage.dto.PatientInformationDto;
 
