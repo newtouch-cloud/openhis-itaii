@@ -31,26 +31,16 @@ public interface IOutpatientSkinTestRecordService {
      * @param outpatientSkinTestRecordSearchParam 查询条件
      * @param pageNo 页码（默认为1）
      * @param pageSize 每页大小（默认为10）
+     * @return 获取门诊皮试记录列表
      */
     Page<OutpatientSkinTestRecordDto> getSkinTestRecords(
         OutpatientSkinTestRecordSearchParam outpatientSkinTestRecordSearchParam, Integer pageNo, Integer pageSize);
 
     /**
-     * 获取门诊皮试记录列表
-     *
-     * @param outpatientSkinTestRecordSearchParam 门诊皮试记录查询参数
-     * @param pageSize 页面大小
-     * @param offset 跳过条数
-     * @return 分页查询
-     */
-    List<OutpatientSkinTestRecordDto> getOutpatientSkinTestRecord(
-        @Param("OutpatientSkinTestRecordSearchParam") OutpatientSkinTestRecordSearchParam outpatientSkinTestRecordSearchParam,
-        @Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
-
-    /**
      * 护士确认执行皮试后，更新皮试记录信息（服务申请管理与过敏与不耐受的相关字段更新）
      *
      * @param outpatientSkinTestRecordDto 皮试记录信息
+     * @return 更新结果
      */
     boolean editSkinTestRecord(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto);
 
@@ -58,8 +48,8 @@ public interface IOutpatientSkinTestRecordService {
      * 护士核对皮试结果后，确认签名（服务申请管理与过敏与不耐受的相关字段更新）
      *
      * @param outpatientSkinTestRecordDto 皮试记录信息
+     * @return 更新结果
      */
     boolean nurseSignChkPs(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto);
-
 
 }

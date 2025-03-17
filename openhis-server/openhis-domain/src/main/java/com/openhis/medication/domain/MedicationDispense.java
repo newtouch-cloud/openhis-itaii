@@ -106,5 +106,12 @@ public class MedicationDispense extends HisBaseEntity {
     /** 单次最大剂量 */
     private BigDecimal maxUnit;
 
+    /** 发放数量 */
+    private Integer quantity;
 
+    /** 发放单位 */
+    private String unitCode;
+
+    /** 产品批号 */
+    private String lotNumber;
 }

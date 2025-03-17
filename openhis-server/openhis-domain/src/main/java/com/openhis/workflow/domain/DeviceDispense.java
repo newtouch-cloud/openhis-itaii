@@ -43,6 +43,15 @@ public class DeviceDispense extends HisBaseEntity {
     /** 发药类型 */
     private Integer dispenseCategoryEnum;
 
+    /** 发放数量 */
+    private Integer quantity;
+
+    /** 发放单位 */
+    private String unitCode;
+
+    /** 产品批号 */
+    private String lotNumber;
+
     /** 器材编码 */
     private Long deviceDefId;
 

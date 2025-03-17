@@ -3,7 +3,7 @@
 <mapper namespace="com.openhis.web.outpatientmanage.mapper.OutpatientManageMapper">
 
     <!-- 门诊皮试记录相关查询-->
-    <select id="getOutpatientSkinTestRecord"
+    <select id="getSkinTestRecords"
             parameterType="com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordSearchParam"
             resultType="com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordDto">
         SELECT

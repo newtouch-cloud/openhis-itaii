@@ -72,6 +72,7 @@
                 ON T1.context_enum = #{device}
                     AND T1.product_id = T4.id
         WHERE T1.encounter_id = #{encounterId}
+            AND T1.status_enum IN (1 , 2 , 5)
             AND T1.delete_flag = '0'
     </select>
 </mapper>

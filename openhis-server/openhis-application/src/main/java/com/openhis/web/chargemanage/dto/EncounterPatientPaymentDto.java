@@ -1,32 +1,46 @@
-package com.openhis.financial.domain;
+/*
+ * Copyright ©2023 CJB-CNIT Team. All rights reserved
+ */
+package com.openhis.web.chargemanage.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 
-import com.core.common.core.domain.HisBaseEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 付款管理Entity实体
+ * 就诊患者账单 dto
  *
- * @author system
- * @date 2025-02-20
+ * @author zwh
+ * @date 2025-03-17
  */
 @Data
-@TableName("fin_payment_reconciliation")
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false)
-public class PaymentReconciliation extends HisBaseEntity {
+public class EncounterPatientPaymentDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
+
+    /** 就诊ID */
+    private Long encounterId;
+
+    /** 处方号 */
+    private String prescriptionNo;
+
+    /** 关联账户ID */
+    private Long accountId;
 
     /** 状态 */
     private Integer statusEnum;
@@ -40,28 +54,8 @@ public class PaymentReconciliation extends HisBaseEntity {
     /** 付款类别 */
     private Integer paymentEnum;
 
-    /** 付款实体ID */
-    private Long paymentReconciliationId;
-
-    /** 发起支付的工作流程类别 */
-    private Integer kindEnum;
-
-    /** 收款员 */
-    private Long entererId;
-
-    /** 支付发起人类型 */
-    private Integer issuerEnum;
-
-    /** 支付的患者ID */
-    private Long patientId;
-
-    /** 请求支付责任人ID */
-    private Long practitionerId;
-
-    /** 付款结果 */
-    private Integer outcomeEnum;
-
     /** 支付位置 */
+    @Dict(dictTable = "adm_location", dictText = "name", dictCode = "id")
     private Long locationId;
 
     /** 到期时间 */
@@ -76,17 +70,9 @@ public class PaymentReconciliation extends HisBaseEntity {
     /** 付款总额 */
     private BigDecimal displayAmount;
 
-    /** 打印标识 */
-    private Integer printCount;
-
     /** 合同编码 */
     private String contractNo;
 
     /** 处方号集合 */
     private String chargeItemIds;
-
-    /** 就诊ID */
-    private Long encounterId;
-
-
 }

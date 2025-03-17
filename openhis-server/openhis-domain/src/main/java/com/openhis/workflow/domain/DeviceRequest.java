@@ -6,8 +6,8 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -60,6 +60,9 @@ public class DeviceRequest extends HisBaseEntity {
 
     /** 请求单位编码 */
     private String unitCode;
+
+    /** 产品批号 */
+    private String lotNumber;
 
     /** 器材编码 */
     private Long deviceDefId;
@@ -129,6 +132,5 @@ public class DeviceRequest extends HisBaseEntity {
 
     /** 发放编号 */
     private Long dispenseId;
-
 
 }
