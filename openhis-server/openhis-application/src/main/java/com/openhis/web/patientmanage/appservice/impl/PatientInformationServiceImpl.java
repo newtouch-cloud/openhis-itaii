@@ -156,9 +156,14 @@ public class PatientInformationServiceImpl implements IPatientInformationService
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
         // 设置死亡时间,死亡时间未来时报错
         if (DateUtils.isFuture(patientInformationDto.getDeceasedDate())) {
-            return R.fail("死亡时间未来时间是未来时间！");
+            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00003, new Object[] {"死亡时间未来时"}));
         }
         patient.setDeceasedDate(DateUtils.parseDate(patientInformationDto.getDeceasedDate()));
+        // 身份证号存在check
+        if (existsByIdCard(patientInformationDto.getIdCard())) {
+            // 身份证号存在
+            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00003, new Object[] {"身份证号已存在"}));
+        }
 
         // 调用服务层更新病人信息
         boolean result = patientService.updateById(patient);
@@ -195,21 +200,21 @@ public class PatientInformationServiceImpl implements IPatientInformationService
         patient.setWbStr(ChineseConvertUtils.toWBFirstLetter(patient.getName()));
         // 设置死亡时间,死亡时间未来时报错
         if (DateUtils.isFuture(patientInformationDto.getDeceasedDate())) {
-            return R.fail("死亡时间未来时间是未来时间！");
+            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00003, new Object[] {"死亡时间未来时"}));
         }
         // 身份证号存在check
         if (existsByIdCard(patientInformationDto.getIdCard())) {
             // 身份证号存在
-            return R.fail("身份证号已存在！");
+            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00003, new Object[] {"身份证号已存在"}));
         }
         patient.setDeceasedDate(DateUtils.parseDate(patientInformationDto.getDeceasedDate()));
 
         // 调用服务层保存病人信息
         boolean result = patientService.save(patient);
         if (result) {
-            return R.ok("病人信息添加成功！");
+            return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"病人信息"}));
         } else {
-            return R.fail("病人信息添加失败！");
+            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00003, null));
         }
     }
 

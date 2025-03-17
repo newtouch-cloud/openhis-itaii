@@ -2,7 +2,6 @@ package com.openhis.web.patientmanage.appservice.impl;
 
 import java.util.List;
 
-import com.openhis.web.outpatientmanage.dto.OutpatientInfusionInitDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +11,7 @@ import com.openhis.common.enums.EncounterSubjectStatus;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.web.patientmanage.appservice.IOutpatientRecordService;
 import com.openhis.web.patientmanage.dto.OutpatientRecordDto;
+import com.openhis.web.patientmanage.dto.OutpatientRecordInitDto;
 import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
 import com.openhis.web.patientmanage.mapper.PatientManageMapper;
 
@@ -33,11 +33,12 @@ public class OutpatientRecordServiceImpl implements IOutpatientRecordService {
      * @return 门诊记录初期数据列表
      */
     @Override
-    public List<String> getOutpatientRecordInit() {
-        // 获取医生名字列表
-        List<String> listDoctorNames = patientManageMapper.getDoctorNames();
+    public OutpatientRecordInitDto getOutpatientRecordInit() {
 
-        return listDoctorNames;
+        OutpatientRecordInitDto intoDto = new OutpatientRecordInitDto();
+        // 获取医生名字列表
+        intoDto.setDoctorNames(patientManageMapper.getDoctorNames());
+        return intoDto;
     }
 
     /**

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.web.patientmanage.dto.OutpatientRecordDto;
+import com.openhis.web.patientmanage.dto.OutpatientRecordInitDto;
 import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
 
 /**
@@ -19,7 +20,7 @@ public interface IOutpatientRecordService {
      *
      * @return 门诊记录初期数据列表
      */
-    List<String> getOutpatientRecordInit();
+    OutpatientRecordInitDto getOutpatientRecordInit();
 
     /**
      * 分页查询门诊记录
