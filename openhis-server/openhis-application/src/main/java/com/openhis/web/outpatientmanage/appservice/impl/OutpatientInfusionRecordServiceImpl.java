@@ -3,7 +3,6 @@ package com.openhis.web.outpatientmanage.appservice.impl;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +39,7 @@ import com.openhis.web.outpatientmanage.mapper.OutpatientManageMapper;
 import com.openhis.workflow.domain.ServiceRequest;
 import com.openhis.workflow.mapper.ServiceRequestMapper;
 import com.openhis.workflow.service.IServiceRequestService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 门诊管理——输液实现类
@@ -48,6 +48,7 @@ import com.openhis.workflow.service.IServiceRequestService;
  * @date 2025/3/12
  */
 @Service
+@Transactional
 public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionRecordService {
 
     @Resource
@@ -119,23 +120,21 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     public IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatient(
         OutpatientInfusionSearchParam outpatientInfusionSearchParam, Integer pageNo, Integer pageSize) {
 
-        String searchKey;
         LocalDateTime beginTime;
         LocalDateTime endTime;
         if (outpatientInfusionSearchParam == null || outpatientInfusionSearchParam.getBeginTime() == null
             || outpatientInfusionSearchParam.getEndTime() == null) {
-            searchKey = null;
             beginTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), true);
             endTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), false);
         } else {
-            searchKey = outpatientInfusionSearchParam.getSearchKey();
             beginTime = DateUtils.startDayOrEndDay(outpatientInfusionSearchParam.getBeginTime(), true);
             endTime = DateUtils.startDayOrEndDay(outpatientInfusionSearchParam.getEndTime(), false);
         }
 
         // 构建查询条件
-        QueryWrapper<OutpatientInfusionPatientDto> queryWrapper = HisQueryUtils.buildQueryWrapper(null, searchKey,
-            new HashSet<>(Arrays.asList("patient_bus_no", "encounter_bus_no", "patient_name")), null);
+        QueryWrapper<OutpatientInfusionPatientDto> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(null, outpatientInfusionSearchParam.getSearchKey(),
+                new HashSet<>(Arrays.asList("patient_bus_no", "encounter_bus_no", "patient_name")), null);
         // based_on_id 是为空的
         queryWrapper.eq("based_on_id", null);
         // 状态是未完成的
@@ -195,8 +194,6 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
      */
     @Override
     public boolean editPatientInfusionRecord(OutpatientInfusionRecordDto outpatientInfusionRecordDto, Long exeCount) {
-        // 这里执行一次就insert 表 wor_service_request里一条数据，based_on_id一直，以mr.quantity来振分
-        // 点击执行一次，生成一条执行记录，确认执行+1 ，直至所有药品打完，
 
         // 根据执行人ID，通过登录userId获取
         Practitioner practitioner =
@@ -291,7 +288,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
 
         LocalDateTime beginDateTime;
         LocalDateTime endDateTime;
-        //筛选时间不传,默认当天记录
+        // 筛选时间不传,默认当天记录
         if (beginTime == null || endTime == null) {
             beginDateTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), true);
             endDateTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), false);

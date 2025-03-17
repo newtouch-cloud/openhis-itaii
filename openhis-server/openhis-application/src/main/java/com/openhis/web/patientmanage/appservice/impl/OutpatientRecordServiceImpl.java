@@ -2,7 +2,8 @@ package com.openhis.web.patientmanage.appservice.impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,11 +12,8 @@ import com.openhis.common.enums.EncounterSubjectStatus;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.web.patientmanage.appservice.IOutpatientRecordService;
 import com.openhis.web.patientmanage.dto.OutpatientRecordDto;
-import com.openhis.web.patientmanage.dto.OutpatientRecordInitDto;
 import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
 import com.openhis.web.patientmanage.mapper.PatientManageMapper;
-
-import javax.annotation.Resource;
 
 /**
  * 门诊记录查询 应用实现
@@ -28,20 +26,6 @@ public class OutpatientRecordServiceImpl implements IOutpatientRecordService {
 
     @Resource
     PatientManageMapper patientManageMapper;
-
-    /**
-     * 获取门诊记录初期数据列表
-     *
-     * @return 门诊记录初期数据列表
-     */
-    @Override
-    public OutpatientRecordInitDto getOutpatientRecordInit() {
-
-        OutpatientRecordInitDto intoDto = new OutpatientRecordInitDto();
-        // 获取医生名字列表
-        intoDto.setDoctorNames(patientManageMapper.getDoctorNames());
-        return intoDto;
-    }
 
     /**
      * 分页查询门诊记录
@@ -72,6 +56,15 @@ public class OutpatientRecordServiceImpl implements IOutpatientRecordService {
                 EnumUtils.getInfoByValue(EncounterSubjectStatus.class, e.getSubjectStatusEnum()));
         });
         return outpatientRecordPage;
+    }
+
+    /**
+     * 获取医生名字列表
+     *
+     * @return 医生名字列表
+     */
+    public List<String> getDoctorNames() {
+        return patientManageMapper.getDoctorNames();
     }
 
 }
