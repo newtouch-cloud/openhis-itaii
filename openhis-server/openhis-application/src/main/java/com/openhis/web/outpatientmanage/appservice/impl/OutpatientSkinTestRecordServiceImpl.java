@@ -133,21 +133,6 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
     }
 
     /**
-     * 获取门诊皮试记录列表
-     *
-     * @param outpatientSkinTestRecordSearchParam 门诊皮试记录查询参数
-     * @param pageSize 页面大小
-     * @param offset 跳过条数
-     * @return 分页查询
-     */
-    @Override
-    public List<OutpatientSkinTestRecordDto> getOutpatientSkinTestRecord(
-        OutpatientSkinTestRecordSearchParam outpatientSkinTestRecordSearchParam, Integer pageSize, Integer offset) {
-        return outpatientManageMapper.getOutpatientSkinTestRecord(outpatientSkinTestRecordSearchParam, pageSize,
-            offset);
-    }
-
-    /**
      * 护士确认执行皮试后，更新皮试记录信息（服务申请管理与过敏与不耐受的相关字段更新）
      *
      * @param outpatientSkinTestRecordDto 皮试记录信息
