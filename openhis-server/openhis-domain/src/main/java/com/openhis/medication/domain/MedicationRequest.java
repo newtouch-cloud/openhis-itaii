@@ -6,8 +6,8 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -73,7 +73,7 @@ public class MedicationRequest extends HisBaseEntity {
     /** 是否停止执行 */
     private Integer performFlag;
 
-    /** 药品编码 */
+    /** 药品定义id */
     private Long medicationId;
 
     /** 患者 */
@@ -166,10 +166,7 @@ public class MedicationRequest extends HisBaseEntity {
     /** 每次发药供应天数 */
     private Integer dispensePerDuration;
 
-    /** 发药人 */
-    private Long dispenserId;
-
     /** 输液速度 */
     private Integer speed;
-    
+
 }

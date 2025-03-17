@@ -63,6 +63,18 @@ public class DictAspect {
         if (dto == null) {
             return;
         }
+        // 检查对象是否是 DTO 类（即是否有 @Dict 注解的字段）
+        boolean isDto = false;
+        for (Field field : dto.getClass().getDeclaredFields()) {
+            if (field.isAnnotationPresent(Dict.class)) {
+                isDto = true;
+                break;
+            }
+        }
+        // 如果不是 DTO 类，直接返回
+        if (!isDto) {
+            return;
+        }
         // 获取 DTO 类的所有字段
         for (Field field : dto.getClass().getDeclaredFields()) {
             field.setAccessible(true); // 设置字段可访问

@@ -42,9 +42,16 @@ public class AdviceInventoryDto {
     /** 产品批号 */
     private String lotNumber;
 
+    /** 库房id */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long locationId;
+
     /**
      * 库房名称
      */
     private String locationName;
+
+    /** 采购单价(进价) */
+    private BigDecimal price;
 
 }

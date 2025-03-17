@@ -64,7 +64,7 @@ public class DeviceRequest extends HisBaseEntity {
     /** 产品批号 */
     private String lotNumber;
 
-    /** 器材编码 */
+    /** 耗材定义id */
     private Long deviceDefId;
 
     /** 请求合计（元） */
@@ -82,7 +82,7 @@ public class DeviceRequest extends HisBaseEntity {
     /** 默认器材房 */
     private Long locationId;
 
-    /** 相关诊疗 */
+    /** 就诊id */
     private Long encounterId;
 
     /** 用药频次 */
@@ -129,8 +129,5 @@ public class DeviceRequest extends HisBaseEntity {
 
     /** 支持用药信息 */
     private String supportInfo;
-
-    /** 发放编号 */
-    private Long dispenseId;
 
 }

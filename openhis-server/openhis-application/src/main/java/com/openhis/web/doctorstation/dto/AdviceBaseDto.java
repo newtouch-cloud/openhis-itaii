@@ -43,6 +43,12 @@ public class AdviceBaseDto {
     /** 商品名称 */
     private String productName;
 
+    /**
+     * 活动类型
+     */
+    private Integer activityType;
+    private String activityType_enumText;
+
     /** 包装单位 */
     @Dict(dictCode = "unit_code")
     private String unitCode;

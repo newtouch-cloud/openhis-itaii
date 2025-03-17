@@ -14,7 +14,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.common.constant.CommonConstants;
+import com.openhis.common.enums.ActivityType;
 import com.openhis.common.enums.ConditionCode;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.doctorstation.appservice.IDoctorStationAdviceAppService;
 import com.openhis.web.doctorstation.dto.AdviceBaseDto;
@@ -119,6 +121,8 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             .collect(Collectors.toList());
         // 诊疗-赋值
         for (AdviceBaseDto baseDto : activityList) {
+            // 活动类型
+            baseDto.setActivityType_enumText(EnumUtils.getInfoByValue(ActivityType.class, baseDto.getActivityType()));
             List<AdvicePriceDto> priceList =
                 mainCharge.stream().filter(e -> baseDto.getChargeItemDefinitionId().equals(e.getDefinitionId()))
                     .collect(Collectors.toList());

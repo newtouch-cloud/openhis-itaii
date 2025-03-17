@@ -28,7 +28,7 @@ public class ActivityDefinition extends HisBaseEntity {
     private Long id;
 
     /** 目录类别 */
-    private ActivityDefCategory categoryEnum;
+    private Integer categoryEnum;
 
     /** 编码 */
     private String busNo;
@@ -43,7 +43,7 @@ public class ActivityDefinition extends HisBaseEntity {
     private String wbStr;
 
     /** 类型 */
-    private String typeCode;
+    private Integer typeEnum;
 
     /** 使用单位 */
     private String permittedUnitCode;
@@ -58,7 +58,7 @@ public class ActivityDefinition extends HisBaseEntity {
     private Integer ybMatchFlag;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
 
     /** 身体部位 */
     private String bodySiteCode;

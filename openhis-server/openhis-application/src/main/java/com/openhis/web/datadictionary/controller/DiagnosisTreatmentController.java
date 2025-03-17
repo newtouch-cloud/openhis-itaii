@@ -198,7 +198,7 @@ public class DiagnosisTreatmentController {
         for (Long detail : ids) {
             ActivityDefinition ActivityDefinition = new ActivityDefinition();
             ActivityDefinition.setId(detail);
-            ActivityDefinition.setStatusEnum(PublicationStatus.RETIRED);
+            ActivityDefinition.setStatusEnum(PublicationStatus.RETIRED.getValue());
             ActivityDefinitionList.add(ActivityDefinition);
         }
         // 更新诊疗信息
@@ -221,7 +221,7 @@ public class DiagnosisTreatmentController {
         for (Long detail : ids) {
             ActivityDefinition ActivityDefinition = new ActivityDefinition();
             ActivityDefinition.setId(detail);
-            ActivityDefinition.setStatusEnum(PublicationStatus.ACTIVE);
+            ActivityDefinition.setStatusEnum(PublicationStatus.ACTIVE.getValue());
             ActivityDefinitionList.add(ActivityDefinition);
         }
         // 更新诊疗信息
@@ -241,7 +241,7 @@ public class DiagnosisTreatmentController {
         ActivityDefinition ActivityDefinition = new ActivityDefinition();
         BeanUtils.copyProperties(diagnosisTreatmentUpDto, ActivityDefinition);
         // 新增外来诊疗目录
-        ActivityDefinition.setStatusEnum(PublicationStatus.DRAFT);
+        ActivityDefinition.setStatusEnum(PublicationStatus.DRAFT.getValue());
         return iActivityDefinitionService.addDiagnosisTreatment(ActivityDefinition)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"诊疗目录"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));

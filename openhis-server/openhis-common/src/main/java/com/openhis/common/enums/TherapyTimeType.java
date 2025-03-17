@@ -1,31 +1,26 @@
 package com.openhis.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 就诊类型
+ * 治疗时长类型
  */
 @Getter
 @AllArgsConstructor
-public enum EncounterClass implements HisEnumInterface {
-    IMP(1, "IMP", "住院"),
+public enum TherapyTimeType implements HisEnumInterface {
 
-    AMB(2, "AMB", "门诊"),
+    LONG_TERM(1, "LT", "长期"),
 
-    OBSENC(3, "OBSENC", "留观"),
+    TEMPORARY(2, "TEMP", "临时"),
 
-    EMER(4, "EMER", "急诊"),
-
-    VR(5, "VR", "线上"),
-
-    HH(6, "HH", "家庭"),
-
-    OTHER(7, "OTHER", "家庭");
+    SEASONAL(3, "SS", "季节性");
 
     @EnumValue
     private final Integer value;
     private final String code;
     private final String info;
+
 }

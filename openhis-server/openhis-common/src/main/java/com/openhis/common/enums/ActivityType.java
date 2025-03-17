@@ -1,31 +1,30 @@
 package com.openhis.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 就诊类型
+ * 活动类型
  */
 @Getter
 @AllArgsConstructor
-public enum EncounterClass implements HisEnumInterface {
-    IMP(1, "IMP", "住院"),
+public enum ActivityType implements HisEnumInterface {
 
-    AMB(2, "AMB", "门诊"),
+    PROOF(1, "PROOF", "检验"),
 
-    OBSENC(3, "OBSENC", "留观"),
+    TEST(2, "TEST", "检查"),
 
-    EMER(4, "EMER", "急诊"),
+    CARE(3, "CARE", "护理"),
 
-    VR(5, "VR", "线上"),
+    OPERATION(4, "OPERATION", "手术"),
 
-    HH(6, "HH", "家庭"),
-
-    OTHER(7, "OTHER", "家庭");
+    OTHER(5, "OTHER", "其他");
 
     @EnumValue
     private final Integer value;
     private final String code;
     private final String info;
+
 }
