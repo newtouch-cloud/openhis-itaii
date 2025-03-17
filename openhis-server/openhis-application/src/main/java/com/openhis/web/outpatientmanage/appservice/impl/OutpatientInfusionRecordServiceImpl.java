@@ -66,12 +66,12 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     @Autowired
     ServiceRequestMapper serviceRequestMapper;
 
-    @Override
     /**
      * 获取门诊输液记录初期数据列表
      *
      * @return 门诊输液记录初期数据列表
      */
+    @Override
     public OutpatientInfusionInitDto getOutpatientInfusionInit() {
         OutpatientInfusionInitDto initDto = new OutpatientInfusionInitDto();
 

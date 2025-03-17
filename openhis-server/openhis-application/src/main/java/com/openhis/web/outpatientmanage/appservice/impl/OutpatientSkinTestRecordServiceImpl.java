@@ -112,7 +112,7 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
         Integer offset = (pageNo - 1) * pageSize;
         // 连表查询患者信息
         List<OutpatientSkinTestRecordDto> listOutpatientSkinTestRecords =
-            outpatientManageMapper.getOutpatientSkinTestRecord(outpatientSkinTestRecordSearchParam, pageSize, offset);
+            outpatientManageMapper.getSkinTestRecords(outpatientSkinTestRecordSearchParam, pageSize, offset);
 
         // 查询总记录数
         long total = outpatientManageMapper.countOutpatientSkinTestRecords(outpatientSkinTestRecordSearchParam);

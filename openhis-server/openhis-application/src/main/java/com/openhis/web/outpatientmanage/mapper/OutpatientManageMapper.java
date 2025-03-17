@@ -29,7 +29,7 @@ public interface OutpatientManageMapper {
      * @param offset 跳过条数
      * @return 分页查询
      */
-    List<OutpatientSkinTestRecordDto> getOutpatientSkinTestRecord(
+    List<OutpatientSkinTestRecordDto> getSkinTestRecords(
         @Param("OutpatientSkinTestRecordSearchParam") OutpatientSkinTestRecordSearchParam outpatientSkinTestRecordSearchParam,
         @Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
 
@@ -62,11 +62,5 @@ public interface OutpatientManageMapper {
     List<OutpatientInfusionRecordDto>
         getOutpatientInfusionRecord(@Param(Constants.WRAPPER) QueryWrapper<OutpatientInfusionRecordDto> queryWrapper);
 
-    /**
-     * 获取医生名字列表
-     *
-     * @return 医生名字列表
-     */
-    List<String> getDoctorNames();
 
 }

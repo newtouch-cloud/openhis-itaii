@@ -131,7 +131,7 @@
 
     <!-- 门诊输液记录患者列表信息查询-->
     <select id="getOutpatientInfusionPatient"
-            resultType="com.openhis.web.outpatientmanage.dto.OutpatientInfusionSearchParam">
+            resultType="com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto">
         SELECT
         T1.service_id,
         T1.prescription_no,
@@ -176,7 +176,7 @@
 
     <!-- 门诊输液记录初始化，默认显示今天待执行输液记录-->
     <select id="getOutpatientInfusionRecord"
-            resultType="com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto">
+            resultType="com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto">
         SELECT
         T1.service_id,
         T1.bus_no,

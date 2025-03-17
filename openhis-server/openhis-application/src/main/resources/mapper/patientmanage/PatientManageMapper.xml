@@ -203,7 +203,7 @@
     </select>
 
     <!-- 查询医生名字列表-->
-    <select id="getDoctorNames" resultType="java.lang.String">
+    <select id="getDoctorNames" resultType ="java.lang.String">
         SELECT MIN(p.name) AS practitioner_name
         FROM adm_encounter_participant ep
                  LEFT JOIN adm_practitioner p ON ep.practitioner_id = p.id
