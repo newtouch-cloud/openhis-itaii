@@ -2,22 +2,15 @@ import request from '@/utils/request'
 
 export function listSkinRecord(query) {
   return request({
-    url: '/outpatientmanage/outpatient-record-page',
+    url: '/outpatientmanage/skintest/outpatient-record-page',
     method: 'get',
     params: query
   })
 }
 
-export function listStatus() {
+export function lists() {
   return request({
-    url: '/outpatientmanage/list-skinteststatus',
-    method: 'get',
-  })
-}
-
-export function listSkinResult() {
-  return request({
-    url: '/outpatientmanage/list-skintestresult',
+    url: '/outpatientmanage/skintest/init',
     method: 'get',
   })
 }

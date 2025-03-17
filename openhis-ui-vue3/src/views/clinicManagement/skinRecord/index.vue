@@ -193,7 +193,7 @@
 import { ref, computed } from 'vue';
 import { ElMessage,ElMessageBox  } from 'element-plus'
 
-import { listSkinRecord,listStatus,listSkinResult,updateNurseSign,updateSkinTestRecord } from './component/api'; 
+import { listSkinRecord,updateNurseSign,updateSkinTestRecord,lists } from './component/api'; 
 
 const showSearch = ref(true);
 const total = ref(1);
@@ -252,15 +252,13 @@ function reset() {
 /** 查询门诊皮试列表 */
 function getList() {
   listSkinRecord(queryParams.value).then(response => {
-	console.log("1234",response);
     skinRecordList.value = response.data.records;
     total.value = response.data.total;
   });
-  listStatus().then(response => {
-	statusList.value = response.data
-  });
-  listSkinResult().then(response => {6
-	skinResultList.value = response.data
+  lists().then(response => {
+	console.log("1234",response);
+	skinResultList.value = response.data.verificationStatus
+	statusList.value = response.data.clinicalStatus
   });
 }
 

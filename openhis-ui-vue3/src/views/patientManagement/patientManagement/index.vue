@@ -225,7 +225,7 @@
 import pcas from 'china-division/dist/pcas-code.json';
 import { ref, computed } from 'vue';
 import {listmaritalstatus,listoccupationtype,lisadministrativegender,listbloodtypeabo,listbloodtypearh,listfamilyrelationshiptype,
-	addPatient,listPatient,updatePatient} from "./component/api"
+	addPatient,listPatient,updatePatient,lists} from "./component/api"
 
 const showSearch = ref(true);
 const open = ref(false);
@@ -298,24 +298,30 @@ function getList() {
 	patientList.value = response.data.records
 	total.value = response.data.total;
   });
-  listmaritalstatus().then(response => {
-	maritalstatusList.value = response.data
+  lists().then(response => {
+	console.log(response);
+	occupationtypeList.value = response.data.occupationType
+	administrativegenderList.value = response.data.administrativeGender
+	bloodtypeaboList.value = response.data.bloodTypeABO
+	bloodtypearhList.value = response.data.bloodTypeRH
+	familyrelationshiptypeList.value = response.data.familyRelationshipType
+	maritalstatusList.value = response.data.maritalStatus
   });
-  listoccupationtype().then(response => {
-	occupationtypeList.value = response.data
-  });
-  lisadministrativegender().then(response => {
-	administrativegenderList.value = response.data
-  });
-  listbloodtypeabo().then(response => {
-	bloodtypeaboList.value = response.data
-  });
-  listbloodtypearh().then(response => {
-	bloodtypearhList.value = response.data
-  });
-  listfamilyrelationshiptype().then(response => {
-	familyrelationshiptypeList.value = response.data
-  });
+//   listoccupationtype().then(response => {
+// 	occupationtypeList.value = response.data
+//   });
+//   lisadministrativegender().then(response => {
+// 	administrativegenderList.value = response.data
+//   });
+//   listbloodtypeabo().then(response => {
+// 	bloodtypeaboList.value = response.data
+//   });
+//   listbloodtypearh().then(response => {
+// 	bloodtypearhList.value = response.data
+//   });
+//   listfamilyrelationshiptype().then(response => {
+// 	familyrelationshiptypeList.value = response.data
+//   });
 }
 
 /** 表单重置 */
@@ -443,6 +449,7 @@ function submitForm() {
         });
       } else {
 		form.value.address = getAddress(form);
+		console.log("/***/*/*/*/*/*/*/*/*/")
 		// form.value.address = form.value.addressProvince+form.value.addressCity +  form.value.addressDistrict + form.value.addressStreet + form.value.address
         addPatient(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");

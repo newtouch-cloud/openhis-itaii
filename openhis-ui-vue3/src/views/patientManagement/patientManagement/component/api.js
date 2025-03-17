@@ -61,6 +61,12 @@ export function listPatient(query) {
       params: query
     })
   }
+  export function lists() {
+    return request({
+      url: '/patientmanage/information/init',
+      method: 'get'
+    })
+  }
 
   // 修改
 export function updatePatient(data) {

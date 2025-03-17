@@ -82,11 +82,11 @@ const doctorOptions = computed(() => {
 /** 查询门诊记录列表 */
 function getList() {
 	listOutpatienRecords(queryParams.value).then(response => {
-		console.log(response);
 		outpatienRecordsList.value = response.data.records;
 		total.value = response.data.total;
 	});
 	listDoctorNames().then(response => {
+		console.log(response);
 		doctorList.value = response.data;
 	});
 }

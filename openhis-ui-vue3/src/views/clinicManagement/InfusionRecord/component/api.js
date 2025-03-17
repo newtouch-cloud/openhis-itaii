@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function listSkinRecord(query) {
+export function listInfusionRecord(query) {
   return request({
-    url: '/outpatientmanage/outpatient-record-page',
+    url: '/outpatientmanage/infusion/init',
     method: 'get',
     params: query
   })

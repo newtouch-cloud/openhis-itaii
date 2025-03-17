@@ -10,7 +10,7 @@ export function listOutpatienRecords(query) {
 
   export function listDoctorNames() {
     return request({
-      url: '/patientmanage/records/list-doctornames',
+      url: '/patientmanage/records/init',
       method: 'get',
     })
   }
