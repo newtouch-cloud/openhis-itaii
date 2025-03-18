@@ -63,4 +63,16 @@ public interface OutpatientManageMapper {
     List<OutpatientInfusionRecordDto> getOutpatientInfusionRecord(
         @Param(Constants.WRAPPER) LambdaQueryWrapper<OutpatientInfusionRecordDto> queryWrapper);
 
+    /**
+     * 查询药品已执行数量/查询同组内药品数量
+     *
+     * @param paramId baseOnId/服务请求ID
+     * @param prefixBusNo 服务请求编码
+     * @param groupId 分组ID
+     * @param flag 控制查询条件
+     * @return 查询个数
+     */
+    long countMedicationExecuteNum(@Param("paramId") Long paramId, @Param("prefixBusNo") String prefixBusNo,
+        @Param("groupId") Long groupId, @Param("flag") boolean flag);
+
 }

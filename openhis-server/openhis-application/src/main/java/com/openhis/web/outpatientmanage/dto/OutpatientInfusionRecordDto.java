@@ -1,14 +1,14 @@
 package com.openhis.web.outpatientmanage.dto;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.annotation.Dict;
-import com.sun.jna.platform.win32.OaIdl;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * 门诊输液记录Dto
@@ -25,7 +25,7 @@ public class OutpatientInfusionRecordDto {
     private Long serviceId;
 
     /** 服务申请状态 */
-    private Integer serviceStatus;
+    private Integer requestStatus;
 
     /** 请求基于什么的ID */
     @JsonSerialize(using = ToStringSerializer.class)
@@ -61,7 +61,7 @@ public class OutpatientInfusionRecordDto {
     private Integer genderEnum;
     private String genderEnum_enumText;
 
-    /** 已执行数量 */
+    /** 住院执行次数 */
     private Integer executeNum;
 
     /** 分组id */

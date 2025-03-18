@@ -19,8 +19,6 @@ public class OutpatientInfusionInitDto {
 
     //皮试结果
     private List<statusEnumOption>  clinicalStatus;
-    //当天位执行的输液记录
-    private List<OutpatientInfusionRecordDto>  infusionList;
 
     /**
      * 状态

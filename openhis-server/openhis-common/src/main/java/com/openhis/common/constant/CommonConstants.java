@@ -112,6 +112,21 @@ public class CommonConstants {
          * 患者姓名
          */
         String PatientName = "patient_name";
+
+        /**
+         * 请求状态
+         */
+        String requestStatus = "request_status";
+
+        /**
+         * 创建时间
+         */
+        String createTime = "create_time";
+
+        /**
+         * 请求基于什么的ID
+         */
+        String basedOnId = "based_on_id";
     }
 
     /**

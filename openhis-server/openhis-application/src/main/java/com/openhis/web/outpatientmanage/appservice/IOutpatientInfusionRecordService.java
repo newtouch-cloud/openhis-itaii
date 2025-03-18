@@ -3,8 +3,6 @@ package com.openhis.web.outpatientmanage.appservice;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.openhis.administration.domain.Practitioner;
-import com.openhis.administration.domain.PractitionerRole;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionInitDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto;
@@ -48,15 +46,6 @@ public interface IOutpatientInfusionRecordService {
     /**
      * 执行单个患者门诊输液
      *
-     * @param exeCount 执行记录数
-     * @param outpatientInfusionRecordDto 患者输液信息
-     * @return 修改成功/失败
-     */
-    boolean editPatientInfusionRecord(OutpatientInfusionRecordDto outpatientInfusionRecordDto, Long exeCount);
-
-    /**
-     * 执行单个患者门诊输液
-     *
      * @param outpatientInfusionRecordDtoList 输液记录
      * @return 修改成功/失败
      */
@@ -71,12 +60,13 @@ public interface IOutpatientInfusionRecordService {
     boolean editPatientInfusionTime(OutpatientInfusionRecordDto outpatientInfusionRecordDto);
 
     /**
-     * 显示门诊输液执行记录查询
+     * 门诊输液执行历史记录查询
      *
      * @param beginTime 开始时间
      * @param endTime 结束时间
+     * @param historyFlag 查询的是否为执行履历
      * @return 门诊输液记录列表
      */
-    List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(String beginTime, String endTime);
+    List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(String beginTime, String endTime,boolean historyFlag);
 
 }
