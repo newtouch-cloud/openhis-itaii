@@ -139,6 +139,7 @@
         T1.lot_number,
         T1.price,
         T1.location_id,
+        T1.location_store_id,
         T2.NAME AS location_name
         FROM
         wor_inventory_item AS T1

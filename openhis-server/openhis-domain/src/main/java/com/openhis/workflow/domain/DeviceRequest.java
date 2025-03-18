@@ -85,6 +85,9 @@ public class DeviceRequest extends HisBaseEntity {
     /** 就诊id */
     private Long encounterId;
 
+    /** 患者ID */
+    private Long patientId;
+
     /** 用药频次 */
     private String rateCode;
 
