@@ -107,6 +107,12 @@ public class AdviceBaseDto {
      */
     private String adviceTableName;
 
+    /** 所属科室 */
+    private Long orgId;
+
+    /** 所在位置 */
+    private Long locationId;
+
     /**
      * 医嘱库存集合
      */

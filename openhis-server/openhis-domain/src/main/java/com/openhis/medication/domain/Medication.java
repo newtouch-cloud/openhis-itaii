@@ -38,6 +38,9 @@ public class Medication extends HisBaseEntity {
     /** 所属科室 */
     private Long orgId;
 
+    /** 所在位置 */
+    private Long locationId;
+
     /** 剂型 */
     private String doseFormCode;
 

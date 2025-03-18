@@ -46,15 +46,4 @@ public enum ChargeItemStatus implements HisEnumInterface {
     private final String code;
     private final String info;
 
-    public static ChargeItemStatus getByValue(Integer value) {
-        if (value == null) {
-            return null;
-        }
-        for (ChargeItemStatus val : values()) {
-            if (val.getValue().equals(value)) {
-                return val;
-            }
-        }
-        return null;
-    }
 }
