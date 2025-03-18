@@ -29,7 +29,7 @@ import com.openhis.administration.service.IHealthcareServiceService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.AccountStatus;
-import com.openhis.common.enums.WhetherContainUnknown;
+import com.openhis.common.enums.Whether;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.basicservice.dto.*;
@@ -65,7 +65,7 @@ public class HealthcareServiceController {
         healthcareServiceInitDto.setActiveFlagOptions(activeFlagOptions);
         // 是否需要预约
         List<HealthcareServiceInitDto.appointmentRequiredFlagOption> appointmentRequiredFlagOptions =
-            Stream.of(WhetherContainUnknown.values())
+            Stream.of(Whether.values())
                 .map(wh -> new HealthcareServiceInitDto.appointmentRequiredFlagOption(wh.getValue(), wh.getInfo()))
                 .collect(Collectors.toList());
         healthcareServiceInitDto.setAppointmentRequiredFlagOptions(appointmentRequiredFlagOptions);
@@ -121,7 +121,7 @@ public class HealthcareServiceController {
             e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
             // 预约要求-枚举类回显赋值
             e.setAppointmentRequiredFlag_enumText(
-                EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getAppointmentRequiredFlag()));
+                EnumUtils.getInfoByValue(Whether.class, e.getAppointmentRequiredFlag()));
         });
         return R.ok(healthcareServicePage, MessageUtils.createMessage(PromptMsgConstant.Common.M00009, null));
     }
@@ -146,8 +146,8 @@ public class HealthcareServiceController {
         healthcareServiceDtoDetail
             .setActiveFlag_enumText(
                 EnumUtils.getInfoByValue(AccountStatus.class, healthcareServiceDtoDetail.getActiveFlag()))
-            .setAppointmentRequiredFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class,
-                healthcareServiceDtoDetail.getAppointmentRequiredFlag()));
+            .setAppointmentRequiredFlag_enumText(
+                EnumUtils.getInfoByValue(Whether.class, healthcareServiceDtoDetail.getAppointmentRequiredFlag()));
         return R.ok(healthcareServiceDtoDetail);
     }
 

@@ -14,29 +14,30 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ItemCategory {
+public enum ItemCategory implements HisEnumInterface {
 
     /**
      * 中药
      */
-    CHINESE_MEDICINE(1, "中药"),
+    CHINESE_MEDICINE(1, "1","中药"),
 
     /**
      * 西药
      */
-    WESTERN_MEDICINE(2, "西药"),
+    WESTERN_MEDICINE(2, "2","西药"),
 
     /**
      * 中成药
      */
-    CHINESE_PATENT_MEDICINE(3, "中成药"),
+    CHINESE_PATENT_MEDICINE(3, "3","中成药"),
 
     /**
      * 医疗耗材
      */
-    MEDICAL_CONSUMABLES(4, "医疗耗材");
+    MEDICAL_CONSUMABLES(4, "4","医疗耗材");
 
     private Integer value;
+    private String code;
     private String info;
 
     public static ItemCategory getByValue(Integer value) {

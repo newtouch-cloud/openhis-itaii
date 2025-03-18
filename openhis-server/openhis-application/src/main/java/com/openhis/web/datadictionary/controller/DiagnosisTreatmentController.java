@@ -27,7 +27,7 @@ import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.ActivityDefCategory;
 import com.openhis.common.enums.OrganizationType;
 import com.openhis.common.enums.PublicationStatus;
-import com.openhis.common.enums.WhetherContainUnknown;
+import com.openhis.common.enums.Whether;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
@@ -142,9 +142,9 @@ public class DiagnosisTreatmentController {
 
         diseaseTreatmentPage.getRecords().forEach(e -> {
             // 医保标记枚举类回显赋值
-            e.setYbFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbFlag()));
+            e.setYbFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbFlag()));
             // 医保对码标记枚举类回显赋值
-            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbMatchFlag()));
+            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
         });
 
         // 返回【诊疗目录列表DTO】分页

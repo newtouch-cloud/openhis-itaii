@@ -29,7 +29,9 @@ public class MedicationManageDto {
     private Long medicationDefId;
 
     /** 药品状态 */
-    private PublicationStatus statusEnum;
+//    private PublicationStatus statusEnum;
+    private Integer statusEnum;
+    private String statusEnum_enumText;
 
     /** 所属科室 */
     private Long orgId;
@@ -45,6 +47,7 @@ public class MedicationManageDto {
 
     /** 是否为活性 */
     private Integer activeFlag;
+    private String activeFlag_enumText;
 
     /** 批次号 */
     private String lotNumber;
@@ -81,6 +84,7 @@ public class MedicationManageDto {
 
     /** 适用范围 */
     private Integer domainEnum;
+    private String domainEnum_enumText;
 
     /** 药品版本 */
     private String version;
@@ -96,6 +100,7 @@ public class MedicationManageDto {
 
     /** 药品分类 */
     private Integer categoryCode;
+    private String categoryCode_enumText;
 
     /** 商品名称 */
     private String merchandiseName;
@@ -138,9 +143,11 @@ public class MedicationManageDto {
 
     /** 是否皮试 */
     private Integer skinTestFlag;
+    private String skinTestFlag_enumText;
 
     /** 是否为注射药物 */
     private Integer injectFlag;
+    private String injectFlag_enumText;
 
     /** 生产厂家 */
     private Long manufacturerId;
@@ -150,12 +157,14 @@ public class MedicationManageDto {
 
     /** 是否限制使用 */
     private Integer restrictedFlag;
+    private String restrictedFlag_enumText;
 
     /** 限制使用范围 */
     private String restrictedScope;
 
     /** 儿童用药标志 */
     private Integer childrenFlag;
+    private String childrenFlag_enumText;
 
     /** 产品特性 */
     private Integer characteristic;

@@ -15,6 +15,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class MedicationManageInitDto {
     private List<statusEnumOption> statusFlagOptions;
+    private List<domainEnumOption> domainFlagOptions;
 
     /**
      * 状态
@@ -25,6 +26,20 @@ public class MedicationManageInitDto {
         private String info;
 
         public statusEnumOption(Integer value, String info) {
+            this.value = value;
+            this.info = info;
+        }
+    }
+
+    /**
+     * 适用范围
+     */
+    @Data
+    public static class domainEnumOption {
+        private Integer value;
+        private String info;
+
+        public domainEnumOption(Integer value, String info) {
             this.value = value;
             this.info = info;
         }

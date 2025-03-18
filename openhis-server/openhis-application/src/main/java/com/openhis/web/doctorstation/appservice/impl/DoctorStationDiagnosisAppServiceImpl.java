@@ -29,7 +29,7 @@ import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.BindingType;
 import com.openhis.common.enums.ConditionDefinitionSource;
 import com.openhis.common.enums.PublicationStatus;
-import com.openhis.common.enums.WhetherContainUnknown;
+import com.openhis.common.enums.Whether;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
@@ -258,9 +258,9 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
                 e.setTypeName(CommonConstants.BusinessName.WESTERN_MEDICINE_DIAGNOSIS);
             }
             // 医保标记
-            e.setYbFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbFlag()));
+            e.setYbFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbFlag()));
             // 医保对码标记
-            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(WhetherContainUnknown.class, e.getYbMatchFlag()));
+            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
         });
     }
 
