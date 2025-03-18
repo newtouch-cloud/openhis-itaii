@@ -1,0 +1,84 @@
+package com.openhis.web.doctorstation.dto;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.enums.EncounterClass;
+import com.openhis.common.enums.RequestStatus;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+/**
+ * 医嘱保存 dto
+ */
+@Data
+@Accessors(chain = true)
+public class AdviceSaveDto {
+
+    /** 医嘱类型 */
+    private String adviceType; // 1:药品 , 2: 耗材 , 3:项目
+
+    /** 执行次数 */
+    private Integer executeNum; // 当医嘱类型为药品时,选填
+
+    /** 处方号 */
+    private String prescriptionNo;
+
+    /** 请求数量 */
+    private Integer quantity;
+
+    /** 请求单位编码 */
+    private String unitCode;
+
+    /** 产品批号 */
+    private String lotNumber;
+
+    /**
+     * 请求状态
+     */
+    private Integer statusEnum;
+
+    /** 请求类型 */
+    private Integer categoryEnum;
+
+    /** 医嘱定义ID */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long adviceDefinitionId;
+
+    /** 患者 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long patientId;
+
+    /** 开方医生 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long practitionerId;
+
+    /** 所属位置 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long locationId;
+
+    /** 所属科室 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orgId;
+
+    /** 就诊id */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long encounterId;
+
+    /** 组套id */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long packageId; // 该参数先预留出来
+
+    /** 活动(项目)定义id */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long activityId; // 该参数先预留出来
+
+    /**
+     * 设置默认值
+     */
+    public AdviceSaveDto() {
+        this.statusEnum = RequestStatus.DRAFT.getValue();
+        this.categoryEnum = EncounterClass.AMB.getValue();
+    }
+
+}

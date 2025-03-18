@@ -49,7 +49,7 @@ public class ServiceRequest extends HisBaseEntity {
     /** 意图 */
     private Integer intentEnum;
 
-    /** 服务分类 */
+    /** 请求类型 */
     private Integer categoryEnum;
 
     /** 优先权 */

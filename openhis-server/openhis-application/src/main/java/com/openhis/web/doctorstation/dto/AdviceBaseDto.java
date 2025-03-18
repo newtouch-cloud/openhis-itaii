@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 public class AdviceBaseDto {
 
     /** 医嘱类型 */
-    private String adviceType; // 1:药品 , 2: 耗材 , 3:检查检验
+    private String adviceType; // 1:药品 , 2: 耗材 , 3:项目
 
     /** 医嘱定义ID */
     @JsonSerialize(using = ToStringSerializer.class)

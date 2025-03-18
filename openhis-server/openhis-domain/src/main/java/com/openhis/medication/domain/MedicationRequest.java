@@ -52,9 +52,6 @@ public class MedicationRequest extends HisBaseEntity {
     /** 产品批号 */
     private String lotNumber;
 
-    /** 请求合计（元） */
-    private BigDecimal displayAmount;
-
     /** 药品请求状态 */
     private Integer statusEnum;
 
