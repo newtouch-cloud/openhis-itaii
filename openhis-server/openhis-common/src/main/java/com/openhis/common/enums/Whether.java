@@ -1,43 +1,29 @@
-/*
- * Copyright ©2023 CJB-CNIT Team. All rights reserved
- */
 package com.openhis.common.enums;
+
+import com.baomidou.mybatisplus.annotation.EnumValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 是否标识
- *
- * @author zwh
- * @date 2025-03-05
+ * 是否
  */
 @Getter
 @AllArgsConstructor
-public enum Whether {
+public enum Whether implements HisEnumInterface {
 
     /**
      * 否
      */
-    NO(0, "否"),
+    NO(0, "no", "否"),
 
     /**
      * 是
      */
-    YES(1, "是");
+    YES(1, "yes", "是");
 
-    private Integer value;
-    private String info;
-
-    public static Whether getByValue(Integer value) {
-        if (value == null) {
-            return null;
-        }
-        for (Whether val : values()) {
-            if (val.getValue().equals(value)) {
-                return val;
-            }
-        }
-        return null;
-    }
+    @EnumValue
+    private final Integer value;
+    private final String code;
+    private final String info;
 }
