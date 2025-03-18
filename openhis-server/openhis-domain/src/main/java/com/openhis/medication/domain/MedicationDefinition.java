@@ -108,8 +108,17 @@ public class MedicationDefinition extends HisBaseEntity {
     /** 限制使用范围 */
     private String restrictedScope;
 
+    /** 是否使用 */
+    private Integer activeFlag;
+
     /** 儿童用药标志 */
     private Integer childrenFlag;
+
+    /** 产品特性 */
+    private Integer characteristic;
+
+    /** 删除状态 */
+    private String deleteFlag;
 
     /** 最小库存警戒数量(常规单位) */
     private BigDecimal itemMinQuantity;
@@ -122,5 +131,26 @@ public class MedicationDefinition extends HisBaseEntity {
 
     /** 默认住院单位 */
     private String defInhospitalUnitCode;
+
+    /** 贯标国家编码 */
+    private String nationalDrugCode;
+
+    /** 拆分属性 */
+    private String partAttribute;
+
+    /** 抗生素分类 */
+    private String antibioticCode;
+
+    /** 权限限制 */
+    private Integer restrictedEnum;
+
+    /** 是否自制 */
+    private Integer selfFlag;
+
+    /** 是否抗生素 */
+    private Integer antibioticFlag;
+
+    /** 基药标识 */
+    private Integer basicFlag;
 
 }

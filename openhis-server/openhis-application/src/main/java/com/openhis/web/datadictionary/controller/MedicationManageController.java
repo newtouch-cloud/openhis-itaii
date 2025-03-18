@@ -28,10 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class MedicationManageController {
 
-    // private final IMedicationDefinitionService iMedicationDefinitionService;
-    // private final IMedicationService iMedicationService;
-    // private final MedicationManageSearchMapper medicationManageSearchMapper;
-
     @Autowired
     private IMedicationManageAppService medicationManageAppService;
 
@@ -42,16 +38,7 @@ public class MedicationManageController {
      */
     @GetMapping("/information-init")
     public R<?> getMedicationInit() {
-
         return medicationManageAppService.getMedicationInit();
-
-        // MedicationManageInitDto medicationManageInitDto = new MedicationManageInitDto();
-        // // 获取状态
-        // List<MedicationManageInitDto.statusEnumOption> statusEnumOptions = Stream.of(PublicationStatus.values())
-        // .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
-        // .collect(Collectors.toList());
-        // medicationManageInitDto.setStatusFlagOptions(statusEnumOptions);
-        // return R.ok(medicationManageInitDto);
     }
 
     /**
@@ -72,25 +59,8 @@ public class MedicationManageController {
         @RequestParam(value = "categoryCode", defaultValue = "") String categoryCode,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-
         return medicationManageAppService.getMedicationList(searchKey, ybMatchFlag, statusEnum, categoryCode, pageNo,
             pageSize, request);
-
-        // // 分页设置
-        // Integer offset = (pageNo - 1) * pageSize;
-        // // 获取租户ID
-        // Integer tenantId = SecurityUtils.getLoginUser().getTenantId();
-        // // 查询药品目录列表
-        // List<MedicationManageDto> medicationDetailList = medicationManageSearchMapper.getPage(searchKey, ybMatchFlag,
-        // statusEnum, categoryCode, tenantId, pageSize, offset);
-        // // 查询总记录数
-        // long total =
-        // medicationManageSearchMapper.getPageCount(searchKey, ybMatchFlag, statusEnum, categoryCode, tenantId);
-        // // 创建Page对象并设置属性
-        // Page<MedicationManageDto> medicationManageDtoPage = new Page<>(pageNo, pageSize, total);
-        // medicationManageDtoPage.setRecords(medicationDetailList);
-        // // 返回【药品录列表DTO】分页
-        // return R.ok(medicationManageDtoPage);
     }
 
     /**
@@ -99,39 +69,15 @@ public class MedicationManageController {
      * @param id 药品ID
      * @return
      */
-    @GetMapping("/information-one/{id}")
+    @GetMapping("/information-one")
     public R<?> getMedicationOne(@PathVariable("id") Long id) {
-
         return medicationManageAppService.getMedicationOne(id);
-
-        // // 获取租户ID
-        // Integer tenantId = SecurityUtils.getLoginUser().getTenantId();
-        // // 查询药品目录列表
-        // MedicationManageDto medicationManageDto = medicationManageSearchMapper.getOne(id, tenantId);
-        // // 返回【药品录列表DTO】列表
-        // return R.ok(medicationManageDto);
     }
 
     // 药品目录编辑
     @PutMapping("/information")
     public R<?> editMedication(@RequestBody MedicationManageUpDto medicationManageUpDto) {
-
         return medicationManageAppService.editMedication(medicationManageUpDto);
-
-        // MedicationDefinition medicationDefinition = new MedicationDefinition();
-        // Medication medication = new Medication();
-        // BeanUtils.copyProperties(medicationManageUpDto, medication); // 子表信息
-        // BeanUtils.copyProperties(medicationManageUpDto, medicationDefinition);// 主表信息
-        //
-        // // 更新子表药品信息
-        // if (iMedicationService.updateById(medication)) {
-        // // 更新主表药品信息
-        // return iMedicationDefinitionService.updateById(medicationDefinition)
-        // ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
-        // : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
-        // } else {
-        // return R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
-        // }
     }
 
     /**
@@ -142,19 +88,6 @@ public class MedicationManageController {
      */
     @PutMapping("/information-stop")
     public R<?> editMedicationStop(@RequestBody List<Long> ids) {
-        // List<Medication> medicationList = new ArrayList<>();
-        // // 取得更新值
-        // for (Long detail : ids) {
-        // Medication medication = new Medication();
-        // medication.setId(detail);
-        // medication.setStatusEnum(PublicationStatus.RETIRED);
-        // medicationList.add(medication);
-        // }
-        // // 更新药品信息
-        // return iMedicationService.updateBatchById(medicationList)
-        // ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
-        // : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
-
         return medicationManageAppService.editMedicationStop(ids);
     }
 
@@ -166,20 +99,7 @@ public class MedicationManageController {
      */
     @PutMapping("/information-start")
     public R<?> editMedicationStart(@RequestBody List<Long> ids) {
-
         return medicationManageAppService.editMedicationStart(ids);
-        // List<Medication> medicationList = new ArrayList<>();
-        // // 取得更新值
-        // for (Long detail : ids) {
-        // Medication medication = new Medication();
-        // medication.setId(detail);
-        // medication.setStatusEnum(PublicationStatus.ACTIVE);
-        // medicationList.add(medication);
-        // }
-        // // 更新药品信息
-        // return iMedicationService.updateBatchById(medicationList)
-        // ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
-        // : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
     }
 
     /**
@@ -190,20 +110,7 @@ public class MedicationManageController {
      */
     @PostMapping("/information")
     public R<?> addMedication(@Validated @RequestBody MedicationManageUpDto medicationManageUpDto) {
-
         return medicationManageAppService.addMedication(medicationManageUpDto);
-
-        // MedicationDetail medicationDetail = new MedicationDetail();
-        // BeanUtils.copyProperties(medicationManageUpDto, medicationDetail);
-        // // 新增主表外来药品目录
-        // if (iMedicationDefinitionService.addMedication(medicationDetail)) {
-        // // 新增子表外来药品目录
-        // return iMedicationService.addMedication(medicationDetail)
-        // ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
-        // : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
-        // } else {
-        // return R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
-        // }
     }
 
     /**
@@ -232,15 +139,6 @@ public class MedicationManageController {
         @RequestParam(value = "ybMatchFlag", defaultValue = "-1") Integer ybMatchFlag,
         @RequestParam(value = "statusEnum", defaultValue = "-1") Integer statusEnum,
         @RequestParam(value = "categoryCode", defaultValue = "") String categoryCode, HttpServletResponse response) {
-
         return medicationManageAppService.exportMedication(searchKey, ybMatchFlag, statusEnum, categoryCode, response);
-
-        // // 获取租户ID
-        // Integer tenantId = SecurityUtils.getLoginUser().getTenantId();
-        // List<MedicationManageDto> list =
-        // medicationManageSearchMapper.getList(searchKey, ybMatchFlag, statusEnum, categoryCode, tenantId);
-        // ExcelUtil<MedicationManageDto> util = new ExcelUtil<>(MedicationManageDto.class);
-        // util.exportExcel(response, list, "药品目录");
-        // return null;
     }
 }

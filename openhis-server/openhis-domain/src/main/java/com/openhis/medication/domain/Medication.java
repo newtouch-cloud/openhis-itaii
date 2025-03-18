@@ -80,4 +80,16 @@ public class Medication extends HisBaseEntity {
     /** 药品定义 */
     private String definition;
 
+    /** 删除状态 */
+    private String deleteFlag;
+
+    /** 用量限定 */
+    private BigDecimal usageLimit;
+
+    /** DDD值 */
+    private String dddCode;
+
+    /** DDD单位 */
+    private String dddUnitCode;
+
 }
