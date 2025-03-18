@@ -4,7 +4,7 @@ import { parseStrEmpty } from "@/utils/openhis";
 // 查询诊疗目录列表
 export function getDiagnosisTreatmentList(query) {
   return request({
-    url: '/datadictionary/diagnosistreatment/information-page',
+    url: '/data-dictionary/diagnosistreatment/information-page',
     method: 'get',
     params: query
   })
@@ -13,7 +13,7 @@ export function getDiagnosisTreatmentList(query) {
 // 查询诊疗目录详细
 export function getDiagnosisTreatmentOne(id) {
   return request({
-    url: '/datadictionary/diagnosistreatment/information-one/' + parseStrEmpty(id),
+    url: '/data-dictionary/diagnosistreatment/information-one/' + parseStrEmpty(id),
     method: 'get'
   })
 }
@@ -21,7 +21,7 @@ export function getDiagnosisTreatmentOne(id) {
 // 新增诊疗目录
 export function addDiagnosisTreatment(data) {
   return request({
-    url: '/datadictionary/diagnosistreatment/information',
+    url: '/data-dictionary/diagnosistreatment/information',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addDiagnosisTreatment(data) {
 // 修改诊疗目录
 export function editDiagnosisTreatment(data) {
   return request({
-    url: '/datadictionary/diagnosistreatment/information',
+    url: '/data-dictionary/diagnosistreatment/information',
     method: 'put',
     data: data
   })
@@ -47,7 +47,7 @@ export function editDiagnosisTreatment(data) {
 // 诊疗目录分类查询
 export function getDiseaseTreatmentInit() {
   return request({
-    url: '/datadictionary/diagnosistreatment/init',
+    url: '/data-dictionary/diagnosistreatment/init',
     method: 'get'
   })
 }
@@ -56,7 +56,7 @@ export function getDiseaseTreatmentInit() {
 export function stopDiseaseTreatment(ids) {
   console.log(ids)
   return request({
-    url: '/datadictionary/diagnosistreatment/information-stop',
+    url: '/data-dictionary/diagnosistreatment/information-stop',
     method: 'put',
     data: ids
   })
@@ -66,7 +66,7 @@ export function stopDiseaseTreatment(ids) {
 export function startDiseaseTreatment(ids) {
   console.log(ids)
   return request({
-    url: '/datadictionary/diagnosistreatment/information-start',
+    url: '/data-dictionary/diagnosistreatment/information-start',
     method: 'put',
     data: ids
   })

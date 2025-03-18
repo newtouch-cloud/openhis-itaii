@@ -4,7 +4,7 @@ import { parseStrEmpty } from "@/utils/openhis";
 // 查询病种目录列表
 export function getDiseaseList(query) {
   return request({
-    url: '/datadictionary/disease/information-page',
+    url: '/data-dictionary/disease/information-page',
     method: 'get',
     params: query
   })
@@ -13,7 +13,7 @@ export function getDiseaseList(query) {
 // 查询病种目录详细
 export function getDiseaseOne(id) {
   return request({
-    url: '/datadictionary/disease/information-one/' + parseStrEmpty(id),
+    url: '/data-dictionary/disease/information-one/' + parseStrEmpty(id),
     method: 'get'
   })
 }
@@ -21,7 +21,7 @@ export function getDiseaseOne(id) {
 // 新增病种目录
 export function addDisease(data) {
   return request({
-    url: '/datadictionary/disease/information',
+    url: '/data-dictionary/disease/information',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addDisease(data) {
 // 修改病种目录
 export function editDisease(data) {
   return request({
-    url: '/datadictionary/disease/information',
+    url: '/data-dictionary/disease/information',
     method: 'put',
     data: data
   })
@@ -47,7 +47,7 @@ export function editDisease(data) {
 // 病种目录分类查询
 export function getDiseaseCategory() {
   return request({
-    url: '/datadictionary/disease/information-init',
+    url: '/data-dictionary/disease/information-init',
     method: 'get'
   })
 }
@@ -55,7 +55,7 @@ export function getDiseaseCategory() {
 // 停用病种目录
 export function stopDisease(ids) {
   return request({
-    url: '/datadictionary/disease/information-stop',
+    url: '/data-dictionary/disease/information-stop',
     method: 'put',
     data: ids
   })
@@ -64,7 +64,7 @@ export function stopDisease(ids) {
 // 启用病种目录
 export function startDisease(ids) {
   return request({
-    url: '/datadictionary/disease/information-start',
+    url: '/data-dictionary/disease/information-start',
     method: 'put',
     data: ids
   })

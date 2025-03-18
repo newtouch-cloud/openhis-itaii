@@ -5,7 +5,7 @@ import { parseStrEmpty } from "@/utils/openhis";
 export function getDeviceList(query) {
   console.log(query,'aaaaa')
   return request({
-    url: '/datadictionary/device/information-page',
+    url: '/data-dictionary/device/information-page',
     method: 'get',
     params: query
   })
@@ -14,7 +14,7 @@ export function getDeviceList(query) {
 // 查询器材目录详细
 export function getDeviceOne(id) {
   return request({
-    url: '/datadictionary/device/information-one/' + parseStrEmpty(id),
+    url: '/data-dictionary/device/information-one/' + parseStrEmpty(id),
     method: 'get'
   })
 }
@@ -22,7 +22,7 @@ export function getDeviceOne(id) {
 // 新增器材目录
 export function addDevice(data) {
   return request({
-    url: '/datadictionary/device/information',
+    url: '/data-dictionary/device/information',
     method: 'post',
     data: data
   })
@@ -31,7 +31,7 @@ export function addDevice(data) {
 // 修改器材目录
 export function editDevice(data) {
   return request({
-    url: '/datadictionary/device/information',
+    url: '/data-dictionary/device/information',
     method: 'put',
     data: data
   })
@@ -48,7 +48,7 @@ export function editDevice(data) {
 // 器材目录分类查询
 export function getDiseaseTreatmentInit() {
   return request({
-    url: '/datadictionary/device/init',
+    url: '/data-dictionary/device/init',
     method: 'get'
   })
 }
@@ -57,7 +57,7 @@ export function getDiseaseTreatmentInit() {
 export function stopDevice(ids) {
   console.log(ids)
   return request({
-    url: '/datadictionary/device/information-stop',
+    url: '/data-dictionary/device/information-stop',
     method: 'put',
     data: ids
   })
@@ -67,7 +67,7 @@ export function stopDevice(ids) {
 export function startDevice(ids) {
   console.log(ids)
   return request({
-    url: '/datadictionary/device/information-start',
+    url: '/data-dictionary/device/information-start',
     method: 'put',
     data: ids
   })

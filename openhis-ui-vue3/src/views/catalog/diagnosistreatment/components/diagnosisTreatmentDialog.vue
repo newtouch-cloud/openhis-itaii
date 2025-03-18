@@ -149,7 +149,7 @@ import {
   addDiagnosisTreatment,
   getDiseaseTreatmentInit,
   getDiagnosisTreatmentOne,
-} from "./diagnosisTreatment";
+} from "./diagnosistreatment";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();

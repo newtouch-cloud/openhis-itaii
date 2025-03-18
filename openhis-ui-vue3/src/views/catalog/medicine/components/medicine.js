@@ -4,7 +4,7 @@ import { parseStrEmpty } from "@/utils/openhis";
 // 查询药品目录列表
 export function getMedicationList(query) {
   return request({
-    url: '/datadictionary/medication/information-page',
+    url: '/data-dictionary/medication/information-page',
     method: 'get',
     params: query
   })
@@ -13,7 +13,7 @@ export function getMedicationList(query) {
 // 查询药品目录详细
 export function getMedicationOne(id) {
   return request({
-    url: '/datadictionary/medication/information-one/' + parseStrEmpty(id),
+    url: '/data-dictionary/medication/information-one/' + parseStrEmpty(id),
     method: 'get'
   })
 }
@@ -21,7 +21,7 @@ export function getMedicationOne(id) {
 // 新增药品目录
 export function addMedication(data) {
   return request({
-    url: '/datadictionary/medication/information',
+    url: '/data-dictionary/medication/information',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addMedication(data) {
 // 修改药品目录
 export function editMedication(data) {
   return request({
-    url: '/datadictionary/medication/information',
+    url: '/data-dictionary/medication/information',
     method: 'put',
     data: data
   })
@@ -47,7 +47,7 @@ export function delUser(userId) {
 // 药品目录分类查询
 export function getMedicationCategory() {
   return request({
-    url: '/datadictionary/medication/information-init',
+    url: '/data-dictionary/medication/information-init',
     method: 'get'
   })
 }
@@ -57,7 +57,7 @@ export function getMedicationCategory() {
 export function stopMedication(ids) {
   console.log(ids)
   return request({
-    url: '/datadictionary/medication/information-stop',
+    url: '/data-dictionary/medication/information-stop',
     method: 'put',
     data: ids
   })
@@ -67,7 +67,7 @@ export function stopMedication(ids) {
 export function startMedication(ids) {
   console.log(ids)
   return request({
-    url: '/datadictionary/medication/information-start',
+    url: '/data-dictionary/medication/information-start',
     method: 'put',
     data: ids
   })
