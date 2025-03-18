@@ -83,7 +83,7 @@ public interface ISupplierManagementAppService {
      * @param id 查询条件
      * @return 厂商/产地查询结果
      */
-    R<?> getSupplierDetail(@PathVariable("id") Long id);
+    R<?> getSupplierDetail(Long id);
 
     /**
      * 厂商/产地停用

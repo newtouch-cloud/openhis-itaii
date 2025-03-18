@@ -144,7 +144,7 @@ public class SupplierManagementAppServiceImpl implements ISupplierManagementAppS
      * @return 厂商/产地查询结果
      */
     @Override
-    public R<?> getSupplierDetail(@PathVariable("id") Long id) {
+    public R<?> getSupplierDetail(Long id) {
         SupplierDto supplierDto = new SupplierDto();
         // 根据ID查询【供应商信息】
         Supplier supplier = supplierService.getById(id);
