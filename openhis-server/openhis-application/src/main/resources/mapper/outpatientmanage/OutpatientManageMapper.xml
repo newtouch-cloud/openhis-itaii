@@ -179,8 +179,9 @@
             resultType="com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto">
         SELECT
         T1.service_id,
+        T1.service_status,
         T1.bus_no,
-        T1.execution_count,
+        T1.execute_num,
         T1.based_on_id,
         T1.activity_id,
         T1.prescription_no,
@@ -194,7 +195,7 @@
         T1.medication_status_Enum,
         T1.group_id,
         T1.clinical_status_enum,
-        T1.flag_text,
+        T1.skin_test_flag,
         T1.speed,
         T1.method_code,
         T1.dose,
@@ -209,25 +210,27 @@
         SELECT
         sr.id AS service_id, --服务申请管理ID
         sr.bus_no, -- 服务请求编码
-        (SELECT COUNT(*) FROM wor_service_request wsr WHERE wsr.based_on_id = sr.based_on_id) AS execution_count,
         sr.based_on_id, -- 请求基于什么的ID
+        sr.execute_num, -- 执行次数
         sr.activity_id,--请求code,输液
         sr.prescription_no, --处方号
         sr.encounter_id , --就诊ID
         sr.tenant_id,
+        sr.status_enum AS service_status, --服务状态
         e.bus_no AS encounter_busNo, --就诊ID（前台显示用）
         pt.name AS patient_name, --病人姓名
         pt.bus_no AS patient_busNo, --病人ID（前台显示用）
         sr.patient_id, --病人ID
-        ad.name AS medication_information, --药品信息
+        md.id AS medication_id, --药品ID
+        md.name AS medication_information, --药品信息
         mr.antity AS medication_antity,--药品数量
         mr.status_enum AS medication_status_Enum, --药品状态
         mr.group_id, --注射药品组号
+        CASE mr.skin_test_flag
+        WHEN 1 THEN 1
+        ELSE 0
+        END AS skin_test_flag ，--皮试标志
         ai.clinical_status_enum, --皮试检查结果
-        CASE mr.skin_test_flag--皮试标志
-        WHEN 1 THEN '是'
-        ELSE '否'
-        END AS flag_text,
         mr.speed, --输液速度
         mr.method_code,--用法
         mr.dose || ' '|| mr.dose_unit_code AS dose,--单次剂量,剂量单位

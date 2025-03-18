@@ -1,5 +1,6 @@
 package com.openhis.workflow.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,8 @@ public class ServiceRequestServiceImpl extends ServiceImpl<ServiceRequestMapper,
      */
     @Override
     public Long countServiceRequestByBasedOnId(Long basedOnId) {
-        QueryWrapper<ServiceRequest> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("based_on_id", basedOnId);
+        LambdaQueryWrapper<ServiceRequest> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ServiceRequest::getBasedOnId, basedOnId);
         return serviceRequestMapper.selectCount(queryWrapper);
     }
 }

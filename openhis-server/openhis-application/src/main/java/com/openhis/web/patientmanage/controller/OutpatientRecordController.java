@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025/2/28
  */
 @RestController
-@RequestMapping("/patientmanage/records")
+@RequestMapping("/patient-manage/records")
 @Slf4j
 @AllArgsConstructor
 public class OutpatientRecordController {

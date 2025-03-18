@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025/2/22
  */
 @RestController
-@RequestMapping("/patientmanage/information")
+@RequestMapping("/patient-manage/information")
 @Slf4j
 @AllArgsConstructor
 public class PatientInformationController {
