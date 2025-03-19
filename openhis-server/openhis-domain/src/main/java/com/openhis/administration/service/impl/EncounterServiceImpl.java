@@ -2,7 +2,7 @@ package com.openhis.administration.service.impl;
 
 import javax.annotation.Resource;
 
-import com.core.common.enums.AssignSeqEnum;
+import com.openhis.common.enums.AssignSeqEnum;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

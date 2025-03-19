@@ -3,6 +3,8 @@
  */
 package com.openhis.web.inventorymanage.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +13,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.web.inventorymanage.dto.InventoryReceiptPageDto;
 import com.openhis.web.inventorymanage.dto.InventorySearchParam;
+import com.openhis.web.inventorymanage.dto.ReceiptDetailDto;
 
 /**
  * 采购入库查询用 mapper
@@ -32,4 +35,12 @@ public interface PurchaseInventoryMapper {
     Page<InventoryReceiptPageDto> selectInventoryReceiptPage(@Param("page") Page<InventoryReceiptPageDto> page,
         @Param(Constants.WRAPPER) QueryWrapper<InventorySearchParam> queryWrapper,
         @Param("purchaseInventory") Integer purchaseInventory);
+
+    /**
+     * 查询单据详情
+     * 
+     * @param busNo 单据号
+     * @return 单据详情
+     */
+    List<ReceiptDetailDto> selectDetail(@Param("busNo") String busNo);
 }

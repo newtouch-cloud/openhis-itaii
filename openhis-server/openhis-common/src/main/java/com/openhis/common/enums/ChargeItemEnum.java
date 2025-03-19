@@ -1,7 +1,7 @@
 /*
  * Copyright ©2023 CJB-CNIT Team. All rights reserved
  */
-package com.core.common.enums;
+package com.openhis.common.enums;
 
 /**
  * 收费项目

@@ -220,8 +220,8 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
                 continue;
 
             // 生成请求的命中值
-            String lotUnitCondition =
-                String.format(CommonConstants.Common.COMMA, supplyRequest.getLotNumber(), supplyRequest.getUnitCode());
+            String lotUnitCondition = String.format(CommonConstants.Common.COMMA_FORMAT, supplyRequest.getLotNumber(),
+                supplyRequest.getUnitCode());
 
             for (ItemChargeDetailDto detail : details) {
 
@@ -238,7 +238,7 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
                         // 判断入库单位是大单位还是小单位
                         if (supplyRequest.getUnitCode().equals(detail.getUnitCode())) {
                             resultList.add(this.addChargeItemDefApp(
-                                String.format(CommonConstants.Common.COMMA, supplyRequest.getLotNumber(),
+                                String.format(CommonConstants.Common.COMMA_FORMAT, supplyRequest.getLotNumber(),
                                     detail.getMinUnitCode()),
                                 supplyRequest.getMinSellPrice(), detail.getDefinitionId()));
                             resultList.add(this.addChargeItemDefApp(lotUnitCondition, supplyRequest.getSellPrice(),
@@ -246,7 +246,7 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
                         } else {
                             resultList
                                 .add(this.addChargeItemDefApp(
-                                    String.format(CommonConstants.Common.COMMA, supplyRequest.getLotNumber(),
+                                    String.format(CommonConstants.Common.COMMA_FORMAT, supplyRequest.getLotNumber(),
                                         detail.getUnitCode()),
                                     supplyRequest.getMinSellPrice(), detail.getDefinitionId()));
                             resultList.add(this.addChargeItemDefApp(lotUnitCondition, supplyRequest.getMinSellPrice(),

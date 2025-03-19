@@ -14,7 +14,6 @@
                T1.tendered_amount,
                T1.returned_amount,
                T1.contract_no,
-               T1.charge_item_ids,
                T2.prescription_no,
                T2.account_id
         FROM fin_payment_reconciliation AS T1
@@ -23,5 +22,49 @@
         WHERE T1.encouter_id =#{encounterId}
             AND T1.status_enum IN (#{success},#{refundAll},#{refundPart})
             AND T1.delete_flag = '0'
+    </select>
+    <select id="selectRefundItem" resultType="com.openhis.web.chargemanage.dto.RefundItemDto">
+        SELECT T1.*,
+               T2.name AS service_name
+        FROM fin_payment_reconciliation AS T1
+            LEFT JOIN adm_charge_item AS T2
+                ON T2.id IN T1.charge_item_ids
+            LEFT JOIN med_medication_request AS T3
+                ON T3.bus_no = SUBSTRING(T2.bus_no, #{three})
+            LEFT JOIN med_medication_dispense AS T4
+            ON T4.med_req_id = T3.id
+        WHERE T2.service_table = #{medMedicationRequest}
+            AND T1.id IN
+            <foreach collection="paymentIdList" item="paymentId" separator="," open="(" close=")">
+                #{paymentId}
+            </foreach>
+         UNION ALL
+        SELECT T1.*,
+               T2.name AS service_name
+        FROM fin_payment_reconciliation AS T1
+            LEFT JOIN adm_charge_item AS T2
+                ON T2.id IN T1.charge_item_ids
+            LEFT JOIN wor_device_request AS T5
+                ON T6.bus_no = SUBSTRING(T2.bus_no, #{three})
+            LEFT JOIN wor_device_dispense AS T6
+                ON T6.device_req_id = T5.id
+        WHERE T2.service_table = #{worDeviceRequest}
+            AND T1.id IN
+            <foreach collection="paymentIdList" item="paymentId" separator="," open="(" close=")">
+                #{paymentId}
+            </foreach>
+        UNION ALL
+        SELECT T1.*,
+               T2.name AS service_name
+        FROM fin_payment_reconciliation AS T1
+            LEFT JOIN adm_charge_item AS T2
+                ON T2.id IN T1.charge_item_ids
+            LEFT JOIN wor_service_request AS T7
+                ON T7.bus_no = SUBSTRING(T2.bus_no, #{three})
+        WHERE T2.service_table = #{worServiceRequest}
+            AND T1.id IN
+            <foreach collection="paymentIdList" item="paymentId" separator="," open="(" close=")">
+                #{paymentId}
+            </foreach>
     </select>
 </mapper>

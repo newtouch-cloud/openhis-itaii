@@ -23,9 +23,9 @@ public enum ItemType implements HisEnumInterface {
     MEDICINE(1, "1", "中药"),
 
     /**
-     * 西药
+     * 耗材
      */
-    DEVICE(2, "2", "西药"),
+    DEVICE(2, "2", "耗材"),
 
     /**
      * 医疗活动

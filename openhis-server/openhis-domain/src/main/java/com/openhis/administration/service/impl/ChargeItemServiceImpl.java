@@ -60,4 +60,15 @@ public class ChargeItemServiceImpl extends ServiceImpl<ChargeItemMapper, ChargeI
             .eq(ChargeItem::getEncounterId, encounterId).set(ChargeItem::getAccountId, accountId));
         return update > 0;
     }
+
+    /**
+     * 根据收费项目id列表获取收费信息
+     *
+     * @param chargeItemIdList 收费项目id列表
+     * @return 收费信息
+     */
+    @Override
+    public List<ChargeItem> getChargeItemInfo(List<Long> chargeItemIdList) {
+        return baseMapper.selectBatchIds(chargeItemIdList);
+    }
 }

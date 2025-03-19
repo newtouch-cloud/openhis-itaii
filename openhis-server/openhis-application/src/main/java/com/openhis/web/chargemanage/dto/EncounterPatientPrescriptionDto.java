@@ -51,6 +51,9 @@ public class EncounterPatientPrescriptionDto implements Serializable {
     /** 处方号 */
     private String prescriptionNo;
 
+    /** 业务编码 */
+    private String busNo;
+
     /** 开立人ID */
     private Long entererId;
 

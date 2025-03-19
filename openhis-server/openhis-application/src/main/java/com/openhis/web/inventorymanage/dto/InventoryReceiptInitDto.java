@@ -5,11 +5,6 @@ package com.openhis.web.inventorymanage.dto;
 
 import java.util.List;
 
-import com.openhis.administration.domain.Location;
-import com.openhis.administration.domain.Supplier;
-import com.openhis.medication.domain.MedicationDetail;
-
-import com.openhis.web.basedatamanage.dto.LocationQueryDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -23,14 +18,84 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class InventoryReceiptInitDto {
 
-    // 返回前台的应是dto 懒得定义请勿学习
+    /**
+     * 单据号
+     */
+    private String busNo;
 
-    /** 药房信息 */
-    private List<Location> location;
+    /**
+     * 供应商
+     */
+    private List<InventoryReceiptInitDto.supplierListOption> supplierListOptions;
 
-    /** 供应商信息 */
-    private List<Supplier> supplier;
+    /**
+     * 经手人
+     */
+    private List<InventoryReceiptInitDto.practitionerListOption> practitionerListOptions;
 
-    /** 药品详细信息 */
-    private List<MedicationDetail> medicationDetail;
+    /**
+     * 入库项目类型
+     */
+    private List<InventoryReceiptInitDto.itemTypeOption> itemTypeOptions;
+
+    /**
+     * 审批状态
+     */
+    private List<InventoryReceiptInitDto.supplyStatusOption> supplyStatusOptions;
+
+    /**
+     * 供应商
+     */
+    @Data
+    public static class supplierListOption {
+        private Long value;
+        private String label;
+
+        public supplierListOption(Long value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
+
+    /**
+     * 经手人
+     */
+    @Data
+    public static class practitionerListOption {
+        private Long value;
+        private String label;
+
+        public practitionerListOption(Long value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
+
+    /**
+     * 入库项目类型
+     */
+    @Data
+    public static class itemTypeOption {
+        private Integer value;
+        private String label;
+
+        public itemTypeOption(Integer value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
+
+    /**
+     * 入库项目类型
+     */
+    @Data
+    public static class supplyStatusOption {
+        private Integer value;
+        private String label;
+
+        public supplyStatusOption(Integer value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
 }

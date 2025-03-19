@@ -91,7 +91,8 @@ public class OutpatientChargeAppServiceImpl implements IOutpatientChargeAppServi
     public R<?> getEncounterPatientPrescription(Long encounterId) {
         return R.ok(outpatientChargeAppMapper.selectEncounterPatientPrescription(encounterId,
             ChargeItemContext.ACTIVITY.getValue(), ChargeItemContext.MEDICATION.getValue(),
-            ChargeItemContext.DEVICE.getValue()));
+            ChargeItemContext.DEVICE.getValue(), ChargeItemStatus.PLANNED.getValue(),
+            ChargeItemStatus.BILLABLE.getValue(), ChargeItemStatus.BILLED.getValue()));
     }
 
     /**

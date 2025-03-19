@@ -50,6 +50,7 @@
                T1.unit_price,
                T1.total_price,
                T1.prescription_no,
+               T1.bus_no,
                T1.enterer_id,
                T1.entered_date,
                T1.account_id,
@@ -72,7 +73,7 @@
                 ON T1.context_enum = #{device}
                     AND T1.product_id = T4.id
         WHERE T1.encounter_id = #{encounterId}
-            AND T1.status_enum IN (1 , 2 , 5)
+            AND T1.status_enum IN (#{planned} , #{billable} , #{billed})
             AND T1.delete_flag = '0'
     </select>
 </mapper>

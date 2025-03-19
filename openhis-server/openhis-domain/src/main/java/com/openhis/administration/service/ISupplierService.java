@@ -9,6 +9,7 @@ import com.openhis.workflow.domain.SupplyRequest;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 供应商管理Service接口
@@ -24,4 +25,11 @@ public interface ISupplierService extends IService<Supplier> {
      * @return
      */
     boolean addSupplier(Supplier supplier);
+
+    /**
+     * 查询供应商下拉列表
+     *
+     * @return 供应商下拉列表
+     */
+    List<Supplier> getList();
 }

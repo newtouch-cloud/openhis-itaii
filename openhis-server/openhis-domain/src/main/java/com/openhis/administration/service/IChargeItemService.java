@@ -35,4 +35,12 @@ public interface IChargeItemService extends IService<ChargeItem> {
      * @return 更新结果
      */
     boolean updateAccountType(Long encounterId, Long accountId);
+
+    /**
+     * 根据收费项目id列表获取收费信息
+     *
+     * @param chargeItemIdList 收费项目id列表
+     * @return 收费信息
+     */
+    List<ChargeItem> getChargeItemInfo(List<Long> chargeItemIdList);
 }

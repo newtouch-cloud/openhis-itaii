@@ -3,12 +3,13 @@
  */
 package com.openhis.web.datadictionary.controller;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.openhis.administration.domain.ChargeItemDefDetail;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -20,18 +21,18 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
-import com.core.common.enums.AssignSeqEnum;
-import com.core.common.enums.ChargeItemEnum;
-import com.core.common.enums.DefinitionTypeEnum;
 import com.core.common.utils.AssignSeqUtil;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.StringUtils;
 import com.core.common.utils.bean.BeanUtils;
+import com.openhis.administration.domain.ChargeItemDefDetail;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.service.IChargeItemDefDetailService;
 import com.openhis.administration.service.IChargeItemDefinitionService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.ChargeItemEnum;
+import com.openhis.common.enums.ItemType;
 import com.openhis.common.enums.PublicationStatus;
 import com.openhis.web.datadictionary.dto.ChargeItemDefPageDto;
 import com.openhis.web.datadictionary.dto.ChargeItemOptionDto;
@@ -71,7 +72,7 @@ public class ItemDefinitionController {
     public R<?> getInitDefinitionOptions(ItemDefSearchParam itemDefSearchParam) {
         /// TODO: 2025/2/26 收费项目下拉框 暂未做成用枚举代替，后续替换
         List<ChargeItemOptionDto> chargeItemOptions = new ArrayList<>();
-        if (DefinitionTypeEnum.MEDICATION.getCode().equals(itemDefSearchParam.getDefinitionType())) {
+        if (ItemType.MEDICINE.getCode().equals(itemDefSearchParam.getDefinitionType())) {
             // 西药
             chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.WEST_MEDICINE.getCode(),
                 ChargeItemEnum.WEST_MEDICINE.getInfo()));
@@ -84,14 +85,14 @@ public class ItemDefinitionController {
             // 其他
             chargeItemOptions
                 .add(new ChargeItemOptionDto(ChargeItemEnum.OTHER_FEE.getCode(), ChargeItemEnum.OTHER_FEE.getInfo()));
-        } else if (DefinitionTypeEnum.DEVICE.getCode().equals(itemDefSearchParam.getDefinitionType())) {
+        } else if (ItemType.DEVICE.getCode().equals(itemDefSearchParam.getDefinitionType())) {
             // 卫生材料
             chargeItemOptions.add(new ChargeItemOptionDto(ChargeItemEnum.SANITARY_MATERIALS_FEE.getCode(),
                 ChargeItemEnum.SANITARY_MATERIALS_FEE.getInfo()));
             // 其他
             chargeItemOptions
                 .add(new ChargeItemOptionDto(ChargeItemEnum.OTHER_FEE.getCode(), ChargeItemEnum.OTHER_FEE.getInfo()));
-        } else if (DefinitionTypeEnum.ACTIVITY.getCode().equals(itemDefSearchParam.getDefinitionType())) {
+        } else if (ItemType.ACTIVITY.getCode().equals(itemDefSearchParam.getDefinitionType())) {
             // 床位
             chargeItemOptions
                 .add(new ChargeItemOptionDto(ChargeItemEnum.BED_FEE.getCode(), ChargeItemEnum.BED_FEE.getInfo()));
@@ -155,14 +156,14 @@ public class ItemDefinitionController {
             queryWrapper.eq(ChargeItemDefPageDto::getCategoryCode, chargeItemDefPageDto.getChargeItem());
         }
         // 通过 DefinitionType 区分药品定价/器具定价/活动定价
-        if (DefinitionTypeEnum.MEDICATION.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
+        if (ItemType.MEDICINE.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
             queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable,
                 CommonConstants.TableName.MED_MEDICATION_DEFINITION);
             chargeItemDefinitionPage = chargeItemDefSearchMapper.getMedList(new Page<>(pageNo, pageSize), queryWrapper);
-        } else if (DefinitionTypeEnum.DEVICE.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
+        } else if (ItemType.DEVICE.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
             queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, CommonConstants.TableName.ADM_DEVICE_DEFINITION);
             chargeItemDefinitionPage = chargeItemDefSearchMapper.getDevList(new Page<>(pageNo, pageSize), queryWrapper);
-        } else if (DefinitionTypeEnum.ACTIVITY.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
+        } else if (ItemType.ACTIVITY.getCode().equals(chargeItemDefPageDto.getDefinitionType())) {
             queryWrapper.eq(ChargeItemDefPageDto::getInstanceTable, CommonConstants.TableName.WOR_ACTIVITY_DEFINITION);
             chargeItemDefinitionPage = chargeItemDefSearchMapper.getActList(new Page<>(pageNo, pageSize), queryWrapper);
         }
@@ -203,46 +204,5 @@ public class ItemDefinitionController {
     public R<?> getDropdownOption() {
         return R.ok(Arrays.stream(PublicationStatus.values())
             .map(status -> new ChargeItemOptionDto(status.getValue(), status.getInfo())).collect(Collectors.toList()));
-    }
-
-    /**
-     * 采番测试（例子，非常规代码，请勿调用）
-     *
-     * @return 采番测试结果
-     */
-    @GetMapping(value = "/test-assign")
-    public R<?> getTestAssign() {
-        // 基础采番
-        String code = assignSeqUtil.getSeq(AssignSeqEnum.TEST.getPrefix());
-        // 控制长度采番(seqLength: 总长度)
-        String code1 = assignSeqUtil.getSeq(AssignSeqEnum.TEST.getPrefix(), 8);
-        // 控制长度批量采番
-        List<String> code2 = assignSeqUtil.getSeq(AssignSeqEnum.TEST.getPrefix(), 8, 3);
-        // 获取编号
-        Integer code3 = assignSeqUtil.getSeqNo(AssignSeqEnum.TEST.getPrefix());
-        // 批量获取编号
-        List<Integer> code4 = assignSeqUtil.getSeqNo(AssignSeqEnum.TEST.getPrefix(), 3);
-        // 每日采番
-        String code5 = assignSeqUtil.getSeqByDay(AssignSeqEnum.TEST.getPrefix());
-        // 每日按长度采番(seqLength: 日期后的数字位数)
-        String code6 = assignSeqUtil.getSeqByDay(AssignSeqEnum.TEST.getPrefix(), 8);
-        // 每日批量采番
-        List<String> code7 = assignSeqUtil.getSeqByDay(AssignSeqEnum.TEST.getPrefix(), 8, 3);
-        // 每日获取编号
-        Integer code8 = assignSeqUtil.getSeqNoByDay(AssignSeqEnum.TEST.getPrefix());
-        // 每日批量获取编号
-        List<Integer> code9 = assignSeqUtil.getSeqNoByDay(AssignSeqEnum.TEST.getPrefix(), 3);
-        Map<String, Object> map = new HashMap<>();
-        map.put("code", code);
-        map.put("code1", code1);
-        map.put("code2", code2);
-        map.put("code3", code3);
-        map.put("code4", code4);
-        map.put("code5", code5);
-        map.put("code6", code6);
-        map.put("code7", code7);
-        map.put("code8", code8);
-        map.put("code9", code9);
-        return R.ok(map);
     }
 }

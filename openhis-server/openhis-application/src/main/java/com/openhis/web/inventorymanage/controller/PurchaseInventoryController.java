@@ -5,7 +5,6 @@ package com.openhis.web.inventorymanage.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.openhis.web.inventorymanage.dto.InventoryReceiptInitDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,25 +30,15 @@ public class PurchaseInventoryController {
     @Autowired
     private IPurchaseInventoryAppService purchaseInventoryAppService;
 
-    // @GetMapping(value = "/init")
-    // public R<?> init() {
-    // // 采番
-    //
-    // InventoryReceiptInitDto initDto = new InventoryReceiptInitDto();
-    // // 设置供应商列表
-    // initDto.setSupplier(supplierService.list())
-    // // 设置药房列表
-    // .setLocation(locationService.list(new LambdaQueryWrapper<Location>().in(Location::getFormEnum, 1)))
-    // // 药品详细
-    // .setMedicationDetail(medicationService.getDetailList());
-    // return R.ok(initDto);
-    // }
-
-    // 添加入库单据之前需要
-    // 1.supplier供应商信息列表
-    // 2.location信息列表包括（药房，药库，材料柜，护理站）
-    // 3.practitioner_role与practitioner联查获取对应location的管理员列表
-    // 4.查询选定对应药品类型的药品信息列表
+    /**
+     * 入库单据页面初始化
+     *
+     * @return 初始化信息
+     */
+    @GetMapping(value = "/init")
+    public R<?> purchaseInventoryInit() {
+        return purchaseInventoryAppService.purchaseInventoryInit();
+    }
 
     /**
      * 入库单据列表

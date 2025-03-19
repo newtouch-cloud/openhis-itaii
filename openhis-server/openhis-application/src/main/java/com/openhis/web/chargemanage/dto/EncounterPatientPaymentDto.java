@@ -73,6 +73,4 @@ public class EncounterPatientPaymentDto implements Serializable {
     /** 合同编码 */
     private String contractNo;
 
-    /** 处方号集合 */
-    private String chargeItemIds;
 }

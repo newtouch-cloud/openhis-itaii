@@ -98,14 +98,14 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
                 // 匹配包装单位
                 List<AdvicePriceDto> advicePrice1 = childCharge.stream()
                     .filter(e -> e.getDefinitionId().equals(finalChargeItemDefinitionId) && e.getConditionValue()
-                        .equals(String.format(CommonConstants.Common.COMMA, finalUnitCode,
+                        .equals(String.format(CommonConstants.Common.COMMA_FORMAT, finalUnitCode,
                             adviceInventoryDto.getLotNumber())))
                     .peek(e -> e.setUnitCode(finalUnitCode)) // 设置 unitCode
                     .collect(Collectors.toList());
                 // 匹配最小单位
                 List<AdvicePriceDto> advicePrice2 = childCharge.stream()
                     .filter(e -> e.getDefinitionId().equals(finalChargeItemDefinitionId) && e.getConditionValue()
-                        .equals(String.format(CommonConstants.Common.COMMA, finalMinUnitCode,
+                        .equals(String.format(CommonConstants.Common.COMMA_FORMAT, finalMinUnitCode,
                             adviceInventoryDto.getLotNumber())))
                     .peek(e -> e.setUnitCode(finalMinUnitCode)) // 设置 unitCode
                     .collect(Collectors.toList());

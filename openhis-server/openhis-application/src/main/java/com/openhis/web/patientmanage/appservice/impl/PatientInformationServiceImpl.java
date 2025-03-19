@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
-import com.core.common.enums.AssignSeqEnum;
+import com.openhis.common.enums.AssignSeqEnum;
 import com.core.common.utils.AssignSeqUtil;
 import com.core.common.utils.ChineseConvertUtils;
 import com.core.common.utils.DateUtils;

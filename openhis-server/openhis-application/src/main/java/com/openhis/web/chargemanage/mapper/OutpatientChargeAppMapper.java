@@ -41,8 +41,12 @@ public interface OutpatientChargeAppMapper {
      * @param activity 项目
      * @param medication 药品
      * @param device 耗材
+     * @param planned 收费状态：待收费
+     * @param billable 收费状态：待结算
+     * @param billed 收费状态：已结算
      * @return 患者处方列表
      */
     List<EncounterPatientPrescriptionDto> selectEncounterPatientPrescription(@Param("encounterId") Long encounterId,
-        @Param("activity") Integer activity, @Param("medication") Integer medication, @Param("device") Integer device);
+        @Param("activity") Integer activity, @Param("medication") Integer medication, @Param("device") Integer device,
+        @Param("planned") Integer planned, @Param("billable") Integer billable, @Param("billed") Integer billed);
 }

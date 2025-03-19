@@ -33,7 +33,7 @@ public class InventoryReceiptPageDto implements Serializable {
     private Long id;
 
     /** 单据号 */
-    private String busNo;
+    private String supplyBusNo;
 
     /** 状态 */
     private Integer statusEnum;
@@ -42,9 +42,9 @@ public class InventoryReceiptPageDto implements Serializable {
     /** 供应商 */
     private Long supplierId;
 
-    /** 目的仓库 */
-    @Dict(dictCode = "id", dictText = "name", dictTable = "adm_location")
-    private Long purposeLocationId;
+    /** 经手人 */
+    @Dict(dictCode = "id", dictText = "name", dictTable = "adm_practitioner")
+    private Long practitionerId;
 
     /** 审批人 */
     @Dict(dictCode = "id", dictText = "name", dictTable = "adm_practitioner")

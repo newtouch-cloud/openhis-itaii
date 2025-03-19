@@ -58,18 +58,6 @@ public class InventoryReceiptDto implements Serializable {
     @NotNull
     private Long supplierId;
 
-    /** 源仓库类型 */
-    @NotNull
-    private Integer sourceTypeEnum;
-
-    /** 源仓库 */
-    @NotNull
-    private Long sourceLocationId;
-
-    /** 源仓位 */
-    @NotNull
-    private Long sourceLocationStoreId;
-
     /** 目的仓库类型 */
     @NotNull
     private Integer purposeTypeEnum;
@@ -85,6 +73,10 @@ public class InventoryReceiptDto implements Serializable {
     /** 申请人 */
     @NotNull
     private Long applicantId;
+
+    /** 经手人 */
+    @NotNull
+    private Long practitionerId;
 
     /** 申请时间 */
     private Date applyTime;

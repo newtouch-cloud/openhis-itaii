@@ -28,9 +28,6 @@ public class InventorySearchParam implements Serializable {
     /** 状态 */
     private Integer statusEnum;
 
-    /** 分类 */
-    private Integer categoryEnum;
-
     /** 供应商 */
     private Long supplierId;
 
@@ -40,9 +37,6 @@ public class InventorySearchParam implements Serializable {
     /** 申请结束时间 */
     private Date applyTimeEnd;
 
-    /** 目的仓库 */
-    private Long purposeLocationId;
-
-    /** 申请人 */
-    private Long applicantId;
+    /** 经手人 */
+    private Long practitionerId;
 }

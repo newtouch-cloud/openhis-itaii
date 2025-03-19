@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.openhis.administration.domain.Practitioner;
 import com.openhis.administration.domain.PractitionerRole;
 
+import java.util.List;
+
 /**
  * 医疗参与者管理Service接口
  *
@@ -20,4 +22,10 @@ public interface IPractitionerService extends IService<Practitioner> {
      */
     Practitioner getPractitionerByUserId(long userId);
 
+    /**
+     * 查询医疗参与者列表
+     *
+     * @return 医疗参与者列表
+     */
+    List<Practitioner> getList();
 }

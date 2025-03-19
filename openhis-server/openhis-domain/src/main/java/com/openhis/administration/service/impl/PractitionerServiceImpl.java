@@ -1,13 +1,13 @@
 package com.openhis.administration.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.core.common.utils.SecurityUtils;
 import com.openhis.administration.domain.Practitioner;
-import com.openhis.administration.mapper.PatientMapper;
 import com.openhis.administration.mapper.PractitionerMapper;
 import com.openhis.administration.service.IPractitionerService;
 
@@ -21,9 +21,6 @@ import com.openhis.administration.service.IPractitionerService;
 public class PractitionerServiceImpl extends ServiceImpl<PractitionerMapper, Practitioner>
     implements IPractitionerService {
 
-    @Autowired
-    PractitionerMapper practitionerMapper;
-
     /**
      * 根据执行人ID查询
      *
@@ -35,6 +32,16 @@ public class PractitionerServiceImpl extends ServiceImpl<PractitionerMapper, Pra
 
         QueryWrapper<Practitioner> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", userId);
-        return practitionerMapper.selectOne(queryWrapper);
+        return baseMapper.selectOne(queryWrapper);
+    }
+
+    /**
+     * 查询医疗参与者列表
+     *
+     * @return 医疗参与者列表
+     */
+    @Override
+    public List<Practitioner> getList() {
+        return baseMapper.selectList(new LambdaQueryWrapper<>());
     }
 }

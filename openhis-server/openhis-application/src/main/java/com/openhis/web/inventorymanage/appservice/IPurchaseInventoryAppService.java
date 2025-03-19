@@ -69,4 +69,11 @@ public interface IPurchaseInventoryAppService {
      * @return 操作结果
      */
     R<?> withdrawApproval(String busNo);
+
+    /**
+     * 入库单据页面初始化
+     *
+     * @return 初始化信息
+     */
+    R<?> purchaseInventoryInit();
 }
