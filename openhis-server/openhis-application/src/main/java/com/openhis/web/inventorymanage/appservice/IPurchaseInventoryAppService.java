@@ -6,8 +6,8 @@ package com.openhis.web.inventorymanage.appservice;
 import javax.servlet.http.HttpServletRequest;
 
 import com.core.common.core.domain.R;
-import com.openhis.web.inventorymanage.dto.InventoryReceiptDto;
 import com.openhis.web.inventorymanage.dto.InventorySearchParam;
+import com.openhis.web.inventorymanage.dto.PurchaseInventoryDto;
 
 /**
  * 采购入库 appService
@@ -41,10 +41,10 @@ public interface IPurchaseInventoryAppService {
     /**
      * 添加/编辑入库单据
      *
-     * @param inventoryReceiptDto 入库单据
+     * @param purchaseInventoryDto 入库单据
      * @return 操作结果
      */
-    R<?> addOrEditInventoryReceipt(InventoryReceiptDto inventoryReceiptDto);
+    R<?> addOrEditInventoryReceipt(PurchaseInventoryDto purchaseInventoryDto);
 
     /**
      * 删除单据

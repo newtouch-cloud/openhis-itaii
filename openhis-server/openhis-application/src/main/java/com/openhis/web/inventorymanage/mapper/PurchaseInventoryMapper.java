@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.openhis.web.inventorymanage.dto.InventoryReceiptPageDto;
 import com.openhis.web.inventorymanage.dto.InventorySearchParam;
 import com.openhis.web.inventorymanage.dto.ReceiptDetailDto;
+import com.openhis.web.inventorymanage.dto.ReceiptPageDto;
 
 /**
  * 采购入库查询用 mapper
@@ -32,7 +32,7 @@ public interface PurchaseInventoryMapper {
      * @param purchaseInventory 单据类型：采购入库
      * @return 入库单据分页列表
      */
-    Page<InventoryReceiptPageDto> selectInventoryReceiptPage(@Param("page") Page<InventoryReceiptPageDto> page,
+    Page<ReceiptPageDto> selectInventoryReceiptPage(@Param("page") Page<ReceiptPageDto> page,
         @Param(Constants.WRAPPER) QueryWrapper<InventorySearchParam> queryWrapper,
         @Param("purchaseInventory") Integer purchaseInventory);
 

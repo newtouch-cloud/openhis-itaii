@@ -3,7 +3,7 @@
 <mapper namespace="com.openhis.web.inventorymanage.mapper.PurchaseInventoryMapper">
 
     <select id="selectInventoryReceiptPage"
-            resultType="com.openhis.web.inventorymanage.dto.InventoryReceiptPageDto">
+            resultType="com.openhis.web.inventorymanage.dto.ReceiptPageDto">
         SELECT T2.id,
                T2.bus_no AS supply_bus_no,
                T2.status_enum,
@@ -11,7 +11,7 @@
                T2.approver_id,
                T2.approval_time,
                T2.applicant_id,
-               T2.apply_time,
+               T2.create_time,
                T2.practitioner_id,
                T2.tenant_id
         FROM (SELECT T1.id,
@@ -21,7 +21,7 @@
                      T1.approver_id,
                      T1.approval_time,
                      T1.applicant_id,
-                     T1.apply_time,
+                     T1.create_time,
                      T1.practitioner_id,
                      T1.tenant_id
               FROM wor_supply_request AS T1
@@ -33,7 +33,7 @@
                        T1.approver_id,
                        T1.approval_time,
                        T1.applicant_id,
-                       T1.apply_time,
+                       T1.create_time,
                        T1.practitioner_id,
                        T1.tenant_id
               ORDER BY T1.bus_no desc

@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.core.common.core.domain.model.LoginUser;
+import com.core.common.utils.DateUtils;
 import com.openhis.common.enums.SupplyStatus;
 import com.openhis.workflow.domain.SupplyRequest;
 import com.openhis.workflow.mapper.SupplyRequestMapper;
@@ -68,8 +69,10 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
      */
     @Override
     public boolean submitApproval(String busNo) {
-        int updateCount = baseMapper.update(null, new LambdaUpdateWrapper<SupplyRequest>()
-            .eq(SupplyRequest::getBusNo, busNo).set(SupplyRequest::getStatusEnum, SupplyStatus.APPROVAL.getValue()));
+        int updateCount = baseMapper.update(null,
+            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo)
+                .set(SupplyRequest::getStatusEnum, SupplyStatus.APPROVAL.getValue())
+                .set(SupplyRequest::getApplyTime, DateUtils.getNowDate()));
         return updateCount > 0;
     }
 

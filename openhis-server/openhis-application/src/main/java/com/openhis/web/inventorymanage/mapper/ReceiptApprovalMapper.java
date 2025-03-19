@@ -8,8 +8,13 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.web.inventorymanage.dto.ItemChargeDetailDto;
+import com.openhis.web.inventorymanage.dto.ReceiptApprovalSearchParam;
+import com.openhis.web.inventorymanage.dto.ReceiptPageDto;
 import com.openhis.web.inventorymanage.dto.SupplyItemDetailDto;
 import com.openhis.workflow.domain.SupplyRequest;
 
@@ -49,4 +54,18 @@ public interface ReceiptApprovalMapper extends BaseMapper<SupplyRequest> {
      * @return 价格信息
      */
     List<ItemChargeDetailDto> selectChargeDetail(@Param("itemIdList") List<Long> itemIdList);
+
+    /**
+     * 查询单据审批分页列表
+     *
+     * @param page 分页
+     * @param queryWrapper 查询条件
+     * @param approval 单据状态：审核中
+     * @param agree 单据状态：同意
+     * @param reject 单据状态：驳回
+     * @return 单据审批分页列表
+     */
+    Page<ReceiptPageDto> selectReceiptPage(@Param("page") Page<ReceiptPageDto> page,
+        @Param(Constants.WRAPPER) QueryWrapper<ReceiptApprovalSearchParam> queryWrapper,
+        @Param("approval") Integer approval, @Param("agree") Integer agree, @Param("reject") Integer reject);
 }

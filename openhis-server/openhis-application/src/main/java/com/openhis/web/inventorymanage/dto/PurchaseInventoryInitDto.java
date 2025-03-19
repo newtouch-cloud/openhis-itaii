@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class InventoryReceiptInitDto {
+public class PurchaseInventoryInitDto {
 
     /**
      * 单据号
@@ -26,22 +26,22 @@ public class InventoryReceiptInitDto {
     /**
      * 供应商
      */
-    private List<InventoryReceiptInitDto.supplierListOption> supplierListOptions;
+    private List<PurchaseInventoryInitDto.supplierListOption> supplierListOptions;
 
     /**
      * 经手人
      */
-    private List<InventoryReceiptInitDto.practitionerListOption> practitionerListOptions;
+    private List<PurchaseInventoryInitDto.practitionerListOption> practitionerListOptions;
 
     /**
      * 入库项目类型
      */
-    private List<InventoryReceiptInitDto.itemTypeOption> itemTypeOptions;
+    private List<PurchaseInventoryInitDto.itemTypeOption> itemTypeOptions;
 
     /**
      * 审批状态
      */
-    private List<InventoryReceiptInitDto.supplyStatusOption> supplyStatusOptions;
+    private List<PurchaseInventoryInitDto.supplyStatusOption> supplyStatusOptions;
 
     /**
      * 供应商

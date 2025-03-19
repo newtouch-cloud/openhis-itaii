@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
-import com.openhis.common.enums.AssignSeqEnum;
 import com.core.common.utils.AssignSeqUtil;
 import com.core.common.utils.DateUtils;
 import com.core.common.utils.MessageUtils;
@@ -27,10 +26,7 @@ import com.openhis.administration.service.IPractitionerService;
 import com.openhis.administration.service.ISupplierService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.ItemType;
-import com.openhis.common.enums.SupplyCategory;
-import com.openhis.common.enums.SupplyStatus;
-import com.openhis.common.enums.SupplyType;
+import com.openhis.common.enums.*;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.inventorymanage.appservice.IPurchaseInventoryAppService;
@@ -71,29 +67,29 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
     @Override
     public R<?> purchaseInventoryInit() {
 
-        InventoryReceiptInitDto initDto = new InventoryReceiptInitDto();
+        PurchaseInventoryInitDto initDto = new PurchaseInventoryInitDto();
         // 单据号
         initDto.setBusNo(assignSeqUtil.getSeqByDay(AssignSeqEnum.PURCHASE_NUM.getPrefix(), 12));
         // 查询供应商列表
         List<Supplier> supplierList = supplierService.getList();
         // 查询经手人列表
         List<Practitioner> practitionerList = practitionerService.getList();
-        // 供应商信息
-        List<InventoryReceiptInitDto.practitionerListOption> practitionerListOptions = practitionerList.stream()
-            .map(practitioner -> new InventoryReceiptInitDto.practitionerListOption(practitioner.getId(),
+        // 经手人信息
+        List<PurchaseInventoryInitDto.practitionerListOption> practitionerListOptions = practitionerList.stream()
+            .map(practitioner -> new PurchaseInventoryInitDto.practitionerListOption(practitioner.getId(),
                 practitioner.getName()))
             .collect(Collectors.toList());
-        // 经手人信息
-        List<InventoryReceiptInitDto.supplierListOption> supplierListOptions = supplierList.stream()
-            .map(supplier -> new InventoryReceiptInitDto.supplierListOption(supplier.getId(), supplier.getName()))
+        // 供应商信息
+        List<PurchaseInventoryInitDto.supplierListOption> supplierListOptions = supplierList.stream()
+            .map(supplier -> new PurchaseInventoryInitDto.supplierListOption(supplier.getId(), supplier.getName()))
             .collect(Collectors.toList());
         // 入库项目类型
-        List<InventoryReceiptInitDto.itemTypeOption> itemTypeOptions = Stream.of(ItemType.values())
-            .map(itemType -> new InventoryReceiptInitDto.itemTypeOption(itemType.getValue(), itemType.getInfo()))
+        List<PurchaseInventoryInitDto.itemTypeOption> itemTypeOptions = Stream.of(ItemType.values())
+            .map(itemType -> new PurchaseInventoryInitDto.itemTypeOption(itemType.getValue(), itemType.getInfo()))
             .collect(Collectors.toList());
         // 审批状态
-        List<InventoryReceiptInitDto.supplyStatusOption> supplyStatusOptions = Stream.of(SupplyStatus.values())
-            .map(supplyStatus -> new InventoryReceiptInitDto.supplyStatusOption(supplyStatus.getValue(),
+        List<PurchaseInventoryInitDto.supplyStatusOption> supplyStatusOptions = Stream.of(SupplyStatus.values())
+            .map(supplyStatus -> new PurchaseInventoryInitDto.supplyStatusOption(supplyStatus.getValue(),
                 supplyStatus.getInfo()))
             .collect(Collectors.toList());
 
@@ -125,7 +121,7 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
         QueryWrapper<InventorySearchParam> queryWrapper =
             HisQueryUtils.buildQueryWrapper(inventorySearchParam, searchKey, searchFields, request);
         // 查询入库单据分页列表
-        Page<InventoryReceiptPageDto> inventoryReceiptPage = purchaseInventoryMapper.selectInventoryReceiptPage(
+        Page<ReceiptPageDto> inventoryReceiptPage = purchaseInventoryMapper.selectInventoryReceiptPage(
             new Page<>(pageNo, pageSize), queryWrapper, SupplyType.PURCHASE_INVENTORY.getValue());
 
         inventoryReceiptPage.getRecords().forEach(e -> {
@@ -144,8 +140,8 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
     @Override
     public R<?> getDetail(String busNo) {
         List<ReceiptDetailDto> receiptDetailList = purchaseInventoryMapper.selectDetail(busNo);
-        if (receiptDetailList.isEmpty()){
-            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00006,null));
+        if (receiptDetailList.isEmpty()) {
+            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00006, null));
         }
         return R.ok(receiptDetailList);
     }
@@ -153,17 +149,17 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
     /**
      * 添加/编辑入库单据
      *
-     * @param inventoryReceiptDto 入库单据
+     * @param purchaseInventoryDto 入库单据
      * @return 操作结果
      */
     @Override
-    public R<?> addOrEditInventoryReceipt(InventoryReceiptDto inventoryReceiptDto) {
+    public R<?> addOrEditInventoryReceipt(PurchaseInventoryDto purchaseInventoryDto) {
 
         // 初始化单据信息
         SupplyRequest supplyRequest = new SupplyRequest();
-        BeanUtils.copyProperties(inventoryReceiptDto, supplyRequest);
+        BeanUtils.copyProperties(purchaseInventoryDto, supplyRequest);
 
-        if (inventoryReceiptDto.getId() != null) {
+        if (purchaseInventoryDto.getId() != null) {
             // 更新单据信息
             supplyRequestService.updateById(supplyRequest);
         } else {

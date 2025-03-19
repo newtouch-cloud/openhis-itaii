@@ -26,7 +26,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class InventoryReceiptDto implements Serializable {
+public class PurchaseInventoryDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

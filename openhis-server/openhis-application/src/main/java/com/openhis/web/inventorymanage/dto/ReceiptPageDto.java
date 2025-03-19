@@ -16,14 +16,14 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * 入库单据分页列表 dto
+ * 单据分页列表 dto
  *
  * @author zwh
  * @date 2025-02-18
  */
 @Data
 @Accessors(chain = true)
-public class InventoryReceiptPageDto implements Serializable {
+public class ReceiptPageDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,16 +39,22 @@ public class InventoryReceiptPageDto implements Serializable {
     private Integer statusEnum;
     private String statusEnum_enumText;
 
+    /** 状态 */
+    private Integer typeEnum;
+    private String typeEnum_enumText;
+
     /** 供应商 */
     private Long supplierId;
 
     /** 经手人 */
     @Dict(dictCode = "id", dictText = "name", dictTable = "adm_practitioner")
     private Long practitionerId;
+    private String practitionerId_dictText;
 
     /** 审批人 */
     @Dict(dictCode = "id", dictText = "name", dictTable = "adm_practitioner")
     private Long approverId;
+    private String approverId_dictText;
 
     /** 审批时间 */
     private Date approvalTime;
@@ -56,8 +62,12 @@ public class InventoryReceiptPageDto implements Serializable {
     /** 申请人 */
     @Dict(dictCode = "id", dictText = "name", dictTable = "adm_practitioner")
     private Long applicantId;
+    private String applicantId_dictText;
 
     /** 申请时间 */
     private Date applyTime;
+
+    /** 制单日期 */
+    private Date createTime;
 
 }
