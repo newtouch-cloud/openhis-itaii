@@ -39,7 +39,7 @@ public class OutpatientInfusionRecordController {
      * @return 门诊输液的患者列表
      */
     @GetMapping(value = "/infusion-patient-list")
-    public R<?> getPatientInfusionRecord(OutpatientInfusionSearchParam outpatientInfusionSearchParam,
+    public R<?> getOutpatientInfusionPatientList(OutpatientInfusionSearchParam outpatientInfusionSearchParam,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
 
