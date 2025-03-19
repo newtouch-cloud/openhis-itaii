@@ -144,7 +144,10 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
     @Override
     public R<?> getDetail(String busNo) {
         List<ReceiptDetailDto> receiptDetailList = purchaseInventoryMapper.selectDetail(busNo);
-        return null;
+        if (receiptDetailList.isEmpty()){
+            return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00006,null));
+        }
+        return R.ok(receiptDetailList);
     }
 
     /**

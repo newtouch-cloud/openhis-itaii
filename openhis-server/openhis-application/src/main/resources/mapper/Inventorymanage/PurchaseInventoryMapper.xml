@@ -41,7 +41,37 @@
         ${ew.customSqlSegment}
     </select>
     <select id="selectDetail" resultType="com.openhis.web.inventorymanage.dto.ReceiptDetailDto">
-        SELECT *
+        SELECT T1.id,
+               T1.bus_no,
+               T1.item_quantity,
+               T1.unit_code,
+               T1.detail_json,
+               T1.purpose_type_enum,
+               T1.apply_time,
+               T1.lot_number,
+               T1.trace_no,
+               T1.invoice_no,
+               T1.start_time,
+               T1.end_time,
+               T1.price,
+               T1.total_price,
+               T1.sell_price,
+               T1.min_sell_price,
+               T2."name" AS item_name,
+               T3.total_volume,
+               T4."name" AS supplier_name,
+               T5."name" AS practitioner_name,
+               T6."name" AS purpose_location_name,
+               T7."name" AS purpose_location_store_name,
+               (SELECT COALESCE(SUM(CASE
+                                        WHEN T1.unit_code = T9.base_unit_code THEN T9.base_quantity
+                                        WHEN T1.unit_code = T9.min_unit_code THEN T9.min_quantity
+                                        ELSE 0 END ), 0)
+                   FROM wor_inventory_item T9
+                   WHERE T9.item_id = T1.item_id
+                     AND T9.location_id = T1.purpose_location_id
+                     AND T9.location_store_id = T1.purpose_location_store_id
+               ) AS total_quantity
         FROM wor_supply_request T1
             LEFT JOIN med_medication_definition T2
                 ON T1.item_id = T2.id
@@ -55,10 +85,44 @@
                 ON T1.purpose_location_id = T6.id
             LEFT JOIN adm_location T7
                 ON T1.purpose_location_store_id  = T7.id
+            LEFT JOIN wor_inventory_item T9
+                ON T1.item_id = T9.item_id
+                    AND T1.purpose_location_id = T9.location_id
+                    AND T1.purpose_location_store_id = T9.location_store_id
         WHERE T1.bus_no = #{busNo}
             AND T1.delete_flag = '0'
-        UNION ALL
-        SELECT *
+        UNION
+        SELECT T1.id,
+               T1.bus_no,
+               T1.item_quantity,
+               T1.unit_code,
+               T1.detail_json,
+               T1.purpose_type_enum,
+               T1.apply_time,
+               T1.lot_number,
+               T1.trace_no,
+               T1.invoice_no,
+               T1.start_time,
+               T1.end_time,
+               T1.price,
+               T1.total_price,
+               T1.sell_price,
+               T1.min_sell_price,
+               T8."name" AS item_name,
+               T8."size" AS total_volume,
+               T4."name" AS supplier_name,
+               T5."name" AS practitioner_name,
+               T6."name" AS purpose_location_name,
+               T7."name" AS purpose_location_store_name,
+               (SELECT COALESCE(SUM(CASE
+                                        WHEN T1.unit_code = T9.base_unit_code THEN T9.base_quantity
+                                        WHEN T1.unit_code = T9.min_unit_code THEN T9.min_quantity
+                                        ELSE 0 END ), 0)
+                FROM wor_inventory_item T9
+                WHERE T9.item_id = T1.item_id
+                  AND T9.location_id = T1.purpose_location_id
+                  AND T9.location_store_id = T1.purpose_location_store_id
+               ) AS total_quantity
         FROM wor_supply_request T1
             LEFT JOIN adm_device_definition T8
                 ON T1.item_id = T8.id
@@ -70,6 +134,10 @@
                 ON T1.purpose_location_id = T6.id
             LEFT JOIN adm_location T7
                 ON T1.purpose_location_store_id  = T7.id
+            LEFT JOIN wor_inventory_item T9
+                ON T1.item_id = T9.item_id
+                    AND T1.purpose_location_id = T9.location_id
+                    AND T1.purpose_location_store_id = T9.location_store_id
         WHERE T1.bus_no = #{busNo}
             AND T1.delete_flag = '0'
     </select>
