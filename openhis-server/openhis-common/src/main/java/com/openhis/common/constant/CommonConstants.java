@@ -114,10 +114,15 @@ public class CommonConstants {
         String PatientBusNo = "patient_bus_no";
 
         /**
+         * 患者ID
+         */
+        String PatientId = "patient_id";
+
+
+        /**
          * 就诊号
          */
         String EncounterBusNo = "encounter_bus_no";
-
         /**
          * 身份证号
          */
@@ -141,17 +146,17 @@ public class CommonConstants {
         /**
          * 请求状态
          */
-        String requestStatus = "request_status";
+        String RequestStatus = "request_status";
 
         /**
          * 创建时间
          */
-        String createTime = "create_time";
+        String CreateTime = "create_time";
 
         /**
          * 请求基于什么的ID
          */
-        String basedOnId = "based_on_id";
+        String BasedOnId = "based_on_id";
     }
 
     /**

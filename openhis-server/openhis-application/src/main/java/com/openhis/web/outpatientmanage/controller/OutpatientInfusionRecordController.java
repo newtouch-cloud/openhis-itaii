@@ -2,6 +2,8 @@ package com.openhis.web.outpatientmanage.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +14,6 @@ import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.web.outpatientmanage.appservice.IOutpatientInfusionRecordService;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto;
-import com.openhis.web.outpatientmanage.dto.OutpatientInfusionSearchParam;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,16 +36,18 @@ public class OutpatientInfusionRecordController {
     /**
      * 查询门诊输液的患者列表
      *
-     * @param outpatientInfusionSearchParam 查询参数
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
      * @return 返回门诊输液的患者列表
      */
     @GetMapping(value = "/infusion-patient-list")
-    public R<?> getOutpatientInfusionPatientList(OutpatientInfusionSearchParam outpatientInfusionSearchParam,
+    public R<?> getOutpatientInfusionPatientList(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
-        return R.ok(outpatientInfusionRecordService.getOutpatientInfusionPatientList(outpatientInfusionSearchParam,
-            pageNo, pageSize));
+        return R
+            .ok(outpatientInfusionRecordService.getOutpatientInfusionPatientList(searchKey, pageNo, pageSize, request));
     }
 
     /**
@@ -54,9 +57,10 @@ public class OutpatientInfusionRecordController {
      * @return 当前患者门诊输液待执行列表
      */
     @GetMapping(value = "/patient-infusion-record")
-    public R<?> getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto) {
+    public R<?> getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto,
+        HttpServletRequest request) {
 
-        return R.ok(outpatientInfusionRecordService.getPatientInfusionRecord(outpatientInfusionPatientDto));
+        return R.ok(outpatientInfusionRecordService.getPatientInfusionRecord(outpatientInfusionPatientDto, request));
     }
 
     /**
@@ -94,29 +98,23 @@ public class OutpatientInfusionRecordController {
     /**
      * 门诊输液待执行记录查询
      *
-     * @param beginTime 开始时间
-     * @param endTime 结束时间
      * @return 门诊输液待执行记录列表
      */
     @GetMapping(value = "/infusion-wait-perform-record")
-    public R<?> getPatientInfusionRecords(@RequestParam(required = false) String beginTime,
-        @RequestParam(required = false) String endTime) {
+    public R<?> getPatientInfusionRecords(HttpServletRequest request) {
 
-        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(beginTime, endTime, false));
+        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(request, false));
     }
 
     /**
      * 门诊输液执行历史记录查询
      *
-     * @param beginTime 开始时间
-     * @param endTime 结束时间
      * @return 门诊输液执行历史记录列表
      */
     @GetMapping(value = "/infusion-perform-record")
-    public R<?> getPatientInfusionPerformRecord(@RequestParam(required = false) String beginTime,
-        @RequestParam(required = false) String endTime) {
+    public R<?> getPatientInfusionPerformRecord(HttpServletRequest request) {
 
-        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(beginTime, endTime, true));
+        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(request, true));
     }
 
 }

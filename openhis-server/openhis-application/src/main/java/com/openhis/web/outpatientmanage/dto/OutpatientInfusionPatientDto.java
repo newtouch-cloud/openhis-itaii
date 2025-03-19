@@ -50,4 +50,7 @@ public class OutpatientInfusionPatientDto {
     /** 病人年龄 */
     private String ageString;
 
+    /** 开单时间 */
+    private Date createTime;
+
 }
