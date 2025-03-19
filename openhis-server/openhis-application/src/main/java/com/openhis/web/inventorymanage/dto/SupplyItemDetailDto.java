@@ -21,9 +21,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class SupplyItemDetailDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class SupplyItemDetailDto {
 
     /** ID */
     @JsonSerialize(using = ToStringSerializer.class)

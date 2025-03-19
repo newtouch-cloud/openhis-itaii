@@ -34,11 +34,6 @@ public class PurchaseInventoryInitDto {
     private List<PurchaseInventoryInitDto.practitionerListOption> practitionerListOptions;
 
     /**
-     * 入库项目类型
-     */
-    private List<PurchaseInventoryInitDto.itemTypeOption> itemTypeOptions;
-
-    /**
      * 审批状态
      */
     private List<PurchaseInventoryInitDto.supplyStatusOption> supplyStatusOptions;
@@ -66,20 +61,6 @@ public class PurchaseInventoryInitDto {
         private String label;
 
         public practitionerListOption(Long value, String label) {
-            this.value = value;
-            this.label = label;
-        }
-    }
-
-    /**
-     * 入库项目类型
-     */
-    @Data
-    public static class itemTypeOption {
-        private Integer value;
-        private String label;
-
-        public itemTypeOption(Integer value, String label) {
             this.value = value;
             this.label = label;
         }

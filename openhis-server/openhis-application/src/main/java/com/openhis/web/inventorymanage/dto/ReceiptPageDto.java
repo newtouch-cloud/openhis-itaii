@@ -3,7 +3,6 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -23,9 +22,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class ReceiptPageDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ReceiptPageDto {
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
@@ -70,6 +67,6 @@ public class ReceiptPageDto implements Serializable {
     private Date applyTime;
 
     /** 制单日期 */
-    private Date createTime;
+    private Date occurrenceTime;
 
 }
