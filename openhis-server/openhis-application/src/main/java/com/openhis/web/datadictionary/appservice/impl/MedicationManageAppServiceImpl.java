@@ -117,9 +117,9 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             // 药品状态
             e.setStatusEnum_enumText(EnumUtils.getInfoByValue(PublicationStatus.class, e.getStatusEnum()));
             // 活动标记
-            e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
+//            e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
             // 适用范围
-            e.setDomainEnum_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getDomainEnum()));
+//            e.setDomainEnum_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getDomainEnum()));
         });
 
         // 返回【药品录列表DTO】分页

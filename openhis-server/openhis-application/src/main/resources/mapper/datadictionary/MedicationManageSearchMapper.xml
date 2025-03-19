@@ -20,6 +20,9 @@
         T2.dose_unit_code,
         T2.max_unit,
         T2.definition,
+        T2.usage_limit,
+        T2.ddd_code,
+        T2.ddd_unit_code,
         T1.bus_no,
         T1.name,
         T1.domain_enum,
@@ -32,7 +35,6 @@
         T1.merchandise_py_str,
         T1.merchandise_wb_str,
         T1.unit_code,
-        T1.min_unit_code,
         T1.comprised_text,
         T1.ingredient,
         T1.part_percent,
@@ -48,9 +50,24 @@
         T1.restricted_flag,
         T1.restricted_scope,
         T1.children_flag,
-        T1.characteristic
+        T1.characteristic,
+        T1.national_drug_code,
+        T1.part_attribute,
+        T1.antibiotic_code
+        T1.restricted_enum
+        T1.self_flag
+        T1.antibiotic_flag
+        T1.basic_flag
+        T1.remark,
+        T3.manufacturer_name,
+        T4.base_unit_code,
+        T4.base_quantity,
+        T4.min_unit_code,
+        T4.min_quantity
         FROM med_medication_definition T1
-        LEFT JOIN med_medication T2 on T1.id = T2.medication_def_id
+        LEFT JOIN med_medication T2 ON T1.id = T2.medication_def_id
+        LEFT JOIN adm_supplier T3 ON T1.manufacturer_id = T3.id
+        LEFT JOIN wor_inventory_item T4 ON  T1.id = T4.item_id
         <where>
             T1.delete_flag = '0'
             <if test="searchKey!=null and searchKey!='' ">
@@ -79,6 +96,7 @@
         ORDER BY T1.bus_no
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
+
     <select id="getOne" resultType="com.openhis.web.datadictionary.dto.MedicationManageDto">
         SELECT T2.id,
         T2.medication_def_id,
@@ -138,6 +156,7 @@
             </if>
         </where>
     </select>
+
     <select id="getPageCount" resultType="java.lang.Long">
         SELECT COUNT(*)
         FROM med_medication_definition T1
@@ -168,6 +187,7 @@
             </if>
         </where>
     </select>
+
     <select id="getList" resultType="com.openhis.web.datadictionary.dto.MedicationManageDto">
         SELECT T2.id,
         T2.medication_def_id,
@@ -244,4 +264,5 @@
         </where>
         ORDER BY T1.bus_no
     </select>
+
 </mapper>

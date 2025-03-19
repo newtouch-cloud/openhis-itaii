@@ -49,7 +49,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025-02-20
  */
 @RestController
-@RequestMapping("/datadictionary/diagnosistreatment")
+@RequestMapping("/data-dictionary/diagnosis-treatment")
 @Slf4j
 @AllArgsConstructor
 public class DiagnosisTreatmentController {

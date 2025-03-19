@@ -77,6 +77,15 @@ public class MedicationManageDto {
     /** 药品定义 */
     private String definition;
 
+    /** 用量限定 */
+    private BigDecimal usageLimit;
+
+    /** DDD值 */
+    private String dddCode;
+
+    /** DDD单位 */
+    private String dddUnitCode;
+
     /** 药品编号 */
     private String busNo;
 
@@ -116,7 +125,7 @@ public class MedicationManageDto {
     private String unitCode;
 
     /** 最小单位 */
-    private String minUnitCode;
+//    private String minUnitCode;
 
     /** 所含耗材 */
     private String comprisedText;
@@ -169,5 +178,41 @@ public class MedicationManageDto {
 
     /** 产品特性 */
     private Integer characteristic;
+
+    /** 贯标国家编码 */
+    private String nationalDrugCode;
+
+    /** 拆分属性 */
+    private String partAttribute;
+
+    /** 抗生素分类 */
+    private String antibioticCode;
+
+    /** 权限限制 */
+    private Integer restrictedEnum;
+
+    /** 是否自制 */
+    private Integer selfFlag;
+
+    /** 是否抗生素 */
+    private Integer antibioticFlag;
+
+    /** 基药标识 */
+    private Integer basicFlag;
+
+    /** 生产厂家名称 */
+    private String manufacturerName;
+
+    /** 常规单位 */
+    private String baseUnitCode;
+
+    /** 当前库存数量(常规单位) */
+    private String baseQuantity;
+
+    /** 最小单位 */
+    private String minUnitCode;
+
+    /** 当前库存数量(最小单位数量) */
+    private String minQuantity;
 
 }
