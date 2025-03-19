@@ -1,5 +1,7 @@
 package com.openhis.web.doctorstation.appservice.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,16 +15,25 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.core.domain.R;
+import com.core.common.utils.AssignSeqUtil;
+import com.core.common.utils.MessageUtils;
+import com.openhis.administration.domain.ChargeItem;
+import com.openhis.administration.service.IChargeItemService;
 import com.openhis.common.constant.CommonConstants;
-import com.openhis.common.enums.ActivityType;
-import com.openhis.common.enums.ConditionCode;
+import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.*;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
+import com.openhis.medication.domain.MedicationRequest;
+import com.openhis.medication.service.IMedicationRequestService;
 import com.openhis.web.doctorstation.appservice.IDoctorStationAdviceAppService;
-import com.openhis.web.doctorstation.dto.AdviceBaseDto;
-import com.openhis.web.doctorstation.dto.AdviceInventoryDto;
-import com.openhis.web.doctorstation.dto.AdvicePriceDto;
+import com.openhis.web.doctorstation.dto.*;
 import com.openhis.web.doctorstation.mapper.DoctorStationAdviceAppMapper;
+import com.openhis.workflow.domain.DeviceRequest;
+import com.openhis.workflow.domain.ServiceRequest;
+import com.openhis.workflow.service.IDeviceRequestService;
+import com.openhis.workflow.service.IServiceRequestService;
 
 /**
  * 医生站-医嘱/处方 应用实现类
@@ -31,7 +42,22 @@ import com.openhis.web.doctorstation.mapper.DoctorStationAdviceAppMapper;
 public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAppService {
 
     @Resource
+    AssignSeqUtil assignSeqUtil;
+
+    @Resource
     DoctorStationAdviceAppMapper doctorStationAdviceAppMapper;
+
+    @Resource
+    IMedicationRequestService iMedicationRequestService;
+
+    @Resource
+    IDeviceRequestService iDeviceRequestService;
+
+    @Resource
+    IServiceRequestService iServiceRequestService;
+
+    @Resource
+    IChargeItemService iChargeItemService;
 
     /**
      * 查询医嘱信息
@@ -63,6 +89,8 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
         // 医嘱库存集合
         List<AdviceInventoryDto> adviceInventory = doctorStationAdviceAppMapper.getAdviceInventory(locationId,
             adviceDefinitionIdList, CommonConstants.SqlCondition.ABOUT_INVENTORY_TABLE_STR);
+        // TODO: 预减库存待处理
+
         // 费用定价子表信息
         List<AdvicePriceDto> childCharge = doctorStationAdviceAppMapper
             .getChildCharge(ConditionCode.UNIT_PRODUCT_BATCH_NUM.getInfo(), chargeItemDefinitionIdList);
@@ -130,6 +158,137 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             baseDto.setPriceList(priceList);
         }
         return adviceBaseInfo;
+    }
+
+    /**
+     * 门诊保存医嘱
+     *
+     * @param adviceSaveParam 医嘱表单信息
+     * @return 结果
+     */
+    @Override
+    public R<?> saveAdvice(AdviceSaveParam adviceSaveParam) {
+        // 医嘱分类信息
+        List<AdviceSaveDto> adviceSaveList = adviceSaveParam.getAdviceSaveList();
+        // TODO: 保存医嘱时规则校验;待做
+        // 药品
+        List<AdviceSaveDto> medicineList = adviceSaveList.stream()
+            .filter(e -> ItemType.MEDICINE.getValue().equals(e.getAdviceType())).collect(Collectors.toList());
+        // 耗材
+        List<AdviceSaveDto> deviceList = adviceSaveList.stream()
+            .filter(e -> ItemType.DEVICE.getValue().equals(e.getAdviceType())).collect(Collectors.toList());
+        // 诊疗活动
+        List<AdviceSaveDto> activityList = adviceSaveList.stream()
+            .filter(e -> ItemType.ACTIVITY.getValue().equals(e.getAdviceType())).collect(Collectors.toList());
+        // 生成处方号 , 只有开了药品才有处方号
+        String prescriptionNo = "";
+        if (medicineList.size() > 0) {
+            prescriptionNo = assignSeqUtil.getSeq(AssignSeqEnum.PRESCRIPTION_NO.getPrefix(), 8);
+        }
+        // 保存药品请求
+        List<MedicationRequest> medicationRequestList = new ArrayList<>();
+        MedicationRequest medicationRequest;
+        for (AdviceSaveDto adviceSaveDto : medicineList) {
+            medicationRequest = new MedicationRequest();
+            medicationRequest.setBusNo(assignSeqUtil.getSeq(AssignSeqEnum.MEDICATION_RES_NO.getPrefix(), 8));
+            medicationRequest.setPrescriptionNo(prescriptionNo);
+            medicationRequest.setQuantity(adviceSaveDto.getQuantity());
+            medicationRequest.setExecuteNum(adviceSaveDto.getExecuteNum());
+            medicationRequest.setUnitCode(adviceSaveDto.getUnitCode());
+            medicationRequest.setLotNumber(adviceSaveDto.getLotNumber());
+            medicationRequest.setStatusEnum(adviceSaveDto.getStatusEnum());
+            medicationRequest.setCategoryEnum(adviceSaveDto.getCategoryEnum());
+            medicationRequest.setMedicationId(adviceSaveDto.getAdviceDefinitionId());// 医嘱定义id
+            medicationRequest.setPatientId(adviceSaveDto.getPatientId());
+            medicationRequest.setPractitionerId(adviceSaveDto.getPractitionerId());
+            medicationRequest.setOrgId(adviceSaveDto.getOrgId());
+            medicationRequest.setLocationId(adviceSaveDto.getLocationId());
+            medicationRequest.setEncounterId(adviceSaveDto.getEncounterId());
+            medicationRequest.setTherapyEnum(adviceSaveDto.getTherapyEnum());
+            medicationRequest.setMethodCode(adviceSaveDto.getMethodCode());
+            medicationRequest.setRateCode(adviceSaveDto.getRateCode());
+            medicationRequest.setDose(adviceSaveDto.getDose());
+            medicationRequest.setDoseUnitCode(adviceSaveDto.getDoseUnitCode());
+            // medicationRequest.setPackageId(adviceSaveDto.getPackageId());
+
+            medicationRequestList.add(medicationRequest);
+        }
+        iMedicationRequestService.saveBatch(medicationRequestList);
+
+        // 保存耗材请求
+        List<DeviceRequest> deviceRequestList = new ArrayList<>();
+        DeviceRequest deviceRequest;
+        for (AdviceSaveDto adviceSaveDto : deviceList) {
+            deviceRequest = new DeviceRequest();
+            deviceRequest.setBusNo(assignSeqUtil.getSeq(AssignSeqEnum.DEVICE_RES_NO.getPrefix(), 8));
+            deviceRequest.setPrescriptionNo(prescriptionNo);
+            deviceRequest.setQuantity(adviceSaveDto.getQuantity());
+            deviceRequest.setUnitCode(adviceSaveDto.getUnitCode());
+            deviceRequest.setLotNumber(adviceSaveDto.getLotNumber());
+            deviceRequest.setStatusEnum(adviceSaveDto.getStatusEnum());
+            deviceRequest.setCategoryEnum(adviceSaveDto.getCategoryEnum());
+            deviceRequest.setDeviceDefId(adviceSaveDto.getAdviceDefinitionId());// 耗材定义id
+            deviceRequest.setPatientId(adviceSaveDto.getPatientId());
+            deviceRequest.setRequesterId(adviceSaveDto.getPractitionerId());
+            deviceRequest.setOrgId(adviceSaveDto.getOrgId());
+            deviceRequest.setLocationId(adviceSaveDto.getLocationId());
+            deviceRequest.setEncounterId(adviceSaveDto.getEncounterId());
+            // deviceRequest.setPackageId(adviceSaveDto.getPackageId());
+            // deviceRequest.setActivityId(adviceSaveDto.getActivityId());
+
+            deviceRequestList.add(deviceRequest);
+        }
+        iDeviceRequestService.saveBatch(deviceRequestList);
+
+        // 保存诊疗项目请求
+        List<ServiceRequest> serviceRequestList = new ArrayList<>();
+        ServiceRequest serviceRequest;
+        for (AdviceSaveDto adviceSaveDto : activityList) {
+            serviceRequest = new ServiceRequest();
+            serviceRequest.setBusNo(assignSeqUtil.getSeq(AssignSeqEnum.SERVICE_RES_NO.getPrefix(), 8));
+            serviceRequest.setPrescriptionNo(prescriptionNo);
+            serviceRequest.setBasedOnTable(CommonConstants.TableName.WOR_ACTIVITY_DEFINITION);
+            serviceRequest.setBasedOnId(adviceSaveDto.getAdviceDefinitionId());
+            serviceRequest.setQuantity(adviceSaveDto.getQuantity());
+            serviceRequest.setUnitCode(adviceSaveDto.getUnitCode());
+            serviceRequest.setStatusEnum(adviceSaveDto.getStatusEnum());
+            serviceRequest.setCategoryEnum(adviceSaveDto.getCategoryEnum());
+            serviceRequest.setCategoryEnum(adviceSaveDto.getCategoryEnum());
+            serviceRequest.setActivityId(adviceSaveDto.getAdviceDefinitionId());// 诊疗定义id
+            serviceRequest.setPatientId(adviceSaveDto.getPatientId());
+            serviceRequest.setRequesterId(adviceSaveDto.getPractitionerId());
+            serviceRequest.setEncounterId(adviceSaveDto.getEncounterId());
+
+            serviceRequestList.add(serviceRequest);
+        }
+        iServiceRequestService.saveBatch(serviceRequestList);
+
+        // 保存费用项管理
+        List<ChargeItem> chargeItemList = new ArrayList<>();
+        ChargeItem chargeItem;
+        for (AdviceSaveDto adviceSaveDto : adviceSaveList) {
+            chargeItem = new ChargeItem();
+            chargeItem.setStatusEnum(ChargeItemStatus.PLANNED.getValue());
+            chargeItem.setBusNo(assignSeqUtil.getSeq(AssignSeqEnum.CHARGE_ITEM_NO.getPrefix(), 8));
+            chargeItem.setPrescriptionNo(prescriptionNo);
+            chargeItem.setPatientId(adviceSaveDto.getPatientId());
+            chargeItem.setContextEnum(adviceSaveDto.getAdviceType());
+            chargeItem.setEncounterId(adviceSaveDto.getEncounterId());
+            chargeItem.setQuantityValue(adviceSaveDto.getQuantity()); // 数量
+            chargeItem.setQuantityUnit(adviceSaveDto.getUnitCode()); // 单位
+            chargeItem.setUnitPrice(adviceSaveDto.getUnitPrice()); // 单价
+            chargeItem
+                .setTotalPrice((new BigDecimal(adviceSaveDto.getQuantity()).multiply(adviceSaveDto.getUnitPrice()))
+                    .setScale(4, RoundingMode.HALF_UP)); // 总价
+            chargeItem.setDefinitionId(adviceSaveDto.getDefinitionId());
+            chargeItem.setDefDetailId(adviceSaveDto.getDefinitionDetailId());
+
+            chargeItemList.add(chargeItem);
+        }
+        iChargeItemService.saveBatch(chargeItemList);
+        // TODO: 此处调用请求方法接口
+
+        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"门诊医嘱"}));
     }
 
 }

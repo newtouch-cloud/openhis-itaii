@@ -115,12 +115,12 @@ const currentRow = ref(null);
 const dateRange = ref([]);
 const historyRecordsList = ref([])
 const patientList = ref([]);
-const infusionList = ref([]);
-// const infusionList = ref([
-//       { groupId: 1, executionCount: 2, doctorId_dictText: '张三', patientName: '李四', genderEnum_enumText: '男', status: '123456789012345678', medicationInformation: '药品A', medicationAntity: 10, rateCode: '每日一次', dose: '10mg', speed: '50ml/h', orgId_dictText: '内科', medicationStatusEnum_enumText: '已发放', skinTestFlag_enumText: '是', clinicalStatusEnum_enumText: '阴性' },
-//       { groupId: 1, executionCount: 2, doctorId_dictText: '张三', patientName: '王五', genderEnum_enumText: '女', status: '123456789012345679', medicationInformation: '药品A', medicationAntity: 10, rateCode: '每日一次', dose: '10mg', speed: '50ml/h', orgId_dictText: '内科', medicationStatusEnum_enumText: '已发放', skinTestFlag_enumText: '是', clinicalStatusEnum_enumText: '阴性' },
-//       { groupId: 2, executionCount: 1, doctorId_dictText: '李六', patientName: '赵七', genderEnum_enumText: '男', status: '123456789012345680', medicationInformation: '药品B', medicationAntity: 5, rateCode: '每日两次', dose: '5mg', speed: '30ml/h', orgId_dictText: '外科', medicationStatusEnum_enumText: '已发放', skinTestFlag_enumText: '否', clinicalStatusEnum_enumText: '无' },
-//     ]);
+// const infusionList = ref([]);
+const infusionList = ref([
+      { groupId: 1, executionCount: 2, doctorId_dictText: '张三', patientName: '李四', genderEnum_enumText: '男', status: '123456789012345678', medicationInformation: '药品A', medicationAntity: 10, rateCode: '每日一次', dose: '10mg', speed: '50ml/h', orgId_dictText: '内科', medicationStatusEnum_enumText: '已发放', flagText: '是', clinicalStatusEnum_enumText: '阴性' },
+      { groupId: 1, executionCount: 2, doctorId_dictText: '张三', patientName: '王五', genderEnum_enumText: '女', status: '123456789012345679', medicationInformation: '药品A', medicationAntity: 10, rateCode: '每日一次', dose: '10mg', speed: '50ml/h', orgId_dictText: '内科', medicationStatusEnum_enumText: '已发放', flagText: '是', clinicalStatusEnum_enumText: '阴性' },
+      { groupId: 2, executionCount: 1, doctorId_dictText: '李六', patientName: '赵七', genderEnum_enumText: '男', status: '123456789012345680', medicationInformation: '药品B', medicationAntity: 5, rateCode: '每日两次', dose: '5mg', speed: '30ml/h', orgId_dictText: '外科', medicationStatusEnum_enumText: '已发放', flagText: '否', clinicalStatusEnum_enumText: '无' },
+    ]);
 
 const ids = ref([]);
 
@@ -193,30 +193,30 @@ function handleSelectionChange(selection) {
   });
   // 获取当前选中的 groupId 和 medicationId 集合
   const currentGroupIds = new Set(selection.map(item => item.groupId));
-//   const currentMedicationIds = new Set(selection.map(item => item.medicationId));
+  const currentMedicationIds = new Set(selection.map(item => item.medicationId));
   // 更新 selectedGroupIds 和 selectedMedicationIds
   selection.forEach(item => {
     const groupId = item.groupId;
     const medicationId = item.medicationId;
     // 检查 groupId 和 medicationId 是否同时存在
-    if (selectedGroupIds.value.has(groupId) ) {
+    if (selectedGroupIds.value.has(groupId) && selectedMedicationIds.value.has(medicationId)) {
       // 如果都存在，则移除它们
       selectedGroupIds.value.delete(groupId);
-    //   selectedMedicationIds.value.delete(medicationId);
+      selectedMedicationIds.value.delete(medicationId);
     } else {
       // 否则添加它们
       selectedGroupIds.value.add(groupId);
-    //   selectedMedicationIds.value.add(medicationId);
+      selectedMedicationIds.value.add(medicationId);
     }
   });
   // 动态更新表格行的选中状态
   infusionList.value.forEach(row => {
     // 检查当前行的 groupId 和 medicationId 是否同时在 selectedGroupIds 和 selectedMedicationIds 中
-    const isSelected = selectedGroupIds.value.has(row.groupId) 
+    const isSelected = selectedGroupIds.value.has(row.groupId) && selectedMedicationIds.value.has(row.medicationId);
     tableRef.value.toggleRowSelection(row, isSelected);
   });
   console.log('Current selectedGroupIds:', selectedGroupIds.value);
-//   console.log('Current selectedMedicationIds:', selectedMedicationIds.value);
+  console.log('Current selectedMedicationIds:', selectedMedicationIds.value);
   console.log('Current selectedItems:', selectedItems.value);
 }
 function handleSubmitCanel(){

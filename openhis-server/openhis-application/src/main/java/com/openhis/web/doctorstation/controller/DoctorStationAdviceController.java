@@ -3,14 +3,12 @@
  */
 package com.openhis.web.doctorstation.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
 import com.openhis.web.doctorstation.appservice.IDoctorStationAdviceAppService;
 import com.openhis.web.doctorstation.dto.AdviceBaseDto;
+import com.openhis.web.doctorstation.dto.AdviceSaveParam;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +37,22 @@ public class DoctorStationAdviceController {
     @GetMapping(value = "/advice-base-info")
     public R<?> getAdviceBaseInfo(AdviceBaseDto adviceBaseDto,
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
-        @RequestParam(value = "locationId",required = false) Long locationId,
+        @RequestParam(value = "locationId", required = false) Long locationId,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         return R.ok(
             iDoctorStationAdviceAppService.getAdviceBaseInfo(adviceBaseDto, searchKey, locationId, pageNo, pageSize));
+    }
+
+    /**
+     * 门诊保存医嘱
+     * 
+     * @param adviceSaveParam 医嘱表单信息
+     * @return 结果
+     */
+    @PostMapping(value = "/save-advice")
+    public R<?> saveAdvice(@RequestBody AdviceSaveParam adviceSaveParam) {
+        return iDoctorStationAdviceAppService.saveAdvice(adviceSaveParam);
     }
 
 }

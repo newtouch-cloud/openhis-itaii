@@ -25,6 +25,10 @@ public class AdvicePriceDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long definitionId;
 
+    /** 费用定价子表ID */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long definitionDetailId;
+
     /** 命中条件 */
     private String conditionCode;
 

@@ -48,7 +48,7 @@ public class InventoryManageAssembler {
                 // 收费项id：供应物品id
                 .setProductId(supplyItemDetailDto.getItemId())
                 // 物品数量
-                .setQuantityValue(supplyItemDetailDto.getItemQuantity().longValue())
+                .setQuantityValue(supplyItemDetailDto.getItemQuantity().intValue())
                 // 物品单位
                 .setQuantityUnit(supplyItemDetailDto.getItemUnit())
                 // 原价

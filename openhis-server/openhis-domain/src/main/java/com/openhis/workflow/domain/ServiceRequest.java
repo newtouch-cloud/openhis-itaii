@@ -62,7 +62,7 @@ public class ServiceRequest extends HisBaseEntity {
     private Long activityId;
 
     /** 数量 */
-    private BigDecimal quantity;
+    private Integer quantity;
 
     /** 单位 */
     private String unitCode;

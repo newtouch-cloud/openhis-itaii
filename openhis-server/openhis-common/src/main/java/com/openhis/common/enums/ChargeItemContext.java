@@ -17,24 +17,24 @@ import lombok.Getter;
 public enum ChargeItemContext implements HisEnumInterface {
 
     /**
-     * 采购
-     */
-    PURCHASE(1, "1", "采购"),
-
-    /**
      * 药品
      */
-    MEDICATION(2, "2", "药品"),
+    MEDICATION(1, "1", "药品"),
 
     /**
      * 耗材
      */
-    DEVICE(3, "3", "耗材"),
+    DEVICE(2, "2", "耗材"),
 
     /**
      * 项目
      */
-    ACTIVITY(4, "4", "项目");
+    ACTIVITY(3, "3", "项目"),
+
+    /**
+     * 采购
+     */
+    PURCHASE(4, "4", "采购");
 
     private final Integer value;
     private final String code;
