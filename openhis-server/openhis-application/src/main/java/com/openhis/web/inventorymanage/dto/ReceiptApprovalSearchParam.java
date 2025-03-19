@@ -9,23 +9,20 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * 入库单据分页查询条件
+ * 单据审批分页查询条件
  *
  * @author zwh
- * @date 2025-02-18
+ * @date 2025-03-19
  */
 @Data
 @Accessors(chain = true)
-public class InventorySearchParam implements Serializable {
+public class ReceiptApprovalSearchParam implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /** 状态 */
     private Integer statusEnum;
 
-    /** 供应商 */
-    private Long supplierId;
-
-    /** 经手人 */
-    private Long practitionerId;
+    /** 类型 */
+    private Integer typeEnum;
 }

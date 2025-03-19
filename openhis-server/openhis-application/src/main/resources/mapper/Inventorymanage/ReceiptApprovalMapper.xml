@@ -108,4 +108,47 @@
                 #{itemId}
             </foreach>
     </select>
+    <select id="selectReceiptPage" resultType="com.openhis.web.inventorymanage.dto.ReceiptPageDto">
+        SELECT T2.id,
+               T2.bus_no,
+               T2.status_enum,
+               T2.type_enum,
+               T2.supplier_id,
+               T2.approver_id,
+               T2.approval_time,
+               T2.applicant_id,
+               T2.apply_time,
+               T2.create_time,
+               T2.practitioner_id,
+               T2.tenant_id
+        FROM (SELECT T1.id,
+                     T1.bus_no,
+                     T1.status_enum,
+                     T1.type_enum,
+                     T1.supplier_id,
+                     T1.approver_id,
+                     T1.approval_time,
+                     T1.applicant_id,
+                     T1.apply_time,
+                     T1.create_time,
+                     T1.practitioner_id,
+                     T1.tenant_id
+              FROM wor_supply_request AS T1
+              WHERE T1.status_enum IN (#{approval},#{agree},#{reject})
+              GROUP BY T1.id,
+                       T1.bus_no,
+                       T1.status_enum,
+                       T1.type_enum,
+                       T1.supplier_id,
+                       T1.approver_id,
+                       T1.approval_time,
+                       T1.applicant_id,
+                       T1.apply_time,
+                       T1.create_time,
+                       T1.practitioner_id,
+                       T1.tenant_id
+              ORDER BY T1.bus_no desc
+             ) AS T2
+            ${ew.customSqlSegment}
+    </select>
 </mapper>

@@ -4,11 +4,9 @@
 package com.openhis.web.inventorymanage.appservice.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,6 +14,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.core.domain.model.LoginUser;
 import com.core.common.utils.DateUtils;
@@ -28,10 +28,13 @@ import com.openhis.administration.service.IChargeItemService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.EventStatus;
+import com.openhis.common.enums.SupplyStatus;
+import com.openhis.common.enums.SupplyType;
+import com.openhis.common.utils.EnumUtils;
+import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.inventorymanage.appservice.IReceiptApprovalAppService;
 import com.openhis.web.inventorymanage.assembler.InventoryManageAssembler;
-import com.openhis.web.inventorymanage.dto.ItemChargeDetailDto;
-import com.openhis.web.inventorymanage.dto.SupplyItemDetailDto;
+import com.openhis.web.inventorymanage.dto.*;
 import com.openhis.web.inventorymanage.mapper.ReceiptApprovalMapper;
 import com.openhis.workflow.domain.InventoryItem;
 import com.openhis.workflow.domain.SupplyDelivery;
@@ -65,23 +68,58 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
     private ReceiptApprovalMapper receiptApprovalMapper;
 
     /**
-     * 校验单据是否正确
+     * 单据审批页面初始化
      *
-     * @param supplyRequest 单据信息
-     * @return 校验结果
+     * @return 初始化信息
      */
     @Override
-    public R<?> verifyInventoryReceipt(SupplyRequest supplyRequest) {
+    public R<?> receiptApprovalInit() {
+        ReceiptInitDto initDto = new ReceiptInitDto();
+        // 单据类型
+        List<ReceiptInitDto.supplyTypeOption> supplyTypeOptions = Stream.of(SupplyType.values())
+            .map(supplyType -> new ReceiptInitDto.supplyTypeOption(supplyType.getValue(), supplyType.getInfo()))
+            .collect(Collectors.toList());
+        // 审批状态
+        List<ReceiptInitDto.supplyStatusOption> supplyStatusOptions = Stream.of(SupplyStatus.values())
+            .map(supplyStatus -> new ReceiptInitDto.supplyStatusOption(supplyStatus.getValue(), supplyStatus.getInfo()))
+            .collect(Collectors.toList());
+        initDto.setSupplyTypeOptions(supplyTypeOptions).setSupplyStatusOptions(supplyStatusOptions);
 
-        // // 判断同一物品的批次号是否重复
-        // boolean result = supplyRequestMapper
-        // .exists(new LambdaQueryWrapper<SupplyRequest>().eq(SupplyRequest::getItemId, supplyRequest.getItemId())
-        // .eq(SupplyRequest::getLotNumber, supplyRequest.getLotNumber())
-        // .ne(supplyRequest.getId() != null, SupplyRequest::getId, supplyRequest.getId()));
-        // if (result) {
-        // return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00003, new Object[] {"批次号"}));
-        // }
-        return R.ok();
+        return R.ok(initDto);
+    }
+
+    /**
+     * 审批单据分页列表
+     *
+     * @param receiptSearchParam 查询条件
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @param searchKey 模糊查询关键字
+     * @param request 请求数据
+     * @return 审批单据分页列表
+     */
+    @Override
+    public R<?> getPage(ReceiptApprovalSearchParam receiptSearchParam, Integer pageNo, Integer pageSize,
+        String searchKey, HttpServletRequest request) {
+        // 设置模糊查询的字段名
+        HashSet<String> searchFields = new HashSet<>();
+        searchFields.add(CommonConstants.FieldName.SupplyBusNo);
+
+        // 构建查询条件
+        QueryWrapper<ReceiptApprovalSearchParam> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(receiptSearchParam, searchKey, searchFields, request);
+        // 查询单据分页列表
+        Page<ReceiptPageDto> receiptPage =
+            receiptApprovalMapper.selectReceiptPage(new Page<>(pageNo, pageSize), queryWrapper,
+                SupplyStatus.APPROVAL.getValue(), SupplyStatus.AGREE.getValue(), SupplyStatus.REJECT.getValue());
+
+        receiptPage.getRecords().forEach(e -> {
+            // 单据状态
+            e.setStatusEnum_enumText(EnumUtils.getInfoByValue(SupplyStatus.class, e.getStatusEnum()));
+            // 单据状态
+            e.setTypeEnum_enumText(EnumUtils.getInfoByValue(SupplyType.class, e.getTypeEnum()));
+        });
+        return R.ok(receiptPage);
     }
 
     /**

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
 import com.openhis.web.inventorymanage.appservice.IPurchaseInventoryAppService;
-import com.openhis.web.inventorymanage.dto.InventoryReceiptDto;
 import com.openhis.web.inventorymanage.dto.InventorySearchParam;
+import com.openhis.web.inventorymanage.dto.PurchaseInventoryDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,12 +72,12 @@ public class PurchaseInventoryController {
     /**
      * 添加/编辑入库单据
      *
-     * @param inventoryReceiptDto 入库单据
+     * @param purchaseInventoryDto 入库单据
      * @return 操作结果
      */
     @PutMapping("/inventory-receipt")
-    public R<?> addOrEditInventoryReceipt(@Validated @RequestBody InventoryReceiptDto inventoryReceiptDto) {
-        return purchaseInventoryAppService.addOrEditInventoryReceipt(inventoryReceiptDto);
+    public R<?> addOrEditInventoryReceipt(@Validated @RequestBody PurchaseInventoryDto purchaseInventoryDto) {
+        return purchaseInventoryAppService.addOrEditInventoryReceipt(purchaseInventoryDto);
     }
 
     /**

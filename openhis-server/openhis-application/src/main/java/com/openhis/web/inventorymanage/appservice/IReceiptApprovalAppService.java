@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.core.common.core.domain.R;
 import com.openhis.web.inventorymanage.dto.ItemChargeDetailDto;
+import com.openhis.web.inventorymanage.dto.ReceiptApprovalSearchParam;
 import com.openhis.web.inventorymanage.dto.SupplyItemDetailDto;
-import com.openhis.workflow.domain.SupplyRequest;
 
 /**
  * 单据审批 appService
@@ -19,14 +19,6 @@ import com.openhis.workflow.domain.SupplyRequest;
  * @date 2025-03-05
  */
 public interface IReceiptApprovalAppService {
-
-    /**
-     * 校验单据是否正确
-     *
-     * @param supplyRequest 单据信息
-     * @return 校验结果
-     */
-    R<?> verifyInventoryReceipt(SupplyRequest supplyRequest);
 
     /**
      * 根据单据号获取供应单据及供应项相关详细信息
@@ -62,4 +54,24 @@ public interface IReceiptApprovalAppService {
      * @return 操作结果
      */
     R<?> reject(String busNo, HttpServletRequest request);
+
+    /**
+     * 审批单据分页列表
+     *
+     * @param receiptSearchParam 查询条件
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @param searchKey 模糊查询关键字
+     * @param request 请求数据
+     * @return 审批单据分页列表
+     */
+    R<?> getPage(ReceiptApprovalSearchParam receiptSearchParam, Integer pageNo, Integer pageSize, String searchKey,
+        HttpServletRequest request);
+
+    /**
+     * 单据审批页面初始化
+     *
+     * @return 初始化信息
+     */
+    R<?> receiptApprovalInit();
 }
