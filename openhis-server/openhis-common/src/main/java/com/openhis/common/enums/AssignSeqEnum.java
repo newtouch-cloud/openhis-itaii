@@ -24,7 +24,32 @@ public enum AssignSeqEnum {
     /**
      * 就诊编号
      */
-    ENCOUNTER_NUM("3", "就诊编号", "EN");
+    ENCOUNTER_NUM("3", "就诊编号", "EN"),
+
+    /**
+     * 处方号
+     */
+    PRESCRIPTION_NO("4", "处方号", "P"),
+
+    /**
+     * 药品请求编码
+     */
+    MEDICATION_RES_NO("5", "药品请求编码", "MR"),
+
+    /**
+     * 耗材请求编码
+     */
+    DEVICE_RES_NO("6", "耗材请求编码", "DR"),
+
+    /**
+     * 服务项目请求编码
+     */
+    SERVICE_RES_NO("7", "服务项目请求编码", "SR"),
+
+    /**
+     * 费用项目编码
+     */
+    CHARGE_ITEM_NO("8", "费用项目编码", "CI");
 
     private final String code;
     private final String info;
