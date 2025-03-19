@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
@@ -99,8 +100,8 @@ public class MedicationManageDto {
     private String wbStr;
 
     /** 药品分类 */
+    @Dict(dictCode = "medicine_category")
     private Integer categoryCode;
-    private String categoryCode_enumText;
 
     /** 商品名称 */
     private String merchandiseName;
@@ -142,12 +143,12 @@ public class MedicationManageDto {
     private String pharmacologyCategoryCode;
 
     /** 是否皮试 */
+    @Dict(dictCode = "sys_yes_no")
     private Integer skinTestFlag;
-    private String skinTestFlag_enumText;
 
     /** 是否为注射药物 */
+    @Dict(dictCode = "sys_yes_no")
     private Integer injectFlag;
-    private String injectFlag_enumText;
 
     /** 生产厂家 */
     private Long manufacturerId;
@@ -156,15 +157,15 @@ public class MedicationManageDto {
     private Long supplyId;
 
     /** 是否限制使用 */
+    @Dict(dictCode = "sys_yes_no")
     private Integer restrictedFlag;
-    private String restrictedFlag_enumText;
 
     /** 限制使用范围 */
     private String restrictedScope;
 
     /** 儿童用药标志 */
+    @Dict(dictCode = "sys_yes_no")
     private Integer childrenFlag;
-    private String childrenFlag_enumText;
 
     /** 产品特性 */
     private Integer characteristic;

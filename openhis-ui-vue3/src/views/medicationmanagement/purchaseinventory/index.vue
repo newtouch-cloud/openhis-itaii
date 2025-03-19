@@ -7,25 +7,25 @@
       v-show="showSearch"
       label-width="90px"
     >
-      <el-form-item label="服务名称：" prop="searchKey">
+      <el-form-item label="单据号" prop="busNo">
         <el-input
-          v-model="queryParams.searchKey"
-          placeholder="服务名称"
+          v-model="queryParams.busNo"
+          placeholder="单据号："
           clearable
-          style="width: 240px"
+          style="width: 150px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item
-        label="是否需要预约："
-        prop="appointmentRequiredFlag"
-        label-width="120px"
+        label="审批状态："
+        prop="statusEnum"
+        label-width="100px"
       >
         <el-select
-          v-model="queryParams.appointmentRequiredFlag"
+          v-model="queryParams.statusEnum"
           placeholder=""
           clearable
-          style="width: 240px"
+          style="width: 150px"
         >
           <el-option
             v-for="dict in appointmentRequiredFlagOptions"
@@ -35,12 +35,21 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="活动标记：" prop="activeFlag">
+      <el-form-item label="供应商：" prop="supplierId">
+        <el-input
+          v-model="queryParams.supplierId"
+          placeholder="回车查询"
+          clearable
+          style="width: 150px"
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="部门：" prop="categoryEnum">
         <el-select
-          v-model="queryParams.activeFlag"
+          v-model="queryParams.categoryEnum"
           placeholder=""
           clearable
-          style="width: 240px"
+          style="width: 150px"
         >
           <el-option
             v-for="dict in activeFlagOptions"
@@ -50,6 +59,31 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="部门经手人：" prop="applicantId" label-width="120px">
+        <el-select
+          v-model="queryParams.applicantId"
+          placeholder=""
+          clearable
+          style="width: 150px"
+        >
+          <el-option
+            v-for="dict in activeFlagOptions"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="查询时间">
+        <el-date-picker
+          v-model="dateRange"
+          value-format="YYYY-MM-DD"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
+      </el-form-item>
     </el-form>
 
     <el-row :gutter="10" class="mb8">
@@ -58,9 +92,9 @@
           type="primary"
           plain
           icon="Plus"
-          @click="handleAdd"
+          @click="openAddInventoryReceiptDialog"
           v-hasPermi="['system:user:add']"
-          >添加</el-button
+          >添加记录</el-button
         >
       </el-col>
       <el-col :span="1.5">
@@ -91,93 +125,68 @@
           icon="CircleClose"
           @click="handleClear"
           v-hasPermi="['system:user:export']"
-          >清空条件</el-button
+          >重置</el-button
         >
       </el-col>
     </el-row>
 
     <el-table
       v-loading="loading"
-      :data="registrationfeeList"
+      :data="purchaseinventoryList"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="服务名称" align="center" key="name" prop="name" />
+      <el-table-column label="单据号" align="center" key="busNo" prop="busNo" />
       <el-table-column
-        label="活动标记"
+        label="审批状态"
         align="center"
-        key="activeFlag_enumText"
-        prop="activeFlag_enumText"
+        key="statusEnum_enumText"
+        prop="statusEnum_enumText"
       />
       <el-table-column
-        label="提供部门"
+        label="供应商"
         align="center"
-        key="offeredOrgId_dictText"
-        prop="offeredOrgId_dictText"
+        key="supplierId"
+        prop="supplierId"
         :show-overflow-tooltip="true"
       />
       <el-table-column
-        label="服务分类"
+        label="部门"
         align="center"
-        key="categoryCode_dictText"
-        prop="categoryCode_dictText"
+        key="purposeLocationId"
+        prop="purposeLocationId"
         :show-overflow-tooltip="true"
       />
       <el-table-column
-        label="服务类型 "
+        label="部门经手人"
         align="center"
-        key="typeCode_dictText"
-        prop="typeCode_dictText"
+        key="approverId"
+        prop="approverId"
         :show-overflow-tooltip="true"
       />
       <el-table-column
-        label="服务专业"
+        label="制单人"
         align="center"
-        key="specialtyCode_dictText"
-        prop="specialtyCode_dictText"
+        key="applicantId"
+        prop="applicantId"
       />
       <el-table-column
-        label="地点"
+        label="审核人"
         align="center"
-        key="locationId_dictText"
-        prop="locationId_dictText"
+        key="approverId"
+        prop="approverId"
       />
       <el-table-column
-        label="说明"
+        label="制单日期"
         align="center"
-        key="comment"
-        prop="comment"
+        key="applyTime"
+        prop="applyTime"
       />
       <el-table-column
-        label="额外细节"
+        label="审核日期 "
         align="center"
-        key="extraDetails"
-        prop="extraDetails"
-      />
-      <el-table-column
-        label="联系方式"
-        align="center"
-        key="contact"
-        prop="contact"
-        width="120"
-      />
-      <el-table-column
-        label="预约要求"
-        align="center"
-        key="appointmentRequiredFlag_enumText"
-        prop="appointmentRequiredFlag_enumText"
-      />
-      <el-table-column
-        label="名称"
-        align="center"
-        key="chargeName"
-        prop="chargeName"
-      />
-      <el-table-column
-        label="基础价格"
-        align="center"
-        key="price"
-        prop="price"
+        key="approvalTime"
+        prop="approvalTime"
       />
       <el-table-column
         label="操作"
@@ -212,236 +221,33 @@
       v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
-
-    <!-- 添加或修改服务管理对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form
-        :model="form"
-        :rules="rules"
-        ref="registrationfeeRef"
-        label-width="100px"
-      >
-        <div class="title">服务管理</div>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="服务名称" prop="name">
-              <el-input
-                v-model="form.name"
-                placeholder="请输入服务名称"
-                :disabled="form.id != undefined"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="服务分类" prop="categoryCode">
-              <el-select v-model="form.categoryCode" placeholder="请选择">
-                <el-option
-                  v-for="dict in category_code"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="服务类型" prop="fwTypeCode">
-              <el-select v-model="form.fwTypeCode" placeholder="请选择">
-                <el-option
-                  v-for="dict in service_type_code"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="服务专业" prop="specialtyCode">
-              <el-select v-model="form.specialtyCode" placeholder="请选择">
-                <el-option
-                  v-for="dict in specialty_code"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="地点" prop="locationId">
-              <el-tree-select
-                v-model="form.locationId"
-                :data="locationOptions"
-                :props="{ value: 'id', label: 'name', children: 'children' }"
-                value-key="id"
-                placeholder="请选择地点"
-                check-strictly
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="提供部门" prop="offeredOrgId">
-              <el-tree-select
-                v-model="form.offeredOrgId"
-                :data="deptOptions"
-                :props="{ value: 'id', label: 'name', children: 'children' }"
-                value-key="id"
-                placeholder="请选择提供部门"
-                check-strictly
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="活动标记" prop="activeFlag">
-              <el-select v-model="form.activeFlag" placeholder="请选择">
-                <el-option
-                  v-for="item in activeFlagOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="额外细节" prop="extraDetails;">
-              <el-input v-model="form.extraDetails" maxlength="11" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="联系方式" prop="contact">
-              <el-input v-model="form.contact" maxlength="11" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="预约要求" prop="appointmentRequiredFlag">
-              <el-select
-                v-model="form.appointmentRequiredFlag"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in appointmentRequiredFlagOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <el-col :span="16">
-            <el-form-item label="服务说明" prop="comment">
-              <el-input
-                v-model="form.comment"
-                :autosize="{ minRows: 4, maxRows: 10 }"
-                type="textarea"
-                placeholder=""
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <div class="title">费用管理</div>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="名称" prop="chargeName;">
-              <el-input
-                v-model="form.chargeName"
-                :disabled="form.id != undefined"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="基础价格" prop="price">
-              <el-input v-model="form.price" :disabled="form.id != undefined" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row v-if="form.id == undefined">
-          <el-col :span="12">
-            <el-form-item label="收费项目标题" prop="title">
-              <el-input v-model="form.title" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="医保类别" prop="ybType">
-              <el-select
-                v-model="form.ybType"
-                placeholder="医保类别"
-                clearable
-                style="width: 240px"
-              >
-                <el-option
-                  v-for="dict in med_chrgitm_type"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row v-if="form.id == undefined">
-          <el-col :span="12">
-            <el-form-item label="财务类型" prop="cwTypeCode">
-              <el-select v-model="form.cwTypeCode" placeholder="请选择">
-                <el-option
-                  v-for="dict in financial_type_code"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24" v-if="form.id == undefined">
-          <el-col :span="16">
-            <el-form-item label="收费说明" prop="description">
-              <el-input
-                v-model="form.description"
-                :autosize="{ minRows: 4, maxRows: 10 }"
-                type="textarea"
-                placeholder=""
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <template #footer v-if="title != '查看'">
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <inventory-receipt-dialog
+      ref="inventoryReceiptRef"
+      :item="currentData"
+      :domainEnum="domainEnumOptions"
+      :status="statusFlagOptions"
+      @submit="submitForm"
+    />
   </div>
 </template>
 
-<script setup name="Registrationfee">
+<script setup name="Purchaseinventory">
 import {
-  getRegistrationfeeList,
-  editRegistrationfee,
-  addRegistrationfee,
-  getRegistrationfeeOne,
+  getPurchaseinventoryList,
+  editPurchaseinventory,
+  addPurchaseinventory,
+  getPurchaseinventoryOne,
   getInit,
   deptTreeSelect,
   locationTreeSelect,
-  delRegistrationfee,
-} from "./components/registrationfee";
+  delPurchaseinventory,
+} from "./components/purchaseinventory";
+
+import inventoryReceiptDialog from "./components/inventoryReceiptDialog";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
-const registrationfeeRef = ref(null); // 初始化 ref
+const purchaseinventoryRef = ref(null); // 初始化 ref
 const {
   adm_location,
   category_code,
@@ -458,7 +264,7 @@ const {
   "financial_type_code"
 );
 
-const registrationfeeList = ref([]);
+const purchaseinventoryList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -471,6 +277,7 @@ const activeFlagOptions = ref(undefined);
 const appointmentRequiredFlagOptions = ref(undefined);
 const deptOptions = ref(undefined); // 部门树选项
 const locationOptions = ref(undefined); // 地点树选项
+const dateRange = ref([]);
 
 // 是否停用
 const statusFlagOptions = ref(undefined);
@@ -522,7 +329,7 @@ const data = reactive({
 const { queryParams, form, rules } = toRefs(data);
 
 /** 挂号收费查询下拉树结构 */
-function getRegistrationfeeTypeList() {
+function getPurchaseinventoryTypeList() {
   getInit().then((response) => {
     console.log(response, "response");
     activeFlagOptions.value = response.data.activeFlagOptions; // 活动标记
@@ -553,19 +360,21 @@ function getLocationTree() {
 /** 查询挂号收费项目列表 */
 function getList() {
   loading.value = true;
-  // queryParams.value.statusEnum = +queryParams.value.statusEnum
-  console.log(queryParams.value, "queryParams.value");
-  getRegistrationfeeList(queryParams.value).then((res) => {
-    loading.value = false;
-    console.log(res, "res");
-    registrationfeeList.value = res.data.records;
-    total.value = res.data.total;
-    console.log(total.value, "total.value");
-  });
+  // // queryParams.value.statusEnum = +queryParams.value.statusEnum
+  // console.log(queryParams.value, "queryParams.value");
+  // getPurchaseinventoryList(queryParams.value).then((res) => {
+  loading.value = false;
+  //   console.log(res, "res");
+  //   purchaseinventoryList.value = res.data.records;
+  //   total.value = res.data.total;
+  //   console.log(total.value, "total.value");
+  // });
 }
 
 /** 搜索按钮操作 */
 function handleQuery() {
+  queryParams.value.applyTimeStart = dateRange.value[0];
+  queryParams.value.applyTimeEnd = dateRange.value[1];
   queryParams.value.pageNo = 1;
   getList();
 }
@@ -586,6 +395,10 @@ function handleSelectionChange(selection) {
   multiple.value = !selection.length;
 }
 
+/** 打开新增弹窗 */
+function openAddInventoryReceiptDialog() {
+  proxy.$refs["inventoryReceiptRef"].show();
+}
 /** 重置操作表单 */
 function reset() {
   form.value = {
@@ -608,7 +421,7 @@ function reset() {
     title: undefined,
     comment: undefined,
   };
-  proxy.resetForm("registrationfeeRef");
+  proxy.resetForm("purchaseinventoryRef");
 }
 /** 取消按钮 */
 function cancel() {
@@ -663,14 +476,14 @@ function submitForm() {
   form.value.name = getName();
   // 收费名称
   form.value.chargeName = getName();
-  proxy.$refs["registrationfeeRef"].validate((valid) => {
+  proxy.$refs["purchaseinventoryRef"].validate((valid) => {
     if (valid) {
       if (form.value.id != undefined) {
         // 调用转换函数
         const transformFormEditParam = transformFormEditData(form);
         console.log(transformFormEditData, "transformFormEditData");
-        console.log(form.value, "editRegistrationfee", form.value.statusEnum);
-        editRegistrationfee(transformFormEditParam).then((response) => {
+        console.log(form.value, "editPurchaseinventory", form.value.statusEnum);
+        editPurchaseinventory(transformFormEditParam).then((response) => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           reset();
@@ -680,7 +493,7 @@ function submitForm() {
         // 调用转换函数
         const transformedData = transformFormData(form);
         console.log(transformedData, "transformedData");
-        addRegistrationfee(transformedData).then((response) => {
+        addPurchaseinventory(transformedData).then((response) => {
           reset();
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
@@ -695,11 +508,20 @@ function submitForm() {
 function getName() {
   console.log(service_type_code.value, "service_type_code.value");
   // 服务类型
-  const serviceTypeText = proxy.selectDictLabel(service_type_code.value, form.value.fwTypeCode);
+  const serviceTypeText = proxy.selectDictLabel(
+    service_type_code.value,
+    form.value.fwTypeCode
+  );
   // 服务分类
-  const categoryCodeText = proxy.selectDictLabel(category_code.value, form.value.categoryCode);
+  const categoryCodeText = proxy.selectDictLabel(
+    category_code.value,
+    form.value.categoryCode
+  );
   // 服务专业
-  const specialtyCodeText = proxy.selectDictLabel(specialty_code.value, form.value.specialtyCode);
+  const specialtyCodeText = proxy.selectDictLabel(
+    specialty_code.value,
+    form.value.specialtyCode
+  );
   console.log(
     serviceTypeText,
     "serviceTypeText",
@@ -717,7 +539,7 @@ function getName() {
   return nameParts.reduce((acc, part) => {
     if (part) {
       if (acc) {
-        acc += ' - '; // 在非空字段之间添加 '-'
+        acc += " - "; // 在非空字段之间添加 '-'
       }
       acc += part;
     }
@@ -729,7 +551,7 @@ function handleView(row) {
   reset();
   title.value = "查看";
   open.value = true;
-  getRegistrationfeeOne(row.id).then((response) => {
+  getPurchaseinventoryOne(row.id).then((response) => {
     console.log(response, "responsebbbb", row.id);
     form.value = response.data;
   });
@@ -741,7 +563,7 @@ function handleDelete(row) {
   proxy.$modal
     .confirm("是否确认删除以上数据?")
     .then(function () {
-      return delRegistrationfee({ ids: delId.join(",") });
+      return delPurchaseinventory({ ids: delId.join(",") });
     })
     .then(() => {
       getList();
@@ -842,7 +664,7 @@ const transformFormEditData = (form) => {
     },
   };
 };
-getRegistrationfeeTypeList();
+getPurchaseinventoryTypeList();
 getDeptTree();
 getLocationTree();
 getList();

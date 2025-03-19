@@ -42,6 +42,10 @@ public class AdviceInventoryDto {
     /** 产品批号 */
     private String lotNumber;
 
+    /** 库位 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long locationStoreId;
+
     /** 库房id */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;

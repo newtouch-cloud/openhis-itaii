@@ -88,8 +88,8 @@ public class SupplierManagementController {
      * @param id 查询条件
      * @return 厂商/产地查询结果
      */
-    @GetMapping(value = "/get-supplier-detail/{id}")
-    public R<?> getSupplierDetail(@PathVariable("id") Long id) {
+    @GetMapping(value = "/get-supplier-detail")
+    public R<?> getSupplierDetail(@RequestParam Long id) {
         return supplierManagementAppService.getSupplierDetail(id);
     }
 

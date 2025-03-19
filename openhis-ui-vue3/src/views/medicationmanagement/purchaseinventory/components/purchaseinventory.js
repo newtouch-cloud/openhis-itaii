@@ -2,16 +2,16 @@ import request from '@/utils/request'
 import { parseStrEmpty } from "@/utils/openhis";
 
 // 查询服务管理列表
-export function getRegistrationfeeList(query) {
+export function getPurchaseinventoryList(query) {
   return request({
-    url: '/basic-service/healthcare/healthcare-service-page',
+    url: '/inventory-manage/purchase/inventory-receipt-page',
     method: 'get',
     params: query
   })
 }
 
 // 查询服务管理详细
-export function getRegistrationfeeOne(id) {
+export function getPurchaseinventoryOne(id) {
   return request({
     url: '/basic-service/healthcare/healthcare-service-detail/' + parseStrEmpty(id),
     method: 'get'
@@ -19,7 +19,7 @@ export function getRegistrationfeeOne(id) {
 }
 
 // 新增服务管理
-export function addRegistrationfee(data) {
+export function addPurchaseinventory(data) {
   return request({
     url: '/basic-service/healthcare/healthcare-service',
     method: 'post',
@@ -28,7 +28,7 @@ export function addRegistrationfee(data) {
 }
 
 // 修改服务管理
-export function editRegistrationfee(data) {
+export function editPurchaseinventory(data) {
   return request({
     url: '/basic-service/healthcare/healthcare-service',
     method: 'put',
@@ -63,7 +63,7 @@ export function locationTreeSelect(queryParams) {
 }
 
 // 删除收费挂号项目
-export function delRegistrationfee(param) {
+export function delPurchaseinventory(param) {
   console.log(param,'aaaa')
   return request({
     url: '/basic-service/healthcare/healthcare-service',

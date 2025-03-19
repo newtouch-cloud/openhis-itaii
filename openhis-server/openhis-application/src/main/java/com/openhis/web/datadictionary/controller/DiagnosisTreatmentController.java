@@ -157,7 +157,7 @@ public class DiagnosisTreatmentController {
      * @param id 诊疗ID
      * @return
      */
-    @GetMapping("/information-one/{id}")
+    @GetMapping("/information-one")
     public R<?> getDiseaseTreatmentOne(@PathVariable("id") Long id) {
         DiagnosisTreatmentDto diagnosisTreatmentDto = new DiagnosisTreatmentDto();
         // 根据ID查询【诊疗目录】

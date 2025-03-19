@@ -14,40 +14,29 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ChargeItemContext {
+public enum ChargeItemContext implements HisEnumInterface {
 
     /**
      * 采购
      */
-    PURCHASE(1, "采购"),
+    PURCHASE(1, "1", "采购"),
 
     /**
      * 药品
      */
-    MEDICATION(2, "药品"),
+    MEDICATION(2, "2", "药品"),
 
     /**
      * 耗材
      */
-    DEVICE(3, "耗材"),
+    DEVICE(3, "3", "耗材"),
 
     /**
      * 项目
      */
-    ACTIVITY(4, "项目");
+    ACTIVITY(4, "4", "项目");
 
-    private Integer value;
-    private String info;
-
-    public static ChargeItemContext getByValue(Integer value) {
-        if (value == null) {
-            return null;
-        }
-        for (ChargeItemContext val : values()) {
-            if (val.getValue().equals(value)) {
-                return val;
-            }
-        }
-        return null;
-    }
+    private final Integer value;
+    private final String code;
+    private final String info;
 }

@@ -101,7 +101,7 @@ public class DiseaseManageController {
      * @param id 疾病ID
      * @return
      */
-    @GetMapping("/information-one/{id}")
+    @GetMapping("/information-one")
     public R<?> getDiseaseOne(@PathVariable("id") Long id) {
         DiseaseManageDto diseaseManageDto = new DiseaseManageDto();
         // 根据ID查询【病种目录】

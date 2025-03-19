@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
@@ -59,8 +60,19 @@ public interface OutpatientManageMapper {
      * @param queryWrapper 查询条件
      * @return 门诊输液记录列表
      */
-    List<OutpatientInfusionRecordDto>
-        getOutpatientInfusionRecord(@Param(Constants.WRAPPER) QueryWrapper<OutpatientInfusionRecordDto> queryWrapper);
+    List<OutpatientInfusionRecordDto> getOutpatientInfusionRecord(
+        @Param(Constants.WRAPPER) LambdaQueryWrapper<OutpatientInfusionRecordDto> queryWrapper);
 
+    /**
+     * 查询药品已执行数量/查询同组内药品数量
+     *
+     * @param paramId baseOnId/服务请求ID
+     * @param prefixBusNo 服务请求编码
+     * @param groupId 分组ID
+     * @param flag 控制查询条件
+     * @return 查询个数
+     */
+    long countMedicationExecuteNum(@Param("paramId") Long paramId, @Param("prefixBusNo") String prefixBusNo,
+        @Param("groupId") Long groupId, @Param("flag") boolean flag);
 
 }

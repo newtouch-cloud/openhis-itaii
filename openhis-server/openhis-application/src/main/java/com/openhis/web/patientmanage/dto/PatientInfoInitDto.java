@@ -28,6 +28,10 @@ public class PatientInfoInitDto {
     private List<PatientInfoInitDto.statusEnumOption>  bloodTypeRH;
     //获取家庭关系列表
     private List<PatientInfoInitDto.statusEnumOption>  familyRelationshipType;
+    //身份证件类型
+    private List<PatientInfoInitDto.statusEnumOption>  identityDocumentType;
+    //是/否 状态
+    private List<PatientInfoInitDto.statusEnumOption>  whetherStatus;
 
     /**
      * 状态

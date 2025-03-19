@@ -46,6 +46,9 @@ public class DeviceRequest extends HisBaseEntity {
     /** 请求意图 */
     private String intentCode;
 
+    /** 请求类型 */
+    private Integer categoryEnum;
+
     /** 优先级 */
     private Integer priorityEnum;
 
@@ -67,9 +70,6 @@ public class DeviceRequest extends HisBaseEntity {
     /** 耗材定义id */
     private Long deviceDefId;
 
-    /** 请求合计（元） */
-    private BigDecimal displayAmount;
-
     /** 器材规格 */
     private String deviceSpecifications;
 
@@ -84,6 +84,9 @@ public class DeviceRequest extends HisBaseEntity {
 
     /** 就诊id */
     private Long encounterId;
+
+    /** 患者ID */
+    private Long patientId;
 
     /** 用药频次 */
     private String rateCode;

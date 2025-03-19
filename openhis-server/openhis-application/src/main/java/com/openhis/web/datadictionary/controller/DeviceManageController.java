@@ -117,7 +117,7 @@ public class DeviceManageController {
      * @param id 器材ID
      * @return
      */
-    @GetMapping("/information-one/{id}")
+    @GetMapping("/information-one")
     public R<?> getDeviceOne(@PathVariable("id") Long id) {
 
         return deviceManageAppService.getDeviceOne(id);

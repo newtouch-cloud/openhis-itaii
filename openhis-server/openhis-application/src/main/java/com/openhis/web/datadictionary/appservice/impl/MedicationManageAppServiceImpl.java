@@ -25,7 +25,9 @@ import com.core.common.utils.SecurityUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.core.common.utils.poi.ExcelUtil;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.*;
+import com.openhis.common.enums.AccountStatus;
+import com.openhis.common.enums.ApplicableScope;
+import com.openhis.common.enums.PublicationStatus;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.medication.domain.Medication;
 import com.openhis.medication.domain.MedicationDefinition;
@@ -118,16 +120,6 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
             // 适用范围
             e.setDomainEnum_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getDomainEnum()));
-            // 药品分类
-            e.setCategoryCode_enumText(EnumUtils.getInfoByValue(ItemCategory.class, e.getCategoryCode()));
-            // 是否皮试
-            e.setSkinTestFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getSkinTestFlag()));
-            // 是否为注射药物
-            e.setInjectFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getInjectFlag()));
-            // 是否限制使用
-            e.setRestrictedFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getRestrictedFlag()));
-            // 儿童用药标志
-            e.setChildrenFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getChildrenFlag()));
         });
 
         // 返回【药品录列表DTO】分页
@@ -135,9 +127,9 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
     }
 
     /**
-     * 编辑供应商信息
+     * 编辑药品目录信息
      *
-     * @param medicationManageUpDto 供应商信息
+     * @param medicationManageUpDto 药品目录信息
      */
     @Override
     public R<?> editMedication(@Validated @RequestBody MedicationManageUpDto medicationManageUpDto) {
@@ -222,9 +214,9 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
     }
 
     /**
-     * 添加供应商信息
+     * 添加药品目录信息
      *
-     * @param medicationManageUpDto 供应商信息
+     * @param medicationManageUpDto 药品目录信息
      */
     @Override
     public R<?> addMedication(@Validated @RequestBody MedicationManageUpDto medicationManageUpDto) {

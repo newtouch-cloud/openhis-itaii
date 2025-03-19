@@ -59,6 +59,12 @@ public class DeviceDefinition extends HisBaseEntity {
     /** 最小使用单位 */
     private String minUnitCode;
 
+    /** 所属科室 */
+    private Long orgId;
+
+    /** 所在位置 */
+    private Long locationId;
+
     /** 产品型号 */
     private String modelNumber;
 

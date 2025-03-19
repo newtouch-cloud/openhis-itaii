@@ -13,8 +13,9 @@ export function getSupplierList(query) {
 // 查询厂商详细
 export function getSupplierOne(id) {
   return request({
-    url: '/data-dictionary/supplier/get-supplier-detail/' + parseStrEmpty(id),
-    method: 'get'
+    url: '/data-dictionary/supplier/get-supplier-detail',
+    method: 'get',
+    params:  {id} 
   })
 }
 

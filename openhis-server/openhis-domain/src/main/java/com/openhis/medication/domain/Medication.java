@@ -38,6 +38,9 @@ public class Medication extends HisBaseEntity {
     /** 所属科室 */
     private Long orgId;
 
+    /** 所在位置 */
+    private Long locationId;
+
     /** 剂型 */
     private String doseFormCode;
 
@@ -76,5 +79,17 @@ public class Medication extends HisBaseEntity {
 
     /** 药品定义 */
     private String definition;
+
+    /** 删除状态 */
+    private String deleteFlag;
+
+    /** 用量限定 */
+    private BigDecimal usageLimit;
+
+    /** DDD值 */
+    private String dddCode;
+
+    /** DDD单位 */
+    private String dddUnitCode;
 
 }

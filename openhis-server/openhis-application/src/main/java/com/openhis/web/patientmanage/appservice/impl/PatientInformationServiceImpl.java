@@ -95,6 +95,18 @@ public class PatientInformationServiceImpl implements IPatientInformationService
             .collect(Collectors.toList());
         initDto.setFamilyRelationshipType(statusEnumOptions6);
 
+        // 获取证件类型
+        List<PatientInfoInitDto.statusEnumOption> statusEnumOptions7 = Stream.of(IdentityDocumentType.values())
+            .map(status -> new PatientInfoInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+        initDto.setIdentityDocumentType(statusEnumOptions7);
+
+        // 获取是/否状态
+        List<PatientInfoInitDto.statusEnumOption> statusEnumOptions8 = Stream.of(Whether.values())
+            .map(status -> new PatientInfoInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+        initDto.setWhetherStatus(statusEnumOptions8);
+
         return initDto;
     }
 

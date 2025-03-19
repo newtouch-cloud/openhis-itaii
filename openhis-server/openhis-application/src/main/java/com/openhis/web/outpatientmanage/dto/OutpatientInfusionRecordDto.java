@@ -1,12 +1,14 @@
 package com.openhis.web.outpatientmanage.dto;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.annotation.Dict;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.math.BigDecimal;
 
 /**
  * 门诊输液记录Dto
@@ -21,6 +23,9 @@ public class OutpatientInfusionRecordDto {
     /** 服务申请管理表ID */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long serviceId;
+
+    /** 服务申请状态 */
+    private Integer requestStatus;
 
     /** 请求基于什么的ID */
     @JsonSerialize(using = ToStringSerializer.class)
@@ -56,9 +61,8 @@ public class OutpatientInfusionRecordDto {
     private Integer genderEnum;
     private String genderEnum_enumText;
 
-    /** 已执行数量 */
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long executionCount;
+    /** 住院执行次数 */
+    private Integer executeNum;
 
     /** 分组id */
     @JsonSerialize(using = ToStringSerializer.class)
@@ -88,6 +92,9 @@ public class OutpatientInfusionRecordDto {
     /** 预计结束时间 */
     private String occurrenceEndTime;
 
+    /** 药品ID */
+    private Long medicationId;
+
     /** 药品信息 */
     private String medicationInformation;
 
@@ -108,10 +115,14 @@ public class OutpatientInfusionRecordDto {
     private String medicationStatusEnum_enumText;
 
     /** 皮试标志（是/否） */
-    private String flagText;
+    private Integer skinTestFlag;
+    private String skinTestFlag_enumText;
 
     /** 皮试结果 */
     private Integer clinicalStatusEnum;
     private String clinicalStatusEnum_enumText;
+
+    /** 开单时间 */
+    private Date createTime;
 
 }

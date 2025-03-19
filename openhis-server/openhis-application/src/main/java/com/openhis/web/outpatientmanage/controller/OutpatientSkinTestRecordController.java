@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2025/3/5
  */
 @RestController
-@RequestMapping("/outpatientmanage/skintest")
+@RequestMapping("/outpatient-manage/skin-test")
 @Slf4j
 @AllArgsConstructor
 public class OutpatientSkinTestRecordController {
@@ -46,7 +46,7 @@ public class OutpatientSkinTestRecordController {
      *
      * @param outpatientSkinTestRecordDto 皮试记录信息
      */
-    @PutMapping("/outpatient-record-skintest")
+    @PutMapping("/outpatient-record-skin-test")
     public R<?> editSkinTestRecord(@Validated @RequestBody OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
 
         if (!OutpatientSkinTestRecordService.editSkinTestRecord(outpatientSkinTestRecordDto)) {
@@ -60,7 +60,7 @@ public class OutpatientSkinTestRecordController {
      *
      * @param outpatientSkinTestRecordDto 皮试记录信息
      */
-    @PutMapping("/outpatient-record-signcheck")
+    @PutMapping("/outpatient-record-sign-check")
     public R<?> nurseSignChkPs(@Validated @RequestBody OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
 
         if (!OutpatientSkinTestRecordService.nurseSignChkPs(outpatientSkinTestRecordDto)) {

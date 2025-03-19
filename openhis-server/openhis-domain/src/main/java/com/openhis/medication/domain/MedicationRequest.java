@@ -43,14 +43,14 @@ public class MedicationRequest extends HisBaseEntity {
     /** 请求数量 */
     private Integer quantity;
 
+    /** 执行次数 */
+    private Integer executeNum;
+
     /** 请求单位编码 */
     private String unitCode;
 
     /** 产品批号 */
     private String lotNumber;
-
-    /** 请求合计（元） */
-    private BigDecimal displayAmount;
 
     /** 药品请求状态 */
     private Integer statusEnum;

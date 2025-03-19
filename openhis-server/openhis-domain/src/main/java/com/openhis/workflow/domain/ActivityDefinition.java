@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
-import com.openhis.common.enums.ActivityDefCategory;
-import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,6 +45,12 @@ public class ActivityDefinition extends HisBaseEntity {
 
     /** 使用单位 */
     private String permittedUnitCode;
+
+    /** 所属科室 */
+    private Long orgId;
+
+    /** 所在位置 */
+    private Long locationId;
 
     /** 医保标记 */
     private Integer ybFlag;

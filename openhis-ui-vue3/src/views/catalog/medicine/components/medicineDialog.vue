@@ -17,7 +17,6 @@
                   <el-input
                     v-model="form.name"
                     placeholder=""
-                    @input="generateCodes"
                   />
                 </el-form-item>
               </el-col>
@@ -55,7 +54,6 @@
                   <el-input
                     v-model="form.name"
                     placeholder=""
-                    @input="generateCodes"
                   />
                 </el-form-item>
               </el-col>
@@ -650,7 +648,6 @@
 //   getDiseaseCategory,
 //   getDiseaseOne,
 // } from "./components/medicine";
-import pinyin from "pinyin"; // 需要安装 pinyin 库
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -700,14 +697,6 @@ const data = reactive({
   },
 });
 
-// 生成拼音码和五笔码
-const generateCodes = () => {
-  form.value.pyStr = pinyin(form.value.name, {
-    style: pinyin.STYLE_FIRST_LETTER,
-  }).join(""); // 生成拼音首字母
-  console.log(form.value.pyStr, "form.pyStr", form.value.name);
-  // form.wbStr = wubi(form.name).join(''); // 如果有五笔库，可以生成五笔码
-};
 const { queryParams, form, antibioticForm, rules } = toRefs(data);
 
 const props = defineProps({
