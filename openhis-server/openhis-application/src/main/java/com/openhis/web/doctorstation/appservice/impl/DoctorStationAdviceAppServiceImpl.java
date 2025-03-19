@@ -183,6 +183,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
         // 生成处方号 , 只有开了药品才有处方号
         String prescriptionNo = "";
         if (medicineList.size() > 0) {
+            // TODO: 药品分方;待做
             prescriptionNo = assignSeqUtil.getSeq(AssignSeqEnum.PRESCRIPTION_NO.getPrefix(), 8);
         }
         // 保存药品请求
@@ -209,6 +210,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             medicationRequest.setRateCode(adviceSaveDto.getRateCode());
             medicationRequest.setDose(adviceSaveDto.getDose());
             medicationRequest.setDoseUnitCode(adviceSaveDto.getDoseUnitCode());
+            medicationRequest.setGroupId(adviceSaveDto.getGroupId());// 分组id
             // medicationRequest.setPackageId(adviceSaveDto.getPackageId());
 
             medicationRequestList.add(medicationRequest);
@@ -221,7 +223,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
         for (AdviceSaveDto adviceSaveDto : deviceList) {
             deviceRequest = new DeviceRequest();
             deviceRequest.setBusNo(assignSeqUtil.getSeq(AssignSeqEnum.DEVICE_RES_NO.getPrefix(), 8));
-            deviceRequest.setPrescriptionNo(prescriptionNo);
+            // deviceRequest.setPrescriptionNo(prescriptionNo); // 耗材不需要处方号
             deviceRequest.setQuantity(adviceSaveDto.getQuantity());
             deviceRequest.setUnitCode(adviceSaveDto.getUnitCode());
             deviceRequest.setLotNumber(adviceSaveDto.getLotNumber());
@@ -246,7 +248,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
         for (AdviceSaveDto adviceSaveDto : activityList) {
             serviceRequest = new ServiceRequest();
             serviceRequest.setBusNo(assignSeqUtil.getSeq(AssignSeqEnum.SERVICE_RES_NO.getPrefix(), 8));
-            serviceRequest.setPrescriptionNo(prescriptionNo);
+            // serviceRequest.setPrescriptionNo(prescriptionNo); // 诊疗不需要处方号
             serviceRequest.setBasedOnTable(CommonConstants.TableName.WOR_ACTIVITY_DEFINITION);
             serviceRequest.setBasedOnId(adviceSaveDto.getAdviceDefinitionId());
             serviceRequest.setQuantity(adviceSaveDto.getQuantity());
@@ -286,7 +288,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             chargeItemList.add(chargeItem);
         }
         iChargeItemService.saveBatch(chargeItemList);
-        // TODO: 此处调用请求方法接口
+        // TODO: 此处调用请求发放接口
 
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"门诊医嘱"}));
     }

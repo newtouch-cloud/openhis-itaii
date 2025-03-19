@@ -94,13 +94,19 @@ public class AdviceSaveDto {
     /** 剂量单位 */
     private String doseUnitCode;
 
+    /**
+     * 分组id , 一组药品共用一个id,前端传过来
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long groupId;
+
     /** 组套id */
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long packageId; // 该参数先预留出来
+    private Long packageId;
 
     /** 活动(项目)定义id */
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long activityId; // 该参数先预留出来
+    private Long activityId;
 
     /**
      * 设置默认值
