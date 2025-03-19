@@ -29,7 +29,17 @@ public class CommonConstants {
         /**
          * 逗号（用于拼接）
          */
-        String COMMA = "%s,%s";
+        String COMMA_FORMAT = "%s,%s";
+
+        /**
+         * 逗号
+         */
+        String COMMA = ",";
+
+        /**
+         * 3（用于字符串截位）
+         */
+        Integer THREE = 3;
     }
 
     /**
@@ -71,6 +81,21 @@ public class CommonConstants {
          * 发放请求
          */
         String WOR_SUPPLY_REQUEST = "wor_supply_request";
+
+        /**
+         * 药品请求
+         */
+        String MED_MEDICATION_REQUEST = "med_medication_request";
+
+        /**
+         * 服务请求
+         */
+        String WOR_SERVICE_REQUEST = "wor_service_request";
+
+        /**
+         * 耗材请求
+         */
+        String WOR_DEVICE_REQUEST = "wor_device_request";
     }
 
     /**
