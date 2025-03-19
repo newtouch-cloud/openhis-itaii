@@ -44,7 +44,9 @@ public class ReceiptPageDto implements Serializable {
     private String typeEnum_enumText;
 
     /** 供应商 */
+    @Dict(dictCode = "id", dictText = "name", dictTable = "adm_supplier")
     private Long supplierId;
+    private String supplierId_dictText;
 
     /** 经手人 */
     @Dict(dictCode = "id", dictText = "name", dictTable = "adm_practitioner")
