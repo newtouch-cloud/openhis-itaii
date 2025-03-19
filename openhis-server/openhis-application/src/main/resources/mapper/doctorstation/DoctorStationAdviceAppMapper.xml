@@ -162,6 +162,7 @@
     <select id="getChildCharge" resultType="com.openhis.web.doctorstation.dto.AdvicePriceDto">
         SELECT
         T1.definition_id,
+        T1.id AS definition_detail_id,
         T2.charge_name,
         T1.condition_value,
         T1.condition_code,

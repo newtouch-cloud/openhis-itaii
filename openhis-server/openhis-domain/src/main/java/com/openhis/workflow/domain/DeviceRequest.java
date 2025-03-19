@@ -35,7 +35,7 @@ public class DeviceRequest extends HisBaseEntity {
     private String prescriptionNo;
 
     /** 相关诊疗项目 */
-    private Integer activityId;
+    private Long activityId;
 
     /** 组套id */
     private Long packageId;

@@ -18,9 +18,9 @@ import lombok.Getter;
 public enum ItemType implements HisEnumInterface {
 
     /**
-     * 中药
+     * 药品
      */
-    MEDICINE(1, "1", "中药"),
+    MEDICINE(1, "1", "药品"),
 
     /**
      * 耗材

@@ -62,7 +62,7 @@ public class ChargeItem extends HisBaseEntity {
     private Long costOrgId;
 
     /** 数量 */
-    private Long quantityValue;
+    private Integer quantityValue;
 
     /** 单位 */
     private String quantityUnit;
