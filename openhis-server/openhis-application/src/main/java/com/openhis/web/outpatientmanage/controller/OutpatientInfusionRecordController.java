@@ -48,7 +48,7 @@ public class OutpatientInfusionRecordController {
     }
 
     /**
-     * 点击患者，执行该患者的输液记录
+     * 点击患者，查询该患者的输液记录
      *
      * @param outpatientInfusionPatientDto 患者输液信息
      * @return 当前患者门诊输液待执行列表
