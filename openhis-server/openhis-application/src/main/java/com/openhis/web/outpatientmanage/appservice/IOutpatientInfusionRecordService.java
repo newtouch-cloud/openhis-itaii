@@ -35,19 +35,19 @@ public interface IOutpatientInfusionRecordService {
         OutpatientInfusionSearchParam outpatientInfusionSearchParam, Integer pageNo, Integer pageSize);
 
     /**
-     * 查询单个患者门诊输液记录查询
+     * 查询门诊输液的患者列表
      *
      * @param outpatientInfusionPatientDto 患者输液信息
-     * @return 门诊输液记录列表
+     * @return 门诊输液的患者列表
      */
     List<OutpatientInfusionRecordDto>
         getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto);
 
     /**
-     * 执行单个患者门诊输液
+     * 执行患者门诊输液
      *
-     * @param outpatientInfusionRecordDtoList 输液记录
-     * @return 修改成功/失败
+     * @param outpatientInfusionRecordDtoList 输液记录列表
+     * @return 执行成功/失败
      */
     boolean batchEditPatientInfusionRecord(List<OutpatientInfusionRecordDto> outpatientInfusionRecordDtoList);
 

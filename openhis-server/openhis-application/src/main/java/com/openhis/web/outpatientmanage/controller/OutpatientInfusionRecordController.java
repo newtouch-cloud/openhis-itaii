@@ -43,10 +43,10 @@ public class OutpatientInfusionRecordController {
     }
 
     /**
-     * 查询单个患者的门诊输液记录
+     * 查询门诊输液的患者列表
      *
      * @param outpatientInfusionPatientDto 患者输液信息
-     * @return 门诊输液记录列表
+     * @return 门诊输液的患者列表
      */
     @GetMapping(value = "/patient-infusion")
     public R<?> getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto) {
