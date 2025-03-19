@@ -1,18 +1,18 @@
 import request from '@/utils/request'
 
 // 待执行输液记录查询
-export function listInfusionRecord(query) {
+export function listInfusionRecord() {
   return request({
     url: '/outpatient-manage/infusion/infusion-wait-perform-record',
-    method: 'get',
-    params: query
+    method: 'get'
   })
 }
 // 病人列表
-export function listPatients() {
+export function listPatients(query) {
   return request({
-    url: '/outpatient-manage/infusion/patient-infusion',
+    url: '/outpatient-manage/infusion/infusion-patient-list',
     method: 'get',
+    params: query
   })
 }
 
@@ -25,10 +25,10 @@ export function updateInfusionRecord(data) {
     })
   }
 
-  // 查询单个患者门诊输液记录查询
+  // 点击患者，查询该患者的输液记录
   export function listPatientInfusionRecord(query) {
     return request({
-      url: '/outpatient-manage/infusion/patient-infusion',
+      url: '/outpatient-manage/infusion/patient-infusion-record',
       method: 'get',
       params: query
     })
