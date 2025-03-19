@@ -30,7 +30,7 @@
                abi.advice_table_name
         from (
                  SELECT T1.tenant_id,
-                        '1'                   AS advice_type,
+                        1                     AS advice_type,
                         T1.ID                 AS advice_definition_id,
                         T1.NAME               AS advice_name,
                         T1.bus_no             AS advice_bus_no,
@@ -65,7 +65,7 @@
                  WHERE T1.delete_flag = '0'
                  UNION ALL
                  SELECT T1.tenant_id,
-                        '2'               AS advice_type,
+                        2                 AS advice_type,
                         T1.ID             AS advice_definition_id,
                         T1.NAME           AS advice_name,
                         T1.bus_no         AS advice_bus_no,
@@ -98,7 +98,7 @@
                  WHERE T1.delete_flag = '0'
                  UNION ALL
                  SELECT T1.tenant_id,
-                        '3'               AS advice_type,
+                        3                 AS advice_type,
                         T1.ID             AS advice_definition_id,
                         T1.NAME           AS advice_name,
                         T1.bus_no         AS advice_bus_no,
