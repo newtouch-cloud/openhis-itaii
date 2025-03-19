@@ -12,6 +12,7 @@ import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.web.outpatientmanage.appservice.IOutpatientInfusionRecordService;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto;
+import com.openhis.web.outpatientmanage.dto.OutpatientInfusionSearchParam;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,23 +33,27 @@ public class OutpatientInfusionRecordController {
     IOutpatientInfusionRecordService outpatientInfusionRecordService;
 
     /**
-     * 门诊输液记录初期数据
+     * 查询门诊输液的患者列表
      *
-     * @return
+     * @param outpatientInfusionSearchParam 查询参数
+     * @return 门诊输液的患者列表
      */
-    @GetMapping("/init")
-    public R<?> getOutpatientInfusionInit() {
+    @GetMapping(value = "/infusion-patient-list")
+    public R<?> getPatientInfusionRecord(OutpatientInfusionSearchParam outpatientInfusionSearchParam,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
 
-        return R.ok(outpatientInfusionRecordService.getOutpatientInfusionInit());
+        return R.ok(outpatientInfusionRecordService.getOutpatientInfusionPatientList(outpatientInfusionSearchParam,
+            pageNo, pageSize));
     }
 
     /**
-     * 查询门诊输液的患者列表
+     * 点击患者，执行该患者的输液记录
      *
      * @param outpatientInfusionPatientDto 患者输液信息
-     * @return 门诊输液的患者列表
+     * @return 当前患者门诊输液待执行列表
      */
-    @GetMapping(value = "/patient-infusion")
+    @GetMapping(value = "/patient-infusion-record")
     public R<?> getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto) {
 
         return R.ok(outpatientInfusionRecordService.getPatientInfusionRecord(outpatientInfusionPatientDto));

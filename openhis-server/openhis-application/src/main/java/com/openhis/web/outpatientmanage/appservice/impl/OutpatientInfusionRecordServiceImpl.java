@@ -3,7 +3,6 @@ package com.openhis.web.outpatientmanage.appservice.impl;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -32,7 +31,6 @@ import com.openhis.common.enums.Whether;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.outpatientmanage.appservice.IOutpatientInfusionRecordService;
-import com.openhis.web.outpatientmanage.dto.OutpatientInfusionInitDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionSearchParam;
@@ -67,24 +65,6 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     ServiceRequestMapper serviceRequestMapper;
 
     /**
-     * 获取门诊输液记录初期数据列表
-     *
-     * @return 门诊输液记录初期数据列表
-     */
-    @Override
-    public OutpatientInfusionInitDto getOutpatientInfusionInit() {
-        OutpatientInfusionInitDto initDto = new OutpatientInfusionInitDto();
-
-        // 获取皮试结果
-        List<OutpatientInfusionInitDto.statusEnumOption> statusEnumOptions = Stream.of(ClinicalStatus.values())
-            .map(status -> new OutpatientInfusionInitDto.statusEnumOption(status.getValue(), status.getInfo()))
-            .collect(Collectors.toList());
-        initDto.setClinicalStatus(statusEnumOptions);
-
-        return initDto;
-    }
-
-    /**
      * 获取门诊输液记录的患者列表
      *
      * @param outpatientInfusionSearchParam 门诊输液记录的患者列表查询参数
@@ -93,7 +73,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
      * @return 分页查询
      */
     @Override
-    public IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatient(
+    public IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(
         OutpatientInfusionSearchParam outpatientInfusionSearchParam, Integer pageNo, Integer pageSize) {
 
         LocalDateTime beginTime;
@@ -145,10 +125,10 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     }
 
     /**
-     * 查询单个患者门诊输液待执行记录
+     * 点击患者，执行该患者的输液记录
      *
      * @param outpatientInfusionPatientDto 患者输液信息
-     * @return 患者待输液记录列表
+     * @return 当前患者门诊输液待执行列表
      */
     @Override
     public List<OutpatientInfusionRecordDto>
@@ -293,7 +273,8 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
      * @return 门诊输液执行记录查询
      */
     @Override
-    public List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(String beginTime, String endTime,boolean historyFlag) {
+    public List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(String beginTime, String endTime,
+        boolean historyFlag) {
 
         LocalDateTime beginDateTime;
         LocalDateTime endDateTime;
@@ -308,15 +289,15 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
 
         // 创建查询包装器
         LambdaQueryWrapper<OutpatientInfusionRecordDto> queryWrapper = new LambdaQueryWrapper<>();
-        //执行历史查询的条件
-        if(historyFlag){
+        // 执行历史查询的条件
+        if (historyFlag) {
             // based_on_id 不为空，此条件筛选出执行履历
             queryWrapper.isNotNull(OutpatientInfusionRecordDto::getBasedOnId);
             // 状态是已完成
             queryWrapper.eq(OutpatientInfusionRecordDto::getRequestStatus, EventStatus.COMPLETED.getValue());
 
-            //门诊输液待执行记录查询
-        }else{
+            // 门诊输液待执行记录查询
+        } else {
             // based_on_id 为空，此条件筛选控制不显示执行履历
             queryWrapper.isNull(OutpatientInfusionRecordDto::getBasedOnId);
             // 状态是进行中

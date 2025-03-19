@@ -1,6 +1,5 @@
 package com.openhis.web.patientmanage.dto;
 
-import com.openhis.web.outpatientmanage.dto.OutpatientInfusionInitDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

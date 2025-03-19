@@ -3,7 +3,6 @@ package com.openhis.web.outpatientmanage.appservice;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.openhis.web.outpatientmanage.dto.OutpatientInfusionInitDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionSearchParam;
@@ -17,13 +16,6 @@ import com.openhis.web.outpatientmanage.dto.OutpatientInfusionSearchParam;
 public interface IOutpatientInfusionRecordService {
 
     /**
-     * 获取门诊输液记录初期数据列表
-     *
-     * @return 门诊输液记录初期数据列表
-     */
-    OutpatientInfusionInitDto getOutpatientInfusionInit();
-
-    /**
      * 获取门诊输液记录的患者列表
      *
      * @param outpatientInfusionSearchParam 门诊输液记录的患者列表查询参数
@@ -31,14 +23,14 @@ public interface IOutpatientInfusionRecordService {
      * @param pageSize 每页多少条
      * @return 分页查询
      */
-    IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatient(
+    IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(
         OutpatientInfusionSearchParam outpatientInfusionSearchParam, Integer pageNo, Integer pageSize);
 
     /**
-     * 查询门诊输液的患者列表
+     * 点击患者，执行该患者的输液记录
      *
      * @param outpatientInfusionPatientDto 患者输液信息
-     * @return 门诊输液的患者列表
+     * @return 当前患者门诊输液待执行列表
      */
     List<OutpatientInfusionRecordDto>
         getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto);
