@@ -6,10 +6,11 @@
             		<el-date-picker v-model="dateRange"  value-format="YYYY-MM-DD" type="daterange" range-separator="-" 
             		start-placeholder="开始日期" end-placeholder="结束日期" style="width: auto;"></el-date-picker>
 		   		</el-form-item>
-		   		<el-form-item label="" prop="phone">
-		      		<el-input v-model="queryParams.phone"  placeholder="门诊号/病人/ID" clearable style="width: 180px"
+		   		<el-form-item label="" prop="searchKey">
+		      		<el-input v-model="queryParams.searchKey"  placeholder="门诊号/病人/ID" clearable style="width: 180px"
 		         		@keyup.enter="handleQuery" />
 		   		</el-form-item>
+				
 		   		<el-form-item>
 		      		<el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
 		      		<el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -28,7 +29,7 @@
 				<el-table-column prop="ageString" label="年龄" width="80" />
 				<el-table-column prop="status" label="身份证号" width="140" />
 		  </el-table>
-		  <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" 
+		  <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNo" 
 			v-model:limit="queryParams.pageSize" @pagination="getList" />
 		</div>
 
@@ -62,7 +63,7 @@
 					<el-table-column prop="speed" label="输液速度" width="80" />
 					<el-table-column prop="orgId_dictText" label="发放科室" width="120" />
 					<el-table-column prop="medicationStatusEnum_enumText" label="药品状态" width="100" />
-					<el-table-column prop="flagText" label="是否皮试" width="60" /> 
+					<el-table-column prop="skinTestFlag_enumText" label="是否皮试" width="60" /> 
 					<el-table-column prop="clinicalStatusEnum_enumText" label="皮试结果" width="60" />
 					<el-table-column label="操作" align="center" width="90" fixed="right">
 						<template #default="scope">
@@ -99,12 +100,13 @@
 
 <script  setup name="InfusionRecord">
 import { ref, computed } from 'vue';
-import { listPatients,updateInfusionRecord,listInfusionRecord } from './component/api.js'; 
-// import prescriptioncard from '@/views/clinicmanagement/infusionrecord/component/prescription.vue'
+import { listPatients,updateInfusionRecord,listInfusionRecord,
+	listPatientInfusionRecord,listPatientInfusionPerformRecord } from './component/api.js'; 
 
 const showSearch = ref(true);
 const showPrescription = ref(false);
 const total = ref(1);
+const selectedItems = ref(new Set());
 
 const tableRef = ref(null);
 const selectedGroupIds = ref(new Set());
@@ -113,12 +115,12 @@ const currentRow = ref(null);
 const dateRange = ref([]);
 const historyRecordsList = ref([])
 const patientList = ref([]);
-// const infusionList = ref([]);
-const infusionList = ref([
-      { groupId: 1, executionCount: 2, doctorId_dictText: '张三', patientName: '李四', genderEnum_enumText: '男', status: '123456789012345678', medicationInformation: '药品A', medicationAntity: 10, rateCode: '每日一次', dose: '10mg', speed: '50ml/h', orgId_dictText: '内科', medicationStatusEnum_enumText: '已发放', flagText: '是', clinicalStatusEnum_enumText: '阴性' },
-      { groupId: 1, executionCount: 2, doctorId_dictText: '张三', patientName: '王五', genderEnum_enumText: '女', status: '123456789012345679', medicationInformation: '药品A', medicationAntity: 10, rateCode: '每日一次', dose: '10mg', speed: '50ml/h', orgId_dictText: '内科', medicationStatusEnum_enumText: '已发放', flagText: '是', clinicalStatusEnum_enumText: '阴性' },
-      { groupId: 2, executionCount: 1, doctorId_dictText: '李六', patientName: '赵七', genderEnum_enumText: '男', status: '123456789012345680', medicationInformation: '药品B', medicationAntity: 5, rateCode: '每日两次', dose: '5mg', speed: '30ml/h', orgId_dictText: '外科', medicationStatusEnum_enumText: '已发放', flagText: '否', clinicalStatusEnum_enumText: '无' },
-    ]);
+const infusionList = ref([]);
+// const infusionList = ref([
+//       { groupId: 1, executionCount: 2, doctorId_dictText: '张三', patientName: '李四', genderEnum_enumText: '男', status: '123456789012345678', medicationInformation: '药品A', medicationAntity: 10, rateCode: '每日一次', dose: '10mg', speed: '50ml/h', orgId_dictText: '内科', medicationStatusEnum_enumText: '已发放', skinTestFlag_enumText: '是', clinicalStatusEnum_enumText: '阴性' },
+//       { groupId: 1, executionCount: 2, doctorId_dictText: '张三', patientName: '王五', genderEnum_enumText: '女', status: '123456789012345679', medicationInformation: '药品A', medicationAntity: 10, rateCode: '每日一次', dose: '10mg', speed: '50ml/h', orgId_dictText: '内科', medicationStatusEnum_enumText: '已发放', skinTestFlag_enumText: '是', clinicalStatusEnum_enumText: '阴性' },
+//       { groupId: 2, executionCount: 1, doctorId_dictText: '李六', patientName: '赵七', genderEnum_enumText: '男', status: '123456789012345680', medicationInformation: '药品B', medicationAntity: 5, rateCode: '每日两次', dose: '5mg', speed: '30ml/h', orgId_dictText: '外科', medicationStatusEnum_enumText: '已发放', skinTestFlag_enumText: '否', clinicalStatusEnum_enumText: '无' },
+//     ]);
 
 const ids = ref([]);
 
@@ -127,28 +129,27 @@ const { proxy } = getCurrentInstance();
 const data = reactive({
   form: {},
   queryParams: {
-	pageNum: 1,
+	pageNo: 1,
     pageSize: 10,
-    patientname: undefined,
-    patientid: undefined
+    searchKey: undefined
   },
 });
 const { queryParams } = toRefs(data);
 
 /** 查询门诊输液列表 */
 function getList() {
-//   listInfusionRecord(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
-//     jobLogList.value = response.rows;
-//     total.value = response.total;
-//     loading.value = false;
-//   });
+  listInfusionRecord(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
+	console.log('Full response:', response);
+  });
 	listPatients().then(response => {
 		console.log('Full response:', response); // 打印完整响应
 		patientList.value = response.data;
 		total.value = response.total;
-	}).catch(error => {
-		console.error('Error:', error); // 捕获并打印错误
 	});
+	listPatientInfusionPerformRecord().then(response => {
+		console.log('Full response:', response); // 打印完整响应
+		historyRecordsList.value = response.data;
+  });
 }
 
 /** 搜索按钮操作 */
@@ -166,7 +167,9 @@ function resetQuery() {
 }
 
 function handleSubmit(){
-	updateInfusionRecord(form.value).then(response => {
+	const itemsList = Array.isArray(selectedItems.value) ? selectedItems.value : [selectedItems.value];
+	console.log('Full response:', itemsList,selectedItems.value);
+	updateInfusionRecord(itemsList).then(response => {
 		proxy.$modal.msgSuccess("执行成功");
 		open.value = false;
 		getList();
@@ -182,33 +185,39 @@ function isEqual(set1, set2) {
 }
 
 function handleSelectionChange(selection) {
-//   console.log('Current selection:', selection);
-//   console.log('Current selectedGroupIds:', selectedGroupIds.value);
-
-  // 获取当前选中的 groupId 集合
+  // 清空之前选中的数据
+  selectedItems.value.clear();
+  // 将当前选中的数据存到 selectedItems 中
+  selection.forEach(item => {
+    selectedItems.value.add(item);
+  });
+  // 获取当前选中的 groupId 和 medicationId 集合
   const currentGroupIds = new Set(selection.map(item => item.groupId));
-
-  // 更新 selectedGroupIds
-  // 如果当前选中的 groupId 已经存在，则移除它；否则添加它
+//   const currentMedicationIds = new Set(selection.map(item => item.medicationId));
+  // 更新 selectedGroupIds 和 selectedMedicationIds
   selection.forEach(item => {
     const groupId = item.groupId;
-    if (selectedGroupIds.value.has(groupId)) {
+    const medicationId = item.medicationId;
+    // 检查 groupId 和 medicationId 是否同时存在
+    if (selectedGroupIds.value.has(groupId) ) {
+      // 如果都存在，则移除它们
       selectedGroupIds.value.delete(groupId);
+    //   selectedMedicationIds.value.delete(medicationId);
     } else {
+      // 否则添加它们
       selectedGroupIds.value.add(groupId);
+    //   selectedMedicationIds.value.add(medicationId);
     }
   });
-
   // 动态更新表格行的选中状态
   infusionList.value.forEach(row => {
-    // 如果当前行的 groupId 在 selectedGroupIds 中，则选中；否则取消选中
-    const isSelected = selectedGroupIds.value.has(row.groupId);
-    // console.log('Row groupId:', row.groupId, 'isSelected:', isSelected);
+    // 检查当前行的 groupId 和 medicationId 是否同时在 selectedGroupIds 和 selectedMedicationIds 中
+    const isSelected = selectedGroupIds.value.has(row.groupId) 
     tableRef.value.toggleRowSelection(row, isSelected);
   });
-
   console.log('Current selectedGroupIds:', selectedGroupIds.value);
-
+//   console.log('Current selectedMedicationIds:', selectedMedicationIds.value);
+  console.log('Current selectedItems:', selectedItems.value);
 }
 function handleSubmitCanel(){
 	ids.value = []
@@ -247,7 +256,7 @@ getList();
 }
 .right {
 	margin-left: 2%;
-  	width: 72%;
+  	width: 70%;
 }
 .selected-row {
   background-color: #effae8 !important;

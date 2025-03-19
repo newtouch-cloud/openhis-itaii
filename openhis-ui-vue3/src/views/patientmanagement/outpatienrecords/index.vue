@@ -87,7 +87,7 @@ function getList() {
 	});
 	listDoctorNames().then(response => {
 		console.log(response);
-		// doctorList.value = response.data;
+		doctorList.value = response.data;
 	});
 }
 
@@ -96,7 +96,6 @@ function handleQuery() {
 	queryParams.value.beginTime = dateRange.value[0];
 	queryParams.value.endTime = dateRange.value[1];
 	queryParams.value.pageNo = 1;
-	console.log("123",queryParams.value,typeof queryParams.value.beginTime)
 	getList();
 }
 /** 重置按钮操作 */

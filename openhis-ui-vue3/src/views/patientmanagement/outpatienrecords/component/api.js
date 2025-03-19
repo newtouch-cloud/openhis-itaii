@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function listOutpatienRecords(query) {
     return request({
-      url: '/patientmanage/records/outpatient-record-page',
+      url: '/patient-manage/records/outpatient-record-page',
       method: 'get',
       params: query
     })
@@ -10,7 +10,7 @@ export function listOutpatienRecords(query) {
 
   export function listDoctorNames() {
     return request({
-      url: '/patientmanage/records/init',
+      url: '/patient-manage/records/init',
       method: 'get',
     })
   }

@@ -72,11 +72,6 @@
 					  </el-col>					  
 				  </el-row>
 				  <el-row>
-					  <!-- <el-col :span="6">
-						<el-form-item label="年龄" prop="age">
-						   <el-input v-model="form.age" clearable :disabled="isViewMode"/>
-						</el-form-item>
-					  </el-col> -->
 					  <el-col :span="12">
 						<el-form-item label="性别" prop="genderEnum">
 						   <el-radio-group v-model="form.genderEnum" :disabled="isViewMode">
@@ -89,8 +84,8 @@
 					  <el-col :span="7">
 						<el-form-item label="活动标识" prop="tempFlag">
 						   <el-radio-group v-model="form.tempFlag" :disabled="isViewMode">
-								<el-radio v-for="dict in patient_temp_flag" :key="dict.value" :label="dict.value" >
-									{{ dict.label }}
+								<el-radio v-for="item in tempFlagList" :key="item.value" :label="item.value" >
+									{{ item.info }}
 								</el-radio>
 						   </el-radio-group>
 						</el-form-item>
@@ -100,8 +95,7 @@
 					  <el-col :span="7">
 						<el-form-item label="证件类别" prop="idType">
 						   <el-select v-model="form.idType" placeholder="证件类别" clearable :disabled="isViewMode">
-						      <el-option v-for="dict in sys_idtype"
-						         :key="dict.value" :label="dict.label" :value="dict.value" />
+						      <el-option v-for="item in idTypeList" :key="item.value" :label="item.info" />
 						   </el-select>
 						</el-form-item>
 					  </el-col>
@@ -191,7 +185,7 @@
 						         :key="item.value" :label="item.info" :value="item.value" />
 						   </el-select>
 						</el-form-item>
-					  </el-col>					  
+					  </el-col>
 				  </el-row>
 				  <el-row>
 					  <el-col :span="10">
@@ -224,8 +218,7 @@
 <script  setup name="patientManagement">
 import pcas from 'china-division/dist/pcas-code.json';
 import { ref, computed } from 'vue';
-import {listmaritalstatus,listoccupationtype,lisadministrativegender,listbloodtypeabo,listbloodtypearh,listfamilyrelationshiptype,
-	addPatient,listPatient,updatePatient,lists} from "./component/api"
+import {addPatient,listPatient,updatePatient,lists} from "./component/api"
 
 const showSearch = ref(true);
 const open = ref(false);
@@ -239,6 +232,8 @@ const bloodtypeaboList = ref([]) //血型abo
 const bloodtypearhList = ref([]) //血型RH
 const familyrelationshiptypeList = ref([]) //家庭关系
 const addressCom = ref(""); //地址
+const tempFlagList = ref([])
+const idTypeList = ref([])
 
 const options = ref(pcas); // 地区数据
 const selectedOptions = ref([]); // v-model 绑定的选中值
@@ -306,6 +301,8 @@ function getList() {
 	bloodtypearhList.value = response.data.bloodTypeRH
 	familyrelationshiptypeList.value = response.data.familyRelationshipType
 	maritalstatusList.value = response.data.maritalStatus
+	tempFlagList.value = response.data.whetherStatus
+	idTypeList.value = response.data.identityDocumentType
   });
 
 }
