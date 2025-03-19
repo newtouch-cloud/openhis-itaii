@@ -286,6 +286,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             chargeItemList.add(chargeItem);
         }
         iChargeItemService.saveBatch(chargeItemList);
+        // TODO: 此处调用请求方法接口
 
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"门诊医嘱"}));
     }
