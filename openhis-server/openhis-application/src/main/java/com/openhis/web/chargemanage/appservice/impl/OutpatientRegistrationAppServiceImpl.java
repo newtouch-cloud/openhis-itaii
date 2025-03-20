@@ -211,11 +211,13 @@ public class OutpatientRegistrationAppServiceImpl implements IOutpatientRegistra
         EncounterLocation encounterLocation = new EncounterLocation();
         BeanUtils.copyProperties(encounterLocationFormData, encounterLocation);
         iEncounterLocationService.saveEncounterLocationByRegister(encounterLocation);
-        // 保存就诊参数者信息
-        encounterParticipantFormData.setEncounterId(encounterId);
-        EncounterParticipant encounterParticipant = new EncounterParticipant();
-        BeanUtils.copyProperties(encounterParticipantFormData, encounterParticipant);
-        iEncounterParticipantService.saveEncounterParticipantByRegister(encounterParticipant);
+        // 保存就诊参数者信息 , 选了参与这才保存
+        if (encounterParticipantFormData.getPractitionerId() != null) {
+            encounterParticipantFormData.setEncounterId(encounterId);
+            EncounterParticipant encounterParticipant = new EncounterParticipant();
+            BeanUtils.copyProperties(encounterParticipantFormData, encounterParticipant);
+            iEncounterParticipantService.saveEncounterParticipantByRegister(encounterParticipant);
+        }
         // 保存就诊账户信息
         accountFormData.setEncounterId(encounterId);
         Account account = new Account();
