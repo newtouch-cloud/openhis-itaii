@@ -1,6 +1,7 @@
 package com.openhis.web.chargemanage.dto;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -26,7 +27,7 @@ public class EncounterParticipantFormData {
     private String typeCode;
 
     /** 参与者ID */
-    @NotBlank(message = "参与者ID不能为空")
+    @NotNull(message = "参与者ID不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long practitionerId;
 

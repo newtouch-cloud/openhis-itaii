@@ -1,13 +1,13 @@
 package com.openhis.web.chargemanage.dto;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.enums.*;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * 就诊 表单数据
@@ -19,7 +19,7 @@ public class EncounterFormData {
     /**
      * 患者ID
      */
-    @NotBlank(message = "患者ID不能为空")
+    @NotNull(message = "患者ID不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long patientId;
 
@@ -41,7 +41,7 @@ public class EncounterFormData {
     /**
      * 优先级编码
      */
-    @NotBlank(message = "优先级编码不能为空")
+    @NotNull(message = "优先级编码不能为空")
     private Integer priorityEnum;
 
     /**
@@ -52,7 +52,7 @@ public class EncounterFormData {
     /**
      * 服务ID
      */
-    @NotBlank(message = "服务ID不能为空")
+    @NotNull(message = "服务ID不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long serviceTypeId;
 
@@ -64,7 +64,7 @@ public class EncounterFormData {
     /**
      * 机构ID
      */
-    @NotBlank(message = "机构ID不能为空")
+    @NotNull(message = "机构ID不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long organizationId;
 

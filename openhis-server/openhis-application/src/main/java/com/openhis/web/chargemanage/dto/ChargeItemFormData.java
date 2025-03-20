@@ -3,6 +3,8 @@ package com.openhis.web.chargemanage.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 import com.core.common.utils.SecurityUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -12,8 +14,6 @@ import com.openhis.common.enums.EncounterClass;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * 费用项管理 表单数据
@@ -29,7 +29,7 @@ public class ChargeItemFormData {
     private Long encounterId;
 
     /** 患者id */
-    @NotBlank(message = "患者id不能为空")
+    @NotNull(message = "患者id不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long patientId;
 
@@ -50,7 +50,7 @@ public class ChargeItemFormData {
     private Long performerId;
 
     /** 费用定价ID */
-    @NotBlank(message = "费用定价ID不能为空")
+    @NotNull(message = "费用定价ID不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long definitionId;
 
@@ -65,12 +65,12 @@ public class ChargeItemFormData {
     private String serviceTable;
 
     /** 医疗服务ID */
-    @NotBlank(message = "医疗服务ID不能为空")
+    @NotNull(message = "医疗服务ID不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long serviceId;
 
     /** 总价 */
-    @NotBlank(message = "总价不能为空")
+    @NotNull(message = "总价不能为空")
     private BigDecimal totalPrice;
 
     /** 关联账户ID */

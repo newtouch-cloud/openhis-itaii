@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * 就诊位置 表单数据
@@ -26,7 +27,7 @@ public class EncounterLocationFormData {
     /**
      * 位置ID
      */
-    @NotBlank(message = "位置ID不能为空")
+    @NotNull(message = "位置ID不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
 
