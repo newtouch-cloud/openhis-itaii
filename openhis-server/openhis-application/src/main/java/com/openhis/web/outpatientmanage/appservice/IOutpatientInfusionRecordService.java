@@ -19,12 +19,13 @@ public interface IOutpatientInfusionRecordService {
     /**
      * 获取门诊输液记录的患者列表
      *
+     * @param infusionPatientDto 输液患者实体
      * @param searchKey 模糊查询关键字
      * @param pageNo 当前页
      * @param pageSize 每页多少条
      * @return 分页查询
      */
-    IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(
+    IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(OutpatientInfusionPatientDto infusionPatientDto,
         String searchKey, Integer pageNo, Integer pageSize, HttpServletRequest request);
 
     /**

@@ -36,18 +36,20 @@ public class OutpatientInfusionRecordController {
     /**
      * 查询门诊输液的患者列表
      *
+     * @param infusionPatientDto 患者实体
      * @param searchKey 模糊查询关键字
      * @param pageNo 当前页
      * @param pageSize 每页多少条
      * @return 返回门诊输液的患者列表
      */
     @GetMapping(value = "/infusion-patient-list")
-    public R<?> getOutpatientInfusionPatientList(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
+    public R<?> getOutpatientInfusionPatientList(OutpatientInfusionPatientDto infusionPatientDto,
+        @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
         return R
-            .ok(outpatientInfusionRecordService.getOutpatientInfusionPatientList(searchKey, pageNo, pageSize, request));
+            .ok(outpatientInfusionRecordService.getOutpatientInfusionPatientList(infusionPatientDto,searchKey, pageNo, pageSize, request));
     }
 
     /**

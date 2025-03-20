@@ -64,17 +64,19 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     /**
      * 获取门诊输液记录的患者列表
      *
+     * @param infusionPatientDto 输液患者实体
      * @param searchKey 模糊查询关键字
      * @param pageNo 当前页
      * @param pageSize 每页多少条
      * @return 分页查询
      */
     @Override
-    public IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(String searchKey, Integer pageNo,
-        Integer pageSize, HttpServletRequest request) {
+    public IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(
+        OutpatientInfusionPatientDto infusionPatientDto, String searchKey, Integer pageNo, Integer pageSize,
+        HttpServletRequest request) {
 
         // 构建查询条件
-        QueryWrapper<OutpatientInfusionPatientDto> queryWrapper = HisQueryUtils.buildQueryWrapper(null, searchKey,
+        QueryWrapper<OutpatientInfusionPatientDto> queryWrapper = HisQueryUtils.buildQueryWrapper(infusionPatientDto, searchKey,
             new HashSet<>(Arrays.asList(CommonConstants.FieldName.PatientBusNo,
                 CommonConstants.FieldName.EncounterBusNo, CommonConstants.FieldName.PatientName)),
             request);
