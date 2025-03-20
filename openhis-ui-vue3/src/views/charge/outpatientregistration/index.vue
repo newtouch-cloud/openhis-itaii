@@ -9,7 +9,7 @@
           <el-form
             :model="form"
             :rules="rules"
-            ref="outpatientregistrationRef"
+            ref="outpatientRegistrationRef"
             label-width="110px"
           >
             <el-row :gutter="24">
@@ -151,7 +151,7 @@
               <el-col :span="4">
                 <el-form-item
                   label="参保类型："
-                  prop="locationId"
+                  prop="cb"
                   class="custom-label-spacing"
                 >
                   <el-input
@@ -455,11 +455,11 @@
               <el-col :span="4">
                 <el-form-item
                   label="总金额："
-                  prop="pyStr"
+                  prop="totalPrice"
                   class="custom-label-spacing"
                 >
                   <el-input
-                    v-model="form.pyStr"
+                    v-model="form.totalPrice"
                     placeholder=""
                     :disabled="true"
                   />
@@ -678,10 +678,29 @@ const data = reactive({
     // status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
   },
   rules: {
-    // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    // conditionCode: [
-    //   { required: true, message: "编码不能为空", trigger: "blur" },
+    patientId: [{ required: true, message: "病人不能为空", trigger: "blur" }],
+    priorityEnum: [
+      { required: true, message: "优先级不能为空", trigger: "blur" },
+    ],
+    serviceTypeId: [
+      { required: true, message: "挂号类型不能为空", trigger: "blur" },
+    ],
+    organizationId: [
+      { required: true, message: "优先级不能为空", trigger: "blur" },
+    ],
+    locationId: [
+      { required: true, message: "就诊科室不能为空", trigger: "blur" },
+    ],
+    // practitionerId: [
+    //   { required: true, message: "医生不能为空", trigger: "blur" },
     // ],
+    typeCode: [
+      { required: true, message: "账户类型不能为空", trigger: "blur" },
+    ],
+    definitionId: [
+      { required: true, message: "费用定价不能为空", trigger: "blur" },
+    ],
+    totalPrice: [{ required: true, message: "总价不能为空", trigger: "blur" }],
   },
 });
 
@@ -797,13 +816,6 @@ function setInfo() {
     (doctor) => doctor.id === form.value.practitionerId
   );
   form.value.doctorName = doctorData.length > 0 ? doctorData[0].name : "";
-  console.log(doctorData, "datayisheng");
-  const healthcareData = healthcareList.value.filter(
-    (healthcare) => healthcare.id === form.value.serviceTypeId
-  );
-  form.value.locationId_dictText =
-    healthcareData.length > 0 ? healthcareData[0].name : "";
-  form.value.price = healthcareData.length > 0 ? healthcareData[0].price : "";
 }
 
 // 设定费用项管理表单
@@ -811,10 +823,9 @@ function setchargeItem() {
   const healthcareData = healthcareList.value.filter(
     (healthcare) => healthcare.id === form.value.serviceTypeId
   );
-  form.value.definitionId =
-    healthcareData.length > 0 ? healthcareData[0].definitionId : "";
-  form.value.totalPrice =
-    healthcareData.length > 0 ? healthcareData[0].price : "";
+  form.value.locationId_dictText =
+    healthcareData.length > 0 ? healthcareData[0].name : "";
+  form.value.price = healthcareData.length > 0 ? healthcareData[0].price : "";
 }
 /**  查询患者信息 */
 function getList() {
@@ -944,10 +955,14 @@ function reset() {
 function handleAdd() {
   const transformedData = transformFormData(form.value);
   console.log(transformedData, "transformedData门诊挂号");
-  addOutpatientRegistration(transformedData).then((response) => {
-    reset();
-    proxy.$modal.msgSuccess("新增成功");
-    getList();
+  proxy.$refs["outpatientRegistrationRef"].validate((valid) => {
+    if (valid) {
+      addOutpatientRegistration(transformedData).then((response) => {
+        reset();
+        proxy.$modal.msgSuccess("新增成功");
+        getList();
+      });
+    }
   });
 }
 
@@ -979,7 +994,7 @@ function transformFormData(form) {
       patientId: form.patientId,
       definitionId: form.definitionId,
       serviceId: form.serviceTypeId,
-      totalPrice: form.totalPrice, // 默认值为 99.99
+      totalPrice: form.price, // 默认值为 99.99
     },
   };
 }

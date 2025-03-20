@@ -373,10 +373,10 @@
                     :disabled="form.id != undefined"
                   >
                     <el-option
-                      v-for="category in medicine_unit"
-                      :key="category.value"
-                      :label="category.label"
-                      :value="category.value"
+                      v-for="domainEnum in domainEnumOptions"
+                      :key="domainEnum.value"
+                      :label="domainEnum.info"
+                      :value="domainEnum.value"
                     />
                   </el-select>
                 </el-form-item>
@@ -471,18 +471,17 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="6">
+              <el-col :span="12">
                 <el-form-item label="生效日期" prop="effectiveDate">
                   <el-date-picker
                     v-model="form.effectiveDate"
                     type="datetime"
                     value-format="YYYY-MM-DD HH:mm:ss"
                     placeholder="生效日期"
-                    :default-time="defaultTime"
                   />
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="10">
                 <el-form-item
                   label="到期日期"
                   prop="expirationDate"
@@ -493,7 +492,6 @@
                     type="datetime"
                     value-format="YYYY-MM-DD HH:mm:ss"
                     placeholder="到期日期"
-                    :default-time="defaultTime"
                   />
                 </el-form-item>
               </el-col>
@@ -720,6 +718,7 @@ function show() {
   // getList();
   reset();
   statusFlagOptions.value = props.status;
+  domainEnumOptions.value = props.domainEnum;
   // currentData.value.activeFlag == 1
   //   ? (currentData.value.activeFlag = true)
   //   : (currentData.value.activeFlag = false); //是否为活性
@@ -751,6 +750,7 @@ function edit() {
   reset();
   form.value = props.item;
   statusFlagOptions.value = props.status;
+  domainEnumOptions.value = props.domainEnum;
   visible.value = true;
 }
 /** 重置操作表单 */

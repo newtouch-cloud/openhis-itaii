@@ -9,18 +9,14 @@
     >
       <el-form-item label="单据号" prop="busNo">
         <el-input
-          v-model="queryParams.busNo"
+          v-model="queryParams.searchKey"
           placeholder="单据号："
           clearable
           style="width: 150px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item
-        label="审批状态："
-        prop="statusEnum"
-        label-width="100px"
-      >
+      <el-form-item label="审批状态：" prop="statusEnum" label-width="100px">
         <el-select
           v-model="queryParams.statusEnum"
           placeholder=""
@@ -28,49 +24,40 @@
           style="width: 150px"
         >
           <el-option
-            v-for="dict in appointmentRequiredFlagOptions"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="supplyStatus in supplyStatusOptions"
+            :key="supplyStatus.value"
+            :label="supplyStatus.label"
+            :value="supplyStatus.value"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="供应商：" prop="supplierId">
-        <el-input
-          v-model="queryParams.supplierId"
-          placeholder="回车查询"
-          clearable
-          style="width: 150px"
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="部门：" prop="categoryEnum">
         <el-select
-          v-model="queryParams.categoryEnum"
+          v-model="queryParams.supplierId"
           placeholder=""
           clearable
           style="width: 150px"
         >
           <el-option
-            v-for="dict in activeFlagOptions"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="supplier in supplierListOptions"
+            :key="supplier.value"
+            :label="supplier.label"
+            :value="supplier.value"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="部门经手人：" prop="applicantId" label-width="120px">
+      <el-form-item label="经手人：" prop="practitionerId" label-width="120px">
         <el-select
-          v-model="queryParams.applicantId"
+          v-model="queryParams.practitionerId"
           placeholder=""
           clearable
           style="width: 150px"
         >
           <el-option
-            v-for="dict in activeFlagOptions"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="practitioner in practitionerListOptions"
+            :key="practitioner.value"
+            :label="practitioner.label"
+            :value="practitioner.value"
           />
         </el-select>
       </el-form-item>
@@ -113,7 +100,7 @@
           type="primary"
           plain
           icon="Search"
-          @click="getList"
+          @click="handleQuery"
           v-hasPermi="['system:user:import']"
           >查询</el-button
         >
@@ -136,7 +123,12 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="单据号" align="center" key="busNo" prop="busNo" />
+      <el-table-column
+        label="单据号"
+        align="center"
+        key="supplyBusNo"
+        prop="supplyBusNo"
+      />
       <el-table-column
         label="审批状态"
         align="center"
@@ -146,48 +138,51 @@
       <el-table-column
         label="供应商"
         align="center"
-        key="supplierId"
-        prop="supplierId"
+        key="supplierId_dictText"
+        prop="supplierId_dictText"
         :show-overflow-tooltip="true"
       />
       <el-table-column
-        label="部门"
+        label="经手人"
         align="center"
-        key="purposeLocationId"
-        prop="purposeLocationId"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
-        label="部门经手人"
-        align="center"
-        key="approverId"
-        prop="approverId"
+        key="practitionerId_dictText"
+        prop="practitionerId_dictText"
         :show-overflow-tooltip="true"
       />
       <el-table-column
         label="制单人"
         align="center"
-        key="applicantId"
-        prop="applicantId"
+        key="applicantId_dictText"
+        prop="applicantId_dictText"
       />
       <el-table-column
         label="审核人"
         align="center"
-        key="approverId"
-        prop="approverId"
+        key="approverId_dictText"
+        prop="approverId_dictText"
       />
       <el-table-column
         label="制单日期"
         align="center"
-        key="applyTime"
-        prop="applyTime"
-      />
+        key="occurrenceTime"
+        prop="occurrenceTime"
+        width="160"
+      >
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.occurrenceTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="审核日期 "
         align="center"
         key="approvalTime"
         prop="approvalTime"
-      />
+        width="160"
+      >
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.approvalTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -223,10 +218,11 @@
     />
     <inventory-receipt-dialog
       ref="inventoryReceiptRef"
-      :item="currentData"
-      :domainEnum="domainEnumOptions"
-      :status="statusFlagOptions"
-      @submit="submitForm"
+      :practitionerListOptions="practitionerListOptions"
+      :itemTypeOptions="itemTypeOptions"
+      :supplierListOptions="supplierListOptions"
+      :busNoAdd="busNoAdd"
+      @new-item-added="getList"
     />
   </div>
 </template>
@@ -278,6 +274,11 @@ const appointmentRequiredFlagOptions = ref(undefined);
 const deptOptions = ref(undefined); // 部门树选项
 const locationOptions = ref(undefined); // 地点树选项
 const dateRange = ref([]);
+const busNoAdd = ref(""); // 单据号新增
+const itemTypeOptions = ref(undefined); // 入库项目类型
+const practitionerListOptions = ref(undefined); // 查询经手人列表
+const supplierListOptions = ref(undefined); // 供应商列表
+const supplyStatusOptions = ref(undefined); // 审批状态
 
 // 是否停用
 const statusFlagOptions = ref(undefined);
@@ -289,52 +290,24 @@ const data = reactive({
     pageSize: 10,
     searchKey: undefined, // 供应商名称
     busNo: undefined, // 编码
-    statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
-    sourceEnum: undefined, // 来源（包括 1：厂商/产地目录分类，2：自定义）
+    practitionerId: undefined,
+    supplierId: undefined,
+    statusEnum: undefined, // 审批状态
   },
-  rules: {
-    offeredOrgId: [
-      { required: true, message: "提供部门不能为空", trigger: "blur" },
-    ],
-    categoryCode: [
-      { required: true, message: "服务分类不能为空", trigger: "blur" },
-    ],
-    fwTypeCode: [
-      { required: true, message: "服务类型不能为空", trigger: "blur" },
-    ],
-    specialtyCode: [
-      { required: true, message: "服务专业不能为空", trigger: "blur" },
-    ],
-    locationId: [{ required: true, message: "地点不能为空", trigger: "blur" }],
-    name: [{ required: true, message: "服务名称不能为空", trigger: "blur" }],
-    contact: [
-      { required: true, message: "联系人电话不能为空", trigger: "blur" },
-    ],
-    appointmentRequiredFlag: [
-      { required: true, message: "预约要求不能为空", trigger: "blur" },
-    ],
-    activeFlag: [
-      { required: true, message: "活动标识不能为空", trigger: "blur" },
-    ],
-    chargeName: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    description: [{ required: true, message: "描述不能为空", trigger: "blur" }],
-    cwTypeCode: [
-      { required: true, message: "财务类别不能为空", trigger: "blur" },
-    ],
-    ybType: [{ required: true, message: "医保类别不能为空", trigger: "blur" }],
-    price: [{ required: true, message: "基础价格不能为空", trigger: "blur" }],
-  },
+  rules: {},
 });
 
 const { queryParams, form, rules } = toRefs(data);
 
-/** 挂号收费查询下拉树结构 */
+/** 采购入库查询下拉树结构 */
 function getPurchaseinventoryTypeList() {
   getInit().then((response) => {
-    console.log(response, "response");
-    activeFlagOptions.value = response.data.activeFlagOptions; // 活动标记
-    appointmentRequiredFlagOptions.value =
-      response.data.appointmentRequiredFlagOptions; // 预约必填标记
+    console.log(response, "response采购入库查询下拉树结构");
+    busNoAdd.value = response.data.busNo; // 单据号新增
+    itemTypeOptions.value = response.data.itemTypeOptions; // 活动标记
+    practitionerListOptions.value = response.data.practitionerListOptions; // 预约必填标记
+    supplierListOptions.value = response.data.supplierListOptions; // 供应商列表
+    supplyStatusOptions.value = response.data.supplyStatusOptions; // 供应状态
   });
 }
 
@@ -357,24 +330,25 @@ function getLocationTree() {
   });
 }
 
-/** 查询挂号收费项目列表 */
+/** 查询采购入库项目列表 */
 function getList() {
   loading.value = true;
   // // queryParams.value.statusEnum = +queryParams.value.statusEnum
-  // console.log(queryParams.value, "queryParams.value");
-  // getPurchaseinventoryList(queryParams.value).then((res) => {
-  loading.value = false;
-  //   console.log(res, "res");
-  //   purchaseinventoryList.value = res.data.records;
-  //   total.value = res.data.total;
-  //   console.log(total.value, "total.value");
-  // });
+  console.log(queryParams.value, "queryParams.value");
+  // proxy.addDateRange(queryParams.value, dateRange.value)
+  getPurchaseinventoryList(queryParams.value).then((res) => {
+    loading.value = false;
+    console.log(res, "res");
+    purchaseinventoryList.value = res.data.records;
+    total.value = res.data.total;
+    console.log(total.value, "total.value");
+  });
 }
 
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.applyTimeStart = dateRange.value[0];
-  queryParams.value.applyTimeEnd = dateRange.value[1];
+  queryParams.value.S_TIME = dateRange.value[0] + " 00:00:00";
+  queryParams.value.E_TIME = dateRange.value[1] + " 23:59:59";
   queryParams.value.pageNo = 1;
   getList();
 }
@@ -442,67 +416,17 @@ function handleUpdate(row) {
   open.value = true;
   title.value = "编辑";
 }
-/** 提交按钮 */
-function submitForm() {
-  if (form.value.id != undefined) {
-    // 移除规则
-    rules.value.chargeName = [];
-    rules.value.description = [];
-    rules.value.cwTypeCode = [];
-    rules.value.ybType = [];
-    rules.value.price = [];
-  } else {
-    // 恢复规则
-    rules.value.cwTypeCode = [
-      { required: true, message: "财务类别不能为空", trigger: "blur" },
-    ];
-    rules.value.ybType = [
-      { required: true, message: "医保类别不能为空", trigger: "blur" },
-    ];
-    rules.value.price = [
-      { required: true, message: "基础价格不能为空", trigger: "blur" },
-    ];
-
-    rules.value.chargeName = [
-      { required: true, message: "名称不能为空", trigger: "blur" },
-    ];
-    rules.value.description = [
-      { required: true, message: "描述不能为空", trigger: "blur" },
-    ];
-  }
-
-  // const nameData = name || chargeName;
-  // 服务名称
-  form.value.name = getName();
-  // 收费名称
-  form.value.chargeName = getName();
-  proxy.$refs["purchaseinventoryRef"].validate((valid) => {
-    if (valid) {
-      if (form.value.id != undefined) {
-        // 调用转换函数
-        const transformFormEditParam = transformFormEditData(form);
-        console.log(transformFormEditData, "transformFormEditData");
-        console.log(form.value, "editPurchaseinventory", form.value.statusEnum);
-        editPurchaseinventory(transformFormEditParam).then((response) => {
-          proxy.$modal.msgSuccess("修改成功");
-          open.value = false;
-          reset();
-          getList();
-        });
-      } else {
-        // 调用转换函数
-        const transformedData = transformFormData(form);
-        console.log(transformedData, "transformedData");
-        addPurchaseinventory(transformedData).then((response) => {
-          reset();
-          proxy.$modal.msgSuccess("新增成功");
-          open.value = false;
-          getList();
-        });
-      }
-    }
-  });
-}
+// /** 提交按钮 */
+// function submitForm() {
+//   // // 调用转换函数
+//   // const transformedData = transformFormData(form);
+//   // console.log(transformedData, "transformedData");
+//   // addPurchaseinventory(transformedData).then((response) => {
+//   //   proxy.$modal.msgSuccess("新增成功");
+//   //   open.value = false;
+//     getList();
+//   // });
+// }
 
 // 获取完整地址字符串
 function getName() {

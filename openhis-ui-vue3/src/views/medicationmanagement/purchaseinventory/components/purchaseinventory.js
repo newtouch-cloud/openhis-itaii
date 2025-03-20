@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import { parseStrEmpty } from "@/utils/openhis";
 
-// 查询服务管理列表
+// 查询采购入库列表
 export function getPurchaseinventoryList(query) {
   return request({
     url: '/inventory-manage/purchase/inventory-receipt-page',
@@ -18,28 +18,20 @@ export function getPurchaseinventoryOne(id) {
   })
 }
 
-// 新增服务管理
+// 添加/编辑入库单据
 export function addPurchaseinventory(data) {
   return request({
-    url: '/basic-service/healthcare/healthcare-service',
+    url: '/inventory-manage/purchase/inventory-receipt',
     method: 'post',
     data: data
   })
 }
 
-// 修改服务管理
-export function editPurchaseinventory(data) {
-  return request({
-    url: '/basic-service/healthcare/healthcare-service',
-    method: 'put',
-    data: data
-  })
-}
 
 // 查询厂商类型
 export function getInit() {
   return request({
-    url: '/basic-service/healthcare/init',
+    url: '/inventory-manage/purchase/init',
     method: 'get'
   })
 }

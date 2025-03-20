@@ -133,3 +133,12 @@ export function listfamilyrelationshiptype() {
       method: 'get',
     })
   }
+
+
+  // 查询患者相关
+  export function patientlLists() {
+    return request({
+      url: '/patient-manage/information/init',
+      method: 'get'
+    })
+  }

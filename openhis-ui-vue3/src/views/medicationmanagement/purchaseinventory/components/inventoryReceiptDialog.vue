@@ -36,100 +36,85 @@
       </el-row>
 
       <el-form
-        :model="queryParams"
-        ref="queryRef"
+        :model="receiptHeaderForm"
+        ref="receiptHeaderRef"
         :inline="true"
         v-show="showSearch"
         label-width="90px"
       >
         <el-form-item label="单据号" prop="busNo">
           <el-input
-            v-model="queryParams.busNo"
+            v-model="receiptHeaderForm.busNo"
             placeholder="单据号："
             clearable
-            style="width: 150px"
-            @keyup.enter="handleQuery"
+            style="width: 260px"
           />
         </el-form-item>
         <el-form-item
-          label="采购部门："
-          prop="categoryEnum"
-          label-width="100px"
-        >
-          <el-select
-            v-model="queryParams.categoryEnum"
-            placeholder=""
-            clearable
-            style="width: 150px"
-          >
-            <el-option
-              v-for="dict in appointmentRequiredFlagOptions"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          label="部门经手人："
-          prop="applicantId"
+          label="经手人："
+          prop="practitionerId"
           label-width="120px"
         >
           <el-select
-            v-model="queryParams.applicantId"
+            v-model="receiptHeaderForm.practitionerId"
             placeholder=""
             clearable
             style="width: 150px"
           >
             <el-option
-              v-for="dict in activeFlagOptions"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
+              v-for="practitioner in practitionerListOptions"
+              :key="practitioner.value"
+              :label="practitioner.label"
+              :value="practitioner.value"
             />
           </el-select>
         </el-form-item>
         <el-form-item label="单据日期：">
           <el-date-picker
-            v-model="queryParams.applyTimeStart"
+            v-model="receiptHeaderForm.occurrenceTime"
             value-format="YYYY/MM/DD HH:mm:ss"
             type="datetime"
-            start-placeholder="开始日期"
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="供应商：" prop="supplierId">
-          <el-input
-            v-model="queryParams.supplierId"
-            placeholder="回车查询"
-            clearable
-            style="width: 150px"
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item label="药品类型：" prop="categoryEnum">
           <el-select
-            v-model="queryParams.categoryEnum"
+            v-model="receiptHeaderForm.supplierId"
             placeholder=""
             clearable
             style="width: 150px"
           >
             <el-option
-              v-for="dict in activeFlagOptions"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
+              v-for="supplier in supplierListOptions"
+              :key="supplier.value"
+              :label="supplier.label"
+              :value="supplier.value"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="仓库类型：" prop="purposeLocationId">
+        <el-form-item label="药品类型：" prop="medicationType">
           <el-select
-            v-model="queryParams.purposeLocationId"
+            v-model="receiptHeaderForm.medicationType"
             placeholder=""
             clearable
             style="width: 150px"
           >
             <el-option
-              v-for="dict in activeFlagOptions"
+              v-for="itemType in purchase_type"
+              :key="itemType.value"
+              :label="itemType.label"
+              :value="itemType.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="仓库类型：" prop="purposeTypeEnum">
+          <el-select
+            v-model="receiptHeaderForm.purposeTypeEnum"
+            placeholder=""
+            clearable
+            style="width: 150px"
+          >
+            <el-option
+              v-for="dict in warehous_type"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
@@ -225,18 +210,26 @@
             <el-table-column
               label="项目"
               align="center"
-              key="itemTable"
-              prop="itemTable"
+              key="itemId"
+              prop="itemId"
               width="300"
             >
               <template #default="scope">
-                <el-select
-                  v-model="scope.row.itemTable"
-                  placeholder="请选择计量单位"
-                >
-                  <el-option label="单位1" value="单位1" />
-                  <el-option label="单位2" value="单位2" />
-                </el-select>
+                <div style="display: flex; align-items: center">
+                  <el-select
+                    v-model="scope.row.itemTable"
+                    placeholder="请选择"
+                    @blur="handleBlur(scope.row, scope.$index)"
+                  >
+                    <el-option label="单位1" value="单位1" />
+                    <el-option label="单位2" value="单位2" />
+                  </el-select>
+                  <el-tooltip content="该项目必填" placement="top">
+                    <el-icon style="color: red; margin-left: 5px"
+                      ><Warning
+                    /></el-icon>
+                  </el-tooltip>
+                </div>
               </template>
             </el-table-column>
             <el-table-column
@@ -247,19 +240,19 @@
               width="130"
             >
               <template #default="scope">
-                <el-input v-model="scope.row.busNo" placeholder="" />
+                <el-input v-model="scope.row.guige" placeholder="" />
               </template>
             </el-table-column>
             <el-table-column
               label="厂家/产地"
               align="center"
-              key="supplierId"
-              prop="supplierId"
+              key="supplierName"
+              prop="supplierName"
               :show-overflow-tooltip="true"
               width="130"
             >
               <template #default="scope">
-                <el-input v-model="scope.row.busNo" placeholder="" />
+                <el-input v-model="scope.row.cahngdi" placeholder="" />
               </template>
             </el-table-column>
             <el-table-column
@@ -271,31 +264,47 @@
               width="100"
             >
               <template #default="scope">
-                <el-select
-                  v-model="scope.row.unitCode"
-                  placeholder="请选择计量单位"
-                >
-                  <el-option label="单位1" value="单位1" />
-                  <el-option label="单位2" value="单位2" />
-                </el-select>
+                <div style="display: flex; align-items: center">
+                  <el-select
+                    v-model="scope.row.unitCode"
+                    placeholder="请选择计量单位"
+                    @blur="handleBlur(scope.row, scope.$index)"
+                  >
+                    <el-option label="单位1" value="单位1" />
+                    <el-option label="单位2" value="单位2" />
+                  </el-select>
+                  <el-tooltip content="该项目必填" placement="top">
+                    <el-icon style="color: red; margin-left: 5px"
+                      ><Warning
+                    /></el-icon>
+                  </el-tooltip>
+                </div>
               </template>
             </el-table-column>
             <el-table-column
               label="仓库"
               align="center"
-              key="approverId"
-              prop="approverId"
+              key="purposeLocationStoreId"
+              prop="purposeLocationStoreId"
               :show-overflow-tooltip="true"
               width="130"
             >
               <template #default="scope">
-                <el-select
-                  v-model="scope.row.approverId"
-                  placeholder="请选择仓库"
-                >
-                  <el-option label="仓库1" value="仓库1" />
-                  <el-option label="仓库2" value="仓库2" />
-                </el-select>
+                <div style="display: flex; align-items: center">
+                  <el-select
+                    v-model="scope.row.purposeLocationStoreId"
+                    placeholder="请选择仓库"
+                    @blur="handleBlur(scope.row, scope.$index)"
+                  >
+                    <el-option label="仓库1" value="仓库1" />
+                    <el-option label="仓库2" value="仓库2" />
+                  </el-select>
+                  <el-tooltip content="该项目必填" placement="top">
+                    <el-icon style="color: red; margin-left: 5px"
+                      ><Warning
+                    /></el-icon>
+                  </el-tooltip>
+                </div>
               </template>
             </el-table-column>
             <el-table-column
@@ -306,13 +315,21 @@
               width="130"
             >
               <template #default="scope">
-                <el-select
-                  v-model="scope.row.approverId"
-                  placeholder="请选择货位"
-                >
-                  <el-option label="货位1" value="货位1" />
-                  <el-option label="货位2" value="货位2" />
-                </el-select>
+                <div style="display: flex; align-items: center">
+                  <el-select
+                    v-model="scope.row.approverId"
+                    placeholder="请选择货位"
+                    @blur="handleBlur(scope.row, scope.$index)"
+                  >
+                    <el-option label="货位1" value="货位1" />
+                    <el-option label="货位2" value="货位2" />
+                  </el-select>
+                  <el-tooltip content="该项目必填" placement="top">
+                    <el-icon style="color: red; margin-left: 5px"
+                      ><Warning
+                    /></el-icon>
+                  </el-tooltip>
+                </div>
               </template>
             </el-table-column>
             <el-table-column
@@ -329,23 +346,67 @@
             <el-table-column
               label="采购数量"
               align="center"
-              key="applyTime"
-              prop="applyTime"
+              key="itemQuantity"
+              prop="itemQuantity"
               width="130"
             >
               <template #default="scope">
-                <el-input v-model="scope.row.busNo" placeholder="" />
+                <div style="display: flex; align-items: center">
+                  <el-input
+                    v-model="scope.row.itemQuantity"
+                    placeholder=""
+                    @blur="handleBlur(scope.row, scope.$index)"
+                  />
+                  <el-tooltip content="该项目必填" placement="top">
+                    <el-icon style="color: red; margin-left: 5px"
+                      ><Warning
+                    /></el-icon>
+                  </el-tooltip>
+                </div>
               </template>
             </el-table-column>
             <el-table-column
               label="采购单价 "
               align="center"
-              key="approvalTime"
-              prop="approvalTime"
+              key="price"
+              prop="price"
               width="130"
             >
               <template #default="scope">
-                <el-input v-model="scope.row.busNo" placeholder="" />
+                <div style="display: flex; align-items: center">
+                  <el-input
+                    v-model="scope.row.price"
+                    placeholder=""
+                    @blur="handleBlur(scope.row, scope.$index)"
+                  />
+                  <el-tooltip content="该项目必填" placement="top">
+                    <el-icon style="color: red; margin-left: 5px"
+                      ><Warning
+                    /></el-icon>
+                  </el-tooltip>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="售价 "
+              align="center"
+              key="sellPrice"
+              prop="sellPrice"
+              width="130"
+            >
+              <template #default="scope">
+                <el-input v-model="scope.row.sellPrice" placeholder="" />
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="拆零售价 "
+              align="center"
+              key="minSellPrice"
+              prop="minSellPrice"
+              width="130"
+            >
+              <template #default="scope">
+                <el-input v-model="scope.row.minSellPrice" placeholder="" />
               </template>
             </el-table-column>
             <el-table-column
@@ -405,17 +466,6 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="有效期(月)"
-              align="center"
-              key="approvalTime"
-              prop="approvalTime"
-              width="100"
-            >
-              <template #default="scope">
-                <el-input v-model="scope.row.busNo" placeholder="" />
-              </template>
-            </el-table-column>
-            <el-table-column
               label="发票号 "
               align="center"
               key="invoiceNo"
@@ -445,18 +495,18 @@
               width="130"
             >
               <template #default="scope">
-                <el-input v-model="scope.row.busNo" placeholder="" />
+                <el-input v-model="scope.row.zsbz" placeholder="" />
               </template>
             </el-table-column>
             <el-table-column
               label="备注"
               align="center"
-              key="approvalTime"
-              prop="approvalTime"
+              key="detailJson"
+              prop="detailJson"
               width="130"
             >
               <template #default="scope">
-                <el-input v-model="scope.row.busNo" placeholder="" />
+                <el-input v-model="scope.row.detailJson" placeholder="" />
               </template>
             </el-table-column>
             <el-table-column
@@ -537,34 +587,32 @@
 </template>
 
 <script setup name="InventoryReceiptDialog">
-// import {
-//   getPurchaseinventoryList,
-//   editPurchaseinventory,
-//   addPurchaseinventory,
-//   getPurchaseinventoryOne,
-//   getInit,
-//   deptTreeSelect,
-//   locationTreeSelect,
-//   delPurchaseinventory,
-// } from "./components/purchaseinventory";
+import {
+  getPurchaseinventoryList,
+  editPurchaseinventory,
+  addPurchaseinventory,
+  getPurchaseinventoryOne,
+  getInit,
+  deptTreeSelect,
+  locationTreeSelect,
+  delPurchaseinventory,
+} from "./purchaseinventory";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const purchaseinventoryRef = ref(null); // 初始化 ref
 const {
-  adm_location,
+  warehous_type,
   category_code,
   service_type_code,
   specialty_code,
-  med_chrgitm_type,
-  financial_type_code,
+  purchase_type,
 } = proxy.useDict(
-  "adm_location",
+  "warehous_type",
   "category_code",
   "service_type_code",
   "specialty_code",
-  "med_chrgitm_type",
-  "financial_type_code"
+  "purchase_type"
 );
 
 const purchaseinventoryList = ref([]);
@@ -583,18 +631,37 @@ const locationOptions = ref(undefined); // 地点树选项
 const dateRange = ref([]);
 const visible = ref(false);
 
-// 是否停用
-const statusFlagOptions = ref(undefined);
+const props = defineProps({
+  practitionerListOptions: {
+    type: Object,
+    required: false,
+  },
+  itemTypeOptions: {
+    type: Object,
+    required: false,
+  },
+  supplierListOptions: {
+    type: Object,
+    required: false,
+  },
+  busNoAdd: {
+    type: String,
+    required: true,
+  },
+});
 
 const data = reactive({
   form: {},
+  receiptHeaderForm: {},
   queryParams: {
     pageNo: 1,
     pageSize: 10,
     searchKey: undefined, // 供应商名称
     busNo: undefined, // 编码
-    statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
-    sourceEnum: undefined, // 来源（包括 1：厂商/产地目录分类，2：自定义）
+    statusEnum: undefined, // 状态
+    supplierId: undefined, // 供应商ID
+    applyTimeStart: undefined, // 申请时间开始
+    practitionerId: undefined, // 经手人ID
   },
   rules: {
     offeredOrgId: [
@@ -630,51 +697,93 @@ const data = reactive({
   },
 });
 
-const { queryParams, form, rules } = toRefs(data);
-
+const { queryParams, form, receiptHeaderForm, rules } = toRefs(data);
+const itemTypeOptions = ref(undefined); // 入库项目类型
+const practitionerListOptions = ref(undefined); // 查询经手人列表
+const supplierListOptions = ref(undefined); // 供应商列表
 const selectedRows = ref([]); // 用于存储选中的行
+
 const addNewRow = () => {
-  purchaseinventoryList.value.push({
-    busNo: "",
-    statusEnum_enumText: "",
+  if (data.isAdding) {
+    proxy.$message.warning("请先保存当前行后再新增！");
+    return;
+  }
+  const newRow = {
+    id: "",
+    itemTable: "",
+    itemQuantity: "",
+    itemId: "",
+    unitCode: "",
+    detailJson: "",
     supplierId: "",
-    purposeLocationId: "",
-    approverId: "",
-    applicantId: "",
-    applyTime: null,
-    approvalTime: null,
-    // 其他字段...
-  });
+    purposeTypeEnum: "",
+    purposeLocationId: null,
+    purposeLocationStoreId: null,
+    practitionerId: "",
+    traceNo: "",
+    invoiceNo: "",
+    startTime: "",
+    endTime: "",
+    price: "",
+    totalPrice: "",
+    sellPrice: "",
+    minSellPrice: "",
+    isEditing: true, // 标记当前行是否正在编辑
+  };
+  purchaseinventoryList.value.push(newRow);
+  data.isAdding = true; // 设置标志位为 true，表示有未保存的
 };
 
-/** 挂号收费查询下拉树结构 */
-function getPurchaseinventoryTypeList() {
-  getInit().then((response) => {
-    console.log(response, "response");
-    activeFlagOptions.value = response.data.activeFlagOptions; // 活动标记
-    appointmentRequiredFlagOptions.value =
-      response.data.appointmentRequiredFlagOptions; // 预约必填标记
-  });
-}
+const handleBlur = (row, index) => {
+  console.log(row, "rowhandleBlurhandleBlurhandleBlurhandleBlurhandleBlur");
+  if (
+    row.itemTable &&
+    row.unitCode &&
+    row.purposeLocationStoreId &&
+    row.approverId &&
+    row.itemQuantity &&
+    row.price
+  ) {
+    saveRow(row, index); // 调用保存方法
+  }
+};
 
-/** 查询部门下拉树结构 */
-function getDeptTree() {
-  deptTreeSelect().then((response) => {
-    console.log(response, "response查询部门下拉树结构");
+const saveRow = (row, index) => {
+  console.log(row, "saveRowsaveRowsaveRowsaveRowsaveRowsaveRow");
+  // 保存当前行的逻辑...
+  // 例如：调用 API 保存数据
+  // 保存成功后，将标志位设置为 false
+  // data.isAdding = false;
+  if (receiptHeaderForm.value.medicationType === "1") {
+    row.itemTable = "med_medication_definition";
+  } else {
+    row.itemTable = "adm_device_definition";
+  }
+  row.practitionerId = receiptHeaderForm.value.practitionerId;
+  row.occurrenceTime = receiptHeaderForm.value.occurrenceTime;
+  row.supplierId = receiptHeaderForm.value.supplierId;
+  row.purposeTypeEnum = receiptHeaderForm.value.purposeTypeEnum;
+  console.log(row, "rowabbbbbbbbbbbbbb");
+  // try {
+  // 调用 API 保存数据
+  // await savePurchaseInventory(row);
 
-    deptOptions.value = response.data.records;
-    console.log(deptOptions.value, "部门下拉树结构");
-  });
-}
-
-/** 查询地点下拉树结构 */
-function getLocationTree() {
-  locationTreeSelect().then((response) => {
-    console.log(response, "response查询部门下拉树结构");
-    locationOptions.value = response.data.records;
-    console.log(locationOptions.value, "部门下拉树结构");
-  });
-}
+  // 保存成功后，更新本地数据
+  purchaseinventoryList.value[index] = row;
+  // 将表单数据发送给父组件
+  emits("submit", row);
+  //   addPurchaseinventory(row).then((response) => {
+  //     reset();
+  //     data.isAdding = false; // 允许新增下一行
+  //     proxy.$message.success("保存成功！");
+  //     visible.value = false;
+  //     // getList();
+  //   });
+  // } catch (error) {
+  //   proxy.$message.error("保存失败，请重试！");
+  // }
+  // proxy.$message.success("保存成功！");
+};
 
 /** 查询挂号收费项目列表 */
 function getList() {
@@ -688,21 +797,6 @@ function getList() {
   //   total.value = res.data.total;
   //   console.log(total.value, "total.value");
   // });
-}
-
-/** 搜索按钮操作 */
-function handleQuery() {
-  queryParams.value.applyTimeStart = dateRange.value[0];
-  queryParams.value.applyTimeEnd = dateRange.value[1];
-  queryParams.value.pageNo = 1;
-  getList();
-}
-
-/** 清空条件按钮操作 */
-function handleClear() {
-  // 清空查询条件
-  proxy.resetForm("queryRef");
-  getList();
 }
 
 /** 选择条数  */
@@ -730,32 +824,51 @@ const deleteSelectedRows = () => {
 
 /** 重置操作表单 */
 function reset() {
-  form.value = {
-    id: undefined,
-    name: undefined,
-    categoryCode: undefined,
-    cwTypeCode: undefined,
-    fwTypeCode: undefined,
-    specialtyCode: undefined,
-    locationId: undefined,
-    offeredOrgId: undefined,
-    activeFlag: undefined,
-    extraDetails: undefined,
-    contact: undefined,
-    appointmentRequiredFlag: undefined,
-    chargeName: undefined,
-    price: undefined,
-    description: undefined,
-    ybType: undefined,
-    title: undefined,
-    comment: undefined,
+  // form.value = {
+  //   id: undefined,
+  //   name: undefined,
+  //   categoryCode: undefined,
+  //   cwTypeCode: undefined,
+  //   fwTypeCode: undefined,
+  //   specialtyCode: undefined,
+  //   locationId: undefined,
+  //   offeredOrgId: undefined,
+  //   activeFlag: undefined,
+  //   extraDetails: undefined,
+  //   contact: undefined,
+  //   appointmentRequiredFlag: undefined,
+  //   chargeName: undefined,
+  //   price: undefined,
+  //   description: undefined,
+  //   ybType: undefined,
+  //   title: undefined,
+  //   comment: undefined,
+  // };
+  // proxy.resetForm("purchaseinventoryRef");
+
+  receiptHeaderForm.value = {
+    busNo: undefined,
+    practitionerId: undefined,
+    occurrenceTime: undefined,
+    supplierId: undefined,
+    medicationType: "1",
+    purposeTypeEnum: undefined,
   };
-  proxy.resetForm("purchaseinventoryRef");
+  proxy.resetForm("receiptHeaderRef");
 }
 // 显示弹框
 function show() {
   reset();
   visible.value = true;
+  supplierListOptions.value = props.supplierListOptions;
+  itemTypeOptions.value = props.itemTypeOptions;
+  practitionerListOptions.value = props.practitionerListOptions;
+  receiptHeaderForm.value.busNo = props.busNoAdd;
+  // console.log(purchase_type.value, "purchase_type.value")
+  // // 设置默认值为字典中的第一个值
+  // if (purchase_type.value.length > 0) {
+  //   form.value.medicationType = purchase_type.value[0].value;
+  // }
   getList();
 }
 /** 取消按钮 */
@@ -777,110 +890,7 @@ function handleUpdate(row) {
   open.value = true;
   title.value = "编辑";
 }
-/** 提交按钮 */
-function submitForm() {
-  if (form.value.id != undefined) {
-    // 移除规则
-    rules.value.chargeName = [];
-    rules.value.description = [];
-    rules.value.cwTypeCode = [];
-    rules.value.ybType = [];
-    rules.value.price = [];
-  } else {
-    // 恢复规则
-    rules.value.cwTypeCode = [
-      { required: true, message: "财务类别不能为空", trigger: "blur" },
-    ];
-    rules.value.ybType = [
-      { required: true, message: "医保类别不能为空", trigger: "blur" },
-    ];
-    rules.value.price = [
-      { required: true, message: "基础价格不能为空", trigger: "blur" },
-    ];
 
-    rules.value.chargeName = [
-      { required: true, message: "名称不能为空", trigger: "blur" },
-    ];
-    rules.value.description = [
-      { required: true, message: "描述不能为空", trigger: "blur" },
-    ];
-  }
-
-  // const nameData = name || chargeName;
-  // 服务名称
-  form.value.name = getName();
-  // 收费名称
-  form.value.chargeName = getName();
-  proxy.$refs["purchaseinventoryRef"].validate((valid) => {
-    if (valid) {
-      if (form.value.id != undefined) {
-        // 调用转换函数
-        const transformFormEditParam = transformFormEditData(form);
-        console.log(transformFormEditData, "transformFormEditData");
-        console.log(form.value, "editPurchaseinventory", form.value.statusEnum);
-        editPurchaseinventory(transformFormEditParam).then((response) => {
-          proxy.$modal.msgSuccess("修改成功");
-          open.value = false;
-          reset();
-          getList();
-        });
-      } else {
-        // 调用转换函数
-        const transformedData = transformFormData(form);
-        console.log(transformedData, "transformedData");
-        addPurchaseinventory(transformedData).then((response) => {
-          reset();
-          proxy.$modal.msgSuccess("新增成功");
-          open.value = false;
-          getList();
-        });
-      }
-    }
-  });
-}
-
-// 获取完整地址字符串
-function getName() {
-  console.log(service_type_code.value, "service_type_code.value");
-  // 服务类型
-  const serviceTypeText = proxy.selectDictLabel(
-    service_type_code.value,
-    form.value.fwTypeCode
-  );
-  // 服务分类
-  const categoryCodeText = proxy.selectDictLabel(
-    category_code.value,
-    form.value.categoryCode
-  );
-  // 服务专业
-  const specialtyCodeText = proxy.selectDictLabel(
-    specialty_code.value,
-    form.value.specialtyCode
-  );
-  console.log(
-    serviceTypeText,
-    "serviceTypeText",
-    categoryCodeText,
-    specialtyCodeText
-  );
-  const nameParts = [
-    serviceTypeText,
-    form.value.addressCity,
-    categoryCodeText,
-    specialtyCodeText,
-  ];
-
-  // 使用 reduce 方法拼接地址，非空字段之间用 '-' 连接
-  return nameParts.reduce((acc, part) => {
-    if (part) {
-      if (acc) {
-        acc += " - "; // 在非空字段之间添加 '-'
-      }
-      acc += part;
-    }
-    return acc;
-  }, "");
-}
 /** 详细按钮操作 */
 function handleView(row) {
   reset();
@@ -906,99 +916,7 @@ function handleDelete(row) {
     })
     .catch(() => {});
 }
-// 转换insert参数函数
-const transformFormData = (form) => {
-  const {
-    id,
-    name,
-    categoryCode,
-    // typeCode,
-    cwTypeCode,
-    fwTypeCode,
-    specialtyCode,
-    locationId,
-    offeredOrgId,
-    activeFlag,
-    extraDetails,
-    contact,
-    appointmentRequiredFlag,
-    chargeName,
-    price,
-    description,
-    ybType,
-    title,
-    comment,
-  } = form.value;
 
-  return {
-    healthcareServiceFormData: {
-      id,
-      activeFlag,
-      offeredOrgId,
-      categoryCode,
-      typeCode: fwTypeCode,
-      specialtyCode,
-      locationId,
-      name,
-      contact,
-      appointmentRequiredFlag,
-      extraDetails,
-      comment,
-    },
-    chargeItemDefinitionFormData: {
-      id,
-      chargeName,
-      title,
-      orgId: offeredOrgId,
-      description,
-      typeCode: cwTypeCode,
-      ybType,
-      price,
-    },
-  };
-};
-
-// 转换insert参数函数
-const transformFormEditData = (form) => {
-  const {
-    id,
-    name,
-    categoryCode,
-    // typeCode,
-    cwTypeCode,
-    fwTypeCode,
-    specialtyCode,
-    locationId,
-    offeredOrgId,
-    activeFlag,
-    extraDetails,
-    contact,
-    appointmentRequiredFlag,
-    chargeName,
-    price,
-    description,
-    ybType,
-    title,
-    comment,
-  } = form.value;
-
-  return {
-    healthcareServiceFormData: {
-      id,
-      activeFlag,
-      offeredOrgId,
-      categoryCode,
-      typeCode: fwTypeCode,
-      specialtyCode,
-      locationId,
-      name,
-      contact,
-      appointmentRequiredFlag,
-      extraDetails,
-      comment,
-    },
-  };
-};
 defineExpose({
   show,
 });

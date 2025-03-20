@@ -303,14 +303,22 @@
             key="effectiveDate"
             prop="effectiveDate"
             :show-overflow-tooltip="true"
-          />
+          >
+            <template #default="scope">
+              <span>{{ parseTime(scope.row.effectiveDate) }}</span>
+            </template>
+          </el-table-column>
           <el-table-column
             label="到期日期"
             align="center"
             key="expirationDate"
             prop="expirationDate"
             :show-overflow-tooltip="true"
-          />
+          >
+            <template #default="scope">
+              <span>{{ parseTime(scope.row.expirationDate) }}</span>
+            </template>
+          </el-table-column>
           <el-table-column
             label="用法"
             align="center"
@@ -665,6 +673,7 @@ function getMedicationCategoryList() {
     console.log(response, "response药品目录分类查询下拉树结构");
     medicationOptions.value = response.data.medicationOptions;
     statusFlagOptions.value = response.data.statusFlagOptions;
+    domainEnumOptions.value = response.data.domainFlagOptions;
   });
 }
 /** 查询病种目录列表 */
