@@ -22,7 +22,7 @@ export function getPurchaseinventoryOne(id) {
 export function addPurchaseinventory(data) {
   return request({
     url: '/inventory-manage/purchase/inventory-receipt',
-    method: 'post',
+    method: 'put',
     data: data
   })
 }

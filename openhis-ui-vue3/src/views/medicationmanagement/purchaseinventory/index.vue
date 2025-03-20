@@ -230,7 +230,6 @@
 <script setup name="Purchaseinventory">
 import {
   getPurchaseinventoryList,
-  editPurchaseinventory,
   addPurchaseinventory,
   getPurchaseinventoryOne,
   getInit,

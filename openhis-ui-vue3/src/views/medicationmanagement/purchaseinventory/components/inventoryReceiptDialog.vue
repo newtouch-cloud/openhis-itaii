@@ -217,12 +217,12 @@
               <template #default="scope">
                 <div style="display: flex; align-items: center">
                   <el-select
-                    v-model="scope.row.itemTable"
+                    v-model="scope.row.itemId"
                     placeholder="请选择"
                     @blur="handleBlur(scope.row, scope.$index)"
                   >
-                    <el-option label="单位1" value="单位1" />
-                    <el-option label="单位2" value="单位2" />
+                    <el-option label="项目1" value="1" />
+                    <el-option label="项目2" value="2" />
                   </el-select>
                   <el-tooltip content="该项目必填" placement="top">
                     <el-icon style="color: red; margin-left: 5px"
@@ -270,8 +270,8 @@
                     placeholder="请选择计量单位"
                     @blur="handleBlur(scope.row, scope.$index)"
                   >
-                    <el-option label="单位1" value="单位1" />
-                    <el-option label="单位2" value="单位2" />
+                    <el-option label="单位1" value="1" />
+                    <el-option label="单位2" value="2" />
                   </el-select>
                   <el-tooltip content="该项目必填" placement="top">
                     <el-icon style="color: red; margin-left: 5px"
@@ -284,20 +284,20 @@
             <el-table-column
               label="仓库"
               align="center"
-              key="purposeLocationStoreId"
-              prop="purposeLocationStoreId"
+              key="purposeLocationId"
+              prop="purposeLocationId"
               :show-overflow-tooltip="true"
               width="130"
             >
               <template #default="scope">
                 <div style="display: flex; align-items: center">
                   <el-select
-                    v-model="scope.row.purposeLocationStoreId"
+                    v-model="scope.row.purposeLocationId"
                     placeholder="请选择仓库"
                     @blur="handleBlur(scope.row, scope.$index)"
                   >
-                    <el-option label="仓库1" value="仓库1" />
-                    <el-option label="仓库2" value="仓库2" />
+                    <el-option label="仓库1" value="1" />
+                    <el-option label="仓库2" value="2" />
                   </el-select>
                   <el-tooltip content="该项目必填" placement="top">
                     <el-icon style="color: red; margin-left: 5px"
@@ -310,19 +310,19 @@
             <el-table-column
               label="货位"
               align="center"
-              key="applicantId"
-              prop="applicantId"
+              key="purposeLocationStoreId"
+              prop="purposeLocationStoreId"
               width="130"
             >
               <template #default="scope">
                 <div style="display: flex; align-items: center">
                   <el-select
-                    v-model="scope.row.approverId"
+                    v-model="scope.row.purposeLocationStoreId"
                     placeholder="请选择货位"
                     @blur="handleBlur(scope.row, scope.$index)"
                   >
-                    <el-option label="货位1" value="货位1" />
-                    <el-option label="货位2" value="货位2" />
+                    <el-option label="货位1" value="1" />
+                    <el-option label="货位2" value="2" />
                   </el-select>
                   <el-tooltip content="该项目必填" placement="top">
                     <el-icon style="color: red; margin-left: 5px"
@@ -521,18 +521,18 @@
                   link
                   type="primary"
                   icon="Edit"
-                  @click="handleUpdate(scope.row)"
+                  @click="handleBlur(scope.row, scope.$index)"
                   v-hasPermi="['system:user:edit']"
-                  >编辑</el-button
+                  >保存</el-button
                 >
-                <el-button
+                <!-- <el-button
                   link
                   type="primary"
                   icon="View"
                   @click="handleView(scope.row)"
                   v-hasPermi="['system:user:remove']"
                   >查看</el-button
-                >
+                > -->
               </template>
             </el-table-column>
           </el-table>
@@ -589,7 +589,6 @@
 <script setup name="InventoryReceiptDialog">
 import {
   getPurchaseinventoryList,
-  editPurchaseinventory,
   addPurchaseinventory,
   getPurchaseinventoryOne,
   getInit,
@@ -702,6 +701,7 @@ const itemTypeOptions = ref(undefined); // 入库项目类型
 const practitionerListOptions = ref(undefined); // 查询经手人列表
 const supplierListOptions = ref(undefined); // 供应商列表
 const selectedRows = ref([]); // 用于存储选中的行
+const emit = defineEmits(['new-item-added']);
 
 const addNewRow = () => {
   if (data.isAdding) {
@@ -764,24 +764,26 @@ const saveRow = (row, index) => {
   row.supplierId = receiptHeaderForm.value.supplierId;
   row.purposeTypeEnum = receiptHeaderForm.value.purposeTypeEnum;
   console.log(row, "rowabbbbbbbbbbbbbb");
-  // try {
-  // 调用 API 保存数据
-  // await savePurchaseInventory(row);
+  try {
+    // 调用 API 保存数据
+    // await savePurchaseInventory(row);
 
-  // 保存成功后，更新本地数据
-  purchaseinventoryList.value[index] = row;
-  // 将表单数据发送给父组件
-  emits("submit", row);
-  //   addPurchaseinventory(row).then((response) => {
-  //     reset();
-  //     data.isAdding = false; // 允许新增下一行
-  //     proxy.$message.success("保存成功！");
-  //     visible.value = false;
-  //     // getList();
-  //   });
-  // } catch (error) {
-  //   proxy.$message.error("保存失败，请重试！");
-  // }
+    // 保存成功后，更新本地数据
+    purchaseinventoryList.value[index] = row;
+    // 将表单数据发送给父组件
+    // emits("submit", row);
+    addPurchaseinventory(row).then((response) => {
+      reset();
+      data.isAdding = false; // 允许新增下一行
+      proxy.$message.success("保存成功！");
+      visible.value = false;
+      emit('new-item-added'); // 通知父组件
+      // getList();
+    });
+  } catch (error) {
+    proxy.$message.error("保存失败，请重试！");
+  }
+
   // proxy.$message.success("保存成功！");
 };
 
