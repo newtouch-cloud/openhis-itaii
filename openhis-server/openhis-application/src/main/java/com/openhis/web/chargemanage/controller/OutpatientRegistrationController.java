@@ -84,7 +84,7 @@ public class OutpatientRegistrationController {
     @GetMapping(value = "/location-tree")
     public R<?> getLocationTree(@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-        return R.ok(iLocationAppService.getLocationTree(LocationForm.ROOM.getValue(), pageNo, pageSize));
+        return iLocationAppService.getLocationTree(LocationForm.ROOM.getValue(), pageNo, pageSize);
 
     }
 
