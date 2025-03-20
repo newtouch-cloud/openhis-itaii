@@ -219,7 +219,7 @@
                   <el-select
                     v-model="scope.row.itemId"
                     placeholder="请选择"
-                    @blur="handleBlur(scope.row, scope.$index)"
+                    :class="{ 'error-border': scope.row.error }"
                   >
                     <el-option label="项目1" value="1" />
                     <el-option label="项目2" value="2" />
@@ -268,7 +268,7 @@
                   <el-select
                     v-model="scope.row.unitCode"
                     placeholder="请选择计量单位"
-                    @blur="handleBlur(scope.row, scope.$index)"
+                    :class="{ 'error-border': scope.row.error }"
                   >
                     <el-option label="单位1" value="1" />
                     <el-option label="单位2" value="2" />
@@ -294,7 +294,7 @@
                   <el-select
                     v-model="scope.row.purposeLocationId"
                     placeholder="请选择仓库"
-                    @blur="handleBlur(scope.row, scope.$index)"
+                    :class="{ 'error-border': scope.row.error }"
                   >
                     <el-option label="仓库1" value="1" />
                     <el-option label="仓库2" value="2" />
@@ -319,7 +319,7 @@
                   <el-select
                     v-model="scope.row.purposeLocationStoreId"
                     placeholder="请选择货位"
-                    @blur="handleBlur(scope.row, scope.$index)"
+                    :class="{ 'error-border': scope.row.error }"
                   >
                     <el-option label="货位1" value="1" />
                     <el-option label="货位2" value="2" />
@@ -355,7 +355,7 @@
                   <el-input
                     v-model="scope.row.itemQuantity"
                     placeholder=""
-                    @blur="handleBlur(scope.row, scope.$index)"
+                    :class="{ 'error-border': scope.row.error }"
                   />
                   <el-tooltip content="该项目必填" placement="top">
                     <el-icon style="color: red; margin-left: 5px"
@@ -377,7 +377,7 @@
                   <el-input
                     v-model="scope.row.price"
                     placeholder=""
-                    @blur="handleBlur(scope.row, scope.$index)"
+                    :class="{ 'error-border': scope.row.error }"
                   />
                   <el-tooltip content="该项目必填" placement="top">
                     <el-icon style="color: red; margin-left: 5px"
@@ -521,7 +521,7 @@
                   link
                   type="primary"
                   icon="Edit"
-                  @click="handleBlur(scope.row, scope.$index)"
+                  @click="handleSave(scope.row, scope.$index)"
                   v-hasPermi="['system:user:edit']"
                   >保存</el-button
                 >
@@ -613,34 +613,7 @@ const {
   "purchase_type"
 );
 
-const purchaseinventoryList = ref([
-    {
-        "id": "2",
-        "busNo": "bs002",
-        "totalQuantity": 500,
-        "itemQuantity": 10,
-        "itemName": null,
-        "totalVolume": null,
-        "unitCode": "盒",
-        "unitCode_dictText": "",
-        "detailJson": "测试设备的数据",
-        "practitionerName": "雯雯",
-        "supplierName": "长春市有限公司测试器材",
-        "purposeTypeEnum": 0,
-        "purposeLocationName": "器材A库",
-        "purposeLocationStoreName": "器材A库A货位",
-        "applyTime": "2025-03-12T15:00:00.000+08:00",
-        "lotNumber": "bt002",
-        "traceNo": "zsm002",
-        "invoiceNo": "fp002",
-        "startTime": null,
-        "endTime": null,
-        "price": 7,
-        "totalPrice": 70,
-        "sellPrice": null,
-        "minSellPrice": null
-    }
-]);
+const purchaseinventoryList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -725,31 +698,56 @@ const data = reactive({
     price: [{ required: true, message: "基础价格不能为空", trigger: "blur" }],
   },
   tableRules: {
-      itemId: [{ required: true, message: '项目不能为空', trigger: 'blur' }],
-      itemQuantity: [{ required: true, message: '采购数量不能为空', trigger: 'blur' }],
-      unitCode: [{ required: true, message: '计量单位不能为空', trigger: 'blur' }],
-      supplierId: [{ required: true, message: '供应商不能为空', trigger: 'blur' }],
-      purposeTypeEnum: [{ required: true, message: '仓库类型不能为空', trigger: 'blur' }],
-      purposeLocationId: [{ required: true, message: '仓库不能为空', trigger: 'blur' }],
-      purposeLocationStoreId: [{ required: true, message: '货位不能为空', trigger: 'blur' }],
-      practitionerId: [{ required: true, message: '经手人不能为空', trigger: 'blur' }],
-      lotNumber: [{ required: true, message: '产品批号不能为空', trigger: 'blur' }],
-      traceNo: [{ required: true, message: '药品追溯码不能为空', trigger: 'blur' }],
-      startTime: [{ required: true, message: '生产日期不能为空', trigger: 'blur' }],
-      endTime: [{ required: true, message: '有效期至不能为空', trigger: 'blur' }],
-      price: [{ required: true, message: '采购单价不能为空', trigger: 'blur' }],
-      totalPrice: [{ required: true, message: '合计金额不能为空', trigger: 'blur' }],
-      sellPrice: [{ required: true, message: '售价不能为空', trigger: 'blur' }],
-      minSellPrice: [{ required: true, message: '拆零售价不能为空', trigger: 'blur' }],
-    },
+    itemId: [{ required: true, message: "项目不能为空", trigger: "blur" }],
+    itemQuantity: [
+      { required: true, message: "采购数量不能为空", trigger: "blur" },
+    ],
+    unitCode: [
+      { required: true, message: "计量单位不能为空", trigger: "blur" },
+    ],
+    supplierId: [
+      { required: true, message: "供应商不能为空", trigger: "blur" },
+    ],
+    purposeTypeEnum: [
+      { required: true, message: "仓库类型不能为空", trigger: "blur" },
+    ],
+    purposeLocationId: [
+      { required: true, message: "仓库不能为空", trigger: "blur" },
+    ],
+    purposeLocationStoreId: [
+      { required: true, message: "货位不能为空", trigger: "blur" },
+    ],
+    practitionerId: [
+      { required: true, message: "经手人不能为空", trigger: "blur" },
+    ],
+    lotNumber: [
+      { required: true, message: "产品批号不能为空", trigger: "blur" },
+    ],
+    traceNo: [
+      { required: true, message: "药品追溯码不能为空", trigger: "blur" },
+    ],
+    startTime: [
+      { required: true, message: "生产日期不能为空", trigger: "blur" },
+    ],
+    endTime: [{ required: true, message: "有效期至不能为空", trigger: "blur" }],
+    price: [{ required: true, message: "采购单价不能为空", trigger: "blur" }],
+    totalPrice: [
+      { required: true, message: "合计金额不能为空", trigger: "blur" },
+    ],
+    sellPrice: [{ required: true, message: "售价不能为空", trigger: "blur" }],
+    minSellPrice: [
+      { required: true, message: "拆零售价不能为空", trigger: "blur" },
+    ],
+  },
 });
 
-const { queryParams, form, receiptHeaderForm, rules } = toRefs(data);
+const { queryParams, form, receiptHeaderForm, rules, tableRules } =
+  toRefs(data);
 const itemTypeOptions = ref(undefined); // 入库项目类型
 const practitionerListOptions = ref(undefined); // 查询经手人列表
 const supplierListOptions = ref(undefined); // 供应商列表
 const selectedRows = ref([]); // 用于存储选中的行
-const emit = defineEmits(['new-item-added']);
+const emit = defineEmits(["new-item-added"]);
 
 const addNewRow = () => {
   if (data.isAdding) {
@@ -783,23 +781,56 @@ const addNewRow = () => {
   data.isAdding = true; // 设置标志位为 true，表示有未保存的
 };
 
-const handleBlur = (row, index) => {
+function handleBlur(row, index) {
+  let hasError = false;
   if (receiptHeaderForm.value.medicationType === "1") {
     row.itemTable = "med_medication_definition";
   } else {
     row.itemTable = "adm_device_definition";
   }
+  row.practitionerId = receiptHeaderForm.value.practitionerId;
+  row.occurrenceTime = receiptHeaderForm.value.occurrenceTime;
+  row.supplierId = receiptHeaderForm.value.supplierId;
+  row.purposeTypeEnum = receiptHeaderForm.value.purposeTypeEnum;
+  const fields = [
+    "itemId",
+    "itemQuantity",
+    "unitCode",
+    "supplierId",
+    "purposeTypeEnum",
+    "purposeLocationId",
+    "purposeLocationStoreId",
+    "practitionerId",
+    "lotNumber",
+    "traceNo",
+    "startTime",
+    "endTime",
+    "price",
+    "totalPrice",
+    "sellPrice",
+    "minSellPrice",
+  ];
+
+  fields.forEach((field) => {
+    if (!row[field]) {
+      hasError = true;
+      proxy.$message.error(tableRules.value[field][0].message);
+    }
+  });
+
+  row.error = hasError;
+
   console.log(row, "rowhandleBlurhandleBlurhandleBlurhandleBlurhandleBlur");
-  if (
-    row.itemTable &&
-    row.unitCode &&
-    row.purposeLocationStoreId &&
-    row.itemQuantity &&
-    row.price
-  ) {
-    saveRow(row, index); // 调用保存方法
-  }
-};
+  // if (
+  //   row.itemTable &&
+  //   row.unitCode &&
+  //   row.purposeLocationStoreId &&
+  //   row.itemQuantity &&
+  //   row.price
+  // ) {
+  //   saveRow(row, index); // 调用保存方法
+  // }
+}
 
 const saveRow = (row, index) => {
   console.log(row, "saveRowsaveRowsaveRowsaveRowsaveRowsaveRow");
@@ -812,10 +843,6 @@ const saveRow = (row, index) => {
   // } else {
   //   row.itemTable = "adm_device_definition";
   // }
-  row.practitionerId = receiptHeaderForm.value.practitionerId;
-  row.occurrenceTime = receiptHeaderForm.value.occurrenceTime;
-  row.supplierId = receiptHeaderForm.value.supplierId;
-  row.purposeTypeEnum = receiptHeaderForm.value.purposeTypeEnum;
   console.log(row, "rowabbbbbbbbbbbbbb");
   try {
     // 调用 API 保存数据
@@ -830,7 +857,7 @@ const saveRow = (row, index) => {
       data.isAdding = false; // 允许新增下一行
       proxy.$message.success("保存成功！");
       visible.value = false;
-      emit('new-item-added'); // 通知父组件
+      emit("new-item-added"); // 通知父组件
       // getList();
     });
   } catch (error) {
@@ -840,6 +867,33 @@ const saveRow = (row, index) => {
   // proxy.$message.success("保存成功！");
 };
 
+function handleSave( row , index ) {
+  let hasError = false;
+  // this.purchaseinventoryList.forEach((row) => {
+    handleBlur(row);
+    if (row.error) {
+      hasError = true;
+    }
+  // });
+
+  if (hasError) {
+    proxy.$message.error("请填写完整信息");
+    return;
+  }
+  try {
+    addPurchaseinventory(row).then((response) => {
+      reset();
+      data.isAdding = false; // 允许新增下一行
+      proxy.$message.success("保存成功！");
+      visible.value = false;
+      emit("new-item-added"); // 通知父组件
+      // getList();
+    });
+  } catch (error) {
+    proxy.$message.error("保存失败，请重试！");
+  }
+  // 保存逻辑...
+}
 /** 查询挂号收费项目列表 */
 function getList() {
   loading.value = true;
@@ -914,6 +968,7 @@ function reset() {
 }
 // 显示弹框
 function show() {
+  data.isAdding = false;
   reset();
   visible.value = true;
   supplierListOptions.value = props.supplierListOptions;
@@ -929,17 +984,18 @@ function show() {
 }
 // 显示弹框
 function edit() {
+  data.isAdding = false;
   reset();
   supplierListOptions.value = props.supplierListOptions;
   itemTypeOptions.value = props.itemTypeOptions;
   practitionerListOptions.value = props.practitionerListOptions;
   // receiptHeaderForm.value.busNo = props.busNoAdd;
   form.value = props.item;
-  receiptHeaderForm.value = props.item;
+  receiptHeaderForm.value = props.item.length > 0 ? props.item[0] : {};
   // receiptHeaderForm.value.busNo = props.item.supplyBusNo;
-  purchaseinventoryList.value.push(props.item);
-  console.log(purchaseinventoryList.value,"purchaseinventoryList.value");
-  console.log(receiptHeaderForm.value,"receiptHeaderForm.value");
+  purchaseinventoryList.value = props.item;
+  console.log(purchaseinventoryList.value, "purchaseinventoryList.value");
+  console.log(receiptHeaderForm.value, "receiptHeaderForm.value");
   loading.value = false;
   visible.value = true;
 }
@@ -980,7 +1036,7 @@ function handleDelete(row) {
 
 defineExpose({
   show,
-  edit
+  edit,
 });
 </script>
 <style scoped>
@@ -993,5 +1049,9 @@ defineExpose({
   font-weight: bold;
   font-size: large;
   margin-bottom: 10px;
+}
+
+.error-border {
+  border: 1px solid red;
 }
 </style>
