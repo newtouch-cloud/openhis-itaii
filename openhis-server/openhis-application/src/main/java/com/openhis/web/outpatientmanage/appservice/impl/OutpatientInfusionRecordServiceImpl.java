@@ -306,7 +306,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
      * 显示门诊输液执行记录查询
      *
      * @param historyFlag 查询的是否为执行履历
-     * @return 门诊输液执行记录查询
+     * @return 返回门诊输液执行记录查询
      */
     @Override
     public List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(HttpServletRequest request,
