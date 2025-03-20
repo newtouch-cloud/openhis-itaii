@@ -99,7 +99,7 @@ public class OutpatientInfusionRecordDto {
     private String medicationInformation;
 
     /** 药品数量 */
-    private BigDecimal medicationAntity;
+    private BigDecimal medicationQuantity;
 
     /** 用药频次 */
     private String rateCode;

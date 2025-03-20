@@ -115,8 +115,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
         // based_on_id 是为空的
         queryWrapper.eq(CommonConstants.FieldName.BasedOnId, null);
         // 状态是未完成的
-        queryWrapper.in(CommonConstants.FieldName.RequestStatus, EventStatus.IN_PROGRESS.getValue(),
-            EventStatus.NOT_DONE.getValue());
+        queryWrapper.eq(CommonConstants.FieldName.RequestStatus, EventStatus.IN_PROGRESS.getValue());
 
         // 默认显示100条
         IPage<OutpatientInfusionRecordDto> OutpatientInfusionRecordPage =

@@ -169,7 +169,7 @@
             ad.bus_no = 'sy001' -- 输液的编号，todo：编号未定，后期修改
             AND mr.infusion_flag = 1
             AND sr.status_enum in (2,3) --服务状态未完成
-            AND sr.based_on_id = null
+            AND sr.based_on_id is null
         </where>
         ORDER BY
         mr.create_time,e.bus_no,pt.bus_no
@@ -189,12 +189,12 @@
         T1.activity_id,
         T1.prescription_no,
         T1.encounter_id,
-        T1.encounter_bus_No,
+        T1.encounter_bus_no,
         T1.patient_name,
-        T1.patient_bus_No,
+        T1.patient_bus_no,
         T1.patient_id,
         T1.medication_information,
-        T1.medication_antity,
+        T1.medication_quantity,
         T1.medication_status_Enum,
         T1.group_id,
         T1.clinical_status_enum,
@@ -215,20 +215,21 @@
             sr.id AS service_id, --服务申请管理ID
             sr.bus_no, -- 服务请求编码
             sr.based_on_id, -- 请求基于什么的ID
-            sr.execute_num, -- 执行次数
             sr.activity_id,--请求code,输液
             sr.prescription_no, --处方号
             sr.encounter_id , --就诊ID
             sr.status_enum AS request_status, --服务请求状态
-            e.bus_no AS encounter_busNo, --就诊ID（前台显示用）
+            e.bus_no AS encounter_bus_no, --就诊ID（前台显示用）
             pt.name AS patient_name, --病人姓名
-            pt.bus_no AS patient_busNo, --病人ID（前台显示用）
+            pt.bus_no AS patient_bus_no, --病人ID（前台显示用）
             sr.patient_id, --病人ID
             md.id AS medication_id, --药品ID
             md.name AS medication_information, --药品信息
-            mr.antity AS medication_antity,--药品数量
+            mr.quantity AS medication_quantity,--药品数量
             mr.status_enum AS medication_status_Enum, --药品状态
+            mr.execute_num, -- 药品执行次数
             mr.group_id, --注射药品组号
+            mr.perform_org,--执行科室
             CASE mr.skin_test_flag
             WHEN 1 THEN 1
             ELSE 0
@@ -255,7 +256,6 @@
             <where>
                 ad.bus_no = 'sy001' -- 输液检查的编号，todo：编号未定，后期修改
                 AND mr.infusion_flag = 1
-                AND md.infusion_flag = 1
 
             </where>
             ORDER BY
@@ -280,7 +280,6 @@
         <where>
             ad.bus_no = 'sy001' -- 输液检查的编号，todo：编号未定，后期修改
             AND mr.infusion_flag = 1
-            AND md.infusion_flag = 1
 
             <!-- 药品已执行数量 条件筛选 -->
             <if test="flag and paramId != null and paramId != '' and prefixBusNo != null and prefixBusNo != '' ">
