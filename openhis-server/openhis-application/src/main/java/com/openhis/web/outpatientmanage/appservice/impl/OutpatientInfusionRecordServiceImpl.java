@@ -87,7 +87,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             // 性别
             e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
             // 计算年龄
-            e.setAgeString(AgeCalculatorUtil.getAge(e.getBirthDate()));
+            e.setAgeString(AgeCalculatorUtil.getAge(DateUtils.parseDate(e.getBirthDate())));
         });
 
         return outpatientInfusionPatientDto;
@@ -161,6 +161,13 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             // 构造批量插入的 ServiceRequest 列表
             List<ServiceRequest> serviceRequests = new ArrayList<>();
             for (OutpatientInfusionRecordDto record : groupRecords) {
+
+                //判断当前组药品状态不是已领药，有未领药的数据，跳过执行下一组数据
+                if(record.getMedicationStatusEnum() != EventStatus.COMPLETED.getValue()){
+                    // 跳过当前分组的剩余处理，继续下一个分组
+                    break;
+                }
+
                 String prefixBusNo = record.getBusNo() + "." + record.getGroupId() + "." + record.getMedicationId();
                 // 获取执行次数
                 Long exeCount =

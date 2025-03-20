@@ -42,7 +42,7 @@ public class OutpatientInfusionPatientDto {
     private String genderEnum_enumText;
 
     /** 病人生日 */
-    private Date birthDate;
+    private String birthDate;
 
     /** 病人身份证号 */
     private String idCard;

@@ -151,7 +151,7 @@
             sr.prescription_no, --处方号
             sr.encounter_id,
             e.bus_no as encounter_bus_no, --就诊号
-            pt.birth_date , --病人生日
+            TO_CHAR(pt.birth_date, 'YYYY-MM-DD') AS birth_date  , --病人生日
             pt.bus_no AS patient_bus_no, --病人ID（前台显示用）
             sr.patient_id, --病人ID
             pt.name AS patient_name, --病人姓名
