@@ -10,11 +10,12 @@ export function getPurchaseinventoryList(query) {
   })
 }
 
-// 查询服务管理详细
-export function getPurchaseinventoryOne(id) {
+// 入库单据详情
+export function getpurchaseInventoryDetail(busNo) {
   return request({
-    url: '/basic-service/healthcare/healthcare-service-detail/' + parseStrEmpty(id),
-    method: 'get'
+    url: '/inventory-manage/purchase/inventory-receipt',
+    method: 'get',
+    params: { busNo } // 确保参数正确传递
   })
 }
 

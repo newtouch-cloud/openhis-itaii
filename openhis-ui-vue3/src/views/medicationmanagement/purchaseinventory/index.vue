@@ -222,6 +222,7 @@
       :itemTypeOptions="itemTypeOptions"
       :supplierListOptions="supplierListOptions"
       :busNoAdd="busNoAdd"
+      :item="currentData"
       @new-item-added="getList"
     />
   </div>
@@ -231,7 +232,7 @@
 import {
   getPurchaseinventoryList,
   addPurchaseinventory,
-  getPurchaseinventoryOne,
+  getpurchaseInventoryDetail,
   getInit,
   deptTreeSelect,
   locationTreeSelect,
@@ -278,7 +279,8 @@ const itemTypeOptions = ref(undefined); // 入库项目类型
 const practitionerListOptions = ref(undefined); // 查询经手人列表
 const supplierListOptions = ref(undefined); // 供应商列表
 const supplyStatusOptions = ref(undefined); // 审批状态
-
+// 使用 ref 定义当前编辑的采购
+const currentData = ref({});
 // 是否停用
 const statusFlagOptions = ref(undefined);
 
@@ -401,19 +403,19 @@ function cancel() {
   open.value = false;
   reset();
 }
-/** 新增按钮操作 */
-function handleAdd() {
-  reset();
-  open.value = true;
-  title.value = "新增";
-}
+
 /** 修改按钮操作 */
 function handleUpdate(row) {
-  reset();
-  form.value = JSON.parse(JSON.stringify(row));
-  form.value.fwTypeCode = form.value.typeCode;
-  open.value = true;
-  title.value = "编辑";
+  console.log(typeof(row.supplyBusNo), "row",row);
+  getpurchaseInventoryDetail(row.supplyBusNo).then((response) => {
+
+    currentData.value = response.data;
+    console.log(response, "response采购入库编辑按钮", currentData.value);
+    nextTick(() => {
+      proxy.$refs["inventoryReceiptRef"].edit();
+    });
+    getList();
+  });
 }
 // /** 提交按钮 */
 // function submitForm() {
@@ -469,16 +471,16 @@ function getName() {
     return acc;
   }, "");
 }
-/** 详细按钮操作 */
-function handleView(row) {
-  reset();
-  title.value = "查看";
-  open.value = true;
-  getPurchaseinventoryOne(row.id).then((response) => {
-    console.log(response, "responsebbbb", row.id);
-    form.value = response.data;
-  });
-}
+// /** 详细按钮操作 */
+// function handleView(row) {
+//   reset();
+//   title.value = "查看";
+//   open.value = true;
+//   getPurchaseinventoryOne(row.id).then((response) => {
+//     console.log(response, "responsebbbb", row.id);
+//     form.value = response.data;
+//   });
+// }
 
 /** 删除按钮操作 */
 function handleDelete(row) {

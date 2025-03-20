@@ -590,7 +590,6 @@
 import {
   getPurchaseinventoryList,
   addPurchaseinventory,
-  getPurchaseinventoryOne,
   getInit,
   deptTreeSelect,
   locationTreeSelect,
@@ -614,7 +613,34 @@ const {
   "purchase_type"
 );
 
-const purchaseinventoryList = ref([]);
+const purchaseinventoryList = ref([
+    {
+        "id": "2",
+        "busNo": "bs002",
+        "totalQuantity": 500,
+        "itemQuantity": 10,
+        "itemName": null,
+        "totalVolume": null,
+        "unitCode": "盒",
+        "unitCode_dictText": "",
+        "detailJson": "测试设备的数据",
+        "practitionerName": "雯雯",
+        "supplierName": "长春市有限公司测试器材",
+        "purposeTypeEnum": 0,
+        "purposeLocationName": "器材A库",
+        "purposeLocationStoreName": "器材A库A货位",
+        "applyTime": "2025-03-12T15:00:00.000+08:00",
+        "lotNumber": "bt002",
+        "traceNo": "zsm002",
+        "invoiceNo": "fp002",
+        "startTime": null,
+        "endTime": null,
+        "price": 7,
+        "totalPrice": 70,
+        "sellPrice": null,
+        "minSellPrice": null
+    }
+]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -646,6 +672,10 @@ const props = defineProps({
   busNoAdd: {
     type: String,
     required: true,
+  },
+  item: {
+    type: Object,
+    required: false,
   },
 });
 
@@ -694,6 +724,24 @@ const data = reactive({
     ybType: [{ required: true, message: "医保类别不能为空", trigger: "blur" }],
     price: [{ required: true, message: "基础价格不能为空", trigger: "blur" }],
   },
+  tableRules: {
+      itemId: [{ required: true, message: '项目不能为空', trigger: 'blur' }],
+      itemQuantity: [{ required: true, message: '采购数量不能为空', trigger: 'blur' }],
+      unitCode: [{ required: true, message: '计量单位不能为空', trigger: 'blur' }],
+      supplierId: [{ required: true, message: '供应商不能为空', trigger: 'blur' }],
+      purposeTypeEnum: [{ required: true, message: '仓库类型不能为空', trigger: 'blur' }],
+      purposeLocationId: [{ required: true, message: '仓库不能为空', trigger: 'blur' }],
+      purposeLocationStoreId: [{ required: true, message: '货位不能为空', trigger: 'blur' }],
+      practitionerId: [{ required: true, message: '经手人不能为空', trigger: 'blur' }],
+      lotNumber: [{ required: true, message: '产品批号不能为空', trigger: 'blur' }],
+      traceNo: [{ required: true, message: '药品追溯码不能为空', trigger: 'blur' }],
+      startTime: [{ required: true, message: '生产日期不能为空', trigger: 'blur' }],
+      endTime: [{ required: true, message: '有效期至不能为空', trigger: 'blur' }],
+      price: [{ required: true, message: '采购单价不能为空', trigger: 'blur' }],
+      totalPrice: [{ required: true, message: '合计金额不能为空', trigger: 'blur' }],
+      sellPrice: [{ required: true, message: '售价不能为空', trigger: 'blur' }],
+      minSellPrice: [{ required: true, message: '拆零售价不能为空', trigger: 'blur' }],
+    },
 });
 
 const { queryParams, form, receiptHeaderForm, rules } = toRefs(data);
@@ -729,18 +777,23 @@ const addNewRow = () => {
     sellPrice: "",
     minSellPrice: "",
     isEditing: true, // 标记当前行是否正在编辑
+    error: false, // 新增 error 字段
   };
   purchaseinventoryList.value.push(newRow);
   data.isAdding = true; // 设置标志位为 true，表示有未保存的
 };
 
 const handleBlur = (row, index) => {
+  if (receiptHeaderForm.value.medicationType === "1") {
+    row.itemTable = "med_medication_definition";
+  } else {
+    row.itemTable = "adm_device_definition";
+  }
   console.log(row, "rowhandleBlurhandleBlurhandleBlurhandleBlurhandleBlur");
   if (
     row.itemTable &&
     row.unitCode &&
     row.purposeLocationStoreId &&
-    row.approverId &&
     row.itemQuantity &&
     row.price
   ) {
@@ -754,11 +807,11 @@ const saveRow = (row, index) => {
   // 例如：调用 API 保存数据
   // 保存成功后，将标志位设置为 false
   // data.isAdding = false;
-  if (receiptHeaderForm.value.medicationType === "1") {
-    row.itemTable = "med_medication_definition";
-  } else {
-    row.itemTable = "adm_device_definition";
-  }
+  // if (receiptHeaderForm.value.medicationType === "1") {
+  //   row.itemTable = "med_medication_definition";
+  // } else {
+  //   row.itemTable = "adm_device_definition";
+  // }
   row.practitionerId = receiptHeaderForm.value.practitionerId;
   row.occurrenceTime = receiptHeaderForm.value.occurrenceTime;
   row.supplierId = receiptHeaderForm.value.supplierId;
@@ -857,6 +910,7 @@ function reset() {
     purposeTypeEnum: undefined,
   };
   proxy.resetForm("receiptHeaderRef");
+  purchaseinventoryList.value = [];
 }
 // 显示弹框
 function show() {
@@ -872,6 +926,22 @@ function show() {
   //   form.value.medicationType = purchase_type.value[0].value;
   // }
   getList();
+}
+// 显示弹框
+function edit() {
+  reset();
+  supplierListOptions.value = props.supplierListOptions;
+  itemTypeOptions.value = props.itemTypeOptions;
+  practitionerListOptions.value = props.practitionerListOptions;
+  // receiptHeaderForm.value.busNo = props.busNoAdd;
+  form.value = props.item;
+  receiptHeaderForm.value = props.item;
+  // receiptHeaderForm.value.busNo = props.item.supplyBusNo;
+  purchaseinventoryList.value.push(props.item);
+  console.log(purchaseinventoryList.value,"purchaseinventoryList.value");
+  console.log(receiptHeaderForm.value,"receiptHeaderForm.value");
+  loading.value = false;
+  visible.value = true;
 }
 /** 取消按钮 */
 function cancel() {
@@ -893,17 +963,6 @@ function handleUpdate(row) {
   title.value = "编辑";
 }
 
-/** 详细按钮操作 */
-function handleView(row) {
-  reset();
-  title.value = "查看";
-  open.value = true;
-  getPurchaseinventoryOne(row.id).then((response) => {
-    console.log(response, "responsebbbb", row.id);
-    form.value = response.data;
-  });
-}
-
 /** 删除按钮操作 */
 function handleDelete(row) {
   const delId = row.id || ids.value;
@@ -921,6 +980,7 @@ function handleDelete(row) {
 
 defineExpose({
   show,
+  edit
 });
 </script>
 <style scoped>
