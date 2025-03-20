@@ -157,8 +157,8 @@
             pt.name AS patient_name, --病人姓名
             pt.id_card AS id_card, --病人身份证号
             sr.tenant_id,
-            pt.gender_enum AS gender_enum, --病人性别
-            mr.create_time AS create_time --开单时间
+            pt.gender_enum, --病人性别
+            to_char(mr.create_time, 'YYYY-MM-DD HH24:MI:SS')  AS create_time--开单时间
         FROM
             wor_service_request sr
         LEFT JOIN adm_encounter e ON e.id = sr.encounter_id
@@ -172,7 +172,7 @@
             AND sr.based_on_id is null
         </where>
         ORDER BY
-        mr.create_time,e.bus_no,pt.bus_no
+        create_time,e.bus_no,pt.bus_no
         ) AS T1
         ${ew.customSqlSegment}
     </select>
@@ -241,7 +241,7 @@
             sr.performer_id, --执行护士
             to_char(sr.occurrence_start_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrence_start_time, --预计执行时间
             to_char(sr.occurrence_end_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrence_end_time, --预计结束时间
-            mr.create_time --开单时间
+            to_char(mr.create_time, 'YYYY-MM-DD HH24:MI:SS')  AS create_time--开单时间
             FROM
             wor_service_request sr
             LEFT JOIN adm_encounter e ON e.id = sr.encounter_id
@@ -257,7 +257,7 @@
 
             </where>
             ORDER BY
-            mr.create_time desc,e.bus_no,pt.bus_no
+            create_time desc,e.bus_no,pt.bus_no
         ) AS T1
         ${ew.customSqlSegment}
     </select>

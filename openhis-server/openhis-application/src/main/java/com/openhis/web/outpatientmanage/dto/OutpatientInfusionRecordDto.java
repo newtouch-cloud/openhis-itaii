@@ -3,6 +3,7 @@ package com.openhis.web.outpatientmanage.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.annotation.Dict;
@@ -119,6 +120,6 @@ public class OutpatientInfusionRecordDto {
     private String skinTestFlag_enumText;
 
     /** 开单时间 */
-    private Date createTime;
+    private String createTime;
 
 }

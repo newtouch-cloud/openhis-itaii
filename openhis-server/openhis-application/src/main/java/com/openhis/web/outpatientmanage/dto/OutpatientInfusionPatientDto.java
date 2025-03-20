@@ -1,5 +1,6 @@
 package com.openhis.web.outpatientmanage.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
@@ -51,6 +52,6 @@ public class OutpatientInfusionPatientDto {
     private String ageString;
 
     /** 开单时间 */
-    private Date createTime;
+    private String createTime;
 
 }

@@ -64,22 +64,21 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     /**
      * 获取门诊输液记录的患者列表
      *
-     * @param infusionPatientDto 输液患者实体
      * @param searchKey 模糊查询关键字
      * @param pageNo 当前页
      * @param pageSize 每页多少条
      * @return 分页查询
      */
     @Override
-    public IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(
-        OutpatientInfusionPatientDto infusionPatientDto, String searchKey, Integer pageNo, Integer pageSize,
-        HttpServletRequest request) {
+    public IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(String searchKey, Integer pageNo,
+        Integer pageSize, HttpServletRequest request) {
 
         // 构建查询条件
-        QueryWrapper<OutpatientInfusionPatientDto> queryWrapper = HisQueryUtils.buildQueryWrapper(infusionPatientDto, searchKey,
-            new HashSet<>(Arrays.asList(CommonConstants.FieldName.PatientBusNo,
-                CommonConstants.FieldName.EncounterBusNo, CommonConstants.FieldName.PatientName)),
-            request);
+        QueryWrapper<OutpatientInfusionPatientDto> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(new OutpatientInfusionPatientDto(), searchKey,
+                new HashSet<>(Arrays.asList(CommonConstants.FieldName.PatientBusNo,
+                    CommonConstants.FieldName.EncounterBusNo, CommonConstants.FieldName.PatientName)),
+                request);
 
         IPage<OutpatientInfusionPatientDto> outpatientInfusionPatientDto =
             outpatientManageMapper.getOutpatientInfusionPatient(new Page<>(pageNo, pageSize), queryWrapper);
@@ -113,11 +112,11 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
 
         // 构建查询条件
         QueryWrapper<OutpatientInfusionRecordDto> queryWrapper =
-            HisQueryUtils.buildQueryWrapper(null, null, null, request);
+            HisQueryUtils.buildQueryWrapper(new OutpatientInfusionPatientDto(), null, null, request);
 
         queryWrapper.eq(CommonConstants.FieldName.PatientId, outpatientInfusionPatientDto.getPatientId());
         // based_on_id 是为空的
-        queryWrapper.eq(CommonConstants.FieldName.BasedOnId, null);
+        queryWrapper.isNull(CommonConstants.FieldName.BasedOnId);
         // 状态是未完成的
         queryWrapper.eq(CommonConstants.FieldName.RequestStatus, EventStatus.IN_PROGRESS.getValue());
 
@@ -315,7 +314,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
 
         // 构建查询条件
         QueryWrapper<OutpatientInfusionRecordDto> queryWrapper =
-            HisQueryUtils.buildQueryWrapper(null, null, null, request);
+            HisQueryUtils.buildQueryWrapper(new OutpatientInfusionRecordDto(), null, null, request);
 
         // 执行历史查询的条件
         if (historyFlag) {
