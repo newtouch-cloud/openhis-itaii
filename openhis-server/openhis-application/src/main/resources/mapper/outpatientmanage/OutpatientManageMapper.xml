@@ -151,7 +151,7 @@
             sr.prescription_no, --处方号
             sr.encounter_id,
             e.bus_no as encounter_bus_no, --就诊号
-            TO_CHAR(pt.birth_date, 'YYYY-MM-DD') AS birth_date  , --病人生日
+            TO_CHAR(pt.birth_date, 'YYYY-MM-DD') AS birth_date, --病人生日
             pt.bus_no AS patient_bus_no, --病人ID（前台显示用）
             sr.patient_id, --病人ID
             pt.name AS patient_name, --病人姓名
@@ -197,7 +197,6 @@
         T1.medication_quantity,
         T1.medication_status_Enum,
         T1.group_id,
-        T1.clinical_status_enum,
         T1.skin_test_flag,
         T1.speed,
         T1.method_code,
@@ -234,7 +233,6 @@
             WHEN 1 THEN 1
             ELSE 0
             END AS skin_test_flag ,--皮试标志
-            ai.clinical_status_enum, --皮试检查结果
             mr.speed, --输液速度
             mr.method_code,--用法
             mr.dose || ' '|| mr.dose_unit_code AS dose,--单次剂量,剂量单位
@@ -276,7 +274,6 @@
         LEFT JOIN med_medication_request mr ON mr.prescription_no = sr.prescription_no
         LEFT JOIN med_medication m ON m.id = mr.medication_id
         LEFT JOIN med_medication_definition md ON md.id = m.medication_def_id
-        LEFT JOIN cli_allergy_intolerance ai ON ai.request_id = sr.id
         <where>
             ad.bus_no = 'sy001' -- 输液检查的编号，todo：编号未定，后期修改
             AND mr.infusion_flag = 1

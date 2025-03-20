@@ -118,10 +118,6 @@ public class OutpatientInfusionRecordDto {
     private Integer skinTestFlag;
     private String skinTestFlag_enumText;
 
-    /** 皮试结果 */
-    private Integer clinicalStatusEnum;
-    private String clinicalStatusEnum_enumText;
-
     /** 开单时间 */
     private Date createTime;
 
