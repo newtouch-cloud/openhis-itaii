@@ -257,12 +257,6 @@
                 AND mr.infusion_flag = 1
                 AND md.infusion_flag = 1
 
-                <!-- 时间筛选 -->
-                <if test="beginTime != null and endTime != null">
-                    AND mr.create_time BETWEEN TO_TIMESTAMP(#{beginTime}, 'YYYY-MM-DD HH24:MI:SS')
-                    AND TO_TIMESTAMP(#{endTime}, 'YYYY-MM-DD HH24:MI:SS')
-                </if>
-
             </where>
             ORDER BY
             mr.create_time desc,e.bus_no,pt.bus_no
