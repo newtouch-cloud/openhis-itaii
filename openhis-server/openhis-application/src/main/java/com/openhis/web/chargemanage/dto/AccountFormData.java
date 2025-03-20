@@ -10,6 +10,8 @@ import com.openhis.common.enums.AccountStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 就诊账号 表单数据
  */
@@ -24,6 +26,7 @@ public class AccountFormData {
     private Long encounterId;
 
     /** 患者id */
+    @NotBlank(message = "患者id不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long patientId;
 
@@ -34,6 +37,7 @@ public class AccountFormData {
     private Integer billingStatusEnum;
 
     /** 账户类型编码 */
+    @NotBlank(message = "账户类型不能为空")
     private String typeCode; // 1:个人现金账户, 2:医保账户
 
     /** 名称 */
