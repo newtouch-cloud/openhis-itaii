@@ -39,6 +39,7 @@
 		   		</el-form-item>
 		   		<el-form-item>
 		      		<el-button type="primary" icon="Search" @click="handleQueryRight" style="margin-left: 10px;">搜索</el-button>
+		      		<el-button icon="Refresh" @click="resetQueryRight">重置</el-button>
 			 	 	<el-button  type="primary" icon="SuccessFilled" @click="handleSubmit">确认执行</el-button>
 			 	 	<!-- <el-button  type="primary" icon="SuccessFilled" @click="handleSubmitCanel">取消执行</el-button> -->
 			 	 	<el-button  type="primary" plain icon="Printer" @click="resetQuery">打印患者卡</el-button>
@@ -52,7 +53,8 @@
 					 @selection-change="handleSelectionChange" ref="tableRef">
          			<el-table-column type="selection" width="55" align="center" />
 					<el-table-column prop="groupId" label="组" width="60" />
-					<el-table-column prop="executeNum" label="已执行次数" width="100" />
+					<el-table-column prop="executeNum" label="总执行次数" width="90" />
+					<el-table-column prop="doneNum" label="已执行次数" width="90" />
 					<el-table-column prop="doctorId_dictText" label="开单医生" width="100" />
 					<el-table-column prop="patientName" label="患者姓名" width="100" />
 					<el-table-column prop="genderEnum_enumText" label="性别" width="80" /> 
@@ -62,7 +64,7 @@
 					<el-table-column prop="rateCode" label="用药频次" width="80" />
 					<el-table-column prop="dose" label="单次剂量" width="160" />
 					<el-table-column prop="speed" label="输液速度" width="80" />
-					<el-table-column prop="orgId_dictText" label="发放科室" width="120" />
+					<el-table-column prop="performOrg_dictText" label="发放科室" width="120" />
 					<el-table-column prop="medicationStatusEnum_enumText" label="药品状态" width="100" />
 					<el-table-column prop="skinTestFlag_enumText" label="是否皮试" width="60" /> 
 					<!-- <el-table-column prop="clinicalStatusEnum_enumText" label="皮试结果" width="70" /> -->
@@ -72,14 +74,16 @@
 				<p style="margin: 13px 0px 10px 0px;">院注执行历史</p>
 				<el-table :data="historyRecordsList" border style="width: 100%;height: 250px;">
 					<el-table-column prop="occurrenceStartTime" label="执行时间" width="150" >
-						<el-date-picker v-model="occurrenceStartTime" type="datetime" placeholder="" 
+                        <template #default="scope">
+                            <el-date-picker v-model="scope.row.occurrenceStartTime" type="datetime" placeholder="" 
 						format="YYYY/MM/DD hh:mm:ss" value-format="YYYY-MM-DD h:m:s "  />
+                        </template>
 					</el-table-column>
 					<el-table-column prop="performerId_dictText" label="执行人" width="80" />
 					<el-table-column prop="prescriptionNo" label="处方号" width="100" />
 					<el-table-column prop="doctorId_dictText" label="开单医生" width="100" />
 					<el-table-column prop="medicationInformation" label="药品信息" width="180" />
-					<el-table-column prop="medicationAntity" label="药品数量" width="80" />
+					<el-table-column prop="medicationQuantity" label="药品数量" width="80" />
 					<el-table-column prop="rateCode" label="用药频次" width="80" />
 					<el-table-column prop="dose" label="单词剂量" width="160" />
 					<el-table-column prop="speed" label="输液速度" width="80" />
@@ -122,6 +126,8 @@ const dateRangeRight = ref([]);
 const historyRecordsList = ref([]);
 const patientList = ref([]);
 const infusionList = ref([]);
+// const timeRightStart = ref([]);
+// const timeRightEnd = ref([]);
 const ids = ref([]);
 
 const { proxy } = getCurrentInstance();
@@ -138,10 +144,10 @@ const { queryParams } = toRefs(data);
 
 /** 查询门诊输液列表 */
 function getList() {
-  listInfusionRecord(queryParams.value).then(response => {
-	console.log('Full response1:', response);
-	infusionList.value = response.data;
-  });
+    listInfusionRecord(queryParams.value).then(response => {
+        console.log('Full response1:', response);
+        infusionList.value = response.data;
+    });
 	listPatients().then(response => {
 		console.log('Full response2:', response);
 		patientList.value = response.data.records;
@@ -172,8 +178,8 @@ function handleQuery() {
 function handleQueryRight() {
 	const createTimeSTime = dateRangeRight.value[0];
 	const createTimeETime = dateRangeRight.value[1];
-	// queryParams.value.createTimeSTime = dateRangeRight.value[0];
-	// queryParams.value.createTimeETime = dateRangeRight.value[1];
+    // timeRightStart.value = createTimeSTime;
+    // timeRightEnd.value = createTimeETime;
 	console.log("111",createTimeSTime,createTimeETime)
 	listInfusionRecord(createTimeSTime,createTimeETime).then(response => {
 		console.log('Full response1:', response);
@@ -182,13 +188,29 @@ function handleQueryRight() {
   	listPatientInfusionPerformRecord(createTimeSTime,createTimeETime).then(response => {
 		console.log('Full response3:', response);
 		historyRecordsList.value = response.data;
-  }	);
+  });
 }
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
   getList();
+//   listPatients().then(response => {
+// 		console.log('Full response2:', response);
+// 		patientList.value = response.data.records;
+// 	});
+}
+
+/** 重置按钮操作 */
+function resetQueryRight() {
+    dateRangeRight.value = [];
+    listInfusionRecord().then(response => {
+        console.log('Full response1:', response);
+        infusionList.value = response.data;
+    });
+    listPatientInfusionPerformRecord().then(response => {
+    	console.log('Full response3:', response);
+    });	
 }
 
 // 执行输液
@@ -202,11 +224,9 @@ function handleSubmit(){
 	proxy.$modal.msgError("没有有效的数据可供提交");
 	return;
 	}
-	console.log('Full response666:', itemsList,selectedItems.value);
 	updateInfusionRecord(itemsList).then(response => {
 		proxy.$modal.msgSuccess("执行成功");
-		open.value = false;
-		getList();
+		clearSelections();
     });
 }
 
@@ -242,18 +262,28 @@ function handleSelectionChange(selection) {
   console.log('Current selectedPrescriptionNos:', selectedPrescriptionNos.value);
   console.log('Current selectedItems:', selectedItems.value);
 }
-// function handleSubmitCanel(){
-// 	ids.value = []
-// 	currentRow.value  = []
-// 	selectedGroupIds.value.clear(); // 清空 selectedGroupIds
-//     infusionList.value.forEach(row => {
-//     tableRef.value.toggleRowSelection(row, false); // 取消选中所有行
-//     });
-// }
+function clearSelections() {
+  // 清空选中状态
+  selectedItems.value.clear();
+  selectedGroupIds.value.clear();
+  selectedPrescriptionNos.value.clear();
+
+  // 取消表格所有行的选中状态
+  infusionList.value.forEach(row => {
+    tableRef.value.toggleRowSelection(row, false);
+  });
+  dateRangeRight.value = [];
+  listPatientInfusionRecord(currentRow.value).then(response => {
+		infusionList.value = response.data;
+	});
+  	listPatientInfusionPerformRecord().then(response => {
+		console.log('Full response3:', response);
+		historyRecordsList.value = response.data;
+  });
+}
 
 function rowClassName({ row }) {
   if (selectedGroupIds.value.has(row.groupId)) {
-	// console.log('Row groupId:', row.groupId, 'selectedGroupIds:', selectedGroupIds.value);
     return 'selected-row';
   }
   return '';
