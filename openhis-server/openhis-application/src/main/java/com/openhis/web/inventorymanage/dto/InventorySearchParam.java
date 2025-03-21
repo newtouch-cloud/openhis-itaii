@@ -6,6 +6,8 @@ package com.openhis.web.inventorymanage.dto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 /**
  * 入库单据分页查询条件
  *
@@ -24,4 +26,9 @@ public class InventorySearchParam {
 
     /** 经手人 */
     private Long practitionerId;
+
+    /**
+     * 单据时间
+     */
+    private Date occurrenceTime;
 }
