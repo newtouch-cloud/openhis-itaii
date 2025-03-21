@@ -73,10 +73,10 @@
 			<div>
 				<p style="margin: 13px 0px 10px 0px;">院注执行历史</p>
 				<el-table :data="historyRecordsList" border style="width: 100%;height: 250px;">
-					<el-table-column prop="occurrenceStartTime" label="执行时间" width="150" >
+					<el-table-column prop="occurrenceEndTime" label="执行时间" width="180" >
                         <template #default="scope">
-                            <el-date-picker v-model="scope.row.occurrenceStartTime" type="datetime" placeholder="" 
-						format="YYYY/MM/DD hh:mm:ss" value-format="YYYY-MM-DD h:m:s "  />
+                            <el-date-picker v-model="scope.row.occurrenceEndTime" type="datetime"
+                            value-format="YYYY-MM-DD HH:mm:ss"   style="width: 170px;"/>
                         </template>
 					</el-table-column>
 					<el-table-column prop="performerId_dictText" label="执行人" width="80" />
@@ -289,7 +289,8 @@ function rowClassName({ row }) {
   return '';
 }
 function handleUpdateTime(row){
-	updateInfusionRecord(itemsList).then(response => {
+    console.log("row",row)
+	editPatientInfusionTime(row).then(response => {
 		proxy.$modal.msgSuccess("执行成功");
 		open.value = false;
 		getList();
