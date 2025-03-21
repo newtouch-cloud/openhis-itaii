@@ -63,6 +63,10 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
      */
     @Override
     public R<?> addDiagnosisBelongBinding(DiagnosisBelongBindingDto diagnosisBelongBindingDto) {
+        // 如果绑定类型是个人,objectId 存储当前登录账号id
+        if (BindingType.PERSONAL.getValue().equals(diagnosisBelongBindingDto.getBindingEnum())) {
+            diagnosisBelongBindingDto.setObjectId(SecurityUtils.getLoginUser().getUserId());
+        }
         DiagnosisBelongBinding diagnosisBelongBinding = new DiagnosisBelongBinding();
         BeanUtils.copyProperties(diagnosisBelongBindingDto, diagnosisBelongBinding);
         // 校验是否重复新增
@@ -85,6 +89,10 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
      */
     @Override
     public R<?> updateDiagnosisBelongBinding(DiagnosisBelongBindingDto diagnosisBelongBindingDto) {
+        // 如果绑定类型是个人,objectId 存储当前登录账号id
+        if (BindingType.PERSONAL.getValue().equals(diagnosisBelongBindingDto.getBindingEnum())) {
+            diagnosisBelongBindingDto.setObjectId(SecurityUtils.getLoginUser().getUserId());
+        }
         DiagnosisBelongBinding diagnosisBelongBinding = new DiagnosisBelongBinding();
         BeanUtils.copyProperties(diagnosisBelongBindingDto, diagnosisBelongBinding);
         // 校验是否重复编辑
