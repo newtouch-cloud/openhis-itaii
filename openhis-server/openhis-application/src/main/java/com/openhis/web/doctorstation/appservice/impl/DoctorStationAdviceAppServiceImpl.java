@@ -210,6 +210,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             medicationRequest.setRateCode(adviceSaveDto.getRateCode());
             medicationRequest.setDose(adviceSaveDto.getDose());
             medicationRequest.setDoseUnitCode(adviceSaveDto.getDoseUnitCode());
+            medicationRequest.setSkinTestFlag(adviceSaveDto.getSkinTestFlag()); // 皮试标记
             medicationRequest.setGroupId(adviceSaveDto.getGroupId());// 分组id
             // medicationRequest.setPackageId(adviceSaveDto.getPackageId());
 

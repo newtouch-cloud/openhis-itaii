@@ -7,14 +7,20 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * 保存诊断 子参数类
+ * 诊断查询 dto
  *
  * @author system
  * @date 2025-02-20
  */
 @Data
 @Accessors(chain = true)
-public class SaveDiagnosisChildParam {
+public class DiagnosisQueryDto {
+
+    /**
+     * 诊断ID
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long conditionId;
 
     /**
      * 诊断定义id
@@ -22,15 +28,15 @@ public class SaveDiagnosisChildParam {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long definitionId;
 
+    /** 所属分类 */
+    private Integer sourceEnum;
     /**
-     * 医保编码
+     * 诊断类型(中医诊断或西医诊断)
      */
-    private String ybNo;
+    private String typeName;
 
-    /**
-     * 验证状态
-     */
-    private Integer verificationStatusEnum;
+    /** 诊断名称 */
+    private String name;
 
     /**
      * 主诊断标记 (1:是,0:否)
@@ -38,9 +44,9 @@ public class SaveDiagnosisChildParam {
     private Integer maindiseFlag;
 
     /**
-     * 诊断ID - 用于存储 adm_encounter_diagnosis表
+     * 验证状态
      */
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long conditionId;
+    private Integer verificationStatusEnum;
+    private String verificationStatusEnum_enumText;
 
 }

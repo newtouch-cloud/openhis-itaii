@@ -26,10 +26,7 @@ import com.openhis.clinical.service.IConditionService;
 import com.openhis.clinical.service.IDiagnosisBelongBindingService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.BindingType;
-import com.openhis.common.enums.ConditionDefinitionSource;
-import com.openhis.common.enums.PublicationStatus;
-import com.openhis.common.enums.Whether;
+import com.openhis.common.enums.*;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
@@ -238,6 +235,46 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
         this.handleConditionDefinitionMetadata(organizationList);
         conditionDefinitionBusinessClass.setOrganizationList(organizationList);
         return R.ok(conditionDefinitionBusinessClass);
+    }
+
+    /**
+     * 查询就诊诊断信息
+     *
+     * @param encounterId 就诊id
+     * @return 就诊诊断信息
+     */
+    @Override
+    public R<?> getEncounterDiagnosis(Long encounterId) {
+        List<DiagnosisQueryDto> encounterDiagnosis = doctorStationDiagnosisAppMapper.getEncounterDiagnosis(encounterId);
+        for (DiagnosisQueryDto diagnosis : encounterDiagnosis) {
+            // 中医诊断/西医诊断
+            if (ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_DIAGNOSIS.getValue()
+                .equals(diagnosis.getSourceEnum())
+                || ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_SYNDROME_CATALOG.getValue()
+                    .equals(diagnosis.getSourceEnum())) {
+                diagnosis.setTypeName(CommonConstants.BusinessName.TCM_DIAGNOSIS);
+            } else {
+                diagnosis.setTypeName(CommonConstants.BusinessName.WESTERN_MEDICINE_DIAGNOSIS);
+            }
+            // 验证状态
+            diagnosis.setVerificationStatusEnum_enumText(
+                EnumUtils.getInfoByValue(ConditionVerificationStatus.class, diagnosis.getVerificationStatusEnum()));
+        }
+        return R.ok(encounterDiagnosis);
+    }
+
+    /**
+     * 删除就诊诊断信息
+     *
+     * @param conditionId 诊断ID
+     * @return 结果
+     */
+    @Override
+    public R<?> delEncounterDiagnosis(Long conditionId) {
+        iConditionService.removeById(conditionId);
+        iEncounterDiagnosisService
+            .remove(new LambdaQueryWrapper<EncounterDiagnosis>().eq(EncounterDiagnosis::getConditionId, conditionId));
+        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"就诊诊断信息"}));
     }
 
     /**

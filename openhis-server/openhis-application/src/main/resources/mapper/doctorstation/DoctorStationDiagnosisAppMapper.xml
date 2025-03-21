@@ -116,4 +116,20 @@
         AND T1.status_enum = #{statusEnum}
     </select>
 
+    <select id="getEncounterDiagnosis" resultType="com.openhis.web.doctorstation.dto.DiagnosisQueryDto">
+        SELECT T1.condition_id,
+               T2.definition_id,
+               T3.source_enum,
+               T3.NAME,
+               T1.maindise_flag,
+               T2.verification_status_enum
+        FROM adm_encounter_diagnosis AS T1
+                 LEFT JOIN cli_condition AS T2 ON T2.ID = T1.condition_id
+            AND T2.delete_flag = '0'
+                 LEFT JOIN cli_condition_definition AS T3 ON t3.ID = T2.definition_id
+            AND T3.delete_flag = '0'
+        WHERE T1.delete_flag = '0'
+          AND T1.encounter_id = #{encounterId}
+    </select>
+
 </mapper>

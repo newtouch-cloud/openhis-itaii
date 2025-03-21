@@ -95,6 +95,11 @@ public class AdviceSaveDto {
     private String doseUnitCode;
 
     /**
+     * 皮试标志 1:是 , 0:否
+     */
+    private Integer skinTestFlag;
+
+    /**
      * 分组id , 一组药品共用一个id,前端传过来
      */
     @JsonSerialize(using = ToStringSerializer.class)

@@ -74,4 +74,20 @@ public interface IDoctorStationDiagnosisAppService {
      */
     R<?> getConditionDefinitionBusinessClass(Long patientId);
 
+    /**
+     * 查询就诊诊断信息
+     *
+     * @param encounterId 就诊id
+     * @return 就诊诊断信息
+     */
+    R<?> getEncounterDiagnosis(Long encounterId);
+
+    /**
+     * 删除就诊诊断信息
+     *
+     * @param conditionId 诊断ID
+     * @return 结果
+     */
+    R<?> delEncounterDiagnosis(Long conditionId);
+
 }

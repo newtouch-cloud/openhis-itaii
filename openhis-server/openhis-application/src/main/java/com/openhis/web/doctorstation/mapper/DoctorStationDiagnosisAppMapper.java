@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.web.doctorstation.dto.ConditionDefinitionMetadata;
 import com.openhis.web.doctorstation.dto.DiagnosisBelongBindingDto;
+import com.openhis.web.doctorstation.dto.DiagnosisQueryDto;
 
 /**
  * 医生站-诊断 应用Mapper
@@ -72,5 +73,13 @@ public interface DoctorStationDiagnosisAppMapper {
      */
     List<ConditionDefinitionMetadata> getOrganizationList(@Param("statusEnum") Integer statusEnum,
         @Param("bindingEnum") Integer bindingEnum, @Param("currentUserOrganizationId") Long currentUserOrganizationId);
+
+    /**
+     * 查询就诊诊断信息
+     *
+     * @param encounterId 就诊id
+     * @return 就诊诊断信息
+     */
+    List<DiagnosisQueryDto> getEncounterDiagnosis(@Param("encounterId") Long encounterId);
 
 }
