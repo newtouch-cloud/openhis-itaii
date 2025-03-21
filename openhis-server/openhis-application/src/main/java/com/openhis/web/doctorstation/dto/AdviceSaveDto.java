@@ -79,6 +79,12 @@ public class AdviceSaveDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long encounterId;
 
+    /**
+     * 诊断ID
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long conditionId;
+
     /** 治疗类型 */
     private Integer therapyEnum;
 

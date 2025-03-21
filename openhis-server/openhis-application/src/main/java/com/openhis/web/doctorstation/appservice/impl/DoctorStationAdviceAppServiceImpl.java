@@ -205,6 +205,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             medicationRequest.setOrgId(adviceSaveDto.getOrgId());
             medicationRequest.setLocationId(adviceSaveDto.getLocationId());
             medicationRequest.setEncounterId(adviceSaveDto.getEncounterId());
+            medicationRequest.setConditionId(adviceSaveDto.getConditionId()); // 诊断id
             medicationRequest.setTherapyEnum(adviceSaveDto.getTherapyEnum());
             medicationRequest.setMethodCode(adviceSaveDto.getMethodCode());
             medicationRequest.setRateCode(adviceSaveDto.getRateCode());

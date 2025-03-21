@@ -91,6 +91,11 @@ public class MedicationRequest extends HisBaseEntity {
     /** 就诊id */
     private Long encounterId;
 
+    /**
+     * 诊断ID
+     */
+    private Long conditionId;
+
     /** 支持用药信息 */
     private String supportInfo;
 
