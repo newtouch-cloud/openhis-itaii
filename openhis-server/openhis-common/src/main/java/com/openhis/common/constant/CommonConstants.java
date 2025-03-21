@@ -40,6 +40,11 @@ public class CommonConstants {
          * 3（用于字符串截位）
          */
         Integer THREE = 3;
+
+        /**
+         * 中杠
+         */
+        String DASH = "-";
     }
 
     /**
@@ -118,7 +123,6 @@ public class CommonConstants {
          */
         String PatientId = "patient_id";
 
-
         /**
          * 就诊号
          */
@@ -157,6 +161,11 @@ public class CommonConstants {
          * 请求基于什么的ID
          */
         String BasedOnId = "based_on_id";
+
+        /**
+         * 药品id
+         */
+        String MedicationId = "medication_id";
     }
 
     /**

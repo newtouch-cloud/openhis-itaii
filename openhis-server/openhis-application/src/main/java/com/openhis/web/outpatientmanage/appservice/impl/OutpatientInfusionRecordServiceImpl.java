@@ -1,6 +1,8 @@
 package com.openhis.web.outpatientmanage.appservice.impl;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -124,7 +126,21 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
         IPage<OutpatientInfusionRecordDto> OutpatientInfusionRecordPage =
             outpatientManageMapper.getOutpatientInfusionRecord(new Page<>(1, 100), queryWrapper);
 
-        return OutpatientInfusionRecordPage.getRecords();
+        List<OutpatientInfusionRecordDto> infusionPerformList = OutpatientInfusionRecordPage.getRecords();
+
+        // 遍历列表并处理每个记录
+        infusionPerformList.forEach(e -> {
+            // 性别
+            e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
+            // 药品状态
+            e.setMedicationStatusEnum_enumText(
+                EnumUtils.getInfoByValue(EventStatus.class, e.getMedicationStatusEnum()));
+            // 皮试标志
+            e.setSkinTestFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getSkinTestFlag()));
+
+        });
+
+        return infusionPerformList;
     }
 
     /**
@@ -176,7 +192,8 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
                     break;
                 }
 
-                String prefixBusNo = record.getBusNo() + "." + record.getGroupId() + "." + record.getMedicationId();
+                String prefixBusNo = record.getBusNo() + CommonConstants.Common.DASH + record.getGroupId()
+                    + CommonConstants.Common.DASH + record.getMedicationId();
                 // 获取执行次数
                 Long exeCount =
                     outpatientManageMapper.countExecuteNumOrGroupNum(record.getServiceId(), prefixBusNo, null, true);
@@ -189,7 +206,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
                         .setActivityId(record.getActivityId()).setPatientId(record.getPatientId())
                         .setEncounterId(record.getEncounterId()).setPerformerId(practitioner.getId())
                         .setPerformerTypeCode(practitionerRole.getRoleCode())
-                        .setOccurrenceStartTime(DateUtils.getNowDate())
+                        .setOccurrenceStartTime(DateUtils.getNowDate()).setRequesterId(practitioner.getId())
                         .setOccurrenceEndTime(DateUtils.addDateMinute(DateUtils.getNowDate(), 30));
 
                     serviceRequests.add(serviceRequest);
@@ -202,8 +219,12 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             return false; // 如果批量插入失败，返回 false
         }
         // 批量更新执行状态
-        if (!checkServiceRequestIsCompleted(serviceRecords)) {
-            return false; // 如果批量耿欣失败，返回 false
+        List<Long> serviceIds = checkServiceRequestIsCompleted(serviceRecords);
+        int updateRes = batchUpdateRecordStatus(serviceIds);
+
+        // 如果更新失败，返回 false
+        if (updateRes == 0) {
+            return false;
         }
 
         return true;
@@ -214,9 +235,9 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
      * 检查该条服务申请的所有输液信息都完成
      *
      * @param serviceRecords 同一个服务请求的输液信息列表
-     * @return 更新成功/失败
+     * @return 更新的ID集合
      */
-    public boolean checkServiceRequestIsCompleted(Map<Long, List<OutpatientInfusionRecordDto>> serviceRecords) {
+    public List<Long> checkServiceRequestIsCompleted(Map<Long, List<OutpatientInfusionRecordDto>> serviceRecords) {
 
         // 存储更新的serviceId
         List<Long> serviceIds = new ArrayList<>();
@@ -233,7 +254,8 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             int index = 0; // 用于记录当前索引
 
             for (OutpatientInfusionRecordDto record : groupRecords) {
-                String prefixBusNo = record.getBusNo() + "." + record.getGroupId() + "." + record.getMedicationId();
+                String prefixBusNo = record.getBusNo() + CommonConstants.Common.DASH + record.getGroupId()
+                    + CommonConstants.Common.DASH + record.getMedicationId();
                 // 获取执行次数
                 Long exeCount = outpatientManageMapper.countExecuteNumOrGroupNum(serviceId, prefixBusNo, null, true);
 
@@ -255,11 +277,12 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             // 如果最终结果为 1，表示所有记录都满足条件,即当前服务请求的数据全部被执行
             if (result == 1) {
                 serviceIds.add(serviceId);
+                return serviceIds;
             }
 
         }
 
-        return batchUpdateRecordStatus(serviceIds);
+        return null;
     }
 
     /**
@@ -268,9 +291,10 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
      * @param serviceIds 服务请求ID列表
      * @return 修改成功/失败
      */
-    public boolean batchUpdateRecordStatus(List<Long> serviceIds) {
+    public int batchUpdateRecordStatus(List<Long> serviceIds) {
         if (serviceIds == null || serviceIds.isEmpty()) {
-            return false; // 如果传入的列表为空，直接返回失败
+            // 返回-1,表示不更新
+            return -1;
         }
 
         LambdaUpdateWrapper<ServiceRequest> updateWrapper = new LambdaUpdateWrapper<>();
@@ -279,8 +303,8 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             EventStatus.COMPLETED.getValue());
 
         int countUpdate = serviceRequestMapper.update(null, updateWrapper);
-        // 如果更新的记录数大于 0，返回 true
-        return countUpdate > 0;
+        // 如果更新的记录数大于 0
+        return countUpdate;
     }
 
     /**
@@ -323,13 +347,62 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             // 状态是已完成
             queryWrapper.eq(CommonConstants.FieldName.RequestStatus, EventStatus.COMPLETED.getValue());
 
+            List<OutpatientInfusionRecordDto> infusionPerformList = editRecords(queryWrapper);
+            List<Long> medicationIds = checkServiceRequestIsCompleted(infusionPerformList);
+            // 未产生执行历史
+            if (medicationIds == null || medicationIds.isEmpty()) {
+                return infusionPerformList;
+            }
+            // 筛选一下执行的药品
+            queryWrapper.in(CommonConstants.FieldName.MedicationId, medicationIds);
+
+            return editRecords(queryWrapper);
+
             // 门诊输液待执行记录查询
         } else {
             // based_on_id 为空，此条件筛选控制不显示执行履历
             queryWrapper.isNull(CommonConstants.FieldName.BasedOnId);
             // 状态是进行中
             queryWrapper.eq(CommonConstants.FieldName.RequestStatus, EventStatus.IN_PROGRESS.getValue());
+
+            return editRecords(queryWrapper);
         }
+
+    }
+
+    /**
+     * 执行完成后，显示执行历史
+     *
+     * @param infusionPerformList 执行历史输液列表
+     * @return medicationIds 返回药品id集合
+     */
+    public List<Long> checkServiceRequestIsCompleted(List<OutpatientInfusionRecordDto> infusionPerformList) {
+
+        List<Long> medicationIds = new ArrayList<>();
+        infusionPerformList.forEach(e -> {
+
+            // 使用正则表达式匹配 . 前面的第一个数字
+            String regex = "(\\d+)\\.";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(e.getBusNo());
+
+            if (matcher.find()) {
+                // 获取匹配的第一个数字
+                medicationIds.add(Long.valueOf(matcher.group(1))); // 添加到 List 中
+            }
+        });
+
+        return medicationIds;
+
+    }
+
+    /**
+     * 显示门诊输液执行记录查询
+     *
+     * @param queryWrapper 查询条件
+     * @return 返回门诊输液执行记录查询
+     */
+    public List<OutpatientInfusionRecordDto> editRecords(QueryWrapper<OutpatientInfusionRecordDto> queryWrapper) {
 
         // 默认显示100条
         IPage<OutpatientInfusionRecordDto> OutpatientInfusionRecordPage =

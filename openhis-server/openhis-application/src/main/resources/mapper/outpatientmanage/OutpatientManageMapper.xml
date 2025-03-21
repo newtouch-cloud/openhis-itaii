@@ -133,34 +133,34 @@
     <select id="getOutpatientInfusionPatient"
             resultType="com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto">
         SELECT
-            T1.tenant_id,
-            T1.service_id,
-            T1.prescription_no,
-            T1.encounter_bus_no,
-            T1.birth_date,
-            T1.patient_bus_no,
-            T1.patient_id,
-            T1.patient_name,
-            T1.id_card,
-            T1.gender_enum,
-            T1.create_time
+        T1.tenant_id,
+        T1.service_id,
+        T1.prescription_no,
+        T1.encounter_bus_no,
+        T1.birth_date,
+        T1.patient_bus_no,
+        T1.patient_id,
+        T1.patient_name,
+        T1.id_card,
+        T1.gender_enum,
+        T1.create_time
         FROM
         (
         SELECT DISTINCT
-            sr.id AS service_id, --服务申请管理ID
-            sr.prescription_no, --处方号
-            sr.encounter_id,
-            e.bus_no as encounter_bus_no, --就诊号
-            TO_CHAR(pt.birth_date, 'YYYY-MM-DD') AS birth_date, --病人生日
-            pt.bus_no AS patient_bus_no, --病人ID（前台显示用）
-            sr.patient_id, --病人ID
-            pt.name AS patient_name, --病人姓名
-            pt.id_card AS id_card, --病人身份证号
-            sr.tenant_id,
-            pt.gender_enum, --病人性别
-            to_char(mr.create_time, 'YYYY-MM-DD HH24:MI:SS')  AS create_time--开单时间
+        sr.id AS service_id, --服务申请管理ID
+        sr.prescription_no, --处方号
+        sr.encounter_id,
+        e.bus_no as encounter_bus_no, --就诊号
+        TO_CHAR(pt.birth_date, 'YYYY-MM-DD') AS birth_date, --病人生日
+        pt.bus_no AS patient_bus_no, --病人ID（前台显示用）
+        sr.patient_id, --病人ID
+        pt.name AS patient_name, --病人姓名
+        pt.id_card AS id_card, --病人身份证号
+        sr.tenant_id,
+        pt.gender_enum, --病人性别
+        to_char(mr.create_time, 'YYYY-MM-DD HH24:MI:SS') AS create_time--开单时间
         FROM
-            wor_service_request sr
+        wor_service_request sr
         LEFT JOIN adm_encounter e ON e.id = sr.encounter_id
         LEFT JOIN adm_patient pt ON pt.id = sr.patient_id
         LEFT JOIN wor_activity_definition ad ON ad.id = sr.activity_id
@@ -185,17 +185,21 @@
         T1.request_status,
         T1.bus_no,
         T1.execute_num,
+        T1.done_num,
         T1.based_on_id,
         T1.activity_id,
         T1.prescription_no,
         T1.encounter_id,
         T1.encounter_bus_no,
         T1.patient_name,
+        T1.gender_enum,
         T1.patient_bus_no,
         T1.patient_id,
         T1.medication_information,
+        T1.medication_id,
         T1.medication_quantity,
-        T1.medication_status_Enum,
+        T1.medication_status_enum,
+        T1.rate_code,
         T1.group_id,
         T1.skin_test_flag,
         T1.speed,
@@ -210,54 +214,57 @@
         FROM
         (
         SELECT
-            sr.tenant_id,
-            sr.id AS service_id, --服务申请管理ID
-            sr.bus_no, -- 服务请求编码
-            sr.based_on_id, -- 请求基于什么的ID
-            sr.activity_id,--请求code,输液
-            sr.prescription_no, --处方号
-            sr.encounter_id , --就诊ID
-            sr.status_enum AS request_status, --服务请求状态
-            e.bus_no AS encounter_bus_no, --就诊ID（前台显示用）
-            pt.name AS patient_name, --病人姓名
-            pt.bus_no AS patient_bus_no, --病人ID（前台显示用）
-            sr.patient_id, --病人ID
-            md.id AS medication_id, --药品ID
-            md.name AS medication_information, --药品信息
-            mr.quantity AS medication_quantity,--药品数量
-            mr.status_enum AS medication_status_Enum, --药品状态
-            mr.execute_num, -- 药品执行次数
-            mr.group_id, --注射药品组号
-            mr.perform_org,--执行科室
-            CASE mr.skin_test_flag
-            WHEN 1 THEN 1
-            ELSE 0
-            END AS skin_test_flag ,--皮试标志
-            mr.speed, --输液速度
-            mr.method_code,--用法
-            mr.dose || ' '|| mr.dose_unit_code AS dose,--单次剂量,剂量单位
-            mr.practitioner_id as doctor_id, --开单医生
-            mr.org_id,--开单科室
-            sr.performer_id, --执行护士
-            to_char(sr.occurrence_start_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrence_start_time, --预计执行时间
-            to_char(sr.occurrence_end_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrence_end_time, --预计结束时间
-            to_char(mr.create_time, 'YYYY-MM-DD HH24:MI:SS')  AS create_time--开单时间
-            FROM
-            wor_service_request sr
-            LEFT JOIN adm_encounter e ON e.id = sr.encounter_id
-            LEFT JOIN adm_patient pt ON pt.id = sr.patient_id
-            LEFT JOIN wor_activity_definition ad ON ad.id = sr.activity_id
-            LEFT JOIN med_medication_request mr ON mr.prescription_no = sr.prescription_no
-            LEFT JOIN med_medication m ON m.id = mr.medication_id
-            LEFT JOIN med_medication_definition md ON md.id = m.medication_def_id
-            LEFT JOIN cli_allergy_intolerance ai ON ai.request_id = sr.id
-            <where>
-                ad.bus_no = 'sy001' -- 输液检查的编号，todo：编号未定，后期修改
-                AND mr.infusion_flag = 1
+        sr.tenant_id,
+        sr.id AS service_id, --服务申请管理ID
+        sr.bus_no, -- 服务请求编码
+        sr.based_on_id, -- 请求基于什么的ID
+        sr.activity_id,--请求code,输液
+        sr.prescription_no, --处方号
+        sr.encounter_id , --就诊ID
+        sr.status_enum AS request_status, --服务请求状态
+        e.bus_no AS encounter_bus_no, --就诊ID（前台显示用）
+        pt.name AS patient_name, --病人姓名
+        pt.gender_enum, --病人性别
+        pt.bus_no AS patient_bus_no, --病人ID（前台显示用）
+        sr.patient_id, --病人ID
+        md.id AS medication_id, --药品ID
+        md.name AS medication_information, --药品信息
+        mr.quantity AS medication_quantity,--药品数量
+        mr.status_enum AS medication_status_enum, --药品状态
+        mr.rate_code, --药品状态
+        mr.execute_num, -- 总执行次数
+        (select count (*) from wor_service_request wor where wor.based_on_id = sr.id) as done_num ,-- 已执行次数
+        mr.group_id, --注射药品组号
+        mr.perform_org,--执行科室
+        CASE mr.skin_test_flag
+        WHEN 1 THEN 1
+        ELSE 0
+        END AS skin_test_flag ,--皮试标志
+        mr.speed, --输液速度
+        mr.method_code,--用法
+        mr.dose || ' '|| mr.dose_unit_code AS dose,--单次剂量,剂量单位
+        mr.practitioner_id as doctor_id, --开单医生
+        mr.org_id,--开单科室
+        sr.performer_id, --执行护士
+        to_char(sr.occurrence_start_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrence_start_time, --预计执行时间
+        to_char(sr.occurrence_end_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrence_end_time, --预计结束时间
+        to_char(mr.create_time, 'YYYY-MM-DD HH24:MI:SS') AS create_time--开单时间
+        FROM
+        wor_service_request sr
+        LEFT JOIN adm_encounter e ON e.id = sr.encounter_id
+        LEFT JOIN adm_patient pt ON pt.id = sr.patient_id
+        LEFT JOIN wor_activity_definition ad ON ad.id = sr.activity_id
+        LEFT JOIN med_medication_request mr ON mr.prescription_no = sr.prescription_no
+        LEFT JOIN med_medication m ON m.id = mr.medication_id
+        LEFT JOIN med_medication_definition md ON md.id = m.medication_def_id
+        LEFT JOIN cli_allergy_intolerance ai ON ai.request_id = sr.id
+        <where>
+            ad.bus_no = 'sy001' -- 输液检查的编号，todo：编号未定，后期修改
+            AND mr.infusion_flag = 1
 
-            </where>
-            ORDER BY
-            create_time desc,e.bus_no,pt.bus_no
+        </where>
+        ORDER BY
+        create_time desc,e.bus_no,pt.bus_no
         ) AS T1
         ${ew.customSqlSegment}
     </select>

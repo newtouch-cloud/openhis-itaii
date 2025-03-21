@@ -1,9 +1,7 @@
 package com.openhis.web.outpatientmanage.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.annotation.Dict;
@@ -65,6 +63,9 @@ public class OutpatientInfusionRecordDto {
     /** 住院执行次数 */
     private Integer executeNum;
 
+    /** 已经行次数 */
+    private Integer doneNum;
+
     /** 分组id */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long groupId;
@@ -84,8 +85,8 @@ public class OutpatientInfusionRecordDto {
     /** 发放科室 */
     @Dict(dictCode = "id", dictTable = "adm_organization", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long orgId;
-    private String orgId_dictText;
+    private Long performOrg;
+    private String performOrg_dictText;
 
     /** 预计执行时间 */
     private String occurrenceStartTime;
@@ -94,6 +95,7 @@ public class OutpatientInfusionRecordDto {
     private String occurrenceEndTime;
 
     /** 药品ID */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long medicationId;
 
     /** 药品信息 */
