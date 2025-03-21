@@ -40,7 +40,7 @@
 		   		<el-form-item>
 		      		<el-button type="primary" icon="Search" @click="handleQueryRight" style="margin-left: 10px;">搜索</el-button>
 			 	 	<el-button  type="primary" icon="SuccessFilled" @click="handleSubmit">确认执行</el-button>
-			 	 	<el-button  type="primary" icon="SuccessFilled" @click="handleSubmitCanel">取消执行</el-button>
+			 	 	<!-- <el-button  type="primary" icon="SuccessFilled" @click="handleSubmitCanel">取消执行</el-button> -->
 			 	 	<el-button  type="primary" plain icon="Printer" @click="resetQuery">打印患者卡</el-button>
 			 	 	<el-button  type="primary" plain icon="Printer" @click="resetQuery">打印瓶签</el-button>
 			 	 	<el-button  type="primary" plain icon="Printer" @click="resetQuery">打印输液单</el-button>
@@ -52,7 +52,7 @@
 					 @selection-change="handleSelectionChange" ref="tableRef">
          			<el-table-column type="selection" width="55" align="center" />
 					<el-table-column prop="groupId" label="组" width="60" />
-					<el-table-column prop="executionCount" label="已执行次数" width="100" />
+					<el-table-column prop="executeNum" label="已执行次数" width="100" />
 					<el-table-column prop="doctorId_dictText" label="开单医生" width="100" />
 					<el-table-column prop="patientName" label="患者姓名" width="100" />
 					<el-table-column prop="genderEnum_enumText" label="性别" width="80" /> 
@@ -71,7 +71,10 @@
 			<div>
 				<p style="margin: 13px 0px 10px 0px;">院注执行历史</p>
 				<el-table :data="historyRecordsList" border style="width: 100%;height: 250px;">
-					<el-table-column prop="occurrenceStartTime" label="执行时间" width="150" />
+					<el-table-column prop="occurrenceStartTime" label="执行时间" width="150" >
+						<el-date-picker v-model="occurrenceStartTime" type="datetime" placeholder="" 
+						format="YYYY/MM/DD hh:mm:ss" value-format="YYYY-MM-DD h:m:s "  />
+					</el-table-column>
 					<el-table-column prop="performerId_dictText" label="执行人" width="80" />
 					<el-table-column prop="prescriptionNo" label="处方号" width="100" />
 					<el-table-column prop="doctorId_dictText" label="开单医生" width="100" />
@@ -82,6 +85,11 @@
 					<el-table-column prop="speed" label="输液速度" width="80" />
 					<el-table-column prop="orgId_dictText" label="发放科室" width="120" />
 					<el-table-column prop="medicationStatusEnum_enumText" label="药品状态" width="100" />
+					<el-table-column label="操作" align="center" width="90" fixed="right" class-name="small-padding fixed-width">
+					<template #default="scope">
+						<el-button link type="primary" icon="Edit" @click="handleUpdateTime(scope.row)">确认</el-button>
+					</template>
+			</el-table-column>
 				</el-table>
 			</div>
 		</div>
@@ -96,8 +104,8 @@
 
 <script  setup name="InfusionRecord">
 import { ref, computed } from 'vue';
-import { listPatients,updateInfusionRecord,listInfusionRecord,
-	listPatientInfusionRecord,listPatientInfusionPerformRecord } from './component/api.js'; 
+import { listPatients,updateInfusionRecord,listInfusionRecord,editPatientInfusionTime,
+	listPatientInfusionRecord,listPatientInfusionPerformRecord } from './component/api'; 
 
 const showSearch = ref(true);
 const showPrescription = ref(false);
@@ -114,12 +122,6 @@ const dateRangeRight = ref([]);
 const historyRecordsList = ref([]);
 const patientList = ref([]);
 const infusionList = ref([]);
-// const infusionList = ref([
-//       { groupId: 1, executionCount: 2, doctorId_dictText: '张三', patientName: '李四', genderEnum_enumText: '男', status: '123456789012345678', medicationInformation: '药品A', medicationAntity: 10, rateCode: '每日一次', dose: '10mg', speed: '50ml/h', orgId_dictText: '内科', medicationStatusEnum_enumText: '已发放', flagText: '是', clinicalStatusEnum_enumText: '阴性' },
-//       { groupId: 1, executionCount: 2, doctorId_dictText: '张三', patientName: '王五', genderEnum_enumText: '女', status: '123456789012345679', medicationInformation: '药品A', medicationAntity: 10, rateCode: '每日一次', dose: '10mg', speed: '50ml/h', orgId_dictText: '内科', medicationStatusEnum_enumText: '已发放', flagText: '是', clinicalStatusEnum_enumText: '阴性' },
-//       { groupId: 2, executionCount: 1, doctorId_dictText: '李六', patientName: '赵七', genderEnum_enumText: '男', status: '123456789012345680', medicationInformation: '药品B', medicationAntity: 5, rateCode: '每日两次', dose: '5mg', speed: '30ml/h', orgId_dictText: '外科', medicationStatusEnum_enumText: '已发放', flagText: '否', clinicalStatusEnum_enumText: '无' },
-//     ]);
-
 const ids = ref([]);
 
 const { proxy } = getCurrentInstance();
@@ -152,11 +154,19 @@ function getList() {
 
 /** 搜索按钮操作 */
 function handleQuery() {
-	queryParams.value.createTimeSTime = dateRange.value[0];
-	queryParams.value.createTimeETime = dateRange.value[1];
+	if (dateRange.value) {
+    queryParams.value.createTimeSTime = dateRange.value[0];
+    queryParams.value.createTimeETime = dateRange.value[1];
+} else {
+    queryParams.value.createTimeSTime = null;
+    queryParams.value.createTimeETime = null;
+}
 	console.log("111",queryParams.value)
   queryParams.value.pageNo = 1;
-  getList();
+  listPatients(queryParams.value).then(response => {
+		console.log('Full response2:', response);
+		patientList.value = response.data.records;
+	});
 }
 /** 右边搜索按钮操作 */
 function handleQueryRight() {
@@ -178,7 +188,7 @@ function handleQueryRight() {
 function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
-  handleQuery();
+  getList();
 }
 
 // 执行输液
@@ -232,14 +242,14 @@ function handleSelectionChange(selection) {
   console.log('Current selectedPrescriptionNos:', selectedPrescriptionNos.value);
   console.log('Current selectedItems:', selectedItems.value);
 }
-function handleSubmitCanel(){
-	ids.value = []
-	currentRow.value  = []
-	selectedGroupIds.value.clear(); // 清空 selectedGroupIds
-    infusionList.value.forEach(row => {
-    tableRef.value.toggleRowSelection(row, false); // 取消选中所有行
-    });
-}
+// function handleSubmitCanel(){
+// 	ids.value = []
+// 	currentRow.value  = []
+// 	selectedGroupIds.value.clear(); // 清空 selectedGroupIds
+//     infusionList.value.forEach(row => {
+//     tableRef.value.toggleRowSelection(row, false); // 取消选中所有行
+//     });
+// }
 
 function rowClassName({ row }) {
   if (selectedGroupIds.value.has(row.groupId)) {
@@ -247,6 +257,13 @@ function rowClassName({ row }) {
     return 'selected-row';
   }
   return '';
+}
+function handleUpdateTime(row){
+	updateInfusionRecord(itemsList).then(response => {
+		proxy.$modal.msgSuccess("执行成功");
+		open.value = false;
+		getList();
+    });
 }
 
 function handleCurrentChange(row) {
