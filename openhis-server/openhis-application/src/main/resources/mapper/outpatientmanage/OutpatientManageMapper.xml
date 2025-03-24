@@ -239,8 +239,7 @@
             WHERE wor.based_on_id = sr.id
             AND wor.bus_no LIKE '%-%'
             AND CAST(md.id AS CHAR) = LEFT(split_part(wor.bus_no, '-', 3), POSITION('.' IN split_part(wor.bus_no, '-', 3)) - 1)  --药品ID
---             AND CAST(mr.group_id AS CHAR) = split_part(wor.bus_no, '-', 2) -- 组号ID
-
+            AND mr.group_id = CAST(split_part(wor.bus_no, '-', 2) AS BIGINT)-- 组号ID
         ) AS done_num ,-- 已执行次数
         mr.perform_org,--执行科室
         CASE mr.skin_test_flag
@@ -297,7 +296,7 @@
                 AND sr.based_on_id = #{paramId}
                 AND sr.bus_no LIKE CONCAT(#{prefixBusNo}, '%')
                 AND CAST(md.id AS CHAR) = LEFT(split_part(sr.bus_no, '-', 3), POSITION('.' IN split_part(sr.bus_no, '-', 3)) - 1) --药品ID
---                 AND CAST(mr.group_id AS CHAR) = split_part(sr.bus_no, '-', 2) -- 组号ID
+                AND mr.group_id = CAST(split_part(sr.bus_no, '-', 2) AS BIGINT)-- 组号ID
                 AND sr.status_enum = 6 --服务状态是已完成
 
             </if>
