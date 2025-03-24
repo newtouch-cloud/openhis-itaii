@@ -219,12 +219,12 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
     @Override
     public R<?> addDevice(@Validated @RequestBody DeviceManageUpDto deviceManageUpDto) {
 
-        DeviceDefinition DeviceDefinition = new DeviceDefinition();
-        BeanUtils.copyProperties(deviceManageUpDto, DeviceDefinition);
+        DeviceDefinition deviceDefinition = new DeviceDefinition();
+        BeanUtils.copyProperties(deviceManageUpDto, deviceDefinition);
 
         // 新增外来器材目录
-        DeviceDefinition.setStatusEnum(PublicationStatus.DRAFT);
-        return deviceDefinitionService.addDevice(DeviceDefinition)
+        deviceDefinition.setStatusEnum(PublicationStatus.DRAFT);
+        return deviceDefinitionService.addDevice(deviceDefinition)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"器材目录"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
     }
