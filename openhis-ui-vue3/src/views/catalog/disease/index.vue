@@ -269,11 +269,11 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="拼音" prop="pyStr">
               <el-input v-model="form.pyStr" maxlength="11" />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <!-- <el-col :span="12">
             <el-form-item label="停用" prop="status">
               <el-checkbox v-model="form.status"></el-checkbox>

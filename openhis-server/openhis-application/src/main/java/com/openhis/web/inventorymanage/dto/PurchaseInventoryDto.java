@@ -71,7 +71,7 @@ public class PurchaseInventoryDto {
     private Long purposeLocationStoreId;
 
     /** 申请人 */
-    @NotNull
+//    @NotNull
     private Long applicantId;
 
     /** 经手人 */

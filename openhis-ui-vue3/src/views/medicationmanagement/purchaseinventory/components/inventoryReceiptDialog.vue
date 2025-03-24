@@ -205,6 +205,8 @@
             v-loading="loading"
             :data="purchaseinventoryList"
             @selection-change="handleSelectionChange"
+            @row-click="handleRowClick"
+            ref="tableRef"
           >
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column
@@ -591,8 +593,6 @@ import {
   getPurchaseinventoryList,
   addPurchaseinventory,
   getInit,
-  deptTreeSelect,
-  locationTreeSelect,
   delPurchaseinventory,
 } from "./purchaseinventory";
 
@@ -748,8 +748,21 @@ const practitionerListOptions = ref(undefined); // 查询经手人列表
 const supplierListOptions = ref(undefined); // 供应商列表
 const selectedRows = ref([]); // 用于存储选中的行
 const emit = defineEmits(["new-item-added"]);
+const tableRef = ref(undefined); // 表格引用
+const currentRow = ref(undefined); // 当前操作的行
 
-const addNewRow = () => {
+
+ // 挂载时绑定事件
+ onMounted(() => {
+      document.addEventListener('click', handleClickOutside);
+    });
+
+    // 卸载时移除事件
+    onUnmounted(() => {
+      document.removeEventListener('click', handleClickOutside);
+    });
+
+function addNewRow() {
   if (data.isAdding) {
     proxy.$message.warning("请先保存当前行后再新增！");
     return;
@@ -778,8 +791,9 @@ const addNewRow = () => {
     error: false, // 新增 error 字段
   };
   purchaseinventoryList.value.push(newRow);
+  total.value = purchaseinventoryList.value.length;
   data.isAdding = true; // 设置标志位为 true，表示有未保存的
-};
+}
 
 function handleBlur(row, index) {
   let hasError = false;
@@ -832,7 +846,22 @@ function handleBlur(row, index) {
   // }
 }
 
-const saveRow = (row, index) => {
+// 点击行时记录当前行
+function handleRowClick(row) {
+  currentRow.value = row;
+}
+
+// 监听表格外的点击事件
+function handleClickOutside(event) {
+  if (tableRef.value && !tableRef.value.$el.contains(event.target)) {
+    if (currentRow.value) {
+      handleSave(currentRow.value);
+      currentRow.value = null; // 清空当前行
+    }
+  }
+}
+
+function saveRow(row, index) {
   console.log(row, "saveRowsaveRowsaveRowsaveRowsaveRowsaveRow");
   // 保存当前行的逻辑...
   // 例如：调用 API 保存数据
@@ -865,15 +894,15 @@ const saveRow = (row, index) => {
   }
 
   // proxy.$message.success("保存成功！");
-};
+}
 
-function handleSave( row , index ) {
+function handleSave(row, index) {
   let hasError = false;
   // this.purchaseinventoryList.forEach((row) => {
-    handleBlur(row);
-    if (row.error) {
-      hasError = true;
-    }
+  handleBlur(row);
+  if (row.error) {
+    hasError = true;
+  }
   // });
 
   if (hasError) {
@@ -918,7 +947,7 @@ function handleSelectionChange(selection) {
   multiple.value = !selection.length;
 }
 
-const deleteSelectedRows = () => {
+function deleteSelectedRows() {
   if (selectedRows.value.length === 0) {
     alert("请先选择要删除的行");
     return;
@@ -929,7 +958,7 @@ const deleteSelectedRows = () => {
   );
 
   selectedRows.value = []; // 清空选中行
-};
+}
 
 /** 重置操作表单 */
 function reset() {
@@ -994,6 +1023,7 @@ function edit() {
   receiptHeaderForm.value = props.item.length > 0 ? props.item[0] : {};
   // receiptHeaderForm.value.busNo = props.item.supplyBusNo;
   purchaseinventoryList.value = props.item;
+  total.value = purchaseinventoryList.value.length;
   console.log(purchaseinventoryList.value, "purchaseinventoryList.value");
   console.log(receiptHeaderForm.value, "receiptHeaderForm.value");
   loading.value = false;

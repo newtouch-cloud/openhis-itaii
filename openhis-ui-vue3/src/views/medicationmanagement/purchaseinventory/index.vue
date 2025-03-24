@@ -186,7 +186,7 @@
       <el-table-column
         label="操作"
         align="center"
-        width="140"
+        width="180"
         class-name="small-padding fixed-width"
       >
         <template #default="scope">
@@ -202,9 +202,19 @@
             link
             type="primary"
             icon="View"
-            @click="handleView(scope.row)"
+            @click="handleSubmitApproval(scope.row)"
             v-hasPermi="['system:user:remove']"
-            >查看</el-button
+            v-if="scope.row.statusEnum == '1'"
+            >提交审批</el-button
+          >
+          <el-button
+            link
+            type="primary"
+            icon="View"
+            @click="handleWithdrawApproval(scope.row)"
+            v-hasPermi="['system:user:remove']"
+            v-if="scope.row.statusEnum == '2'"
+            >撤销审批</el-button
           >
         </template>
       </el-table-column>
@@ -234,8 +244,8 @@ import {
   addPurchaseinventory,
   getpurchaseInventoryDetail,
   getInit,
-  deptTreeSelect,
-  locationTreeSelect,
+  submitApproval,
+  withdrawApproval,
   delPurchaseinventory,
 } from "./components/purchaseinventory";
 
@@ -244,21 +254,6 @@ import inventoryReceiptDialog from "./components/inventoryReceiptDialog";
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const purchaseinventoryRef = ref(null); // 初始化 ref
-const {
-  adm_location,
-  category_code,
-  service_type_code,
-  specialty_code,
-  med_chrgitm_type,
-  financial_type_code,
-} = proxy.useDict(
-  "adm_location",
-  "category_code",
-  "service_type_code",
-  "specialty_code",
-  "med_chrgitm_type",
-  "financial_type_code"
-);
 
 const purchaseinventoryList = ref([]);
 const open = ref(false);
@@ -269,10 +264,6 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-const activeFlagOptions = ref(undefined);
-const appointmentRequiredFlagOptions = ref(undefined);
-const deptOptions = ref(undefined); // 部门树选项
-const locationOptions = ref(undefined); // 地点树选项
 const dateRange = ref([]);
 const busNoAdd = ref(""); // 单据号新增
 const itemTypeOptions = ref(undefined); // 入库项目类型
@@ -312,25 +303,6 @@ function getPurchaseinventoryTypeList() {
   });
 }
 
-/** 查询部门下拉树结构 */
-function getDeptTree() {
-  deptTreeSelect().then((response) => {
-    console.log(response, "response查询部门下拉树结构");
-
-    deptOptions.value = response.data.records;
-    console.log(deptOptions.value, "部门下拉树结构");
-  });
-}
-
-/** 查询地点下拉树结构 */
-function getLocationTree() {
-  locationTreeSelect().then((response) => {
-    console.log(response, "response查询部门下拉树结构");
-    locationOptions.value = response.data.records;
-    console.log(locationOptions.value, "部门下拉树结构");
-  });
-}
-
 /** 查询采购入库项目列表 */
 function getList() {
   loading.value = true;
@@ -348,8 +320,14 @@ function getList() {
 
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.S_TIME = dateRange.value[0] + " 00:00:00";
-  queryParams.value.E_TIME = dateRange.value[1] + " 23:59:59";
+  queryParams.value.occurrenceTimeSTime =
+    dateRange.value && dateRange.value.length == 2
+      ? dateRange.value[0] + " 00:00:00"
+      : "";
+  queryParams.value.occurrenceTimeETime =
+    dateRange.value && dateRange.value.length == 2
+      ? dateRange.value[1] + " 23:59:59"
+      : "";
   queryParams.value.pageNo = 1;
   getList();
 }
@@ -363,8 +341,6 @@ function handleClear() {
 
 /** 选择条数  */
 function handleSelectionChange(selection) {
-  console.log(selection, "selection");
-  // selectedData.value = selection.map((item) => ({ ...item })); // 存储选择的行数据
   ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
@@ -372,43 +348,16 @@ function handleSelectionChange(selection) {
 
 /** 打开新增弹窗 */
 function openAddInventoryReceiptDialog() {
-  proxy.$refs["inventoryReceiptRef"].show();
-}
-/** 重置操作表单 */
-function reset() {
-  form.value = {
-    id: undefined,
-    name: undefined,
-    categoryCode: undefined,
-    cwTypeCode: undefined,
-    fwTypeCode: undefined,
-    specialtyCode: undefined,
-    locationId: undefined,
-    offeredOrgId: undefined,
-    activeFlag: undefined,
-    extraDetails: undefined,
-    contact: undefined,
-    appointmentRequiredFlag: undefined,
-    chargeName: undefined,
-    price: undefined,
-    description: undefined,
-    ybType: undefined,
-    title: undefined,
-    comment: undefined,
-  };
-  proxy.resetForm("purchaseinventoryRef");
-}
-/** 取消按钮 */
-function cancel() {
-  open.value = false;
-  reset();
+  getPurchaseinventoryTypeList();
+  nextTick(() => {
+    proxy.$refs["inventoryReceiptRef"].show();
+  });
 }
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
-  console.log(typeof(row.supplyBusNo), "row",row);
+  console.log(typeof row.supplyBusNo, "row", row);
   getpurchaseInventoryDetail(row.supplyBusNo).then((response) => {
-
     currentData.value = response.data;
     console.log(response, "response采购入库编辑按钮", currentData.value);
     nextTick(() => {
@@ -417,70 +366,23 @@ function handleUpdate(row) {
     getList();
   });
 }
-// /** 提交按钮 */
-// function submitForm() {
-//   // // 调用转换函数
-//   // const transformedData = transformFormData(form);
-//   // console.log(transformedData, "transformedData");
-//   // addPurchaseinventory(transformedData).then((response) => {
-//   //   proxy.$modal.msgSuccess("新增成功");
-//   //   open.value = false;
-//     getList();
-//   // });
-// }
-
-// 获取完整地址字符串
-function getName() {
-  console.log(service_type_code.value, "service_type_code.value");
-  // 服务类型
-  const serviceTypeText = proxy.selectDictLabel(
-    service_type_code.value,
-    form.value.fwTypeCode
-  );
-  // 服务分类
-  const categoryCodeText = proxy.selectDictLabel(
-    category_code.value,
-    form.value.categoryCode
-  );
-  // 服务专业
-  const specialtyCodeText = proxy.selectDictLabel(
-    specialty_code.value,
-    form.value.specialtyCode
-  );
-  console.log(
-    serviceTypeText,
-    "serviceTypeText",
-    categoryCodeText,
-    specialtyCodeText
-  );
-  const nameParts = [
-    serviceTypeText,
-    form.value.addressCity,
-    categoryCodeText,
-    specialtyCodeText,
-  ];
-
-  // 使用 reduce 方法拼接地址，非空字段之间用 '-' 连接
-  return nameParts.reduce((acc, part) => {
-    if (part) {
-      if (acc) {
-        acc += " - "; // 在非空字段之间添加 '-'
-      }
-      acc += part;
-    }
-    return acc;
-  }, "");
+/** 提交审核按钮 */
+function handleSubmitApproval(row) {
+  submitApproval(row.supplyBusNo).then((response) => {
+    proxy.$modal.msgSuccess("提交审批成功");
+    open.value = false;
+    getList();
+  });
 }
-// /** 详细按钮操作 */
-// function handleView(row) {
-//   reset();
-//   title.value = "查看";
-//   open.value = true;
-//   getPurchaseinventoryOne(row.id).then((response) => {
-//     console.log(response, "responsebbbb", row.id);
-//     form.value = response.data;
-//   });
-// }
+
+/** 撤回审批按钮 */
+function handleWithdrawApproval(row) {
+  withdrawApproval(row.supplyBusNo).then((response) => {
+    proxy.$modal.msgSuccess("撤销审批成功");
+    open.value = false;
+    getList();
+  });
+}
 
 /** 删除按钮操作 */
 function handleDelete(row) {
@@ -496,102 +398,8 @@ function handleDelete(row) {
     })
     .catch(() => {});
 }
-// 转换insert参数函数
-const transformFormData = (form) => {
-  const {
-    id,
-    name,
-    categoryCode,
-    // typeCode,
-    cwTypeCode,
-    fwTypeCode,
-    specialtyCode,
-    locationId,
-    offeredOrgId,
-    activeFlag,
-    extraDetails,
-    contact,
-    appointmentRequiredFlag,
-    chargeName,
-    price,
-    description,
-    ybType,
-    title,
-    comment,
-  } = form.value;
 
-  return {
-    healthcareServiceFormData: {
-      id,
-      activeFlag,
-      offeredOrgId,
-      categoryCode,
-      typeCode: fwTypeCode,
-      specialtyCode,
-      locationId,
-      name,
-      contact,
-      appointmentRequiredFlag,
-      extraDetails,
-      comment,
-    },
-    chargeItemDefinitionFormData: {
-      id,
-      chargeName,
-      title,
-      orgId: offeredOrgId,
-      description,
-      typeCode: cwTypeCode,
-      ybType,
-      price,
-    },
-  };
-};
-
-// 转换insert参数函数
-const transformFormEditData = (form) => {
-  const {
-    id,
-    name,
-    categoryCode,
-    // typeCode,
-    cwTypeCode,
-    fwTypeCode,
-    specialtyCode,
-    locationId,
-    offeredOrgId,
-    activeFlag,
-    extraDetails,
-    contact,
-    appointmentRequiredFlag,
-    chargeName,
-    price,
-    description,
-    ybType,
-    title,
-    comment,
-  } = form.value;
-
-  return {
-    healthcareServiceFormData: {
-      id,
-      activeFlag,
-      offeredOrgId,
-      categoryCode,
-      typeCode: fwTypeCode,
-      specialtyCode,
-      locationId,
-      name,
-      contact,
-      appointmentRequiredFlag,
-      extraDetails,
-      comment,
-    },
-  };
-};
 getPurchaseinventoryTypeList();
-getDeptTree();
-getLocationTree();
 getList();
 </script>
 <style scoped>

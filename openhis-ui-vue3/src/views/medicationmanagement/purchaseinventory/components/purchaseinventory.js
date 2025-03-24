@@ -29,7 +29,7 @@ export function addPurchaseinventory(data) {
 }
 
 
-// 查询厂商类型
+// 查询采购入库单据初始化数据
 export function getInit() {
   return request({
     url: '/inventory-manage/purchase/init',
@@ -37,30 +37,31 @@ export function getInit() {
   })
 }
 
-// 查询部门树形数据
-export function deptTreeSelect(queryParams) {
-  return request({
-    url: '/base-data-manage/organization/organization',
-    method: 'get',
-    param: queryParams
-  })
-}
 
-// 查询地点树形数据
-export function locationTreeSelect(queryParams) {
-  return request({
-    url: '/base-data-manage/cabinet-location/cabinet-location',
-    method: 'get',
-    param: queryParams
-  })
-}
-
-// 删除收费挂号项目
+// 删除单据
 export function delPurchaseinventory(param) {
   console.log(param,'aaaa')
   return request({
-    url: '/basic-service/healthcare/healthcare-service',
+    url: '/inventory-manage/purchase/inventory-receipt',
     method: 'delete',
     params: param
+  })
+}
+
+// 提交审批
+export function submitApproval(busNo) {
+  return request({
+    url: '/inventory-manage/purchase/submit-approval',
+    method: 'put',
+    data: { busNo }
+  })
+}
+
+// 撤回审批
+export function withdrawApproval(busNo) {
+  return request({
+    url: '/inventory-manage/purchase/withdraw-approval',
+    method: 'put',
+    data: { busNo }
   })
 }

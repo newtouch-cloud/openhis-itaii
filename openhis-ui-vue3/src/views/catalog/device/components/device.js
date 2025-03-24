@@ -72,3 +72,21 @@ export function startDevice(ids) {
     data: ids
   })
 }
+
+// 查询部门树形数据
+export function deptTreeSelect(queryParams) {
+  return request({
+    url: '/base-data-manage/organization/organization',
+    method: 'get',
+    param: queryParams
+  })
+}
+
+// 查询地点树形数据
+export function locationTreeSelect(queryParams) {
+  return request({
+    url: '/base-data-manage/cabinet-location/cabinet-location',
+    method: 'get',
+    param: queryParams
+  })
+}

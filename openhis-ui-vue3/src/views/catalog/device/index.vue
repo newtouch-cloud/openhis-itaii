@@ -33,7 +33,7 @@
                   v-model="queryParams.searchKey"
                   placeholder="品名/商品名/英文品名/编码/拼音"
                   clearable
-                  style="width: 240px"
+                  style="width: 220px"
                   @keyup.enter="handleQuery"
                 />
               </el-form-item>
@@ -231,8 +231,8 @@
           <el-table-column
             label="高值器材标志"
             align="center"
-            key="hvcmFlag"
-            prop="hvcmFlag"
+            key="hvcmFlag_enumText"
+            prop="hvcmFlag_enumText"
             :show-overflow-tooltip="true"
           />
 
@@ -254,8 +254,8 @@
           <el-table-column
             label="医保标记"
             align="center"
-            key="ybFlag"
-            prop="ybFlag"
+            key="ybFlag_enumText"
+            prop="ybFlag_enumText"
             :show-overflow-tooltip="true"
             width="110"
           />
@@ -270,8 +270,8 @@
           <el-table-column
             label="医保对码标记"
             align="center"
-            key="ybMatchFlag"
-            prop="ybMatchFlag"
+            key="ybMatchFlag_enumText"
+            prop="ybMatchFlag_enumText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -338,8 +338,8 @@
           <el-table-column
             label="过敏标记"
             align="center"
-            key="allergenFlag"
-            prop="allergenFlag"
+            key="allergenFlag_enumText"
+            prop="allergenFlag_enumText"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -383,6 +383,8 @@
       ref="deviceRef"
       :title="title"
       :item="currentData"
+      :deviceCategories="deviceCategories"
+      :statusFlagOptions="statusFlagOptions"
       @submit="getList()"
     />
     <!-- <device-view-dialog
