@@ -237,9 +237,9 @@
         (SELECT COUNT(*)
             FROM  wor_service_request wor
             WHERE wor.based_on_id = sr.id
+            AND wor.bus_no LIKE '%-%'
             AND CAST(md.id AS CHAR) = LEFT(split_part(wor.bus_no, '-', 3), POSITION('.' IN split_part(wor.bus_no, '-', 3)) - 1)  --药品ID
 --             AND CAST(mr.group_id AS CHAR) = split_part(wor.bus_no, '-', 2) -- 组号ID
-            AND wor.bus_no LIKE '%-%'
 
         ) AS done_num ,-- 已执行次数
         mr.perform_org,--执行科室
