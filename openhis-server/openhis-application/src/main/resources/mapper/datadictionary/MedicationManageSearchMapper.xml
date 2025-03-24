@@ -53,13 +53,13 @@
         T1.characteristic,
         T1.national_drug_code,
         T1.part_attribute,
-        T1.antibiotic_code
-        T1.restricted_enum
-        T1.self_flag
-        T1.antibiotic_flag
-        T1.basic_flag
+        T1.antibiotic_code,
+        T1.restricted_enum,
+        T1.self_flag,
+        T1.antibiotic_flag,
+        T1.basic_flag,
         T1.remark,
-        T3.manufacturer_name,
+        T3.name AS manufacturer_name,
         T4.base_unit_code,
         T4.base_quantity,
         T4.min_unit_code,

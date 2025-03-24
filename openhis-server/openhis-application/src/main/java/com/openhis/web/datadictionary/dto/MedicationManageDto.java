@@ -35,6 +35,7 @@ public class MedicationManageDto {
     private String statusEnum_enumText;
 
     /** 所属科室 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long orgId;
 
     /** 剂型 */
@@ -160,9 +161,11 @@ public class MedicationManageDto {
     private Integer injectFlag;
 
     /** 生产厂家 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long manufacturerId;
 
     /** 供应商 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long supplyId;
 
     /** 是否限制使用 */
