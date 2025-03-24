@@ -233,8 +233,15 @@
         mr.status_enum AS medication_status_enum, --药品状态
         mr.rate_code, --药品状态
         mr.execute_num, -- 总执行次数
-        (select count (*) from wor_service_request wor where wor.based_on_id = sr.id) as done_num ,-- 已执行次数
         mr.group_id, --注射药品组号
+        (SELECT COUNT(*)
+            FROM  wor_service_request wor
+            WHERE wor.based_on_id = sr.id
+            AND CAST(md.id AS CHAR) = LEFT(split_part(wor.bus_no, '-', 3), POSITION('.' IN split_part(wor.bus_no, '-', 3)) - 1)  --药品ID
+--             AND CAST(mr.group_id AS CHAR) = split_part(wor.bus_no, '-', 2) -- 组号ID
+            AND wor.bus_no LIKE '%-%'
+
+        ) AS done_num ,-- 已执行次数
         mr.perform_org,--执行科室
         CASE mr.skin_test_flag
         WHEN 1 THEN 1
@@ -289,7 +296,10 @@
             <if test="flag and paramId != null and paramId != '' and prefixBusNo != null and prefixBusNo != '' ">
                 AND sr.based_on_id = #{paramId}
                 AND sr.bus_no LIKE CONCAT(#{prefixBusNo}, '%')
+                AND CAST(md.id AS CHAR) = LEFT(split_part(sr.bus_no, '-', 3), POSITION('.' IN split_part(sr.bus_no, '-', 3)) - 1) --药品ID
+--                 AND CAST(mr.group_id AS CHAR) = split_part(sr.bus_no, '-', 2) -- 组号ID
                 AND sr.status_enum = 6 --服务状态是已完成
+
             </if>
 
             <!-- 同组内药品数量 条件筛选 -->

@@ -201,7 +201,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
                 if (exeCount < record.getExecuteNum()) {
                     ServiceRequest serviceRequest = new ServiceRequest();
                     serviceRequest.setPrescriptionNo(record.getPrescriptionNo())
-                        .setBusNo(AssignSeqUtil.formatString(prefixBusNo, exeCount, 3))
+                        .setBusNo(AssignSeqUtil.formatString(prefixBusNo, exeCount + 1, 3))
                         .setBasedOnId(record.getServiceId()).setStatusEnum(EventStatus.COMPLETED.getValue())
                         .setActivityId(record.getActivityId()).setPatientId(record.getPatientId())
                         .setEncounterId(record.getEncounterId()).setPerformerId(practitioner.getId())
@@ -219,7 +219,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             return false; // 如果批量插入失败，返回 false
         }
         // 批量更新执行状态
-        List<Long> serviceIds = checkServiceRequestIsCompleted(serviceRecords);
+        List<Long> serviceIds = checkServiceRequestIsCompleted();
         int updateRes = batchUpdateRecordStatus(serviceIds);
 
         // 如果更新失败，返回 false
@@ -234,23 +234,28 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     /**
      * 检查该条服务申请的所有输液信息都完成
      *
-     * @param serviceRecords 同一个服务请求的输液信息列表
      * @return 更新的ID集合
      */
-    public List<Long> checkServiceRequestIsCompleted(Map<Long, List<OutpatientInfusionRecordDto>> serviceRecords) {
+    public List<Long> checkServiceRequestIsCompleted() {
+
+        //获取全部执行输液记录
+        List<OutpatientInfusionRecordDto> patientInfusionList =getPatientInfusionPerformRecord(null,false);
+        // 按 serviceId 分组
+        Map<Long, List<OutpatientInfusionRecordDto>> servicePatientInfusionList = patientInfusionList.stream()
+            .collect(Collectors.groupingBy(OutpatientInfusionRecordDto::getServiceId));
 
         // 存储更新的serviceId
         List<Long> serviceIds = new ArrayList<>();
 
         // 遍历每个分组
-        for (Map.Entry<Long, List<OutpatientInfusionRecordDto>> entry : serviceRecords.entrySet()) {
+        for (Map.Entry<Long, List<OutpatientInfusionRecordDto>> entry : servicePatientInfusionList.entrySet()) {
             // 获取当前分组的 serviceId
             Long serviceId = entry.getKey();
             // 获取当前分组的记录列表
             List<OutpatientInfusionRecordDto> groupRecords = entry.getValue();
 
             // 创建一个数组来记录每个记录是否满足条件
-            int[] flags = new int[serviceRecords.size()];
+            int[] flags = new int[groupRecords.size()];
             int index = 0; // 用于记录当前索引
 
             for (OutpatientInfusionRecordDto record : groupRecords) {
@@ -260,7 +265,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
                 Long exeCount = outpatientManageMapper.countExecuteNumOrGroupNum(serviceId, prefixBusNo, null, true);
 
                 // 判断是否满足条件
-                if (exeCount.equals(record.getExecuteNum())) {
+                if (exeCount != null && exeCount.longValue() == record.getExecuteNum().longValue()) {
                     flags[index] = 1; // 如果满足条件，设置为 1
                 } else {
                     flags[index] = 0; // 如果不满足条件，设置为 0
