@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -48,9 +49,11 @@ public class MedicationManageUpDto {
     private String lotNumber;
 
     /** 生效日期 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date effectiveDate;
 
     /** 到期日期 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date expirationDate;
 
     /** 用法 */
