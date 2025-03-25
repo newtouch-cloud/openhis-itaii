@@ -21,11 +21,11 @@
 			</el-form>
 
 			<el-table :data="patientList" border style="width: 100%" highlight-current-row @current-change="handleCurrentChange" >
-				<el-table-column prop="prescriptionNo" label="处方号" width="150" />
+				<el-table-column prop="prescriptionNo" label="处方号" width="120" />
 				<el-table-column prop="patientName" label="姓名" width="100" />
 				<el-table-column prop="genderEnum_enumText" label="性别" width="80" /> 
 				<el-table-column prop="ageString" label="年龄" width="80" />
-				<el-table-column prop="status" label="身份证号" width="140" />
+				<el-table-column prop="idCard" label="身份证号" width="140" />
 		  </el-table>
 		  <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNo" 
 			v-model:limit="queryParams.pageSize" @pagination="getList"/>
@@ -152,19 +152,15 @@ const { queryParams } = toRefs(data);
 /** 查询门诊输液列表 */
 function getList() {
     listInfusionRecord(queryParams.value).then(response => {
-        console.log('Full response1:', response);
         infusionList.value = response.data;
 		// 为每个 groupId 分配随机颜色
 		groupColors.value = assignRandomColorsToGroups(infusionList.value);
-
 		// 统计每个 groupId 的行数
       	const groupCounts = countGroupRows(infusionList.value);
-
      	// 设置每行的标记
       	markers.value = getRowMarkers(groupCounts, infusionList.value);
     });
 	listPatients().then(response => {
-		console.log('Full response2:', response);
 		patientList.value = response.data.records;
 	});
 }
@@ -178,10 +174,8 @@ function handleQuery() {
 		queryParams.value.createTimeSTime = null;
 		queryParams.value.createTimeETime = null;
 	}
-	console.log("111",queryParams.value)
   	queryParams.value.pageNo = 1;
 	listPatients(queryParams.value).then(response => {
-		console.log('Full response2:', response);
 		patientList.value = response.data.records;
 	});
 }
@@ -203,10 +197,6 @@ function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
   getList();
-//   listPatients().then(response => {
-// 		console.log('Full response2:', response);
-// 		patientList.value = response.data.records;
-// 	});
 }
 
 /** 右边重置按钮操作 */
@@ -214,7 +204,6 @@ function resetQueryRight() {
 	if(historyRecordsList.value.length>0){
 		dateRangeRight.value = [];
     listInfusionRecord().then(response => {
-        console.log('Full response1:', response);
         infusionList.value = response.data;
     });
     listPatientInfusionPerformRecord().then(response => {
@@ -225,7 +214,6 @@ function resetQueryRight() {
 		selectedItems.value.clear();
 		selectedGroupIds.value.clear();
 		dateRangeRight.value = [];
-
 		// 取消表格所有行的选中状态
 		infusionList.value.forEach(row => {
 			tableRef.value.toggleRowSelection(row, false);
@@ -238,12 +226,11 @@ function resetQueryRight() {
 }
 
 function getRandomColor() {
-    const letters = 'CDEF'; // 限制在较亮的颜色范围内
+    const letters = 'CDEF'; 
     let color = '#';
     for (let i = 0; i < 6; i++) {
         color += letters[Math.floor(Math.random() * letters.length)];
     }
-    console.log("color", color);
     return color;
 }
 
@@ -314,10 +301,8 @@ function countGroupRows(data) {
 function handleSubmit(){
 	 // 将 Set 转换为数组
 	 const itemsList = Array.from(selectedItems.value);
-
 	// 如果没有有效数据，直接返回
 	if (itemsList.length === 0) {
-	console.error("No valid items to process");
 	proxy.$modal.msgError("没有有效的数据可供提交");
 	return;
 	}
@@ -335,7 +320,6 @@ function handleSubmit(){
 		proxy.$modal.msgError("已执行完总次数");
 		return;
 	}
-	console.log("/*/*/*/*/*/*/*/*/*",itemsList);
 	updateInfusionRecord(itemsList).then(response => {
 		proxy.$modal.msgSuccess("执行成功");
 		clearSelections();
@@ -353,33 +337,27 @@ function handleSelectionChange(selection) {
   selection.forEach(item => {
     const groupId = item.groupId;
     const prescriptionNo = item.prescriptionNo;
-    // 检查 groupId 和 prescriptionNo 是否同时存在
-    if ( selectedGroupIds.value.has(groupId)) { //selectedPrescriptionNos.value.has(prescriptionNo) &&
+    // 检查 groupId 是否同时存在
+    if ( selectedGroupIds.value.has(groupId)) { 
       // 如果都存在，则移除它们
       selectedGroupIds.value.delete(groupId);
-    //   selectedPrescriptionNos.value.delete(prescriptionNo);
     } else {
       // 否则添加它们
       selectedGroupIds.value.add(groupId);
-    //   selectedPrescriptionNos.value.add(prescriptionNo);
     }
   });
   // 动态更新表格行的选中状态
   infusionList.value.forEach(row => {
-    // 检查当前行的 groupId 和 prescriptionNo 是否同时在 selectedGroupIds 和 selectedPrescriptionNos 中
+    // 检查当前行的 groupId  是否同时在 selectedGroupIds  中
     const isSelected =  selectedGroupIds.value.has(row.groupId);
     tableRef.value.toggleRowSelection(row, isSelected);
   });
-  console.log('Current selectedGroupIds:', selectedGroupIds.value);
-  console.log('Current selectedPrescriptionNos:', selectedPrescriptionNos.value);
-  console.log('Current selectedItems:', selectedItems.value);
 }
 function clearSelections() {
   // 清空选中状态
   selectedItems.value.clear();
   selectedGroupIds.value.clear();
   selectedPrescriptionNos.value.clear();
-
   // 取消表格所有行的选中状态
   infusionList.value.forEach(row => {
     tableRef.value.toggleRowSelection(row, false);
@@ -391,7 +369,6 @@ function clearSelections() {
 	const createTimeSTime = timeRightStart.value || null;
 	const createTimeETime = timeRightEnd.value  || null;
 		listInfusionRecord(createTimeSTime,createTimeETime).then(response => {
-			console.log('Full response1:', response);
 			infusionList.value = response.data;
 		})
     }else{
@@ -401,7 +378,6 @@ function clearSelections() {
 	}
 
   	listPatientInfusionPerformRecord().then(response => {
-		console.log('Full response3:', response);
 		historyRecordsList.value = response.data;
   	});
 }
@@ -421,19 +397,9 @@ function handleUpdateTime(row){
 }
 
 function handleCurrentChange(row) {
-	// 清空选中状态
-	selectedItems.value.clear();
-  selectedGroupIds.value.clear();
-  selectedPrescriptionNos.value.clear();
-
-  // 取消表格所有行的选中状态
-  infusionList.value.forEach(row => {
-    tableRef.value.toggleRowSelection(row, false);
-  });
 	currentRow.value = row; // 更新当前选中行的数据
 	console.log("当前选中行的数据：", currentRow.value);
 	listPatientInfusionRecord(currentRow.value).then(response => {
-		console.log('Full response4:', response);
 		infusionList.value = response.data;
 	});
 }
@@ -453,9 +419,6 @@ getList();
 .right {
 	margin-left: 2%;
   	width: 70%;
-}
-.selected-row {
-  background-color: #eaffde !important;
 }
 
 </style>
