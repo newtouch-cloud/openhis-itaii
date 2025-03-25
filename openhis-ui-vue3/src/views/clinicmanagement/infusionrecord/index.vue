@@ -1,5 +1,5 @@
 <template>
-    <div class="app-container-infusion">
+    <div class="app-container">
 		<div class="left">
 			<el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
            		<el-form-item label="医嘱执行时间">
@@ -28,7 +28,7 @@
 				<el-table-column prop="status" label="身份证号" width="140" />
 		  </el-table>
 		  <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNo" 
-			v-model:limit="queryParams.pageSize" @pagination="getList" />
+			v-model:limit="queryParams.pageSize" @pagination="getList"/>
 		</div>
 
 		<div class="right">
@@ -41,7 +41,6 @@
 		      		<el-button type="primary" icon="Search" @click="handleQueryRight" style="margin-left: 10px;">搜索</el-button>
 		      		<el-button icon="Refresh" @click="resetQueryRight">重置</el-button>
 			 	 	<el-button  type="primary" icon="SuccessFilled" @click="handleSubmit">确认执行</el-button>
-			 	 	<!-- <el-button  type="primary" icon="SuccessFilled" @click="handleSubmitCanel">取消执行</el-button> -->
 			 	 	<el-button  type="primary" plain icon="Printer" @click="resetQuery">打印患者卡</el-button>
 			 	 	<el-button  type="primary" plain icon="Printer" @click="resetQuery">打印瓶签</el-button>
 			 	 	<el-button  type="primary" plain icon="Printer" @click="resetQuery">打印输液单</el-button>
@@ -49,10 +48,15 @@
 			</el-form>
 			<div>
 				<p style="margin: 0px 0px 10px 0px;">院注医嘱</p>
-				<el-table :data="infusionList" border style="width: 100%;height: 300px;"  :row-class-name="rowClassName"
+				<el-table :data="infusionList" border style="width: 100%;height: 300px;"  :row-style="rowStyle"
 					 @selection-change="handleSelectionChange" ref="tableRef">
          			<el-table-column type="selection" width="55" align="center" />
-					<el-table-column prop="groupId" label="组" width="60" />
+					<el-table-column label="组" width="50">
+						<template #default="scope">
+							<span>{{ markers[scope.$index] }}</span>
+						</template>
+					</el-table-column>
+					<!-- <el-table-column prop="groupId" label="组" width="60" /> -->
 					<el-table-column prop="executeNum" label="总执行次数" width="90" />
 					<el-table-column prop="doneNum" label="已执行次数" width="90" />
 					<el-table-column prop="doctorId_dictText" label="开单医生" width="100" />
@@ -72,7 +76,7 @@
 			</div>
 			<div>
 				<p style="margin: 13px 0px 10px 0px;">院注执行历史</p>
-				<el-table :data="historyRecordsList" border style="width: 100%;height: 250px;">
+				<el-table :data="historyRecordsList" border style="width: 100%;height: 300px;">
 					<el-table-column prop="occurrenceEndTime" label="执行时间" width="180" >
                         <template #default="scope">
                             <el-date-picker v-model="scope.row.occurrenceEndTime" type="datetime"
@@ -80,6 +84,7 @@
                         </template>
 					</el-table-column>
 					<el-table-column prop="performerId_dictText" label="执行人" width="80" />
+					<el-table-column prop="patientName" label="患者姓名" width="100" />
 					<el-table-column prop="prescriptionNo" label="处方号" width="100" />
 					<el-table-column prop="doctorId_dictText" label="开单医生" width="100" />
 					<el-table-column prop="medicationInformation" label="药品信息" width="180" />
@@ -126,9 +131,11 @@ const dateRangeRight = ref([]);
 const historyRecordsList = ref([]);
 const patientList = ref([]);
 const infusionList = ref([]);
-// const timeRightStart = ref([]);
-// const timeRightEnd = ref([]);
-const ids = ref([]);
+const timeRightStart = ref([]);
+const timeRightEnd = ref([]);
+
+const groupColors = ref(new Map());
+const markers = ref([]);
 
 const { proxy } = getCurrentInstance();
 
@@ -147,29 +154,33 @@ function getList() {
     listInfusionRecord(queryParams.value).then(response => {
         console.log('Full response1:', response);
         infusionList.value = response.data;
+		// 为每个 groupId 分配随机颜色
+		groupColors.value = assignRandomColorsToGroups(infusionList.value);
+
+		// 统计每个 groupId 的行数
+      	const groupCounts = countGroupRows(infusionList.value);
+
+     	// 设置每行的标记
+      	markers.value = getRowMarkers(groupCounts, infusionList.value);
     });
 	listPatients().then(response => {
 		console.log('Full response2:', response);
 		patientList.value = response.data.records;
 	});
-	listPatientInfusionPerformRecord().then(response => {
-		console.log('Full response3:', response);
-		historyRecordsList.value = response.data;
-  });
 }
 
 /** 搜索按钮操作 */
 function handleQuery() {
 	if (dateRange.value) {
-    queryParams.value.createTimeSTime = dateRange.value[0];
-    queryParams.value.createTimeETime = dateRange.value[1];
-} else {
-    queryParams.value.createTimeSTime = null;
-    queryParams.value.createTimeETime = null;
-}
+		queryParams.value.createTimeSTime = dateRange.value[0];
+		queryParams.value.createTimeETime = dateRange.value[1];
+	} else {
+		queryParams.value.createTimeSTime = null;
+		queryParams.value.createTimeETime = null;
+	}
 	console.log("111",queryParams.value)
-  queryParams.value.pageNo = 1;
-  listPatients(queryParams.value).then(response => {
+  	queryParams.value.pageNo = 1;
+	listPatients(queryParams.value).then(response => {
 		console.log('Full response2:', response);
 		patientList.value = response.data.records;
 	});
@@ -178,15 +189,12 @@ function handleQuery() {
 function handleQueryRight() {
 	const createTimeSTime = dateRangeRight.value[0];
 	const createTimeETime = dateRangeRight.value[1];
-    // timeRightStart.value = createTimeSTime;
-    // timeRightEnd.value = createTimeETime;
-	console.log("111",createTimeSTime,createTimeETime)
+    timeRightStart.value = createTimeSTime;
+    timeRightEnd.value = createTimeETime;
 	listInfusionRecord(createTimeSTime,createTimeETime).then(response => {
-		console.log('Full response1:', response);
 		infusionList.value = response.data;
   	});
   	listPatientInfusionPerformRecord(createTimeSTime,createTimeETime).then(response => {
-		console.log('Full response3:', response);
 		historyRecordsList.value = response.data;
   });
 }
@@ -201,16 +209,105 @@ function resetQuery() {
 // 	});
 }
 
-/** 重置按钮操作 */
+/** 右边重置按钮操作 */
 function resetQueryRight() {
-    dateRangeRight.value = [];
+	if(historyRecordsList.value.length>0){
+		dateRangeRight.value = [];
     listInfusionRecord().then(response => {
         console.log('Full response1:', response);
         infusionList.value = response.data;
     });
     listPatientInfusionPerformRecord().then(response => {
-    	console.log('Full response3:', response);
+		historyRecordsList.value = response.data;
     });	
+	}else{
+		// 清空选中状态
+		selectedItems.value.clear();
+		selectedGroupIds.value.clear();
+		dateRangeRight.value = [];
+
+		// 取消表格所有行的选中状态
+		infusionList.value.forEach(row => {
+			tableRef.value.toggleRowSelection(row, false);
+  		});
+		listPatientInfusionRecord(currentRow.value).then(response => {
+			infusionList.value = response.data;
+		});
+	}
+    
+}
+
+function getRandomColor() {
+    const letters = 'CDEF'; // 限制在较亮的颜色范围内
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * letters.length)];
+    }
+    console.log("color", color);
+    return color;
+}
+
+function assignRandomColorsToGroups(data) {
+    const colors = new Map();
+    data.forEach((item) => {
+      if (!colors.has(item.groupId)) {
+        colors.set(item.groupId, getRandomColor());
+      }
+    });
+    return colors;
+}
+
+// 计算颜色的亮度
+function calculateBrightness(color) {
+      const r = parseInt(color.slice(1, 3), 16);
+      const g = parseInt(color.slice(3, 5), 16);
+      const b = parseInt(color.slice(5, 7), 16);
+      const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+      return brightness;
+    }
+
+    // 根据亮度设置字体颜色
+function getTextColor(color) {
+  const brightness = calculateBrightness(color);
+  return brightness < 128 ? '#FFFFFF' : '#000000';
+}
+
+function getRowMarkers(groupCounts, data) {
+    const markers = new Array(data.length).fill('');
+
+    groupCounts.forEach((groupInfo, groupId) => {
+        const { count, indices } = groupInfo;
+        if (count === 1) {
+            // 如果只有一行，不显示标记
+            return;
+        } else if (count === 2) {
+            // 如果有两行，分别显示左右括号
+            markers[indices[0]] = '﹁';
+            markers[indices[1]] = '﹂';
+        } else {
+            // 如果有两行以上，第一条显示左括号，中间用竖线，最后一条显示右括号
+            markers[indices[0]] = '﹁';
+            for (let i = 1; i < indices.length - 1; i++) {
+                markers[indices[i]] = '|';
+            }
+            markers[indices[indices.length - 1]] = '﹂';
+        }
+    });
+
+    return markers;
+}
+
+function countGroupRows(data) {
+    const groupCounts = new Map();
+    data.forEach((item, index) => {
+        if (!groupCounts.has(item.groupId)) {
+            groupCounts.set(item.groupId, { count: 0, indices: [] });
+        }
+        const groupInfo = groupCounts.get(item.groupId);
+        groupInfo.count++;
+        groupInfo.indices.push(index);
+    });
+    return groupCounts;
 }
 
 // 执行输液
@@ -224,6 +321,21 @@ function handleSubmit(){
 	proxy.$modal.msgError("没有有效的数据可供提交");
 	return;
 	}
+	const allCompleted = itemsList.every(item => item.medicationStatusEnum_enumText === "已完成");
+
+    if (!allCompleted) {
+        // 如果存在未完成的药品，提示用户
+        proxy.$modal.msgError("存在未完成的药品，请检查后再提交");
+        return;
+    }
+	const allExecuted = itemsList.every(item => item.executeNum === item.doneNum);
+
+	if (allExecuted) {
+		// 如果所有药品的 executeNum 和 doneNum 都相等，提示用户
+		proxy.$modal.msgError("已执行完总次数");
+		return;
+	}
+	console.log("/*/*/*/*/*/*/*/*/*",itemsList);
 	updateInfusionRecord(itemsList).then(response => {
 		proxy.$modal.msgSuccess("执行成功");
 		clearSelections();
@@ -245,11 +357,11 @@ function handleSelectionChange(selection) {
     if ( selectedGroupIds.value.has(groupId)) { //selectedPrescriptionNos.value.has(prescriptionNo) &&
       // 如果都存在，则移除它们
       selectedGroupIds.value.delete(groupId);
-      selectedPrescriptionNos.value.delete(prescriptionNo);
+    //   selectedPrescriptionNos.value.delete(prescriptionNo);
     } else {
       // 否则添加它们
       selectedGroupIds.value.add(groupId);
-      selectedPrescriptionNos.value.add(prescriptionNo);
+    //   selectedPrescriptionNos.value.add(prescriptionNo);
     }
   });
   // 动态更新表格行的选中状态
@@ -273,20 +385,31 @@ function clearSelections() {
     tableRef.value.toggleRowSelection(row, false);
   });
   dateRangeRight.value = [];
-  listPatientInfusionRecord(currentRow.value).then(response => {
-		infusionList.value = response.data;
-	});
+  
+  // 检查 currentRow.value 是否存在
+  if (!currentRow.value) {
+	const createTimeSTime = timeRightStart.value || null;
+	const createTimeETime = timeRightEnd.value  || null;
+		listInfusionRecord(createTimeSTime,createTimeETime).then(response => {
+			console.log('Full response1:', response);
+			infusionList.value = response.data;
+		})
+    }else{
+		listPatientInfusionRecord(currentRow.value).then(response => {
+			infusionList.value = response.data;
+		});
+	}
+
   	listPatientInfusionPerformRecord().then(response => {
 		console.log('Full response3:', response);
 		historyRecordsList.value = response.data;
-  });
+  	});
 }
-
-function rowClassName({ row }) {
-  if (selectedGroupIds.value.has(row.groupId)) {
-    return 'selected-row';
-  }
-  return '';
+// 动态设置行的内联样式
+function rowStyle({ row }) {
+    const color = groupColors.value.get(row.groupId);
+    const textColor = getTextColor(color);
+    return { backgroundColor: color, color: textColor };
 }
 function handleUpdateTime(row){
     console.log("row",row)
@@ -298,6 +421,15 @@ function handleUpdateTime(row){
 }
 
 function handleCurrentChange(row) {
+	// 清空选中状态
+	selectedItems.value.clear();
+  selectedGroupIds.value.clear();
+  selectedPrescriptionNos.value.clear();
+
+  // 取消表格所有行的选中状态
+  infusionList.value.forEach(row => {
+    tableRef.value.toggleRowSelection(row, false);
+  });
 	currentRow.value = row; // 更新当前选中行的数据
 	console.log("当前选中行的数据：", currentRow.value);
 	listPatientInfusionRecord(currentRow.value).then(response => {
@@ -310,8 +442,8 @@ getList();
 
 </script>
 
-<style>
-.app-container-infusion {
+<style scoped>
+.app-container{
 	padding: 20px;
   	display: flex;
 }
@@ -323,7 +455,7 @@ getList();
   	width: 70%;
 }
 .selected-row {
-  background-color: #effae8 !important;
+  background-color: #eaffde !important;
 }
 
 </style>
