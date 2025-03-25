@@ -50,8 +50,10 @@ public class DiseaseManageDto {
 
     /** 医保对码标记 */
     private Integer ybMatchFlag;
+    private String ybMatchFlag_enumText;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
+    private String statusEnum_enumText;
 
 }

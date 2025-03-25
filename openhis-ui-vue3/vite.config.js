@@ -32,7 +32,7 @@ export default defineConfig (({mode, command}) => {
         // https://cn.vitejs.dev/config/#server-proxy
         '/dev-api': {
           target: 'http://localhost:18080/openhis',
-          // target: 'http://192.168.31.221:18080/openhis',
+          // target: 'http://192.168.31.221:18081/openhis',
           changeOrigin: true,
           rewrite: p => p.replace (/^\/dev-api/, ''),
         },

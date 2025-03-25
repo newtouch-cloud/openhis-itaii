@@ -51,10 +51,7 @@
             <el-row :gutter="24">
               <el-col :span="6">
                 <el-form-item label="通用名称" prop="name">
-                  <el-input
-                    v-model="form.name"
-                    placeholder=""
-                  />
+                  <el-input v-model="form.name" placeholder="" />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
@@ -125,7 +122,7 @@
                     :disabled="form.id != undefined"
                   >
                     <el-option
-                      v-for="category in medicine_category"
+                      v-for="category in fin_type_code"
                       :key="category.value"
                       :label="category.label"
                       :value="category.value"
@@ -173,7 +170,7 @@
                     :disabled="form.id != undefined"
                   >
                     <el-option
-                      v-for="category in medicine_unit"
+                      v-for="category in unit_code"
                       :key="category.value"
                       :label="category.label"
                       :value="category.value"
@@ -209,7 +206,7 @@
                     :disabled="form.id != undefined"
                   >
                     <el-option
-                      v-for="category in medicine_unit"
+                      v-for="category in unit_code"
                       :key="category.value"
                       :label="category.label"
                       :value="category.value"
@@ -241,7 +238,7 @@
                     :disabled="form.id != undefined"
                   >
                     <el-option
-                      v-for="category in medicine_unit"
+                      v-for="category in unit_code"
                       :key="category.value"
                       :label="category.label"
                       :value="category.value"
@@ -259,7 +256,7 @@
                     :disabled="form.id != undefined"
                   >
                     <el-option
-                      v-for="category in medicine_unit"
+                      v-for="category in unit_code"
                       :key="category.value"
                       :label="category.label"
                       :value="category.value"
@@ -423,6 +420,23 @@
               <el-col :span="6">
                 <el-form-item label="拆零比" prop="partPercent">
                   <el-input v-model="form.partPercent" placeholder="" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="医保类别" prop="ybType">
+                  <el-select
+                    v-model="form.ybType"
+                    placeholder="医保类别"
+                    clearable
+                    style="width: 240px"
+                  >
+                    <el-option
+                      v-for="dict in yb_type"
+                      :key="dict.value"
+                      :label="dict.label"
+                      :value="dict.value"
+                    />
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -653,28 +667,30 @@ const {
   medicine_category,
   system_categories,
   medicine_properties,
-  medicine_unit,
+  unit_code,
   medicine_formulation,
-  medical_insurance_types,
+  yb_type,
   medicine_default_usage,
   medicine_default_frequency,
   medicine_basic_flag,
   sys_normal_disable,
   rate_code,
   method_code,
+  fin_type_code
 } = proxy.useDict(
   "medicine_category",
   "system_categories",
   "medicine_properties",
-  "medicine_unit",
+  "unit_code",
   "medicine_formulation",
-  "medical_insurance_types",
+  "yb_type",
   "medicine_default_usage",
   "medicine_default_frequency",
   "medicine_basic_flag",
   "sys_normal_disable",
   "rate_code",
-  "method_code"
+  "method_code",
+  "fin_type_code"
 );
 
 const title = ref("");

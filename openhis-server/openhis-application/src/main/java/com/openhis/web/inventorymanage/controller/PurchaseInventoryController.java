@@ -98,7 +98,7 @@ public class PurchaseInventoryController {
      * @return 操作结果
      */
     @PutMapping("/submit-approval")
-    public R<?> submitApproval(@RequestParam String busNo) {
+    public R<?> submitApproval(@RequestBody String busNo) {
         return purchaseInventoryAppService.submitApproval(busNo);
     }
 
@@ -109,7 +109,7 @@ public class PurchaseInventoryController {
      * @return 操作结果
      */
     @PutMapping("/withdraw-approval")
-    public R<?> withdrawApproval(@RequestParam String busNo) {
+    public R<?> withdrawApproval(@RequestBody String busNo) {
         return purchaseInventoryAppService.withdrawApproval(busNo);
     }
 }

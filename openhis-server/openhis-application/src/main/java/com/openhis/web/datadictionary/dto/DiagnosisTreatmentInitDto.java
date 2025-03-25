@@ -18,6 +18,7 @@ public class DiagnosisTreatmentInitDto {
     private List<statusEnumOption> statusFlagOptions;
     private List<diseaseTreatmentCategory> diseaseTreatmentCategoryList;
     private List<exeOrganization> exeOrganizations;
+    private List<statusEnumOption> typeEnumOptions;
 
     /**
      * 状态

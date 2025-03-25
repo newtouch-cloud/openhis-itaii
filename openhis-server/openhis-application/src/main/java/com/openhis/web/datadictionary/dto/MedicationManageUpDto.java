@@ -5,9 +5,11 @@ import java.util.Date;
 
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import com.openhis.common.annotation.Dict;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -30,7 +32,12 @@ public class MedicationManageUpDto {
     private Long medicationDefId;
 
     /** 所属科室 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long orgId;
+
+    /** 所在位置 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long locationId;
 
     /** 剂型 */
     private String doseFormCode;
@@ -48,9 +55,11 @@ public class MedicationManageUpDto {
     private String lotNumber;
 
     /** 生效日期 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date effectiveDate;
 
     /** 到期日期 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date expirationDate;
 
     /** 用法 */
@@ -63,7 +72,9 @@ public class MedicationManageUpDto {
     private BigDecimal dose;
 
     /** 剂量单位 */
+    @Dict(dictCode = "unit_code")
     private String doseUnitCode;
+    private String doseUnitCode_dictText;
 
     /** 单次最大剂量 */
     private BigDecimal maxUnit;
@@ -143,9 +154,11 @@ public class MedicationManageUpDto {
     private Integer injectFlag;
 
     /** 生产厂家 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long manufacturerId;
 
     /** 供应商 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long supplyId;
 
     /** 是否限制使用 */
@@ -159,5 +172,20 @@ public class MedicationManageUpDto {
 
     /** 产品特性 */
     private Integer characteristic;
+
+    /** 购入价 */
+    private BigDecimal purchasePrice;
+
+    /** 零售价 */
+    private BigDecimal retailPrice;
+
+    /** 最高零售价 */
+    private BigDecimal maximumRetailPrice;
+
+    /** 医保类别 */
+    private String ybType;
+
+    /** 最小费用 */
+    private String minimalFee;
 
 }

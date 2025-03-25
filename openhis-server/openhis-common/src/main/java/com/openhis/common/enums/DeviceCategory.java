@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum DeviceCategory {
+public enum DeviceCategory implements HisEnumInterface  {
     ACTIVE (1, "active", "有源的"),
     COMMUNICATING(2, "communicating", "通讯类"),
     HOMEUSE(3, "communicating", "非院内使用"),

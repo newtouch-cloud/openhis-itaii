@@ -36,7 +36,7 @@ public class ChargeItemDefinition extends HisBaseEntity {
     private String title;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
 
     /** 机构ID */
     private Long orgId;

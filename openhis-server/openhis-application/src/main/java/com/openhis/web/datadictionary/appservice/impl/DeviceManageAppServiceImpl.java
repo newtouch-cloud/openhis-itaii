@@ -125,6 +125,8 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
             e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
             // 过敏标记枚举类回显赋值
             e.setAllergenFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getAllergenFlag()));
+            //器材分类
+            e.setCategoryEnum_enumText(EnumUtils.getInfoByValue(DeviceCategory.class, e.getCategoryEnum()));
         });
 
         // 返回【器材目录列表DTO】分页
@@ -219,12 +221,12 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
     @Override
     public R<?> addDevice(@Validated @RequestBody DeviceManageUpDto deviceManageUpDto) {
 
-        DeviceDefinition DeviceDefinition = new DeviceDefinition();
-        BeanUtils.copyProperties(deviceManageUpDto, DeviceDefinition);
+        DeviceDefinition deviceDefinition = new DeviceDefinition();
+        BeanUtils.copyProperties(deviceManageUpDto, deviceDefinition);
 
         // 新增外来器材目录
-        DeviceDefinition.setStatusEnum(PublicationStatus.DRAFT);
-        return deviceDefinitionService.addDevice(DeviceDefinition)
+        deviceDefinition.setStatusEnum(PublicationStatus.DRAFT);
+        return deviceDefinitionService.addDevice(deviceDefinition)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"器材目录"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
     }

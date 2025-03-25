@@ -92,6 +92,9 @@ public class DeviceDefinition extends HisBaseEntity {
     /** 生产厂家 */
     private Long manufacturerId;
 
+    /** 生产厂家 */
+    private String manufacturerText;
+
     /** 供应商 */
     private Long supplyId;
 
@@ -100,9 +103,6 @@ public class DeviceDefinition extends HisBaseEntity {
 
     /** 适用范围 */
     private String jurisdiction;
-
-    /** 执行科室 */
-    private Long ruleId;
 
     /** 器材版本 */
     private String version;

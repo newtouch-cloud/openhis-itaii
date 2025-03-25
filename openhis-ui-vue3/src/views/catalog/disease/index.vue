@@ -59,10 +59,7 @@
             />
           </el-form-item>
           <el-form-item label="是否停用" prop="statusEnum">
-            <el-select
-              v-model="queryParams.statusEnum"
-              style="width: 240px"
-            >
+            <el-select v-model="queryParams.statusEnum" style="width: 240px">
               <el-option
                 v-for="status in statusFlagOptions"
                 :key="status.value"
@@ -270,15 +267,75 @@
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="医保编码" prop="ybNo">
+              <el-input v-model="form.ybNo" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="医保标记" prop="ybFlag">
+              <!-- <el-input v-model="form.ybFlag" placeholder="" /> -->
+              <el-checkbox v-model="form.ybFlag"></el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="类型" prop="ybNo">
+              <el-select v-model="form.statusEnum" placeholder="请选择">
+                <el-option
+                  v-for="dict in statusFlagOptions"
+                  :key="dict.value"
+                  :label="dict.info"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="医保标记" prop="ybFlag">
+              <el-select v-model="form.statusEnum" placeholder="请选择">
+                <el-option
+                  v-for="dict in statusFlagOptions"
+                  :key="dict.value"
+                  :label="dict.info"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              label="医保对码标记"
+              prop="ybMatchFlag"
+              label-width="100"
+            >
+              <el-checkbox v-model="form.ybMatchFlag"></el-checkbox>
+            </el-form-item>
+          </el-col>
+          <!-- <el-col :span="12">
             <el-form-item label="拼音" prop="pyStr">
               <el-input v-model="form.pyStr" maxlength="11" />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <!-- <el-col :span="12">
             <el-form-item label="停用" prop="status">
               <el-checkbox v-model="form.status"></el-checkbox>
             </el-form-item>
           </el-col> -->
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="16">
+            <el-form-item label="说明" prop="description">
+              <el-input
+                v-model="form.description"
+                :autosize="{ minRows: 4, maxRows: 10 }"
+                type="textarea"
+                placeholder=""
+              />
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <template #footer>
@@ -299,7 +356,7 @@ import {
   getDiseaseCategory,
   getDiseaseOne,
   stopDisease,
-  startDisease
+  startDisease,
 } from "./components/disease";
 
 const router = useRouter();
@@ -319,6 +376,7 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const conditionDefinitionOptions = ref(undefined);
+const conditionDefinition = ref(undefined);
 // 是否停用
 const statusFlagOptions = ref(undefined);
 // const initPassword = ref(undefined);
@@ -339,6 +397,15 @@ const data = reactive({
     conditionCode: [
       { required: true, message: "编码不能为空", trigger: "blur" },
     ],
+    // typeCode: [
+    //   { required: true, message: "编码不能为空", trigger: "blur" },
+    // ],
+    // description: [
+    //   { required: true, message: "编码不能为空", trigger: "blur" },
+    // ],
+    // conditionCode: [
+    //   { required: true, message: "编码不能为空", trigger: "blur" },
+    // ],
   },
 });
 
@@ -359,7 +426,6 @@ function getDiseaseCategoryList() {
     console.log(response, "response病种目录分类查询下拉树结构");
     conditionDefinitionOptions.value = response.data.diseaseCategoryList;
     statusFlagOptions.value = response.data.statusFlagOptions;
-
   });
 }
 /** 查询病种目录列表 */
@@ -378,6 +444,7 @@ function getList() {
 /** 节点单击事件 */
 function handleNodeClick(data) {
   queryParams.value.sourceEnum = data.value;
+  conditionDefinition.value = data.value;
   handleQuery();
 }
 /** 搜索按钮操作 */
@@ -447,7 +514,7 @@ function handleExport() {
 function handleSelectionChange(selection) {
   console.log(selection, "selection");
   // selectedData.value = selection.map((item) => ({ ...item })); // 存储选择的行数据
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }
@@ -468,6 +535,12 @@ function reset() {
     pyStr: undefined,
     status: undefined,
     statusEnum: undefined,
+    sourceEnum: undefined,
+    typeCode: undefined,
+    description: undefined,
+    ybFlag: undefined,
+    ybNo: undefined,
+    ybMatchFlag: undefined,
   };
   proxy.resetForm("diseaseRef");
 }
@@ -478,6 +551,9 @@ function cancel() {
 }
 /** 新增按钮操作 */
 function handleAdd() {
+  if (conditionDefinition.value === undefined) {
+    return proxy.$modal.msgError("请选择病种目录分类");
+  }
   reset();
   open.value = true;
   title.value = "新增";
@@ -487,6 +563,12 @@ function handleUpdate(row) {
   reset();
   console.log(row, "row");
   form.value = JSON.parse(JSON.stringify(row));
+  form.value.ybFlag == 1
+    ? (form.value.ybFlag = true)
+    : (form.value.ybFlag = false);
+  form.value.ybMatchFlag == 1
+    ? (form.value.ybMatchFlag = true)
+    : (form.value.ybMatchFlag = false);
   open.value = true;
   title.value = "病种编辑";
 }
@@ -494,6 +576,11 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["diseaseRef"].validate((valid) => {
     if (valid) {
+      form.value.sourceEnum = conditionDefinition.value;
+      form.value.ybFlag ? (form.value.ybFlag = 1) : (form.value.ybFlag = 0);
+      form.value.ybMatchFlag
+        ? (form.value.ybMatchFlag = 1)
+        : (form.value.ybMatchFlag = 0);
       if (form.value.id != undefined) {
         // form.value.status
         //   ? (form.value.statusEnum = "3")

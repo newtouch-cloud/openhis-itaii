@@ -185,6 +185,17 @@ public class CommonConstants {
     }
 
     /**
+     * 字典字段名常量
+     */
+    public interface DictName {
+        /**
+         * 药品分类
+         */
+        String MED_CATEGORY_CODE = "med_category_code";
+
+    }
+
+    /**
      * sql条件常量
      */
     public interface SqlCondition {

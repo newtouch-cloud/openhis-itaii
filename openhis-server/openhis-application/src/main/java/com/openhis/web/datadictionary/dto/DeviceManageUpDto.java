@@ -94,10 +94,12 @@ public class DeviceManageUpDto {
 
     /** 生产厂家 */
     @NotNull(message = "生产厂家不能为空")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long manufacturerId;
 
     /** 供应商 */
     @NotNull(message = "供应商不能为空")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long supplyId;
 
     /** 说明 */
@@ -109,7 +111,18 @@ public class DeviceManageUpDto {
 
     /** 执行科室 */
     @NotNull(message = "执行科室不能为空")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long ruleId;
+
+    /** 归属科室 */
+    @NotNull(message = "归属科室不能为空")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orgId;
+
+    /** 所在位置 */
+    @NotNull(message = "所在位置不能为空")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long locationId;
 
     /** 器材版本 */
     private String version;

@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum SupplierType {
+public enum SupplierType implements HisEnumInterface  {
     DRAFT(1, "1", "生产商"),
 
     ACTIVE(2, "2", "供应商");

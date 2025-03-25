@@ -99,6 +99,9 @@ public class MedicationDefinition extends HisBaseEntity {
     /** 生产厂家 */
     private Long manufacturerId;
 
+    /** 生产厂商文本 */
+    private String manufacturerText;
+
     /** 供应商 */
     private Long supplyId;
 

@@ -36,7 +36,8 @@ public class DeviceManageDto {
     private String wbStr;
 
     /** 器材分类 */
-    private DeviceCategory categoryEnum;
+    private Integer categoryEnum;
+    private String categoryEnum_enumText;
 
     /** 器材种类 */
     private String typeCode;
