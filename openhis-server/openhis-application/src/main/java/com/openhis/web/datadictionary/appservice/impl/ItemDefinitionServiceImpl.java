@@ -1,25 +1,22 @@
 package com.openhis.web.datadictionary.appservice.impl;
 
-import com.openhis.administration.domain.ChargeItemDefDetail;
-import com.openhis.administration.service.IChargeItemDefinitionService;
-import com.openhis.workflow.domain.ServiceRequest;
-import liquibase.pro.packaged.S;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.core.common.utils.DateUtils;
+import com.openhis.administration.domain.ChargeItemDefDetail;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.service.IChargeItemDefDetailService;
-import com.openhis.administration.service.IChargeItemService;
+import com.openhis.administration.service.IChargeItemDefinitionService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.enums.PublicationStatus;
 import com.openhis.common.enums.Whether;
 import com.openhis.medication.domain.MedicationDetail;
 import com.openhis.web.datadictionary.appservice.IItemDefinitionService;
 import com.openhis.web.datadictionary.dto.MedicationManageUpDto;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 项目定价 实现
@@ -65,11 +62,33 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
             chargeItemDefDetail1.setDefinitionId(chargeItemDefinition.getId())
                 // 单位+批次（unit,pici） 用,符号拼装
                 .setConditionCode(
-                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber());
-//                .setAmount(1)
-            shargeItemDefDetails.add(chargeItemDefDetail1);
+                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
+                // 购入价
+                .setAmount(medicationManageUpDto.getPurchasePrice()).setPriority(0);
+
+            ChargeItemDefDetail chargeItemDefDetail2 = new ChargeItemDefDetail();
+            chargeItemDefDetail1.setDefinitionId(chargeItemDefinition.getId())
+                // 单位+批次（unit,pici） 用,符号拼装
+                .setConditionCode(
+                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
+                // 零售价
+                .setAmount(medicationManageUpDto.getRetailPrice()).setPriority(1);
+
+            shargeItemDefDetails.add(chargeItemDefDetail2);
+
+            ChargeItemDefDetail chargeItemDefDetail3 = new ChargeItemDefDetail();
+            chargeItemDefDetail1.setDefinitionId(chargeItemDefinition.getId())
+                // 单位+批次（unit,pici） 用,符号拼装
+                .setConditionCode(
+                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
+                // 最高零售价
+                .setAmount(medicationManageUpDto.getMaximumRetailPrice()).setPriority(2);
+
+            shargeItemDefDetails.add(chargeItemDefDetail3);
+
+            return chargeItemDefDetailService.saveBatch(shargeItemDefDetails);
         }
-        // 添加子表信息
+
         return false;
     }
 

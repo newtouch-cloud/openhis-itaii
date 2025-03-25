@@ -151,6 +151,10 @@ public class DiagnosisTreatmentController {
             e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
             //类型举类回显赋值
             e.setTypeEnum_enumText(EnumUtils.getInfoByValue(ActivityType.class, e.getTypeEnum()));
+            //目录类别举类回显赋值
+            e.setCategory_enumText(EnumUtils.getInfoByValue(ActivityDefCategory.class, e.getCategoryEnum()));
+            //状态举类回显赋值
+            e.setStatusEnum_enumText(EnumUtils.getInfoByValue(PublicationStatus.class, e.getStatusEnum()));
         });
 
         // 返回【诊疗目录列表DTO】分页

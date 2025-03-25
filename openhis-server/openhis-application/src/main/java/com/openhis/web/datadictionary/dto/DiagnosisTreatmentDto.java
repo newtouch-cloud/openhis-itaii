@@ -24,7 +24,8 @@ public class DiagnosisTreatmentDto {
     private Long id;
 
     /** 目录类别 */
-    private ActivityDefCategory categoryEnum;
+    private Integer categoryEnum;
+    private String category_enumText;
 
     /** 编码 */
     private String busNo;
@@ -57,7 +58,8 @@ public class DiagnosisTreatmentDto {
     private String ybMatchFlag_enumText;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
+    private String statusEnum_enumText;
 
     /** 身体部位 */
     private String bodySiteCode;
