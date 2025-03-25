@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.openhis.common.enums.*;
+import com.openhis.common.utils.EnumUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +23,6 @@ import com.openhis.clinical.domain.ConditionDefinition;
 import com.openhis.clinical.mapper.ConditionDefinitionMapper;
 import com.openhis.clinical.service.IConditionDefinitionService;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.ConditionDefinitionSource;
-import com.openhis.common.enums.PublicationStatus;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.datadictionary.dto.DiseaseManageDto;
@@ -65,6 +65,7 @@ public class DiseaseManageController {
             .map(status -> new DiseaseManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
             .collect(Collectors.toList());
         diseaseManageInitDto.setStatusFlagOptions(statusEnumOptions);
+
         return R.ok(diseaseManageInitDto);
     }
 
@@ -91,6 +92,14 @@ public class DiseaseManageController {
         // 分页查询
         Page<DiseaseManageDto> diseasePage =
             HisPageUtils.selectPage(conditionDefinitionMapper, queryWrapper, pageNo, pageSize, DiseaseManageDto.class);
+
+        diseasePage.getRecords().forEach(e -> {
+            // 医保对码枚举类回显赋值
+            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
+            //状态
+            e.setStatusEnum_enumText(EnumUtils.getInfoByValue(PublicationStatus.class, e.getStatusEnum()));
+        });
+
         // 返回【病种目录列表DTO】分页
         return R.ok(diseasePage);
     }

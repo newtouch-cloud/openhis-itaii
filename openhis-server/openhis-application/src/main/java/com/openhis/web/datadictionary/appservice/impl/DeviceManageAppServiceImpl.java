@@ -125,6 +125,8 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
             e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
             // 过敏标记枚举类回显赋值
             e.setAllergenFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getAllergenFlag()));
+            //器材分类
+            e.setCategoryEnum_enumText(EnumUtils.getInfoByValue(DeviceCategory.class, e.getCategoryEnum()));
         });
 
         // 返回【器材目录列表DTO】分页
