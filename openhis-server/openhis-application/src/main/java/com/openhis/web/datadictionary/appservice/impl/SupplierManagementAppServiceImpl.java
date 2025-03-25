@@ -12,12 +12,16 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.druid.sql.visitor.functions.Isnull;
 import com.core.common.utils.ChineseConvertUtils;
+import com.core.common.utils.StringUtils;
 import com.openhis.administration.domain.Supplier;
 import com.openhis.administration.mapper.SupplierMapper;
 import com.openhis.administration.service.ISupplierService;
 import com.openhis.common.enums.AccountStatus;
 import com.openhis.common.enums.SupplierType;
+import com.openhis.common.enums.SupplyStatus;
+import com.openhis.common.enums.SupplyType;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.web.datadictionary.appservice.ISupplierManagementAppService;
 import com.openhis.web.datadictionary.dto.SupplierDto;
@@ -73,27 +77,33 @@ public class SupplierManagementAppServiceImpl implements ISupplierManagementAppS
      *
      * @param supplierSearchParam 查询条件
      * @param searchKey 查询条件-模糊查询
+     * @param typeEnum 查询条件
      * @param pageNo 查询条件
      * @param pageSize 查询条件
      * @return 厂商/产地查询结果
      */
     @Override
-    public R<?> getSupplierList(SupplierSearchParam supplierSearchParam,
-        @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
-        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
+    public R<?> getSupplierList(SupplierSearchParam supplierSearchParam, String searchKey,
+                                Integer typeEnum, Integer pageNo, Integer pageSize, HttpServletRequest request) {
 
         // 构建查询条件
         QueryWrapper<Supplier> queryWrapper = HisQueryUtils.buildQueryWrapper(supplierSearchParam, searchKey,
             new HashSet<>(Arrays.asList("bus_no", "name", "py_str", "wb_str")), request);
+        if(StringUtils.isNotNull(typeEnum)){
+            queryWrapper.eq("type_enum",typeEnum);
+        }
+
         // 设置排序
         queryWrapper.orderByAsc("bus_no");
         // 分页查询
         Page<SupplierDto> supplierPage =
             HisPageUtils.selectPage(supplierMapper, queryWrapper, pageNo, pageSize, SupplierDto.class);
         // 枚举类回显赋值
-        supplierPage.getRecords()
-            .forEach(e -> e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag())));
+        supplierPage.getRecords().forEach(e -> {
+            e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
+            // 厂商类型
+            e.setTypeEnum_enumText(EnumUtils.getInfoByValue(SupplierType.class, e.getTypeEnum()));
+        });
         // 返回【病种目录列表DTO】分页
         return R.ok(supplierPage);
     }
@@ -104,7 +114,7 @@ public class SupplierManagementAppServiceImpl implements ISupplierManagementAppS
      * @param supplierUpDto 供应商信息
      */
     @Override
-    public R<?> addSupplyRequest(@Validated @RequestBody SupplierUpDto supplierUpDto) {
+    public R<?> addSupplyRequest(SupplierUpDto supplierUpDto) {
 
         Supplier supplierInfo = new Supplier();
         BeanUtils.copyProperties(supplierUpDto, supplierInfo);
@@ -123,7 +133,7 @@ public class SupplierManagementAppServiceImpl implements ISupplierManagementAppS
      * @param supplierUpDto 供应商信息
      */
     @Override
-    public R<?> editSupplyRequest(@Validated @RequestBody SupplierUpDto supplierUpDto) {
+    public R<?> editSupplyRequest(SupplierUpDto supplierUpDto) {
 
         Supplier supplier = new Supplier();
         BeanUtils.copyProperties(supplierUpDto, supplier);

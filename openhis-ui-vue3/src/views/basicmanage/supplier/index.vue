@@ -7,27 +7,18 @@
       v-show="showSearch"
       label-width="90px"
     >
-      <el-form-item label="厂家编码：" prop="busNo">
-        <el-input
-          v-model="queryParams.busNo"
-          placeholder="厂家编码"
-          clearable
-          style="width: 240px"
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="厂家名称：" prop="searchKey">
         <el-input
           v-model="queryParams.searchKey"
-          placeholder="厂家名称"
+          placeholder="品名/商品名/英文品名/编码/拼音"
           clearable
           style="width: 240px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="厂商种类：" prop="status">
+      <el-form-item label="厂商种类：" prop="typeEnum">
         <el-select
-          v-model="queryParams.status"
+          v-model="queryParams.typeEnum"
           placeholder="生产商/供应商"
           clearable
           style="width: 240px"
@@ -121,8 +112,8 @@
       <el-table-column
         label="类型 "
         align="center"
-        key="typeEnum"
-        prop="typeEnum"
+        key="typeEnum_enumText"
+        prop="typeEnum_enumText"
         :show-overflow-tooltip="true"
       />
       <el-table-column
@@ -153,10 +144,10 @@
         width="160"
       />
       <el-table-column
-        label="机构编号"
+        label="机构"
         align="center"
-        key="orgId"
-        prop="orgId"
+        key="orgId_dictText"
+        prop="orgId_dictText"
         width="160"
       />
       <el-table-column
@@ -236,7 +227,20 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="类型" prop="typeEnum">
-              <el-input v-model="form.typeEnum" maxlength="11" />
+              <!-- <el-input v-model="form.typeEnum" maxlength="11" /> -->
+              <el-select
+                v-model="form.typeEnum"
+                placeholder="生产商/供应商"
+                clearable
+                style="width: 240px"
+              >
+                <el-option
+                  v-for="dict in supplierTypeOptions"
+                  :key="dict.value"
+                  :label="dict.info"
+                  :value="dict.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -260,12 +264,22 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="活动标识" prop="activeFlag">
-              <el-input v-model="form.activeFlag" maxlength="11" />
+              <el-checkbox v-model="form.activeFlag"></el-checkbox>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="机构编号" prop="orgId">
-              <el-input v-model="form.orgId" maxlength="11" />
+            <!-- <el-form-item label="机构编号" prop="orgId"> -->
+              <!-- <el-input v-model="form.orgId" maxlength="11" /> -->
+              <el-form-item label="提供部门" prop="orgId">
+                <el-tree-select
+                  v-model="form.orgId"
+                  :data="deptOptions"
+                  :props="{ value: 'id', label: 'name', children: 'children' }"
+                  value-key="id"
+                  placeholder="请选择提供部门"
+                  check-strictly
+                />
+              <!-- </el-form-item> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -289,6 +303,7 @@ import {
   stopSupplier,
   startSupplier,
   getSupplierInit,
+  deptTreeSelect,
 } from "./components/supplier";
 
 const router = useRouter();
@@ -308,6 +323,7 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const supplierTypeOptions = ref(undefined);
+const deptOptions = ref(undefined); // 部门树选项
 // 是否停用
 const statusFlagOptions = ref(undefined);
 // const initPassword = ref(undefined);
@@ -320,9 +336,9 @@ const data = reactive({
     pageNo: 1,
     pageSize: 10,
     searchKey: undefined, // 供应商名称
-    busNo: undefined, // 编码
-    statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
-    sourceEnum: undefined, // 来源（包括 1：厂商/产地目录分类，2：自定义）
+    // busNo: undefined, // 编码
+    typeEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    // sourceEnum: undefined, // 来源（包括 1：厂商/产地目录分类，2：自定义）
   },
   rules: {
     busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
@@ -349,6 +365,16 @@ function getsupplierTypeList() {
   });
 }
 
+/** 查询部门下拉树结构 */
+function getDeptTree() {
+  console.log("查询部门下拉树结构");
+  deptTreeSelect().then((response) => {
+    console.log(response, "response查询部门下拉树结构");
+    deptOptions.value = response.data.records;
+    console.log(deptOptions.value, "部门下拉树结构");
+  });
+}
+
 /** 查询厂商/产地目录列表 */
 function getList() {
   loading.value = true;
@@ -356,7 +382,7 @@ function getList() {
   console.log(queryParams.value, "queryParams.value");
   getSupplierList(queryParams.value).then((res) => {
     loading.value = false;
-    console.log(res, "res",res.data.records);
+    console.log(res, "res", res.data.records);
     supplierList.value = res.data.records;
     console.log(supplierList.value, "supplierList.value");
     total.value = res.data.total;
@@ -458,6 +484,8 @@ function handleUpdate(row) {
   reset();
   console.log(row, "row");
   form.value = JSON.parse(JSON.stringify(row));
+  form.value.activeFlag == 1 ? (form.value.activeFlag = true) : (form.value.activeFlag = false); //是否为活性
+  // console.log(form.value.ty, "form.value");
   open.value = true;
   title.value = "厂商/产地编辑";
 }
@@ -465,6 +493,7 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["supplierRef"].validate((valid) => {
     if (valid) {
+      form.activeFlag == true ? (form.activeFlag = 1) : (form.activeFlag = 0); //是否为活性
       if (form.value.id != undefined) {
         console.log(form.value, "editSupplier", form.value.statusEnum);
         editSupplier(form.value).then((response) => {
@@ -495,6 +524,7 @@ function handleView(row) {
 }
 getsupplierTypeList();
 getList();
+getDeptTree();
 </script>
 <style scoped>
 .custom-tree-node {
