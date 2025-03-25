@@ -17,7 +17,10 @@ import com.core.system.service.ISysDictTypeService;
 import com.openhis.administration.domain.Supplier;
 import com.openhis.administration.service.ISupplierService;
 import com.openhis.common.constant.CommonConstants;
+import com.openhis.common.enums.DeviceCategory;
+import com.openhis.common.enums.Whether;
 import com.openhis.web.datadictionary.appservice.IItemDefinitionService;
+import com.openhis.web.datadictionary.dto.DeviceManageInitDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -99,15 +102,23 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         // 获取药品分类
         List<SysDictData> medicalList =
             sysDictTypeService.selectDictDataByType(CommonConstants.DictName.MED_CATEGORY_CODE);
-        // 获取药品分类List
-        List<MedicationManageInitDto.dictCategoryCode> medicationListOptions = medicalList.stream()
-            .map(status -> new MedicationManageInitDto.dictCategoryCode(status.getDictValue(), status.getDictLabel()))
+        // 获取药品分类
+        List<MedicationManageInitDto.dictCategoryCode> medicationCategories = Stream.of(DeviceCategory.values())
+            .map(category -> new MedicationManageInitDto.dictCategoryCode(category.getValue(), category.getInfo()))
+            .collect(Collectors.toList());
+
+        //获取是/否 列表
+        // 获取状态
+        List<MedicationManageInitDto.statusEnumOption> statusWeatherOption = Stream.of(Whether.values())
+            .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
             .collect(Collectors.toList());
 
         medicationManageInitDto.setStatusFlagOptions(statusEnumOptions);
         medicationManageInitDto.setDomainFlagOptions(domainEnumOptions);
         medicationManageInitDto.setSupplierListOptions(supplierListOptions);
-        medicationManageInitDto.setMedicationCategoryCodeOptions(medicationListOptions);
+        medicationManageInitDto.setMedicationCategoryCodeOptions(medicationCategories);
+        medicationManageInitDto.setStatusWeatherOptions(statusWeatherOption);
+        
         return R.ok(medicationManageInitDto);
     }
 

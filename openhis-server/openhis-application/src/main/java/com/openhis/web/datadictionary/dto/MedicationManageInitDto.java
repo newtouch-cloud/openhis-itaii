@@ -25,6 +25,8 @@ public class MedicationManageInitDto {
     //单位编码
     private List<MedicationManageInitDto.dictCategoryCode> unitCodeOptions;
 
+    //是/否 状态
+    private List<statusEnumOption> statusWeatherOptions;
     /**
      * 状态
      */
@@ -72,10 +74,11 @@ public class MedicationManageInitDto {
      */
     @Data
     public static class dictCategoryCode {
-        private String value;
+        private Integer value;
         private String info;
+        List<dictCategoryCode> children = new ArrayList<>();
 
-        public dictCategoryCode(String value, String info) {
+        public dictCategoryCode(Integer value, String info) {
             this.value = value;
             this.info = info;
         }
