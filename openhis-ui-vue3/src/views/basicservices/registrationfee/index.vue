@@ -381,7 +381,7 @@
                 style="width: 240px"
               >
                 <el-option
-                  v-for="dict in med_chrgitm_type"
+                  v-for="dict in yb_type"
                   :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
@@ -449,13 +449,15 @@ const {
   specialty_code,
   med_chrgitm_type,
   financial_type_code,
+  yb_type
 } = proxy.useDict(
   "adm_location",
   "category_code",
   "service_type_code",
   "specialty_code",
   "med_chrgitm_type",
-  "financial_type_code"
+  "financial_type_code",
+  "yb_type"
 );
 
 const registrationfeeList = ref([]);

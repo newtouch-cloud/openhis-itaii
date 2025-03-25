@@ -36,7 +36,7 @@
           label-width="68px"
         >
           <el-row :gutter="24">
-            <el-col :span="6">
+            <el-col :span="5">
               <el-form-item label="药品" prop="searchKey" label-width="40">
                 <el-input
                   v-model="queryParams.searchKey"
@@ -47,70 +47,34 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item
-                label="是否系统预置"
-                prop="status"
+                label="状态"
+                prop="statusEnum"
                 label-width="100"
               >
                 <el-select v-model="queryParams.statusEnum" clearable>
                   <el-option
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
+                    v-for="status in statusFlagOptions"
+                    :key="status.value"
+                    :label="status.info"
+                    :value="status.value"
                   />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="4">
-              <el-form-item
-                label="医保是否对码"
-                prop="status"
-                label-width="100"
-              >
+              <el-form-item label="医保对码" prop="ybMatchFlag" label-width="80">
                 <el-select
                   v-model="queryParams.ybMatchFlag"
                   placeholder=""
                   clearable
                 >
                   <el-option
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <!-- <el-col :span="4">
-              <el-form-item label="已发生业务" prop="status" label-width="100">
-                <el-select
-                  v-model="queryParams.status"
-                  placeholder="用户状态"
-                  clearable
-                >
-                  <el-option
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col> -->
-            <el-col :span="4">
-              <el-form-item label="医保等级" prop="status" label-width="80">
-                <el-select
-                  v-model="queryParams.status"
-                  placeholder="用户状态"
-                  clearable
-                >
-                  <el-option
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
+                    v-for="domainEnum in domainEnumOptions"
+                    :key="domainEnum.value"
+                    :label="domainEnum.info"
+                    :value="domainEnum.value"
                   />
                 </el-select>
               </el-form-item>
@@ -630,6 +594,7 @@ const title = ref("");
 const medicationOptions = ref(undefined);
 const statusFlagOptions = ref(undefined);
 const domainEnumOptions = ref(undefined);
+const supplierListOptions = ref(undefined);
 // 使用 ref 定义当前药品数据
 const currentData = ref({});
 // 使用 ref 定义当前查看药品数据
@@ -671,9 +636,10 @@ const filterNode = (value, data) => {
 function getMedicationCategoryList() {
   getMedicationCategory().then((response) => {
     console.log(response, "response药品目录分类查询下拉树结构");
-    medicationOptions.value = response.data.medicationOptions;
+    medicationOptions.value = response.data.medicationListOptions;
     statusFlagOptions.value = response.data.statusFlagOptions;
     domainEnumOptions.value = response.data.domainFlagOptions;
+    supplierListOptions.value = response.data.supplierListOptions;
   });
 }
 /** 查询病种目录列表 */
