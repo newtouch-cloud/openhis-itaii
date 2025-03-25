@@ -49,7 +49,7 @@
 			<div>
 				<p style="margin: 0px 0px 10px 0px;">院注医嘱</p>
 				<el-table :data="infusionList" border style="width: 100%;height: 300px;"  :row-style="rowStyle"
-					 @selection-change="handleSelectionChange" ref="tableRef">
+					 @selection-change="handleSelectionChange" ref="tableRef" >
          			<el-table-column type="selection" width="55" align="center" />
 					<el-table-column label="组" width="50">
 						<template #default="scope">
@@ -134,7 +134,7 @@ const infusionList = ref([]);
 const timeRightStart = ref([]);
 const timeRightEnd = ref([]);
 
-const groupColors = ref(new Map());
+const groupColors = ['#C6E2FF', '#FFFFFF'];
 const markers = ref([]);
 
 const { proxy } = getCurrentInstance();
@@ -152,9 +152,17 @@ const { queryParams } = toRefs(data);
 /** 查询门诊输液列表 */
 function getList() {
     listInfusionRecord(queryParams.value).then(response => {
+		console.log('Full response1:', response);
         infusionList.value = response.data;
-		// 为每个 groupId 分配随机颜色
-		groupColors.value = assignRandomColorsToGroups(infusionList.value);
+		// 为每个 groupId 分配固定颜色
+		response.data.forEach(item => {
+                const colorIndex = item.groupId % 2; // 奇偶性决定颜色索引
+                item.color = groupColors[colorIndex];
+            });
+
+            // 更新表格行的样式
+            updateTableRowStyles();
+		
 		// 统计每个 groupId 的行数
       	const groupCounts = countGroupRows(infusionList.value);
      	// 设置每行的标记
@@ -164,7 +172,18 @@ function getList() {
 		patientList.value = response.data.records;
 	});
 }
+function updateTableRowStyles() {
+    const tableRows = document.querySelectorAll(".infusion-table-row");
 
+    tableRows.forEach(row => {
+        const groupId = row.getAttribute("data-group-id");
+        const color = groupColors[groupId % 2]; // 奇偶性决定颜色
+
+        if (color) {
+            row.style.backgroundColor = color;
+        }
+    });
+}
 /** 搜索按钮操作 */
 function handleQuery() {
 	if (dateRange.value) {
@@ -225,39 +244,6 @@ function resetQueryRight() {
     
 }
 
-function getRandomColor() {
-    const letters = 'CDEF'; 
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * letters.length)];
-    }
-    return color;
-}
-
-function assignRandomColorsToGroups(data) {
-    const colors = new Map();
-    data.forEach((item) => {
-      if (!colors.has(item.groupId)) {
-        colors.set(item.groupId, getRandomColor());
-      }
-    });
-    return colors;
-}
-
-// 计算颜色的亮度
-function calculateBrightness(color) {
-      const r = parseInt(color.slice(1, 3), 16);
-      const g = parseInt(color.slice(3, 5), 16);
-      const b = parseInt(color.slice(5, 7), 16);
-      const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
-      return brightness;
-    }
-
-    // 根据亮度设置字体颜色
-function getTextColor(color) {
-  const brightness = calculateBrightness(color);
-  return brightness < 128 ? '#FFFFFF' : '#000000';
-}
 
 function getRowMarkers(groupCounts, data) {
     const markers = new Array(data.length).fill('');
@@ -269,15 +255,15 @@ function getRowMarkers(groupCounts, data) {
             return;
         } else if (count === 2) {
             // 如果有两行，分别显示左右括号
-            markers[indices[0]] = '﹁';
-            markers[indices[1]] = '﹂';
+            markers[indices[0]] = '┏';
+            markers[indices[1]] = '┗ ';
         } else {
             // 如果有两行以上，第一条显示左括号，中间用竖线，最后一条显示右括号
-            markers[indices[0]] = '﹁';
+            markers[indices[0]] = '┏';
             for (let i = 1; i < indices.length - 1; i++) {
-                markers[indices[i]] = '|';
+                markers[indices[i]] = '┃';
             }
-            markers[indices[indices.length - 1]] = '﹂';
+            markers[indices[indices.length - 1]] = '┗ ';
         }
     });
 
@@ -381,12 +367,10 @@ function clearSelections() {
 		historyRecordsList.value = response.data;
   	});
 }
-// 动态设置行的内联样式
 function rowStyle({ row }) {
-    const color = groupColors.value.get(row.groupId);
-    const textColor = getTextColor(color);
-    return { backgroundColor: color, color: textColor };
-}
+        const colorIndex = row.groupId % 2; // 奇偶性决定颜色索引
+        return { backgroundColor: groupColors[colorIndex] };
+    }
 function handleUpdateTime(row){
     console.log("row",row)
 	editPatientInfusionTime(row).then(response => {
@@ -402,6 +386,9 @@ function handleCurrentChange(row) {
 	listPatientInfusionRecord(currentRow.value).then(response => {
 		infusionList.value = response.data;
 	});
+	listPatientInfusionPerformRecord(currentRow.value).then(response => {
+		historyRecordsList.value = response.data;
+  	});
 }
 
 getList();
@@ -419,6 +406,9 @@ getList();
 .right {
 	margin-left: 2%;
   	width: 70%;
+}
+::v-deep .el-table tbody tr:hover > td {
+    background-color: unset !important
 }
 
 </style>
