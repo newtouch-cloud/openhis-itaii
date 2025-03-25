@@ -8,6 +8,8 @@ import com.openhis.common.enums.PublicationStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 诊疗目录分页检索
  *
@@ -37,7 +39,8 @@ public class DiagnosisTreatmentDto {
     private String wbStr;
 
     /** 类型 */
-    private String typeCode;
+    private Integer typeEnum;
+    private String typeEnum_enumText;
 
     /** 使用单位 */
     private String permittedUnitCode;
@@ -67,4 +70,12 @@ public class DiagnosisTreatmentDto {
 
     /** 规则id */
     private Integer ruleId;
+
+    /** 归属科室 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orgId;
+
+    /** 所在位置 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long locationId;
 }

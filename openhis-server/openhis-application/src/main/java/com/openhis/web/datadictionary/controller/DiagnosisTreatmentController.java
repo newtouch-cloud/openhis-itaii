@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.openhis.common.enums.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +25,6 @@ import com.core.system.service.ISysDictTypeService;
 import com.openhis.administration.domain.Organization;
 import com.openhis.administration.service.IOrganizationService;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.ActivityDefCategory;
-import com.openhis.common.enums.OrganizationType;
-import com.openhis.common.enums.PublicationStatus;
-import com.openhis.common.enums.Whether;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
@@ -113,6 +110,13 @@ public class DiagnosisTreatmentController {
         diseaseTreatmentCategories.add(diseaseTreatmentCategory2);
 
         diagnosisTreatmentInitDto.setDiseaseTreatmentCategoryList(diseaseTreatmentCategories);
+
+        // 获取类型
+        List<DiagnosisTreatmentInitDto.statusEnumOption> typeEnumOptions = Stream.of(ActivityType.values())
+            .map(status -> new DiagnosisTreatmentInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+        diagnosisTreatmentInitDto.setTypeEnumOptions(typeEnumOptions);
+
         return R.ok(diagnosisTreatmentInitDto);
     }
 
@@ -145,6 +149,8 @@ public class DiagnosisTreatmentController {
             e.setYbFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbFlag()));
             // 医保对码标记枚举类回显赋值
             e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
+            //类型举类回显赋值
+            e.setTypeEnum_enumText(EnumUtils.getInfoByValue(ActivityType.class, e.getTypeEnum()));
         });
 
         // 返回【诊疗目录列表DTO】分页

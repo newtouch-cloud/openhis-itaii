@@ -110,8 +110,9 @@ public class MedicationManageDto {
     private String wbStr;
 
     /** 药品分类 */
-    @Dict(dictCode = "medicine_category")
+    @Dict(dictCode = "med_category_code")
     private Integer categoryCode;
+    private String categoryCode_dictText;
 
     /** 商品名称 */
     private String merchandiseName;
@@ -144,7 +145,9 @@ public class MedicationManageDto {
     private String approvalNumber;
 
     /** 医保是否对码 */
+    @Dict(dictCode = "sys_yes_no")
     private Integer ybMatchFlag;
+    private String ybMatchFlag_dictText;
 
     /** 医保编码 */
     private String ybNo;
@@ -155,10 +158,12 @@ public class MedicationManageDto {
     /** 是否皮试 */
     @Dict(dictCode = "sys_yes_no")
     private Integer skinTestFlag;
+    private String skinTestFlag_dictText;
 
     /** 是否为注射药物 */
     @Dict(dictCode = "sys_yes_no")
     private Integer injectFlag;
+    private String injectFlag_dictText;
 
     /** 生产厂家 */
     @JsonSerialize(using = ToStringSerializer.class)
@@ -171,6 +176,7 @@ public class MedicationManageDto {
     /** 是否限制使用 */
     @Dict(dictCode = "sys_yes_no")
     private Integer restrictedFlag;
+    private String restrictedFlag_dictText;
 
     /** 限制使用范围 */
     private String restrictedScope;
@@ -178,6 +184,7 @@ public class MedicationManageDto {
     /** 儿童用药标志 */
     @Dict(dictCode = "sys_yes_no")
     private Integer childrenFlag;
+    private String childrenFlag_dictText;
 
     /** 产品特性 */
     private Integer characteristic;
@@ -213,9 +220,10 @@ public class MedicationManageDto {
     private String baseQuantity;
 
     /** 最小单位 */
-    private String minUnitCode;
+    private Integer minUnitCode;
 
     /** 当前库存数量(最小单位数量) */
     private String minQuantity;
+
 
 }

@@ -11,6 +11,13 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.core.common.core.domain.entity.SysDictData;
+import com.core.common.utils.ChineseConvertUtils;
+import com.core.system.service.ISysDictTypeService;
+import com.openhis.administration.domain.Supplier;
+import com.openhis.administration.service.ISupplierService;
+import com.openhis.common.constant.CommonConstants;
+import com.openhis.web.datadictionary.appservice.IItemDefinitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +32,6 @@ import com.core.common.utils.SecurityUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.core.common.utils.poi.ExcelUtil;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.AccountStatus;
 import com.openhis.common.enums.ApplicableScope;
 import com.openhis.common.enums.PublicationStatus;
 import com.openhis.common.utils.EnumUtils;
@@ -57,6 +63,14 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
 
     @Autowired
     private MedicationManageSearchMapper medicationManageSearchMapper;
+    @Autowired
+    private ISupplierService supplierService;
+
+    @Autowired
+    private ISysDictTypeService sysDictTypeService;
+
+    @Autowired
+    private IItemDefinitionService itemDefinitionServic;
 
     /**
      * 药品目录初始化
@@ -75,9 +89,25 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         List<MedicationManageInitDto.domainEnumOption> domainEnumOptions = Stream.of(ApplicableScope.values())
             .map(domain -> new MedicationManageInitDto.domainEnumOption(domain.getValue(), domain.getInfo()))
             .collect(Collectors.toList());
+        // 查询供应商列表
+        List<Supplier> supplierList = supplierService.getList();
+        // 供应商信息
+        List<MedicationManageInitDto.supplierListOption> supplierListOptions = supplierList.stream()
+            .map(supplier -> new MedicationManageInitDto.supplierListOption(supplier.getId(), supplier.getName()))
+            .collect(Collectors.toList());
+
+        // 获取药品分类
+        List<SysDictData> medicalList =
+            sysDictTypeService.selectDictDataByType(CommonConstants.DictName.MED_CATEGORY_CODE);
+        // 获取药品分类List
+        List<MedicationManageInitDto.dictCategoryCode> medicationListOptions = medicalList.stream()
+            .map(status -> new MedicationManageInitDto.dictCategoryCode(status.getDictValue(), status.getDictLabel()))
+            .collect(Collectors.toList());
 
         medicationManageInitDto.setStatusFlagOptions(statusEnumOptions);
         medicationManageInitDto.setDomainFlagOptions(domainEnumOptions);
+        medicationManageInitDto.setSupplierListOptions(supplierListOptions);
+        medicationManageInitDto.setMedicationCategoryCodeOptions(medicationListOptions);
         return R.ok(medicationManageInitDto);
     }
 
@@ -117,9 +147,9 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             // 药品状态
             e.setStatusEnum_enumText(EnumUtils.getInfoByValue(PublicationStatus.class, e.getStatusEnum()));
             // 活动标记
-//            e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
+            // e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
             // 适用范围
-//            e.setDomainEnum_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getDomainEnum()));
+            // e.setDomainEnum_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getDomainEnum()));
         });
 
         // 返回【药品录列表DTO】分页
@@ -138,6 +168,10 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         Medication medication = new Medication();
         BeanUtils.copyProperties(medicationManageUpDto, medication); // 子表信息
         BeanUtils.copyProperties(medicationManageUpDto, medicationDefinition);// 主表信息
+        // 拼音码
+        medicationDefinition.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(medicationDefinition.getName()));
+        // 五笔码
+        medicationDefinition.setWbStr(ChineseConvertUtils.toWBFirstLetter(medicationDefinition.getName()));
 
         // 更新子表药品信息
         if (medicationService.updateById(medication)) {
@@ -223,10 +257,20 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
 
         MedicationDetail medicationDetail = new MedicationDetail();
         BeanUtils.copyProperties(medicationManageUpDto, medicationDetail);
+        // 拼音码
+        medicationDetail.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(medicationDetail.getName()));
+        // 五笔码
+        medicationDetail.setWbStr(ChineseConvertUtils.toWBFirstLetter(medicationDetail.getName()));
+
         // 新增主表外来药品目录
         if (medicationDefinitionService.addMedication(medicationDetail)) {
+
             // 新增子表外来药品目录
-            return medicationService.addMedication(medicationDetail)
+            boolean insertMedicationSuccess = medicationService.addMedication(medicationDetail);
+            // 添加药品成功后，添加相应的条件价格表信息
+            boolean insertItemDefinitionSuccess = itemDefinitionServic.addItem(medicationManageUpDto,medicationDetail);
+
+            return (insertMedicationSuccess || insertItemDefinitionSuccess)
                 ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
                 : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
         } else {
