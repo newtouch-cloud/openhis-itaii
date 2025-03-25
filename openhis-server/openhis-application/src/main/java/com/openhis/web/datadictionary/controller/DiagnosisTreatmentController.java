@@ -103,6 +103,7 @@ public class DiagnosisTreatmentController {
             .stream().map(status -> new DiagnosisTreatmentInitDto.diseaseTreatmentType(status.getDictValue(),
                 status.getDictLabel()))
             .collect(Collectors.toList());
+
         DiagnosisTreatmentInitDto.diseaseTreatmentCategory diseaseTreatmentCategory2 =
             new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(ActivityDefCategory.TREATMENT_SURGERY.getValue(),
                 ActivityDefCategory.TREATMENT_SURGERY.getInfo());

@@ -11,16 +11,6 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.core.common.core.domain.entity.SysDictData;
-import com.core.common.utils.ChineseConvertUtils;
-import com.core.system.service.ISysDictTypeService;
-import com.openhis.administration.domain.Supplier;
-import com.openhis.administration.service.ISupplierService;
-import com.openhis.common.constant.CommonConstants;
-import com.openhis.common.enums.DeviceCategory;
-import com.openhis.common.enums.Whether;
-import com.openhis.web.datadictionary.appservice.IItemDefinitionService;
-import com.openhis.web.datadictionary.dto.DeviceManageInitDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -30,19 +20,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
+import com.core.common.core.domain.entity.SysDictData;
+import com.core.common.utils.ChineseConvertUtils;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.SecurityUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.core.common.utils.poi.ExcelUtil;
+import com.core.system.service.ISysDictTypeService;
+import com.openhis.administration.domain.Supplier;
+import com.openhis.administration.service.ISupplierService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.ApplicableScope;
 import com.openhis.common.enums.PublicationStatus;
+import com.openhis.common.enums.Whether;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.medication.domain.Medication;
 import com.openhis.medication.domain.MedicationDefinition;
 import com.openhis.medication.domain.MedicationDetail;
 import com.openhis.medication.service.IMedicationDefinitionService;
 import com.openhis.medication.service.IMedicationService;
+import com.openhis.web.datadictionary.appservice.IItemDefinitionService;
 import com.openhis.web.datadictionary.appservice.IMedicationManageAppService;
 import com.openhis.web.datadictionary.dto.MedicationManageDto;
 import com.openhis.web.datadictionary.dto.MedicationManageInitDto;
@@ -103,11 +101,11 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         List<SysDictData> medicalList =
             sysDictTypeService.selectDictDataByType(CommonConstants.DictName.MED_CATEGORY_CODE);
         // 获取药品分类
-        List<MedicationManageInitDto.dictCategoryCode> medicationCategories = Stream.of(DeviceCategory.values())
-            .map(category -> new MedicationManageInitDto.dictCategoryCode(category.getValue(), category.getInfo()))
+        List<MedicationManageInitDto.dictCategoryCode> medicationCategories = medicalList.stream().map(
+            category -> new MedicationManageInitDto.dictCategoryCode(category.getDictValue(), category.getDictLabel()))
             .collect(Collectors.toList());
 
-        //获取是/否 列表
+        // 获取是/否 列表
         // 获取状态
         List<MedicationManageInitDto.statusEnumOption> statusWeatherOption = Stream.of(Whether.values())
             .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
@@ -118,7 +116,7 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         medicationManageInitDto.setSupplierListOptions(supplierListOptions);
         medicationManageInitDto.setMedicationCategoryCodeOptions(medicationCategories);
         medicationManageInitDto.setStatusWeatherOptions(statusWeatherOption);
-        
+
         return R.ok(medicationManageInitDto);
     }
 
@@ -279,7 +277,7 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             // 新增子表外来药品目录
             boolean insertMedicationSuccess = medicationService.addMedication(medicationDetail);
             // 添加药品成功后，添加相应的条件价格表信息
-            boolean insertItemDefinitionSuccess = itemDefinitionServic.addItem(medicationManageUpDto,medicationDetail);
+            boolean insertItemDefinitionSuccess = itemDefinitionServic.addItem(medicationManageUpDto, medicationDetail);
 
             return (insertMedicationSuccess || insertItemDefinitionSuccess)
                 ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
