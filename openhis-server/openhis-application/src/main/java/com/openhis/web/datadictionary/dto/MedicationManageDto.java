@@ -127,7 +127,7 @@ public class MedicationManageDto {
     private String unitCode;
 
     /** 最小单位 */
-//    private String minUnitCode;
+    private String minUnitCode;
 
     /** 所含耗材 */
     private String comprisedText;
@@ -218,9 +218,6 @@ public class MedicationManageDto {
 
     /** 当前库存数量(常规单位) */
     private String baseQuantity;
-
-    /** 最小单位 */
-    private Integer minUnitCode;
 
     /** 当前库存数量(最小单位数量) */
     private String minQuantity;
