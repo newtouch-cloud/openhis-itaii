@@ -54,7 +54,7 @@ public class DiseaseManageController {
      */
     @GetMapping("/information-init")
     public R<?> getDiseaseInit() {
-        
+
         DiseaseManageInitDto diseaseManageInitDto = new DiseaseManageInitDto();
         // 获取疾病目录种类
         List<DiseaseManageInitDto.diseaseCategory> diseaseCategoryList = Stream.of(ConditionDefinitionSource.values())

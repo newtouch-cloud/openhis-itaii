@@ -23,9 +23,10 @@ public class MedicationManageInitDto {
     private List<MedicationManageInitDto.dictCategoryCode> medicationCategoryCodeOptions;
     // 单位编码
     private List<MedicationManageInitDto.dictCategoryCode> unitCodeOptions;
-
     // 是/否 状态
     private List<statusEnumOption> statusWeatherOptions;
+    // 权限限制
+    private List<statusEnumOption> statusRestrictedOptions;
 
     /**
      * 状态

@@ -157,6 +157,9 @@ public class MedicationManageUpDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long manufacturerId;
 
+    /** 生产厂商文本 */
+    private String manufacturerText;
+
     /** 供应商 */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long supplyId;

@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.openhis.common.enums.PermissionLimit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -111,11 +112,17 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
             .collect(Collectors.toList());
 
+        // 权限限制
+        List<MedicationManageInitDto.statusEnumOption> statusRestrictedOptions = Stream.of(PermissionLimit.values())
+            .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+
         medicationManageInitDto.setStatusFlagOptions(statusEnumOptions);
         medicationManageInitDto.setDomainFlagOptions(domainEnumOptions);
         medicationManageInitDto.setSupplierListOptions(supplierListOptions);
         medicationManageInitDto.setMedicationCategoryCodeOptions(medicationCategories);
         medicationManageInitDto.setStatusWeatherOptions(statusWeatherOption);
+        medicationManageInitDto.setStatusRestrictedOptions(statusRestrictedOptions);
 
         return R.ok(medicationManageInitDto);
     }
@@ -155,6 +162,8 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         medicationManageDtoPage.getRecords().forEach(e -> {
             // 药品状态
             e.setStatusEnum_enumText(EnumUtils.getInfoByValue(PublicationStatus.class, e.getStatusEnum()));
+            // 权限限制
+            e.setRestrictedEnum_enumText(EnumUtils.getInfoByValue(PermissionLimit.class, e.getRestrictedEnum()));
             // 活动标记
             // e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
             // 适用范围
