@@ -1,6 +1,7 @@
 package com.core.framework.web.service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,6 +9,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.core.common.constant.CacheConstants;
 import com.core.common.constant.Constants;
@@ -60,7 +63,7 @@ public class SysLoginService {
      */
     public String login(String username, String password, String code, String uuid) {
         // 验证码校验
-         validateCaptcha(username, code, uuid);
+        // validateCaptcha(username, code, uuid);
         // 登录前置校验
         loginPreCheck(username, password);
         // 用户验证
@@ -89,9 +92,18 @@ public class SysLoginService {
         LoginUser loginUser = (LoginUser)authentication.getPrincipal();
 
         // -----start-----登录时set租户id,正常应该从请求头获取,这行代码只是测试使用
-        loginUser.setTenantId(1);
+        Integer tenantId = 0;
+        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            HttpServletRequest request = attributes.getRequest();
+            // 从请求头获取租户ID，假设header名称为"X-Tenant-ID" ; 登录接口前端把租户id放到请求头里
+            String tenantIdHeader = request.getHeader("X-Tenant-ID");
+            if (tenantIdHeader != null && !tenantIdHeader.isEmpty()) {
+                tenantId = Integer.parseInt(tenantIdHeader);
+            }
+        }
+        loginUser.setTenantId(tenantId);
         // -----end-----登录时set租户id,正常应该从请求头获取,这行代码只是测试使用
-
         recordLoginInfo(loginUser.getUserId());
         // 生成token
         return tokenService.createToken(loginUser);
