@@ -84,8 +84,8 @@ public class ChargeItemFormData {
         this.statusEnum = ChargeItemStatus.BILLED.getValue();
         this.contextEnum = EncounterClass.AMB.getValue();
         this.occurrenceTime = new Date();
-        this.performerId = SecurityUtils.getLoginUser().getUserId();
-        this.entererId = SecurityUtils.getLoginUser().getUserId();
+        this.performerId = SecurityUtils.getLoginUser().getPractitionerId();
+        this.entererId = SecurityUtils.getLoginUser().getPractitionerId();
         this.enteredDate = new Date();
         this.serviceTable = CommonConstants.TableName.ADM_HEALTHCARE_SERVICE;
     }

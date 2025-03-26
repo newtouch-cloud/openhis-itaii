@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  * 诊疗目录分页检索
@@ -80,4 +81,8 @@ public class DiagnosisTreatmentDto {
     /** 所在位置 */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
+
+    /** 售价 */
+    private BigDecimal price;
+
 }

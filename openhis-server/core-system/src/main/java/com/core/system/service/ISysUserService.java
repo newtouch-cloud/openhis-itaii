@@ -3,6 +3,7 @@ package com.core.system.service;
 import java.util.List;
 
 import com.core.common.core.domain.entity.SysUser;
+import com.core.common.core.domain.model.LoginUserExtend;
 
 /**
  * 用户 业务层
@@ -203,4 +204,12 @@ public interface ISysUserService {
      * @return 结果
      */
     public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName);
+
+    /**
+     * 扩展属性
+     * 
+     * @param userId 系统用户id
+     * @return 扩展属性
+     */
+    LoginUserExtend getLoginUserExtend(Long userId);
 }

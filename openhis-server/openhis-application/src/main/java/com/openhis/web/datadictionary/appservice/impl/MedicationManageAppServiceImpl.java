@@ -164,10 +164,31 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             e.setStatusEnum_enumText(EnumUtils.getInfoByValue(PublicationStatus.class, e.getStatusEnum()));
             // 权限限制
             e.setRestrictedEnum_enumText(EnumUtils.getInfoByValue(PermissionLimit.class, e.getRestrictedEnum()));
-            // 活动标记
-            // e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
+            // 是否为活性
+            e.setActiveFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getActiveFlag()));
+            // 医保是否对码
+            e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
+            //是否皮试
+            e.setSkinTestFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getSkinTestFlag()));;
+            //是否为注射药物
+            e.setInjectFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getInjectFlag()));
+            //是否限制使用
+            e.setRestrictedFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getRestrictedFlag()));
+            //儿童用药标志
+            e.setChildrenFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getChildrenFlag()));
             // 适用范围
-            // e.setDomainEnum_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getDomainEnum()));
+            e.setDomainEnum_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getDomainEnum()));
+
+            // 是否自制
+            e.setSelfFlag_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getSelfFlag()));
+            // 是否抗生素
+            e.setAntibioticFlag_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getAntibioticFlag()));
+            // 基药标识
+            e.setBasicFlag_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getBasicFlag()));
+
+//            // 活动标记
+//             e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
+
         });
 
         // 返回【药品录列表DTO】分页

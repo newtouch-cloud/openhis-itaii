@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -177,12 +178,15 @@ public class MedicationManageUpDto {
     private Integer characteristic;
 
     /** 购入价 */
+    @NotNull(message = "购入价不能为空")
     private BigDecimal purchasePrice;
 
     /** 零售价 */
+    @NotNull(message = "零售价不能为空")
     private BigDecimal retailPrice;
 
     /** 最高零售价 */
+    @NotNull(message = "最高零售价不能为空")
     private BigDecimal maximumRetailPrice;
 
     /** 医保类别 */
@@ -191,4 +195,35 @@ public class MedicationManageUpDto {
     /** 最小费用 */
     private String minimalFee;
 
+    /** 单次最小用药频次 */
+    private String minRateCode;
+
+    /** 单次最大用药频次 */
+    private String maxRateCode;
+
+    /** 药品状态 */
+    private Integer statusEnum;
+
+    /** 拆分属性 */
+    private Integer partAttributeEnum;
+
+    /** 贯标国家编码 */
+    private String nationalDrugCode;
+
+    /** 是否抗生素 */
+    private Integer antibioticFlag;
+
+    /** 是否自制 */
+    private Integer selfFlag;
+
+    /** DDD值 */
+    private String dddCode;
+
+    /** DDD单位 */
+    private String dddUnitCode;
+
+    /** 用量限定 */
+    private BigDecimal usageLimit;
+
+    /** 系统类别???? */
 }

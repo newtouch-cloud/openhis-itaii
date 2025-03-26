@@ -12,7 +12,7 @@ import com.openhis.web.datadictionary.dto.MedicationManageUpDto;
 public interface IItemDefinitionService {
 
     /**
-     * 添加项目定价
+     * 添加药品的项目定价
      *
      * @param medicationManageUpDto 药品目录信息
      * @param medicationDetail 药品信息

@@ -3,12 +3,13 @@ package com.core.common.core.domain.model;
 import java.util.Collection;
 import java.util.Set;
 
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.core.common.core.domain.entity.SysUser;
+
+import lombok.Data;
 
 /**
  * 登录用户身份权限
@@ -71,6 +72,16 @@ public class LoginUser implements UserDetails {
 
     /** 租户ID */
     private Integer tenantId;
+
+    /**
+     * 机构/科室id
+     */
+    private Long orgId;
+
+    /**
+     * 参与者id
+     */
+    private Long practitionerId;
 
     /**
      * 用户信息

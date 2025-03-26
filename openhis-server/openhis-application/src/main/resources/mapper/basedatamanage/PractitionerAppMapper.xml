@@ -4,5 +4,79 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.openhis.web.basedatamanage.mapper.PractitionerAppAppMapper">
 
+    <select id="getUserPractitionerPage" resultType="com.openhis.web.doctorstation.dto.UserAndPractitionerDto">
+        SELECT T3.tenant_id,
+               T3.user_id,
+               T3.practitioner_id,
+               T3.py_str,
+               T3.wb_str,
+               T3.user_name,
+               T3.nick_name,
+               T3.email,
+               T3.phonenumber,
+               T3.sex,
+               T3.status,
+               T3.remark,
+               T3.birth_date,
+               T3.address,
+               T3.yb_no,
+               T3.org_id
+        from (
+                 SELECT T1.tenant_id,
+                        T1.id AS practitioner_id,
+                        T1.user_id,
+                        T1.py_str,
+                        T1.wb_str,
+                        T2.user_name,
+                        T2.nick_name,
+                        T2.email,
+                        T2.phonenumber,
+                        T2.sex,
+                        T2.status,
+                        T2.remark,
+                        T1.birth_date,
+                        T1.address,
+                        T1.yb_no,
+                        T1.org_id
+                 FROM adm_practitioner AS T1
+                          LEFT JOIN sys_user AS T2 ON T2.user_id = T1.user_id
+                     AND T2.delete_flag = '0'
+                 WHERE T1.delete_flag = '0') AS T3
+            ${ew.customSqlSegment}
+    </select>
+
+    <select id="getChildList" resultType="com.openhis.web.doctorstation.dto.UserAndPractitionerChildDto">
+        SELECT
+        t1.practitioner_id,
+        t1.org_id,
+        t1.location_id,
+        t1.role_code,
+        t2.role_id,
+        t2.role_name
+        FROM
+        adm_practitioner_role AS T1
+        LEFT JOIN sys_role AS T2 ON t2.role_key = t1.role_code
+        AND t2.del_flag = '0'
+        WHERE
+        t1.delete_flag = '0'
+        <if test="practitionerIdList != null and !practitionerIdList.isEmpty()">
+            AND t1.practitioner_id IN
+            <foreach collection="practitionerIdList" item="itemId" open="(" separator="," close=")">
+                #{itemId}
+            </foreach>
+        </if>
+    </select>
+
+    <delete id="delUserRole">
+        delete
+        from sys_user_role
+        where user_id = #{userId}
+    </delete>
+
+    <delete id="delPractitionerRole">
+        delete
+        from adm_practitioner_role
+        where practitioner_id = #{practitionerId}
+    </delete>
 
 </mapper>

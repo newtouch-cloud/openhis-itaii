@@ -48,11 +48,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="5">
-              <el-form-item
-                label="状态"
-                prop="statusEnum"
-                label-width="100"
-              >
+              <el-form-item label="状态" prop="statusEnum" label-width="100">
                 <el-select v-model="queryParams.statusEnum" clearable>
                   <el-option
                     v-for="status in statusFlagOptions"
@@ -64,17 +60,21 @@
               </el-form-item>
             </el-col>
             <el-col :span="4">
-              <el-form-item label="医保对码" prop="ybMatchFlag" label-width="80">
+              <el-form-item
+                label="医保对码"
+                prop="ybMatchFlag"
+                label-width="80"
+              >
                 <el-select
                   v-model="queryParams.ybMatchFlag"
                   placeholder=""
                   clearable
                 >
                   <el-option
-                    v-for="domainEnum in domainEnumOptions"
-                    :key="domainEnum.value"
-                    :label="domainEnum.info"
-                    :value="domainEnum.value"
+                    v-for="ybMatch in statusWeatherOption"
+                    :key="ybMatch.value"
+                    :label="ybMatch.info"
+                    :value="ybMatch.value"
                   />
                 </el-select>
               </el-form-item>
@@ -184,8 +184,15 @@
           <el-table-column
             label="药品状态"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="statusEnum_enumText"
+            prop="statusEnum_enumText"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="医保类别"
+            align="center"
+            key="ybType_enumText"
+            prop="ybType_enumText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -206,23 +213,30 @@
           <el-table-column
             label="药品分类"
             align="center"
-            key="categoryCode"
-            prop="categoryCode"
+            key="categoryCode_dictText"
+            prop="categoryCode_dictText"
             :show-overflow-tooltip="true"
             width="90"
           />
           <el-table-column
             label="所属科室"
             align="center"
-            key="orgId"
-            prop="orgId"
+            key="orgId_dictText"
+            prop="orgId_dictText"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="地点"
+            align="center"
+            key="locationId_dictText"
+            prop="locationId_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="剂型"
             align="center"
-            key="doseFormCode"
-            prop="doseFormCode"
+            key="doseFormCode_dictText"
+            prop="doseFormCode_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -243,8 +257,8 @@
           <el-table-column
             label="是否为活性"
             align="center"
-            key="activeFlag"
-            prop="activeFlag"
+            key="activeFlag_enumText"
+            prop="activeFlag_enumText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -254,13 +268,13 @@
             prop="lotNumber"
             :show-overflow-tooltip="true"
           />
-          <el-table-column
+          <!-- <el-table-column
             label="拆零价"
             align="center"
             key="statusEnum"
             prop="statusEnum"
             :show-overflow-tooltip="true"
-          />
+          /> -->
           <el-table-column
             label="生效日期"
             align="center"
@@ -286,16 +300,15 @@
           <el-table-column
             label="用法"
             align="center"
-            key="methodCode"
-            prop="methodCode"
+            key="methodCode_dictText"
+            prop="methodCode_dictText"
             :show-overflow-tooltip="true"
           />
-
           <el-table-column
             label="用药频次"
             align="center"
-            key="rateCode"
-            prop="rateCode"
+            key="rateCode_dictText"
+            prop="rateCode_dictText"
             :show-overflow-tooltip="true"
             width="100"
           />
@@ -309,8 +322,8 @@
           <el-table-column
             label="剂量单位"
             align="center"
-            key="doseUnitCode"
-            prop="doseUnitCode"
+            key="doseUnitCode_dictText"
+            prop="doseUnitCode_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -329,10 +342,34 @@
             width="90"
           />
           <el-table-column
+            label="用量限定"
+            align="center"
+            key="usageLimit"
+            prop="usageLimit"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="DDD值"
+            align="center"
+            key="dddCode_dictText"
+            prop="dddCode_dictText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="DDD单位"
+            align="center"
+            key="dddUnitCode_dictText"
+            prop="dddUnitCode_dictText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
             label="适用范围"
             align="center"
-            key="domainEnum"
-            prop="domainEnum"
+            key="domainEnum_enumText"
+            prop="domainEnum_enumText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -381,10 +418,10 @@
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="最小单位"
+            label="财务统计类型"
             align="center"
-            key="minUnitCode"
-            prop="minUnitCode"
+            key="minUnitCode_dictText"
+            prop="minUnitCode_dictText"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -429,8 +466,8 @@
           <el-table-column
             label="医保是否对码"
             align="center"
-            key="ybMatchFlag"
-            prop="ybMatchFlag"
+            key="ybMatchFlag_enumText"
+            prop="ybMatchFlag_enumText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -451,16 +488,16 @@
           <el-table-column
             label="是否皮试"
             align="center"
-            key="skinTestFlag"
-            prop="skinTestFlag"
+            key="skinTestFlag_enumText"
+            prop="skinTestFlag_enumText"
             :show-overflow-tooltip="true"
             width="90"
           />
           <el-table-column
             label="是否为注射药物"
             align="center"
-            key="injectFlag"
-            prop="injectFlag"
+            key="injectFlag_enumText"
+            prop="injectFlag_enumText"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -472,18 +509,25 @@
             :show-overflow-tooltip="true"
           />
           <el-table-column
+            label="生产厂家名称"
+            align="center"
+            key="manufacturerName"
+            prop="manufacturerName"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
             label="供应商"
             align="center"
-            key="supplyId"
-            prop="supplyId"
+            key="supplyId_dictText"
+            prop="supplyId_dictText"
             :show-overflow-tooltip="true"
             width="90"
           />
           <el-table-column
             label="是否限制使用"
             align="center"
-            key="restrictedFlag"
-            prop="restrictedFlag"
+            key="restrictedFlag_enumText"
+            prop="restrictedFlag_enumText"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -498,8 +542,8 @@
           <el-table-column
             label="儿童用药标志"
             align="center"
-            key="childrenFlag"
-            prop="childrenFlag"
+            key="childrenFlag_enumText"
+            prop="childrenFlag_enumText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -507,6 +551,94 @@
             align="center"
             key="characteristic"
             prop="characteristic"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="贯标国家编码"
+            align="center"
+            key="nationalDrugCode"
+            prop="nationalDrugCode"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="拆分属性"
+            align="center"
+            key="partAttributeEnum_enumText"
+            prop="partAttributeEnum_enumText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="抗生素分类"
+            align="center"
+            key="antibioticCode_dictText"
+            prop="antibioticCode_dictText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="权限限制"
+            align="center"
+            key="restrictedEnum_enumText"
+            prop="restrictedEnum_enumText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="是否自制"
+            align="center"
+            key=" selfFlag_enumText"
+            prop=" selfFlag_enumText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="是否抗生素"
+            align="center"
+            key="antibioticFlag_enumText"
+            prop="antibioticFlag_enumText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="基药标识"
+            align="center"
+            key="basicFlag_enumText"
+            prop="basicFlag_enumText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="常规单位"
+            align="center"
+            key="baseUnitCode"
+            prop="baseUnitCode"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="当前库存数量(常规单位)"
+            align="center"
+            key="baseQuantity"
+            prop="baseQuantity"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="当前库存数量(最小单位数量)"
+            align="center"
+            key="minQuantity"
+            prop="minQuantity"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="售价"
+            align="center"
+            key="price"
+            prop="price"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -526,14 +658,14 @@
                 v-hasPermi="['system:user:edit']"
                 >编辑</el-button
               >
-              <el-button
+              <!-- <el-button
                 link
                 type="primary"
                 icon="View"
                 @click="openViewMedicine(scope.row)"
                 v-hasPermi="['system:user:remove']"
                 >查看</el-button
-              >
+              > -->
             </template>
           </el-table-column>
         </el-table>
@@ -551,6 +683,8 @@
       :item="currentData"
       :domainEnum="domainEnumOptions"
       :status="statusFlagOptions"
+      :supplierListOptions="supplierListOptions"
+      :statusRestrictedOptions="statusRestrictedOptions"
       @submit="submitForm"
     />
     <medicine-view-dialog
@@ -595,6 +729,8 @@ const medicationOptions = ref(undefined);
 const statusFlagOptions = ref(undefined);
 const domainEnumOptions = ref(undefined);
 const supplierListOptions = ref(undefined);
+const statusWeatherOption = ref(undefined);
+const statusRestrictedOptions = ref(undefined);
 // 使用 ref 定义当前药品数据
 const currentData = ref({});
 // 使用 ref 定义当前查看药品数据
@@ -611,7 +747,7 @@ const data = reactive({
     searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
     ybMatchFlag: undefined, // 是否医保匹配（包括 1：是，0：否）
-    status: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    categoryCode: undefined, // 目录
   },
   rules: {
     // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
@@ -636,15 +772,18 @@ const filterNode = (value, data) => {
 function getMedicationCategoryList() {
   getMedicationCategory().then((response) => {
     console.log(response, "response药品目录分类查询下拉树结构");
-    medicationOptions.value = response.data.medicationListOptions;
+    medicationOptions.value = response.data.medicationCategoryCodeOptions;
     statusFlagOptions.value = response.data.statusFlagOptions;
     domainEnumOptions.value = response.data.domainFlagOptions;
     supplierListOptions.value = response.data.supplierListOptions;
+    statusWeatherOption.value = response.data.statusWeatherOptions;
+    statusRestrictedOptions.value = response.data.statusRestrictedOptions;
   });
 }
 /** 查询病种目录列表 */
 function getList() {
   loading.value = true;
+  console.log(queryParams.value, "queryParams***********************");
   getMedicationList(queryParams.value).then((res) => {
     loading.value = false;
     console.log(res, "res");
@@ -654,12 +793,13 @@ function getList() {
 }
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.deptId = data.id;
+  queryParams.value.categoryCode = data.value;
   handleQuery();
 }
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNo = 1;
+  console.log(queryParams.value, "queryParams");
   getList();
 }
 
@@ -740,25 +880,36 @@ function openAddMedicine() {
 }
 /** 打开编辑弹窗 */
 function openEditMedicine(row) {
-  currentData.value = JSON.parse(JSON.stringify(row));
-  currentData.value.activeFlag == 1
-    ? (currentData.value.activeFlag = true)
-    : (currentData.value.activeFlag = false); //是否为活性
-  currentData.value.ybMatchFlag == 1
-    ? (currentData.value.ybMatchFlag = true)
-    : (currentData.value.ybMatchFlag = false); //医保是否对码
-  currentData.value.skinTestFlag == 1
-    ? (currentData.value.skinTestFlag = true)
-    : (currentData.value.skinTestFlag = false); //是否皮试
-  currentData.value.injectFlag == 1
-    ? (currentData.value.injectFlag = true)
-    : (currentData.value.injectFlag = false); //是否为注射药物
-  currentData.value.restrictedFlag == 1
-    ? (currentData.value.restrictedFlag = true)
-    : (currentData.value.restrictedFlag = false); //是否限制使用
-  currentData.value.childrenFlag == 1
-    ? (currentData.value.childrenFlag = true)
-    : (currentData.value.childrenFlag = false); //儿童用药标志
+  getMedicationOne(row.id).then((response) => {
+    console.log(response, "responsebbbb", row.id);
+    currentData.value = response.data;
+    //  getList();
+  });
+  // currentData.value = JSON.parse(JSON.stringify(row));
+  // currentData.value.activeFlag == 1
+  //   ? (currentData.value.activeFlag = true)
+  //   : (currentData.value.activeFlag = false); //是否为活性
+  // currentData.value.ybMatchFlag == 1
+  //   ? (currentData.value.ybMatchFlag = true)
+  //   : (currentData.value.ybMatchFlag = false); //医保是否对码
+  // currentData.value.skinTestFlag == 1
+  //   ? (currentData.value.skinTestFlag = true)
+  //   : (currentData.value.skinTestFlag = false); //是否皮试
+  // currentData.value.injectFlag == 1
+  //   ? (currentData.value.injectFlag = true)
+  //   : (currentData.value.injectFlag = false); //是否为注射药物
+  // currentData.value.restrictedFlag == 1
+  //   ? (currentData.value.restrictedFlag = true)
+  //   : (currentData.value.restrictedFlag = false); //是否限制使用
+  // currentData.value.childrenFlag == 1
+  //   ? (currentData.value.childrenFlag = true)
+  //   : (currentData.value.childrenFlag = false); //儿童用药标志
+  // currentData.value.antibioticFlag == 1
+  //   ? (currentData.value.antibioticFlag = true)
+  //   : (currentData.value.antibioticFlag = false); //抗生素标志
+  // currentData.value.selfFlag == 1
+  //   ? (currentData.value.selfFlag = true)
+  //   : (currentData.value.selfFlag = false); //自制标志
   console.log(currentData.value, "currentData");
   // 确保子组件已经接收到最新的 props
   nextTick(() => {
@@ -799,8 +950,14 @@ function submitForm(formData) {
   formData.childrenFlag == true
     ? (formData.childrenFlag = 1)
     : (formData.childrenFlag = 0); //儿童用药标志
+  formData.antibioticFlag == true
+    ? (formData.antibioticFlag = 1)
+    : (formData.antibioticFlag = 0); //抗生素标志
+  formData.selfFlag == true
+    ? (formData.selfFlag = 1)
+    : (formData.selfFlag = 0); //自制标志
   formData.status == true ? (formData.status = 1) : (formData.status = 0); //启用状态
-
+console.log(formData, "submitForm");
   if (formData.id != undefined) {
     // form.value.status
     //   ? (form.value.statusEnum = "3")

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 import com.openhis.common.enums.DeviceCategory;
 import com.openhis.common.enums.PublicationStatus;
 
@@ -79,13 +80,20 @@ public class DeviceManageDto {
     private String ybMatchFlag_enumText;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
+    private String statusEnum_enumText;
 
     /** 生产厂家 */
     private Long manufacturerId;
 
+    /** 生产厂商文本 */
+    private Long manufacturerText;
+
     /** 供应商 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Dict(dictTable = "adm_supplier",dictCode = "id",dictText = "name")
     private Long supplyId;
+    private String supplyId_dictText;
 
     /** 说明 */
     private String description;
@@ -94,7 +102,10 @@ public class DeviceManageDto {
     private String jurisdiction;
 
     /** 执行科室 */
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long ruleId;
+    private String ruleId_dictText;
 
     /** 器材版本 */
     private String version;
@@ -105,4 +116,8 @@ public class DeviceManageDto {
     /** 过敏标记 */
     private Integer allergenFlag;
     private String allergenFlag_enumText;
+
+    /** 售价 */
+    private BigDecimal price;
+
 }

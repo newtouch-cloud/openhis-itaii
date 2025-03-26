@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.inventorymanage.mapper.InventoryDetailsMapper">
+
+    <select id="selectPurchaseInDetailsPage"
+            resultType="com.openhis.web.inventorymanage.dto.PurchaseInDetailDto">
+        SELECT T10.id,
+               T10.bus_no,
+               T10.status_enum,
+               T10.item_table,
+               T10.item_no,
+               T10.item_name,
+               T10.item_volume,
+               T10.lot_number,
+               T10.sup_name,
+               T10.item_quantity,
+               T10.price,
+               T10.total_price,
+               T10.unit_code,
+               T10.loc_name,
+               T10.locstore_name,
+               T10.approval_time,
+               T10.occurrence_time,
+               T10.applicant_name,
+               T10.approver_name,
+               T10.tenant_id
+        FROM (SELECT T1.id,
+                     T1.bus_no,
+                     CASE T1.status_enum WHEN 2 THEN '已入库' ELSE '未入库' END                    AS status_enum,
+                     CASE T1.item_table
+                         WHEN 'med_medication_definition' THEN '药品'
+                         WHEN 'adm_device' THEN '设备' END                                     AS item_table,
+                     CASE
+                         WHEN T1.item_table = 'med_medication_definition' THEN T2.bus_no
+                         WHEN T1.item_table = 'adm_device' THEN T4.bus_no END                AS item_no,
+                     CASE
+                         WHEN T1.item_table = 'med_medication_definition' THEN T2.name
+                         WHEN T1.item_table = 'adm_device' THEN T4.name END                  AS item_name,
+                     CASE
+                         WHEN T1.item_table = 'med_medication_definition' THEN T3.total_volume
+                         WHEN T1.item_table = 'adm_device' THEN T4.device_specifications END AS item_volume,
+                     T1.lot_number,
+                     T4.name                                                                 AS sup_name,
+                     T1.item_quantity,
+                     T1.price,
+                     T1.total_price,
+                     T1.unit_code,
+                     T6.name                                                                 AS loc_name,
+                     T7.name                                                                 AS locstore_name,
+                     T1.approval_time,
+                     T1.occurrence_time,
+                     T8.name                                                                 AS applicant_name,
+                     T9.name                                                                 AS approver_name,
+                     T1.tenant_id
+              FROM wor_supply_request AS T1
+                       LEFT JOIN med_medication_definition AS T2 ON T1.item_id = T2.id
+                       LEFT JOIN med_medication AS T3 ON T1.item_id = T3.medication_def_id
+                       LEFT JOIN adm_device AS T4 ON T1.item_id = T4.id
+                       LEFT JOIN adm_supplier AS T5 ON T1.supplier_id = T5.id
+                       LEFT JOIN adm_location AS T6 ON T1.purpose_location_id = T6.id
+                       LEFT JOIN adm_location AS T7 ON T1.purpose_location_store_id = T7.id
+                       LEFT JOIN adm_practitioner AS T8 ON T1.applicant_id = T8.id
+                       LEFT JOIN adm_practitioner AS T9 ON T1.approver_id = T9.id
+              WHERE T1.delete_flag = '0'
+              ORDER BY T1.bus_no desc) AS T10
+            ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectRequisitionOutDetailsPage"
+            resultType="com.openhis.web.inventorymanage.dto.RequisitionOutDetailDto">
+        SELECT T10.id,
+               T10.bus_no,
+               T10.status_enum,
+               T10.item_table,
+               T10.item_no,
+               T10.item_name,
+               T10.item_volume,
+               T10.item_id,
+               T10.item_quantity,
+               T10.unit_code,
+               T10.lot_number,
+               T10.loc_name,
+               T10.locstore_name,
+               T10.apply_time,
+               T10.approval_time,
+               T10.applicant_name,
+               T10.approver_name,
+               T10.tenant_id
+        FROM (SELECT T1.id,
+                     T1.bus_no,
+                     CASE T1.status_enum WHEN 2 THEN '已出库' ELSE '未出库' END                    AS status_enum,
+                     CASE T1.item_table
+                         WHEN 'med_medication_definition' THEN '药品'
+                         WHEN 'adm_device' THEN '设备' END                                     AS item_table,
+                     CASE
+                         WHEN T1.item_table = 'med_medication_definition' THEN T2.bus_no
+                         WHEN T1.item_table = 'adm_device' THEN T4.bus_no END                AS item_no,
+                     CASE
+                         WHEN T1.item_table = 'med_medication_definition' THEN T2.name
+                         WHEN T1.item_table = 'adm_device' THEN T4.name END                  AS item_name,
+                     CASE
+                         WHEN T1.item_table = 'med_medication_definition' THEN T3.total_volume
+                         WHEN T1.item_table = 'adm_device' THEN T4.device_specifications END AS item_volume,
+                     T1.item_id,
+                     T1.item_quantity,
+                     T1.unit_code,
+                     T1.lot_number,
+                     T6.name                                                                 AS loc_name,
+                     T7.name                                                                 AS locstore_name,
+                     T1.apply_time,
+                     T1.approval_time,
+                     T8.name                                                                 AS applicant_name,
+                     T9.name                                                                 AS approver_name,
+                     T1.tenant_id
+              FROM wor_supply_request AS T1
+                       LEFT JOIN med_medication_definition AS T2 ON T1.item_id = T2.id
+                       LEFT JOIN med_medication AS T3 ON T1.item_id = T3.medication_def_id
+                       LEFT JOIN adm_device AS T4 ON T1.item_id = T4.id
+                       LEFT JOIN adm_supplier AS T5 ON T1.supplier_id = T5.id
+                       LEFT JOIN adm_location AS T6 ON T1.purpose_location_id = T6.id
+                       LEFT JOIN adm_location AS T7 ON T1.purpose_location_store_id = T7.id
+                       LEFT JOIN adm_practitioner AS T8 ON T1.applicant_id = T8.id
+                       LEFT JOIN adm_practitioner AS T9 ON T1.approver_id = T9.id
+              WHERE T1.delete_flag = '0'
+              ORDER BY T1.bus_no desc) AS T10
+            ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectInventoryTransferDetailsPage"
+            resultType="com.openhis.web.inventorymanage.dto.InventoryTransferDetailDto">
+        SELECT T10.id,
+               T10.bus_no,
+               T10.status_enum,
+               T10.item_table,
+               T10.item_no,
+               T10.item_name,
+               T10.item_volume,
+               T10.item_id,
+               T10.lot_number,
+               T10.manufacturer_id,
+               T10.item_quantity,
+               T10.unit_code,
+               T10.price,
+               T10.total_price,
+               T10.source_type_enum,
+               T10.source_name,
+               T10.source_store_name,
+               T10.purpose_type_enum,
+               T10.purpose_name,
+               T10.purpose_store_name,
+               T10.approval_time,
+               T10.occurrence_time,
+               T10.applicant_name,
+               T10.approve_name,
+               T10.tenant_id
+        FROM (SELECT T1.id,
+                     T1.bus_no,
+                     CASE T1.status_enum WHEN 2 THEN '已调拨' ELSE '未调拨' END                    AS status_enum,
+                     CASE T1.item_table
+                         WHEN 'med_medication_definition' THEN '药品'
+                         WHEN 'adm_device' THEN '设备' END                                     AS item_table,
+                     CASE
+                         WHEN T1.item_table = 'med_medication_definition' THEN T2.bus_no
+                         WHEN T1.item_table = 'adm_device' THEN T4.bus_no END                AS ite m_no,
+                     CASE
+                         WHEN T1.item_table = 'med_medication_definition' THEN T2.name
+                         WHEN T1.item_table = 'adm_device' THEN T4.name END                  AS item_name,
+                     CASE
+                         WHEN T1.item_table = 'med_medication_definition' THEN T3.total_volume
+                         WHEN T1.item_table = 'adm_device' THEN T4.device_specifications END AS item_volume,
+                     T1.item_id,
+                     T1.lot_number,
+                     CASE
+                         WHEN T1.item_table = 'med_medication_definition' THEN T3.manufacturer_id
+                         WHEN T1.item_table = 'adm_device' THEN T13.manufacturer_id END      AS manufacturer_id,
+                     T1.item_quantity,
+                     T1.unit_code,
+                     T1.price,
+                     T1.total_price,
+                     T1.source_type_enum,
+                     T11.name                                                                AS source_name,
+                     T12.name                                                                AS source_store_name,
+                     T1.purpose_type_enum,
+                     T6.name                                                                 AS purpose_name,
+                     T7.name                                                                 AS purpose_store_name,
+                     T1.approval_time,
+                     T1.occurrence_time,
+                     T8.name                                                                 AS applicant_name,
+                     T9.name                                                                 AS approve_name,
+                     T1.tenant_id
+              FROM wor_supply_request AS T1
+                       LEFT JOIN med_medication_definition AS T2 ON T1.item_id = T2.id
+                       LEFT JOIN med_medication AS T3 ON T1.item_id = T3.medication_def_id
+                       LEFT JOIN adm_device AS T4 ON T1.item_id = T4.id
+                       LEFT JOIN adm_device_definition AS T13 ON T4.device_def_id = T13.id
+                       LEFT JOIN adm_supplier AS T5 ON T1.supplier_id = T5.id
+                       LEFT JOIN adm_location AS T6 ON T1.purpose_location_id = T6.id
+                       LEFT JOIN adm_location AS T7 ON T1.purpose_location_store_id = T7.id
+                       LEFT JOIN adm_practitioner AS T8 ON T1.applicant_id = T8.id
+                       LEFT JOIN adm_practitioner AS T9 ON T1.approver_id = T9.id
+                       LEFT JOIN adm_location AS T11 ON T1.source_location_id = T11.id
+                       LEFT JOIN adm_location AS T12 ON T1.source_location_store_id = T12.id
+              WHERE T1.delete_flag = '0'
+              ORDER BY T1.bus_no desc) AS T10
+            ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectInventoryStockTakeDetailsPage"
+            resultType="com.openhis.web.inventorymanage.dto.InventoryStockTakeDetailDto">
+
+    </select>
+</mapper>

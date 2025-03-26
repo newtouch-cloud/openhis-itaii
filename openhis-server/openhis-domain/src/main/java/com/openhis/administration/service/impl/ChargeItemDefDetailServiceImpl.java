@@ -31,6 +31,7 @@ public class ChargeItemDefDetailServiceImpl extends ServiceImpl<ChargeItemDefApp
             if (baseMapper.selectById(chargeItemDefDetail.getId()) == null) {
                 return false;
             } else {
+                //todo deleteFlag=1
                 return baseMapper.updateById(chargeItemDefDetail) > 0;
             }
         } else {
