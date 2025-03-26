@@ -205,7 +205,7 @@ public class MedicationManageDto {
 
     /** 贯标国家编码 */
     private String nationalDrugCode;
-
+    
     /** 拆分属性 */
     private Integer partAttributeEnum;
     private String partAttributeEnum_enumText;
