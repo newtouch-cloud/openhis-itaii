@@ -29,4 +29,20 @@ public interface IPractitionerAppService {
     IPage<UserAndPractitionerDto> getUserPractitionerPage(UserAndPractitionerDto userAndPractitionerDto,
         String searchKey, Integer pageNo, Integer pageSize);
 
+    /**
+     * 修改用户及参与者
+     *
+     * @param userAndPractitionerDto 用户及参与者dto
+     * @return 结果
+     */
+    R<?> editUserPractitioner(UserAndPractitionerDto userAndPractitionerDto);
+
+    /**
+     * 删除用户及参与者 ; admin不允许删除
+     *
+     * @param userId 系统用户id
+     * @return 结果
+     */
+    R<?> delUserPractitioner(Long userId);
+
 }

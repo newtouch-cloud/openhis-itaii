@@ -67,4 +67,16 @@
         </if>
     </select>
 
+    <delete id="delUserRole">
+        delete
+        from sys_user_role
+        where user_id = #{userId}
+    </delete>
+
+    <delete id="delPractitionerRole">
+        delete
+        from adm_practitioner_role
+        where practitioner_id = #{practitionerId}
+    </delete>
+
 </mapper>

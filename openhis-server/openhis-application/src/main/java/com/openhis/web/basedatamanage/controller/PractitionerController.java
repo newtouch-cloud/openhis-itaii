@@ -52,4 +52,26 @@ public class PractitionerController {
             .ok(practitionerAppService.getUserPractitionerPage(userAndPractitionerDto, searchKey, pageNo, pageSize));
     }
 
+    /**
+     * 修改用户及参与者
+     *
+     * @param userAndPractitionerDto 用户及参与者dto
+     * @return 结果
+     */
+    @PutMapping(value = "/user-practitioner")
+    public R<?> editUserPractitioner(@RequestBody UserAndPractitionerDto userAndPractitionerDto) {
+        return practitionerAppService.editUserPractitioner(userAndPractitionerDto);
+    }
+
+    /**
+     * 删除用户及参与者 ; admin不允许删除
+     * 
+     * @param userId 系统用户id
+     * @return 结果
+     */
+    @DeleteMapping(value = "/user-practitioner")
+    public R<?> delUserPractitioner(@RequestParam Long userId) {
+        return practitionerAppService.delUserPractitioner(userId);
+    }
+
 }
