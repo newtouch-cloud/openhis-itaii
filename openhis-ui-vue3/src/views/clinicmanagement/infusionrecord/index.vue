@@ -258,7 +258,6 @@ const selectedItems = ref(new Set());
 
 const tableRef = ref(null);
 const selectedGroupIds = ref(new Set());
-const selectedPrescriptionNos = ref(new Set());
 
 const currentRow = ref(null);
 const dateRange = ref([]);
