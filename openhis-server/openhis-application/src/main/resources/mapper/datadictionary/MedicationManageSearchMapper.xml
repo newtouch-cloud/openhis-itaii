@@ -53,7 +53,7 @@
         T1.children_flag,
         T1.characteristic,
         T1.national_drug_code,
-        T1.part_attribute,
+        T1.part_attribute_enum,
         T1.antibiotic_code,
         T1.restricted_enum,
         T1.self_flag,
