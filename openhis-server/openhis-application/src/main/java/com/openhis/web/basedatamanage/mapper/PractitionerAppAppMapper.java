@@ -36,4 +36,18 @@ public interface PractitionerAppAppMapper {
      */
     List<UserAndPractitionerChildDto> getChildList(@Param("practitionerIdList") List<Long> practitionerIdList);
 
+    /**
+     * 物理删除系统用户与角色的关系
+     * 
+     * @param userId 系统用户id
+     */
+    void delUserRole(@Param("userId") Long userId);
+
+    /**
+     * 物理删除参与者与业务角色的关系
+     * 
+     * @param practitionerId 参与者id
+     */
+    void delPractitionerRole(@Param("practitionerId") Long practitionerId);
+
 }

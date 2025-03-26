@@ -117,7 +117,7 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
             iPractitionerRoleService.save(practitionerRole);
         }
 
-        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"人员信息"}));
+        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"人员信息"}));
     }
 
     /**
@@ -145,11 +145,95 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
         List<UserAndPractitionerChildDto> childList = practitionerAppAppMapper.getChildList(practitionerIdList);
         for (UserAndPractitionerDto record : records) {
             // 匹配子集合
-            List<UserAndPractitionerChildDto> childDtoList =
-                childList.stream().filter(e -> e.getPractitionerId().equals(record.getPractitionerId())).collect(Collectors.toList());
+            List<UserAndPractitionerChildDto> childDtoList = childList.stream()
+                .filter(e -> e.getPractitionerId().equals(record.getPractitionerId())).collect(Collectors.toList());
             record.setChildList(childDtoList);
         }
         return userPractitionerPage;
+    }
+
+    /**
+     * 修改用户及参与者 : 登录账号和密码不允许编辑
+     *
+     * @param userAndPractitionerDto 用户及参与者dto
+     * @return 结果
+     */
+    @Override
+    public R<?> editUserPractitioner(UserAndPractitionerDto userAndPractitionerDto) {
+        Long userId = userAndPractitionerDto.getUserId(); // 系统用户id
+        Long practitionerId = userAndPractitionerDto.getPractitionerId(); // 参与者id
+
+        String nickName = userAndPractitionerDto.getNickName();
+        String phonenumber = userAndPractitionerDto.getPhonenumber();
+        String sex = userAndPractitionerDto.getSex();
+        // 编辑 sys_user
+        BizUser bizUser = new BizUser();
+        bizUser.setNickName(nickName); // 昵称
+        bizUser.setEmail(userAndPractitionerDto.getEmail());// 邮箱
+        bizUser.setPhonenumber(phonenumber); // 电话
+        bizUser.setSex(sex); // 性别
+        bizUser.setStatus(userAndPractitionerDto.getStatus()); // 状态
+        bizUser.setRemark(userAndPractitionerDto.getRemark()); // 备注
+        iBizUserService.update(bizUser, new LambdaQueryWrapper<BizUser>().eq(BizUser::getUserId, userId));
+        // 先删除,再新增 sys_user_role
+        practitionerAppAppMapper.delUserRole(userId);
+        List<Long> roleIds = userAndPractitionerDto.getRoleIds();
+        BizUserRole bizUserRole;
+        for (Long roleId : roleIds) {
+            bizUserRole = new BizUserRole();
+            bizUserRole.setUserId(userId);
+            bizUserRole.setRoleId(roleId);
+            iBizUserRoleService.save(bizUserRole);
+        }
+        // 编辑 adm_practitioner
+        Practitioner practitioner = new Practitioner();
+        practitioner.setId(practitionerId);
+        practitioner.setName(nickName); // 姓名
+        practitioner.setGenderEnum(Integer.parseInt(sex)); // 性别
+        practitioner.setBirthDate(userAndPractitionerDto.getBirthDate()); // 出生日期
+        practitioner.setPhone(phonenumber); // 电话
+        practitioner.setAddress(userAndPractitionerDto.getAddress()); // 地址
+        practitioner.setYbNo(userAndPractitionerDto.getYbNo()); // 医保码
+        practitioner.setUserId(userId); // 系统用户id
+        practitioner.setOrgId(userAndPractitionerDto.getOrgId()); // 机构id
+        practitioner.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(nickName)); // 拼音码
+        practitioner.setWbStr(ChineseConvertUtils.toWBFirstLetter(nickName)); // 五笔码
+        iPractitionerService.updateById(practitioner);
+        // 先删除,再新增 adm_practitioner_role
+        practitionerAppAppMapper.delPractitionerRole(practitionerId);
+        List<UserAndPractitionerChildDto> childList = userAndPractitionerDto.getChildList();
+        PractitionerRole practitionerRole;
+        for (UserAndPractitionerChildDto userAndPractitionerChildDto : childList) {
+            practitionerRole = new PractitionerRole();
+            practitionerRole.setName(nickName); // 姓名
+            practitionerRole.setPractitionerId(practitionerId); // 参与者id
+            practitionerRole.setRoleCode(userAndPractitionerChildDto.getRoleCode()); // 角色code
+            practitionerRole.setOrgId(userAndPractitionerChildDto.getOrgId()); // 机构id
+            practitionerRole.setLocationId(userAndPractitionerChildDto.getLocationId()); // 位置id
+            iPractitionerRoleService.save(practitionerRole);
+        }
+
+        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"人员信息"}));
+    }
+
+    /**
+     * 删除用户及参与者 ; admin不允许删除
+     *
+     * @param userId 系统用户id
+     * @return 结果
+     */
+    @Override
+    public R<?> delUserPractitioner(Long userId) {
+        iBizUserService.remove(new LambdaQueryWrapper<BizUser>().eq(BizUser::getUserId, userId));
+        practitionerAppAppMapper.delUserRole(userId);
+        Practitioner one =
+            iPractitionerService.getOne(new LambdaQueryWrapper<Practitioner>().eq(Practitioner::getUserId, userId));
+        Long practitionerId = one.getId();// 参与者id
+        iPractitionerService.removeById(practitionerId);
+        iPractitionerRoleService
+            .remove(new LambdaQueryWrapper<PractitionerRole>().eq(PractitionerRole::getPractitionerId, practitionerId));
+
+        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"人员信息"}));
     }
 
 }
