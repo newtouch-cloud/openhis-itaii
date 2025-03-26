@@ -43,7 +43,10 @@ public class DeviceManageUpDto {
 
     /** 器材分类 */
     @NotNull(message = "器材分类不能为空")
-    private DeviceCategory categoryEnum;
+//    private DeviceCategory categoryEnum;
+    private Integer categoryEnum;
+    private String categoryEnum_enumText;
+
 
     /** 器材种类 */
     @NotBlank(message = "器材种类不能为空")
@@ -135,12 +138,15 @@ public class DeviceManageUpDto {
     private Integer allergenFlag;
 
     /** 购入价 */
+    @NotNull(message = "购入价不能为空")
     private BigDecimal purchasePrice;
 
     /** 零售价 */
+    @NotNull(message = "零售价不能为空")
     private BigDecimal retailPrice;
 
     /** 最高零售价 */
+    @NotNull(message = "最高零售价不能为空")
     private BigDecimal maximumRetailPrice;
 
     /** 最小费用 */

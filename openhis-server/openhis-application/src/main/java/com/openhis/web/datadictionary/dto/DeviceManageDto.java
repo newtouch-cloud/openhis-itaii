@@ -80,7 +80,8 @@ public class DeviceManageDto {
     private String ybMatchFlag_enumText;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
+    private String statusEnum_enumText;
 
     /** 生产厂家 */
     private Long manufacturerId;
@@ -101,7 +102,10 @@ public class DeviceManageDto {
     private String jurisdiction;
 
     /** 执行科室 */
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long ruleId;
+    private String ruleId_dictText;
 
     /** 器材版本 */
     private String version;

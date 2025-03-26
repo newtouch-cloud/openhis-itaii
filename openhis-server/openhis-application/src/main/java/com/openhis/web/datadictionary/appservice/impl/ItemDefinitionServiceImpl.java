@@ -3,6 +3,7 @@ package com.openhis.web.datadictionary.appservice.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.core.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +48,9 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
             .setStatusEnum(PublicationStatus.ACTIVE.getValue())
             .setInstanceTable(CommonConstants.TableName.MED_MEDICATION_DEFINITION)
             .setInstanceId(medicationDetail.getMedicationDefId()).setEffectiveStart(DateUtils.getNowDate())
-            // todo 机构ID后续修改
-            .setOrgId(1L)
+            //机构ID
+//            .setOrgId(SecurityUtils.getLoginUser().getOrgId())
+            .setOrgId(1l)//todo 没数据先写死
             // 财务类别
             .setTypeCode(medicationManageUpDto.getMinimalFee())
             // 医保类别
@@ -67,7 +69,7 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
                 .setAmount(medicationManageUpDto.getPurchasePrice());
 
             ChargeItemDefDetail chargeItemDefDetail2 = new ChargeItemDefDetail();
-            chargeItemDefDetail1.setDefinitionId(chargeItemDefinition.getId())
+            chargeItemDefDetail2.setDefinitionId(chargeItemDefinition.getId())
                 // 单位+批次（unit,pici） 用,符号拼装
                 .setConditionCode(
                     medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
@@ -77,7 +79,7 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
             shargeItemDefDetails.add(chargeItemDefDetail2);
 
             ChargeItemDefDetail chargeItemDefDetail3 = new ChargeItemDefDetail();
-            chargeItemDefDetail1.setDefinitionId(chargeItemDefinition.getId())
+            chargeItemDefDetail3.setDefinitionId(chargeItemDefinition.getId())
                 // 单位+批次（unit,pici） 用,符号拼装
                 .setConditionCode(
                     medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
