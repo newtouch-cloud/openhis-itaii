@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 import com.openhis.common.enums.DeviceCategory;
 import com.openhis.common.enums.PublicationStatus;
 
@@ -84,8 +85,14 @@ public class DeviceManageDto {
     /** 生产厂家 */
     private Long manufacturerId;
 
+    /** 生产厂商文本 */
+    private Long manufacturerText;
+
     /** 供应商 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Dict(dictTable = "adm_supplier",dictCode = "id",dictText = "name")
     private Long supplyId;
+    private String supplyId_dictText;
 
     /** 说明 */
     private String description;
@@ -105,4 +112,8 @@ public class DeviceManageDto {
     /** 过敏标记 */
     private Integer allergenFlag;
     private String allergenFlag_enumText;
+
+    /** 售价 */
+    private BigDecimal price;
+
 }

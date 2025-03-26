@@ -7,6 +7,7 @@
         T2.medication_def_id,
         T2.status_enum,
         T2.org_id,
+        T2.location_id,
         T2.dose_form_code,
         T2.total_volume,
         T2.ingredient_item,
@@ -63,13 +64,16 @@
         T4.base_unit_code,
         T4.base_quantity,
         T4.min_unit_code,
-        T4.min_quantity
+        T4.min_quantity,
+        T5.price
         FROM med_medication_definition T1
         LEFT JOIN med_medication T2 ON T1.id = T2.medication_def_id
         LEFT JOIN adm_supplier T3 ON T1.manufacturer_id = T3.id
         LEFT JOIN wor_inventory_item T4 ON  T1.id = T4.item_id
+        LEFT JOIN adm_charge_item_definition T5 ON  T2.medication_def_id = T5.instance_id
         <where>
             T1.delete_flag = '0'
+            AND T5.instance_table = 'med_medication_definition'
             <if test="searchKey!=null and searchKey!='' ">
                 AND ( T1.name LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
                 T1.name_en LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR

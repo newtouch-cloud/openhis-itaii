@@ -92,4 +92,10 @@ public class Medication extends HisBaseEntity {
     /** DDD单位 */
     private String dddUnitCode;
 
+    /** 单次最小用药频次 */
+    private String minRateCode;
+
+    /** 单次最大用药频次 */
+    private String maxRateCode;
+
 }

@@ -70,7 +70,7 @@ public class MedicationManageController {
      * @return
      */
     @GetMapping("/information-one")
-    public R<?> getMedicationOne(@PathVariable("id") Long id) {
+    public R<?> getMedicationOne(@RequestParam Long id) {
         return medicationManageAppService.getMedicationOne(id);
     }
 

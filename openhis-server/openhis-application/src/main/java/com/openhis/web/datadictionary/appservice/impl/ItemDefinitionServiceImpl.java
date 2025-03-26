@@ -64,7 +64,7 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
                 .setConditionCode(
                     medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
                 // 购入价
-                .setAmount(medicationManageUpDto.getPurchasePrice()).setPriority(0);
+                .setAmount(medicationManageUpDto.getPurchasePrice());
 
             ChargeItemDefDetail chargeItemDefDetail2 = new ChargeItemDefDetail();
             chargeItemDefDetail1.setDefinitionId(chargeItemDefinition.getId())
@@ -72,7 +72,7 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
                 .setConditionCode(
                     medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
                 // 零售价
-                .setAmount(medicationManageUpDto.getRetailPrice()).setPriority(1);
+                .setAmount(medicationManageUpDto.getRetailPrice());
 
             shargeItemDefDetails.add(chargeItemDefDetail2);
 
@@ -82,7 +82,7 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
                 .setConditionCode(
                     medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
                 // 最高零售价
-                .setAmount(medicationManageUpDto.getMaximumRetailPrice()).setPriority(2);
+                .setAmount(medicationManageUpDto.getMaximumRetailPrice());
 
             shargeItemDefDetails.add(chargeItemDefDetail3);
 

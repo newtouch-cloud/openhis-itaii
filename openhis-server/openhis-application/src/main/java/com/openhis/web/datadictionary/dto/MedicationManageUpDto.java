@@ -191,4 +191,27 @@ public class MedicationManageUpDto {
     /** 最小费用 */
     private String minimalFee;
 
+    /** 单次最小用药频次 */
+    private String minRateCode;
+
+    /** 单次最大用药频次 */
+    private String maxRateCode;
+
+    /** 药品状态 */
+    private Integer statusEnum;
+
+    /** 拆分属性 */
+    private String partAttribute;
+
+    /** 贯标国家编码 */
+    private String nationalDrugCode;
+
+    /** 是否抗生素 */
+    private Integer antibioticFlag;
+
+    /** 是否自制 */
+    private Integer selfFlag;
+
+    /** 系统类别???? */
+
 }

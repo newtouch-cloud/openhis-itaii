@@ -10,6 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
@@ -30,6 +32,7 @@ import com.openhis.administration.domain.Organization;
 import com.openhis.administration.mapper.DeviceDefinitionMapper;
 import com.openhis.administration.service.IDeviceDefinitionService;
 import com.openhis.administration.service.IOrganizationService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.DeviceCategory;
 import com.openhis.common.enums.OrganizationType;
@@ -43,6 +46,8 @@ import com.openhis.web.datadictionary.dto.DeviceManageDto;
 import com.openhis.web.datadictionary.dto.DeviceManageInitDto;
 import com.openhis.web.datadictionary.dto.DeviceManageSelParam;
 import com.openhis.web.datadictionary.dto.DeviceManageUpDto;
+import com.openhis.web.datadictionary.mapper.DeviceManageMapper;
+import com.openhis.web.doctorstation.dto.AdviceBaseDto;
 
 /**
  * 器材目录 impl
@@ -61,6 +66,9 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
 
     @Autowired
     private IOrganizationService organizationService;
+
+    @Resource
+    DeviceManageMapper deviceManageMapper;
 
     /**
      * 器材目录初始化
@@ -106,15 +114,23 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
+//        // 构建查询条件
+//        QueryWrapper<DeviceDefinition> queryWrapper = HisQueryUtils.buildQueryWrapper(deviceManageSelParam, searchKey,
+//            new HashSet<>(Arrays.asList("bus_no", "name", "py_str", "wb_str")), request);
+//        // 设置排序
+//        queryWrapper.orderByAsc("bus_no");
+//
+//        // 分页查询
+//        Page<DeviceManageDto> deviceManagePage =
+//            HisPageUtils.selectPage(deviceDefinitionMapper, queryWrapper, pageNo, pageSize, DeviceManageDto.class);
+
         // 构建查询条件
-        QueryWrapper<DeviceDefinition> queryWrapper = HisQueryUtils.buildQueryWrapper(deviceManageSelParam, searchKey,
+        QueryWrapper<DeviceManageDto> queryWrapper = HisQueryUtils.buildQueryWrapper(deviceManageSelParam, searchKey,
             new HashSet<>(Arrays.asList("bus_no", "name", "py_str", "wb_str")), request);
-        // 设置排序
-        queryWrapper.orderByAsc("bus_no");
 
         // 分页查询
-        Page<DeviceManageDto> deviceManagePage =
-            HisPageUtils.selectPage(deviceDefinitionMapper, queryWrapper, pageNo, pageSize, DeviceManageDto.class);
+       IPage<DeviceManageDto> deviceManagePage =
+            deviceManageMapper.getDevicePage(new Page<>(pageNo, pageSize), queryWrapper);
 
         deviceManagePage.getRecords().forEach(e -> {
             // 高值器材标志枚举类回显赋值
@@ -125,7 +141,7 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
             e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
             // 过敏标记枚举类回显赋值
             e.setAllergenFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getAllergenFlag()));
-            //器材分类
+            // 器材分类
             e.setCategoryEnum_enumText(EnumUtils.getInfoByValue(DeviceCategory.class, e.getCategoryEnum()));
         });
 

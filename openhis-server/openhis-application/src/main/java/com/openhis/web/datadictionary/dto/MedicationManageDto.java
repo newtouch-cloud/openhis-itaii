@@ -6,7 +6,6 @@ import java.util.Date;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.annotation.Dict;
-import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -34,13 +33,13 @@ public class MedicationManageDto {
     private String statusEnum_enumText;
 
     /** 所属科室 */
-    @Dict(dictTable = "adm_organization",dictCode = "id",dictText = "name")
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long orgId;
     private String orgId_dictText;
 
     /** 所在位置 */
-    @Dict(dictTable = "adm_location",dictCode = "id",dictText = "name")
+    @Dict(dictTable = "adm_location", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
     private String locationId_dictText;
@@ -83,7 +82,9 @@ public class MedicationManageDto {
     private BigDecimal dose;
 
     /** 剂量单位 */
+    @Dict(dictCode = "unit_code")
     private String doseUnitCode;
+    private String doseUnitCode_dictText;
 
     /** 单次最大剂量 */
     private BigDecimal maxUnit;
@@ -95,7 +96,9 @@ public class MedicationManageDto {
     private BigDecimal usageLimit;
 
     /** DDD值 */
+    @Dict(dictCode = "ddd_code")
     private String dddCode;
+    private String dddCode_dictText;
 
     /** DDD单位 */
     @Dict(dictCode = "unit_code")
@@ -149,9 +152,6 @@ public class MedicationManageDto {
     /** 所含耗材 */
     private String comprisedText;
 
-    /** 成分 */
-    private String ingredient;
-
     /** 拆零比 */
     private BigDecimal partPercent;
 
@@ -162,9 +162,8 @@ public class MedicationManageDto {
     private String approvalNumber;
 
     /** 医保是否对码 */
-    @Dict(dictCode = "sys_yes_no")
     private Integer ybMatchFlag;
-    private String ybMatchFlag_dictText;
+    private String ybMatchFlag_enumText;;
 
     /** 医保编码 */
     private String ybNo;
@@ -173,14 +172,12 @@ public class MedicationManageDto {
     private String pharmacologyCategoryCode;
 
     /** 是否皮试 */
-    @Dict(dictCode = "sys_yes_no")
     private Integer skinTestFlag;
-    private String skinTestFlag_dictText;
+    private String skinTestFlag_enumText;
 
     /** 是否为注射药物 */
-    @Dict(dictCode = "sys_yes_no")
     private Integer injectFlag;
-    private String injectFlag_dictText;
+    private String injectFlag_enumText;
 
     /** 生产厂家 */
     @JsonSerialize(using = ToStringSerializer.class)
@@ -188,22 +185,20 @@ public class MedicationManageDto {
 
     /** 供应商 */
     @JsonSerialize(using = ToStringSerializer.class)
-    @Dict(dictTable = "adm_supplier",dictCode = "id",dictText = "name")
+    @Dict(dictTable = "adm_supplier", dictCode = "id", dictText = "name")
     private Long supplyId;
     private String supplyId_dictText;
 
     /** 是否限制使用 */
-    @Dict(dictCode = "sys_yes_no")
     private Integer restrictedFlag;
-    private String restrictedFlag_dictText;
+    private String restrictedFlag_enumText;
 
     /** 限制使用范围 */
     private String restrictedScope;
 
     /** 儿童用药标志 */
-    @Dict(dictCode = "sys_yes_no")
     private Integer childrenFlag;
-    private String childrenFlag_dictText;
+    private String childrenFlag_enumText;
 
     /** 产品特性 */
     private Integer characteristic;
@@ -212,31 +207,27 @@ public class MedicationManageDto {
     private String nationalDrugCode;
 
     /** 拆分属性 */
-    private String partAttribute;
+    private Integer partAttributeEnum;
+    private String partAttributeEnum_enumText;
 
     /** 抗生素分类 */
-
     @Dict(dictCode = "antibiotic_type_code")
     private String antibioticCode;
     private String antibioticCode_dictText;
-
 
     /** 权限限制 */
     private Integer restrictedEnum;
     private String restrictedEnum_enumText;
 
     /** 是否自制 */
-    @Dict(dictCode = "sys_yes_no")
     private Integer selfFlag;
     private String selfFlag_dictText;
 
     /** 是否抗生素 */
-    @Dict(dictCode = "sys_yes_no")
     private Integer antibioticFlag;
     private String antibioticFlag_dictText;
 
     /** 基药标识 */
-    @Dict(dictCode = "sys_yes_no")
     private Integer basicFlag;
     private String basicFlag_dictText;
 
@@ -244,15 +235,24 @@ public class MedicationManageDto {
     private String manufacturerName;
 
     /** 常规单位 */
+    @Dict(dictCode = "unit_code")
     private String baseUnitCode;
+    private String baseUnitCode_dictText;
 
     /** 当前库存数量(常规单位) */
-    @Dict(dictCode = "unit_code")
     private String baseQuantity;
-    private String baseQuantity_dictText;
 
     /** 当前库存数量(最小单位数量) */
     private String minQuantity;
+
+    /** 售价 */
+    private BigDecimal price;
+
+    /** 单次最小用药频次 */
+    private String minRateCode;
+
+    /** 单次最大用药频次 */
+    private String maxRateCode;
 
 
 }
