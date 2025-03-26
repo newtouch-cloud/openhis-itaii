@@ -180,11 +180,11 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             e.setDomainEnum_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getDomainEnum()));
 
             // 是否自制
-            e.setSelfFlag_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getSelfFlag()));
+            e.setSelfFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getSelfFlag()));
             // 是否抗生素
-            e.setAntibioticFlag_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getAntibioticFlag()));
+            e.setAntibioticFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getAntibioticFlag()));
             // 基药标识
-            e.setBasicFlag_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getBasicFlag()));
+            e.setBasicFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getBasicFlag()));
 
 //            // 活动标记
 //             e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));

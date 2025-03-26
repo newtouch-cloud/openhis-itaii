@@ -3,11 +3,11 @@ package com.openhis.web.datadictionary.appservice.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.core.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.core.common.utils.DateUtils;
+import com.core.common.utils.StringUtils;
 import com.openhis.administration.domain.ChargeItemDefDetail;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.service.IChargeItemDefDetailService;
@@ -48,9 +48,9 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
             .setStatusEnum(PublicationStatus.ACTIVE.getValue())
             .setInstanceTable(CommonConstants.TableName.MED_MEDICATION_DEFINITION)
             .setInstanceId(medicationDetail.getMedicationDefId()).setEffectiveStart(DateUtils.getNowDate())
-            //机构ID
-//            .setOrgId(SecurityUtils.getLoginUser().getOrgId())
-            .setOrgId(1l)//todo 没数据先写死
+            // 机构ID
+            // .setOrgId(SecurityUtils.getLoginUser().getOrgId())
+            .setOrgId(1l)// todo 没数据先写死
             // 财务类别
             .setTypeCode(medicationManageUpDto.getMinimalFee())
             // 医保类别
@@ -63,16 +63,16 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
             ChargeItemDefDetail chargeItemDefDetail1 = new ChargeItemDefDetail();
             chargeItemDefDetail1.setDefinitionId(chargeItemDefinition.getId())
                 // 单位+批次（unit,pici） 用,符号拼装
-                .setConditionCode(
-                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
+                .setConditionCode(StringUtils.joinStrings(
+                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber()))
                 // 购入价
                 .setAmount(medicationManageUpDto.getPurchasePrice());
 
             ChargeItemDefDetail chargeItemDefDetail2 = new ChargeItemDefDetail();
             chargeItemDefDetail2.setDefinitionId(chargeItemDefinition.getId())
                 // 单位+批次（unit,pici） 用,符号拼装
-                .setConditionCode(
-                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
+                .setConditionCode(StringUtils.joinStrings(
+                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber()))
                 // 零售价
                 .setAmount(medicationManageUpDto.getRetailPrice());
 
@@ -81,8 +81,8 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
             ChargeItemDefDetail chargeItemDefDetail3 = new ChargeItemDefDetail();
             chargeItemDefDetail3.setDefinitionId(chargeItemDefinition.getId())
                 // 单位+批次（unit,pici） 用,符号拼装
-                .setConditionCode(
-                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber())
+                .setConditionCode(StringUtils.joinStrings(
+                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber()))
                 // 最高零售价
                 .setAmount(medicationManageUpDto.getMaximumRetailPrice());
 

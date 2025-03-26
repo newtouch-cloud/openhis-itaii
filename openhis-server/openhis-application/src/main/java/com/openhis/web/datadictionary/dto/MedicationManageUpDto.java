@@ -53,6 +53,7 @@ public class MedicationManageUpDto {
     private Integer activeFlag;
 
     /** 批次号 */
+    @NotBlank(message = "批次号不能为空")
     private String lotNumber;
 
     /** 生效日期 */
@@ -74,6 +75,7 @@ public class MedicationManageUpDto {
 
     /** 剂量单位 */
     @Dict(dictCode = "unit_code")
+    @NotBlank(message = "剂量单位不能为空")
     private String doseUnitCode;
     private String doseUnitCode_dictText;
 
