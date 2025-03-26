@@ -201,7 +201,7 @@
           <el-table-column prop="rateCode" label="用药频次" width="80" />
           <el-table-column prop="dose" label="单词剂量" width="160" />
           <el-table-column prop="speed" label="输液速度" width="80" />
-          <el-table-column prop="orgId_dictText" label="发放科室" width="120" />
+          <el-table-column prop="performOrg_dictText" label="发放科室" width="120" />
           <el-table-column
             prop="medicationStatusEnum_enumText"
             label="药品状态"
@@ -337,8 +337,7 @@ function handleQueryRight() {
   listInfusionRecord(createTimeSTime, createTimeETime).then((response) => {
     infusionList.value = response.data;
   });
-  listPatientInfusionPerformRecord(createTimeSTime, createTimeETime).then(
-    (response) => {
+  listPatientInfusionPerformRecord(createTimeSTime, createTimeETime).then((response) => {
       historyRecordsList.value = response.data;
     }
   );
@@ -456,10 +455,9 @@ function handleSelectionChange(selection) {
   selection.forEach((item) => {
     selectedItems.value.add(item);
   });
-  // 更新 selectedGroupIds 和 selectedPrescriptionNos
+  // 更新 selectedGroupIds 
   selection.forEach((item) => {
     const groupId = item.groupId;
-    const prescriptionNo = item.prescriptionNo;
     // 检查 groupId 是否同时存在
     if (selectedGroupIds.value.has(groupId)) {
       // 如果都存在，则移除它们
@@ -476,16 +474,7 @@ function handleSelectionChange(selection) {
   });
 }
 function clearSelections() {
-  //   // 清空选中状态
-  //   selectedItems.value.clear();
-  //   selectedGroupIds.value.clear();
-  //   selectedPrescriptionNos.value.clear();
-  //   // 取消表格所有行的选中状态
-  //   infusionList.value.forEach(row => {
-  //     tableRef.value.toggleRowSelection(row, false);
-  //   });
   dateRangeRight.value = [];
-  // 检查 currentRow.value 是否存在
   if (!currentRow.value) {
     const createTimeSTime = timeRightStart.value || null;
     const createTimeETime = timeRightEnd.value || null;
@@ -519,6 +508,10 @@ function handleCurrentChange(row) {
   console.log("当前选中行的数据：", currentRow.value);
   listPatientInfusionRecord(currentRow.value).then((response) => {
     infusionList.value = response.data;
+	// 统计每个 groupId 的行数
+    const groupCounts = countGroupRows(infusionList.value);
+    // 设置每行的标记
+    markers.value = getRowMarkers(groupCounts, infusionList.value);
   });
   listPatientInfusionPerformRecord(currentRow.value).then((response) => {
     historyRecordsList.value = response.data;
@@ -544,6 +537,6 @@ getList();
 }
 
 :deep(.el-table tbody tr:hover > td) {
-  background-color: unset !important;
+	background-color: inherit !important; 
 }
 </style>
