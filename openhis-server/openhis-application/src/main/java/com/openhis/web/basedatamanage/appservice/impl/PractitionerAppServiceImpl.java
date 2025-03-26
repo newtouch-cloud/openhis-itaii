@@ -224,6 +224,9 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
      */
     @Override
     public R<?> delUserPractitioner(Long userId) {
+        if (1L == userId) {
+            return R.fail(null, "admin不允许删除");
+        }
         iBizUserService.remove(new LambdaQueryWrapper<BizUser>().eq(BizUser::getUserId, userId));
         practitionerAppAppMapper.delUserRole(userId);
         Practitioner one =

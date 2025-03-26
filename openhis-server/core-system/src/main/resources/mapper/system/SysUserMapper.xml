@@ -265,4 +265,12 @@
         </foreach>
     </delete>
 
+    <select id="getLoginUserExtend" resultType="com.core.common.core.domain.model.LoginUserExtend">
+        SELECT T1.ID     AS practitioner_id,
+               T1.org_id AS org_id
+        FROM adm_practitioner AS T1
+        WHERE T1.delete_flag = '0'
+          AND T1.user_id = #{userId} LIMIT 1
+    </select>
+
 </mapper> 

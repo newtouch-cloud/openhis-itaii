@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Validator;
 
+import com.core.common.core.domain.model.LoginUserExtend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -484,4 +485,16 @@ public class SysUserServiceImpl implements ISysUserService {
         }
         return successMsg.toString();
     }
+
+    /**
+     * 扩展属性
+     *
+     * @param userId 系统用户id
+     * @return 扩展属性
+     */
+    @Override
+    public LoginUserExtend getLoginUserExtend(Long userId) {
+        return userMapper.getLoginUserExtend(userId);
+    }
+
 }

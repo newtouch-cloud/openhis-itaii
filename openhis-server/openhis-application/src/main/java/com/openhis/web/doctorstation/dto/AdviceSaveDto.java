@@ -2,6 +2,7 @@ package com.openhis.web.doctorstation.dto;
 
 import java.math.BigDecimal;
 
+import com.core.common.utils.SecurityUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.enums.EncounterClass;
@@ -126,8 +127,7 @@ public class AdviceSaveDto {
         this.statusEnum = RequestStatus.DRAFT.getValue();
         this.categoryEnum = EncounterClass.AMB.getValue();
         this.therapyEnum = TherapyTimeType.TEMPORARY.getValue();
-        // TODO: 应该从当前登录账号获取参与者id,现在没有
-        // this.practitionerId
+        this.practitionerId = SecurityUtils.getLoginUser().getPractitionerId();
     }
 
 }

@@ -17,6 +17,7 @@ import com.core.common.constant.Constants;
 import com.core.common.constant.UserConstants;
 import com.core.common.core.domain.entity.SysUser;
 import com.core.common.core.domain.model.LoginUser;
+import com.core.common.core.domain.model.LoginUserExtend;
 import com.core.common.core.redis.RedisCache;
 import com.core.common.exception.ServiceException;
 import com.core.common.exception.user.*;
@@ -63,7 +64,7 @@ public class SysLoginService {
      */
     public String login(String username, String password, String code, String uuid) {
         // 验证码校验
-        // validateCaptcha(username, code, uuid);
+        validateCaptcha(username, code, uuid);
         // 登录前置校验
         loginPreCheck(username, password);
         // 用户验证
@@ -91,7 +92,7 @@ public class SysLoginService {
             MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser)authentication.getPrincipal();
 
-        // -----start-----登录时set租户id,正常应该从请求头获取,这行代码只是测试使用
+        // -----start-----登录时set租户id
         Integer tenantId = 0;
         ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         if (attributes != null) {
@@ -103,8 +104,12 @@ public class SysLoginService {
             }
         }
         loginUser.setTenantId(tenantId);
-        // -----end-----登录时set租户id,正常应该从请求头获取,这行代码只是测试使用
+        // -----end-----登录时set租户id
         recordLoginInfo(loginUser.getUserId());
+        // 设置 机构id和参与者id
+        LoginUserExtend loginUserExtend = userService.getLoginUserExtend(loginUser.getUserId());
+        loginUser.setOrgId(loginUserExtend.getOrgId());
+        loginUser.setPractitionerId(loginUserExtend.getPractitionerId());
         // 生成token
         return tokenService.createToken(loginUser);
     }
