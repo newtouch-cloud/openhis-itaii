@@ -221,15 +221,15 @@ public class MedicationManageDto {
 
     /** 是否自制 */
     private Integer selfFlag;
-    private String selfFlag_dictText;
+    private String selfFlag_enumText;
 
     /** 是否抗生素 */
     private Integer antibioticFlag;
-    private String antibioticFlag_dictText;
+    private String antibioticFlag_enumText;
 
     /** 基药标识 */
     private Integer basicFlag;
-    private String basicFlag_dictText;
+    private String basicFlag_enumText;
 
     /** 生产厂家名称 */
     private String manufacturerName;

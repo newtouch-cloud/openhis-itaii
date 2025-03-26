@@ -178,6 +178,14 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             e.setChildrenFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getChildrenFlag()));
             // 适用范围
             e.setDomainEnum_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getDomainEnum()));
+
+            // 是否自制
+            e.setSelfFlag_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getSelfFlag()));
+            // 是否抗生素
+            e.setAntibioticFlag_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getAntibioticFlag()));
+            // 基药标识
+            e.setBasicFlag_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getBasicFlag()));
+
 //            // 活动标记
 //             e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
 
