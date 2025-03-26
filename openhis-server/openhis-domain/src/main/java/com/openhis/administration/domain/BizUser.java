@@ -2,8 +2,6 @@ package com.openhis.administration.domain;
 
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
 
@@ -24,7 +22,7 @@ import lombok.experimental.Accessors;
 public class BizUser extends HisBaseEntity {
 
     /** 用户ID */
-    @TableId(type = IdType.ASSIGN_ID)
+    // @TableId(type = IdType.ASSIGN_ID)
     private Long userId;
 
     /** 部门ID */

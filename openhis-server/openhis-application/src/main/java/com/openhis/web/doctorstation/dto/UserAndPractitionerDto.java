@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -17,6 +18,18 @@ import lombok.experimental.Accessors;
 public class UserAndPractitionerDto {
 
     /**
+     * 用户id
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long userId;
+
+    /**
+     * 参与者id
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long practitionerId;
+
+    /**
      * 账号
      */
     private String userName;
@@ -25,6 +38,12 @@ public class UserAndPractitionerDto {
      * 姓名
      */
     private String nickName;
+
+    /** 拼音码 */
+    private String pyStr;
+
+    /** 五笔码 */
+    private String wbStr;
 
     /**
      * 邮箱
@@ -39,7 +58,9 @@ public class UserAndPractitionerDto {
     /**
      * 性别
      */
+    @Dict(dictCode = "sys_user_sex")
     private String sex;
+    private String sex_dictText;
 
     /**
      * 密码
@@ -49,7 +70,9 @@ public class UserAndPractitionerDto {
     /**
      * 状态（0正常 1停用）
      */
+    @Dict(dictCode = "sys_normal_disable")
     private String status;
+    private String status_dictText;
 
     /**
      * 备注
@@ -74,14 +97,10 @@ public class UserAndPractitionerDto {
     /**
      * 机构id
      */
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long orgId;
-
-    /**
-     * 位置id
-     */
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long locationId;
+    private String orgId_dictText;
 
     /**
      * 角色id集合
@@ -89,8 +108,8 @@ public class UserAndPractitionerDto {
     private List<Long> roleIds;
 
     /**
-     * 角色code集合
+     * 子集合
      */
-    private List<String> roleCodes;
+    private List<UserAndPractitionerChildDto> childList;
 
 }
