@@ -139,7 +139,7 @@ public class MedicationDefinition extends HisBaseEntity {
     private String nationalDrugCode;
 
     /** 拆分属性 */
-    private String partAttribute;
+    private Integer partAttributeEnum;
 
     /** 抗生素分类 */
     private String antibioticCode;

@@ -133,4 +133,20 @@ public class DeviceManageUpDto {
     /** 过敏标记 */
     // @NotNull(message = "过敏标记不能为空")
     private Integer allergenFlag;
+
+    /** 购入价 */
+    private BigDecimal purchasePrice;
+
+    /** 零售价 */
+    private BigDecimal retailPrice;
+
+    /** 最高零售价 */
+    private BigDecimal maximumRetailPrice;
+
+    /** 最小费用 */
+    private String minimalFee;
+
+    /** 医保类别 */
+    private String ybType;
+
 }

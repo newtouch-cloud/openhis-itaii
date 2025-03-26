@@ -201,7 +201,7 @@ public class MedicationManageUpDto {
     private Integer statusEnum;
 
     /** 拆分属性 */
-    private String partAttribute;
+    private Integer partAttributeEnum;
 
     /** 贯标国家编码 */
     private String nationalDrugCode;
