@@ -157,6 +157,7 @@ public class MedicationManageDto {
 
     /** 剂量形式 */
     private Integer doseFrom;
+    private String doseFrom_enumText;
 
     /** 批准文号 */
     private String approvalNumber;
@@ -202,10 +203,11 @@ public class MedicationManageDto {
 
     /** 产品特性 */
     private Integer characteristic;
+    private String characteristic_enumText;
 
     /** 贯标国家编码 */
     private String nationalDrugCode;
-    
+
     /** 拆分属性 */
     private Integer partAttributeEnum;
     private String partAttributeEnum_enumText;
