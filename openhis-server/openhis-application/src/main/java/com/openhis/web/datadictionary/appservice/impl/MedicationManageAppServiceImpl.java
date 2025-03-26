@@ -186,6 +186,7 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             // 基药标识
             e.setBasicFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getBasicFlag()));
 
+            
 //            // 活动标记
 //             e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
 
