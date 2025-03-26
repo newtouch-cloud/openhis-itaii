@@ -5,6 +5,7 @@ package com.openhis.web.basedatamanage.controller;
 
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.core.common.core.domain.R;
 import com.openhis.web.basedatamanage.appservice.IPractitionerAppService;
 import com.openhis.web.doctorstation.dto.UserAndPractitionerDto;
@@ -50,6 +51,21 @@ public class PractitionerController {
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         return R
             .ok(practitionerAppService.getUserPractitionerPage(userAndPractitionerDto, searchKey, pageNo, pageSize));
+    }
+
+    /**
+     * 查询用户及参与者详情
+     * 
+     * @param userId 系统用户id
+     * @return 用户及参与者详情
+     */
+    @GetMapping(value = "/user-practitioner-detail")
+    public R<?> getUserPractitionerPage(@RequestParam Long userId) {
+        UserAndPractitionerDto userAndPractitionerDto = new UserAndPractitionerDto();
+        userAndPractitionerDto.setUserId(userId);
+        IPage<UserAndPractitionerDto> userPractitionerPage =
+            practitionerAppService.getUserPractitionerPage(userAndPractitionerDto, "", 1, 1);
+        return R.ok(userPractitionerPage.getRecords().get(0));
     }
 
     /**
