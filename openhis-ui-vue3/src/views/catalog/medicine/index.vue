@@ -188,13 +188,13 @@
             prop="statusEnum_enumText"
             :show-overflow-tooltip="true"
           />
-          <el-table-column
+          <!-- <el-table-column
             label="医保类别"
             align="center"
             key="ybType_enumText"
             prop="ybType_enumText"
             :show-overflow-tooltip="true"
-          />
+          /> -->
           <el-table-column
             label="药品名称拼音码"
             align="center"
@@ -885,31 +885,6 @@ function openEditMedicine(row) {
     currentData.value = response.data;
     //  getList();
   });
-  // currentData.value = JSON.parse(JSON.stringify(row));
-  // currentData.value.activeFlag == 1
-  //   ? (currentData.value.activeFlag = true)
-  //   : (currentData.value.activeFlag = false); //是否为活性
-  // currentData.value.ybMatchFlag == 1
-  //   ? (currentData.value.ybMatchFlag = true)
-  //   : (currentData.value.ybMatchFlag = false); //医保是否对码
-  // currentData.value.skinTestFlag == 1
-  //   ? (currentData.value.skinTestFlag = true)
-  //   : (currentData.value.skinTestFlag = false); //是否皮试
-  // currentData.value.injectFlag == 1
-  //   ? (currentData.value.injectFlag = true)
-  //   : (currentData.value.injectFlag = false); //是否为注射药物
-  // currentData.value.restrictedFlag == 1
-  //   ? (currentData.value.restrictedFlag = true)
-  //   : (currentData.value.restrictedFlag = false); //是否限制使用
-  // currentData.value.childrenFlag == 1
-  //   ? (currentData.value.childrenFlag = true)
-  //   : (currentData.value.childrenFlag = false); //儿童用药标志
-  // currentData.value.antibioticFlag == 1
-  //   ? (currentData.value.antibioticFlag = true)
-  //   : (currentData.value.antibioticFlag = false); //抗生素标志
-  // currentData.value.selfFlag == 1
-  //   ? (currentData.value.selfFlag = true)
-  //   : (currentData.value.selfFlag = false); //自制标志
   console.log(currentData.value, "currentData");
   // 确保子组件已经接收到最新的 props
   nextTick(() => {
@@ -959,10 +934,6 @@ function submitForm(formData) {
   formData.status == true ? (formData.status = 1) : (formData.status = 0); //启用状态
 console.log(formData, "submitForm");
   if (formData.id != undefined) {
-    // form.value.status
-    //   ? (form.value.statusEnum = "3")
-    //   : (form.value.statusEnum = "2");
-    // console.log(form.value, "editMedication", form.value.statusEnum);
     editMedication(formData).then((response) => {
       proxy.$modal.msgSuccess("修改成功");
       open.value = false;
