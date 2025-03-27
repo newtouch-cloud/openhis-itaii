@@ -83,15 +83,4 @@ public class MedicationServiceImpl extends ServiceImpl<MedicationMapper, Medicat
         return true;
     }
 
-    /**
-     * 新增药品目录
-     * 
-     * @param medicationDetail
-     * @return
-     */
-    @Override
-    public boolean addYbMedicatione(MedicationDetail medicationDetail) {
-        return false;
-    }
-    
 }
