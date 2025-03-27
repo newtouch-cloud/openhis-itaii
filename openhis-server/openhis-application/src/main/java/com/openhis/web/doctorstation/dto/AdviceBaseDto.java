@@ -19,6 +19,11 @@ public class AdviceBaseDto {
     /** 医嘱类型 */
     private Integer adviceType; // 1:药品 , 2: 耗材 , 3:项目
 
+    /**
+     * 医嘱详细分类
+     */
+    private String categoryCode;
+
     /** 医嘱定义ID */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long adviceDefinitionId;

@@ -82,6 +82,9 @@ public class DeviceRequest extends HisBaseEntity {
     /** 默认器材房 */
     private Long locationId;
 
+    /** 发放耗材房 */
+    private Long performLocation;
+
     /** 就诊id */
     private Long encounterId;
 

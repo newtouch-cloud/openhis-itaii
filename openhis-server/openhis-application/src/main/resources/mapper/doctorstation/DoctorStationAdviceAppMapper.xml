@@ -7,6 +7,7 @@
     <select id="getAdviceBaseInfo" resultType="com.openhis.web.doctorstation.dto.AdviceBaseDto">
         SELECT abi.tenant_id,
                abi.advice_type,
+               abi.category_code,
                abi.advice_definition_id,
                abi.advice_name,
                abi.advice_bus_no,
@@ -31,6 +32,7 @@
         from (
                  SELECT T1.tenant_id,
                         1                     AS advice_type,
+                        T1.category_code      AS category_code,
                         T1.ID                 AS advice_definition_id,
                         T1.NAME               AS advice_name,
                         T1.bus_no             AS advice_bus_no,
@@ -66,6 +68,7 @@
                  UNION ALL
                  SELECT T1.tenant_id,
                         2                 AS advice_type,
+                        T1.category_code  AS category_code,
                         T1.ID             AS advice_definition_id,
                         T1.NAME           AS advice_name,
                         T1.bus_no         AS advice_bus_no,
@@ -96,9 +99,11 @@
                      AND T4.delete_flag = '0'
                      AND T4.instance_table = #{deviceTableName}
                  WHERE T1.delete_flag = '0'
+                   AND T1.category_code = #{singleUse}
                  UNION ALL
                  SELECT T1.tenant_id,
                         3                 AS advice_type,
+                        ''                AS category_code,
                         T1.ID             AS advice_definition_id,
                         T1.NAME           AS advice_name,
                         T1.bus_no         AS advice_bus_no,

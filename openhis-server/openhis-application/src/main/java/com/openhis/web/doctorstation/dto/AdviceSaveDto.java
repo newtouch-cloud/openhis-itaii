@@ -22,6 +22,11 @@ public class AdviceSaveDto {
     /** 医嘱类型 */
     private Integer adviceType; // 1:药品 , 2: 耗材 , 3:项目
 
+    /**
+     * 医嘱详细分类
+     */
+    private String categoryCode;
+
     /** 执行次数 */
     private Integer executeNum; // 当医嘱类型为药品时,选填
 
@@ -68,9 +73,13 @@ public class AdviceSaveDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long practitionerId;
 
-    /** 所属位置 */
+    /** 请求发起的位置 */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
+
+    /** 发放位置 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long performLocation;
 
     /** 所属科室 */
     @JsonSerialize(using = ToStringSerializer.class)
@@ -128,6 +137,7 @@ public class AdviceSaveDto {
         this.categoryEnum = EncounterClass.AMB.getValue();
         this.therapyEnum = TherapyTimeType.TEMPORARY.getValue();
         this.practitionerId = SecurityUtils.getLoginUser().getPractitionerId();
+        this.orgId = SecurityUtils.getLoginUser().getOrgId(); // 开发人科室
     }
 
 }

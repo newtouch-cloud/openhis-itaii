@@ -19,7 +19,9 @@ import com.core.common.core.domain.R;
 import com.core.common.utils.AssignSeqUtil;
 import com.core.common.utils.MessageUtils;
 import com.openhis.administration.domain.ChargeItem;
+import com.openhis.administration.domain.OrganizationLocation;
 import com.openhis.administration.service.IChargeItemService;
+import com.openhis.administration.service.IOrganizationLocationService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.*;
@@ -59,6 +61,9 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
     @Resource
     IChargeItemService iChargeItemService;
 
+    @Resource
+    IOrganizationLocationService iOrganizationLocationService;
+
     /**
      * 查询医嘱信息
      *
@@ -78,7 +83,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
         IPage<AdviceBaseDto> adviceBaseInfo =
             doctorStationAdviceAppMapper.getAdviceBaseInfo(new Page<>(pageNo, pageSize),
                 CommonConstants.TableName.MED_MEDICATION_DEFINITION, CommonConstants.TableName.ADM_DEVICE_DEFINITION,
-                CommonConstants.TableName.WOR_ACTIVITY_DEFINITION, queryWrapper);
+                CommonConstants.TableName.WOR_ACTIVITY_DEFINITION, DeviceCategory.SINGLE_USE.getInfo(), queryWrapper);
         List<AdviceBaseDto> adviceBaseDtoList = adviceBaseInfo.getRecords();
         // 医嘱定义ID集合
         List<Long> adviceDefinitionIdList =
@@ -203,7 +208,14 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             medicationRequest.setPatientId(adviceSaveDto.getPatientId());
             medicationRequest.setPractitionerId(adviceSaveDto.getPractitionerId());
             medicationRequest.setOrgId(adviceSaveDto.getOrgId());
-            medicationRequest.setLocationId(adviceSaveDto.getLocationId());
+            // 查询机构位置关系
+            OrganizationLocation orgLocByOrgIdAndCategoryCode = iOrganizationLocationService
+                .getOrgLocByOrgIdAndCategoryCode(adviceSaveDto.getOrgId(), adviceSaveDto.getCategoryCode());
+            if (orgLocByOrgIdAndCategoryCode != null) {
+                // 发放药房
+                medicationRequest.setPerformLocation(orgLocByOrgIdAndCategoryCode.getDefLocationId());
+            }
+            // medicationRequest.setLocationId(adviceSaveDto.getLocationId()); // 请求发起的位置
             medicationRequest.setEncounterId(adviceSaveDto.getEncounterId());
             medicationRequest.setConditionId(adviceSaveDto.getConditionId()); // 诊断id
             medicationRequest.setTherapyEnum(adviceSaveDto.getTherapyEnum());
@@ -235,7 +247,14 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             deviceRequest.setPatientId(adviceSaveDto.getPatientId());
             deviceRequest.setRequesterId(adviceSaveDto.getPractitionerId());
             deviceRequest.setOrgId(adviceSaveDto.getOrgId());
-            deviceRequest.setLocationId(adviceSaveDto.getLocationId());
+            // 查询机构位置关系
+            OrganizationLocation orgLocByOrgIdAndCategoryCode = iOrganizationLocationService
+                .getOrgLocByOrgIdAndCategoryCode(adviceSaveDto.getOrgId(), adviceSaveDto.getCategoryCode());
+            if (orgLocByOrgIdAndCategoryCode != null) {
+                // 发放耗材房
+                deviceRequest.setPerformLocation(orgLocByOrgIdAndCategoryCode.getDefLocationId());
+            }
+            // deviceRequest.setLocationId(adviceSaveDto.getLocationId()); 请求发起的位置
             deviceRequest.setEncounterId(adviceSaveDto.getEncounterId());
             // deviceRequest.setPackageId(adviceSaveDto.getPackageId());
             // deviceRequest.setActivityId(adviceSaveDto.getActivityId());

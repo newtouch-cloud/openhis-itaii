@@ -79,7 +79,8 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
         bizUser.setStatus(userAndPractitionerDto.getStatus()); // 状态
         bizUser.setRemark(userAndPractitionerDto.getRemark()); // 备注
         iBizUserService.save(bizUser);
-        Long userId = bizUser.getUserId(); // 用户id
+        Long userId =
+            iBizUserService.getOne(new LambdaQueryWrapper<BizUser>().eq(BizUser::getUserName, userName)).getUserId(); // 用户id
         // 新增 sys_user_role
         List<Long> roleIds = userAndPractitionerDto.getRoleIds();
         BizUserRole bizUserRole;
@@ -135,6 +136,7 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
         // 构建查询条件
         QueryWrapper<UserAndPractitionerDto> queryWrapper = HisQueryUtils.buildQueryWrapper(userAndPractitionerDto,
             searchKey, new HashSet<>(Arrays.asList("user_name", "nick_name", "py_str", "wb_str")), null);
+        queryWrapper.orderByDesc("user_id");
         IPage<UserAndPractitionerDto> userPractitionerPage =
             practitionerAppAppMapper.getUserPractitionerPage(new Page<>(pageNo, pageSize), queryWrapper);
         List<UserAndPractitionerDto> records = userPractitionerPage.getRecords();

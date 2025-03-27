@@ -82,8 +82,13 @@ public class MedicationRequest extends HisBaseEntity {
     /** 开方医生 */
     private Long practitionerId;
 
-    /** 发放药房 */
+    /** 所在位置 */
     private Long locationId;
+
+    /**
+     * 发放药房
+     */
+    private Long performLocation;
 
     /** 发放科室 */
     private Long orgId;
