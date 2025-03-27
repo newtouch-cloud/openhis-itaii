@@ -15,7 +15,7 @@
             <div class="head-container">
                <el-tree
                   :data="deptOptions"
-                  :props="{ label: 'name', children: 'children' }"
+                  :props="{ label: 'label', children: 'children' }"
                   :expand-on-click-node="false"
                   :filter-node-method="filterNode"
                   ref="deptTreeRef"
@@ -108,7 +108,7 @@
                      v-hasPermi="['system:user:remove']"
                   >删除</el-button>
                </el-col>
-               <!-- <el-col :span="1.5">
+               <el-col :span="1.5">
                   <el-button
                      type="info"
                      plain
@@ -125,7 +125,7 @@
                      @click="handleExport"
                      v-hasPermi="['system:user:export']"
                   >导出</el-button>
-               </el-col> -->
+               </el-col>
                <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
             </el-row>
 
@@ -171,7 +171,7 @@
             <pagination
                v-show="total > 0"
                :total="total"
-               v-model:page="queryParams.pageNo"
+               v-model:page="queryParams.pageNum"
                v-model:limit="queryParams.pageSize"
                @pagination="getList"
             />
@@ -188,11 +188,11 @@
                   </el-form-item>
                </el-col>
                <el-col :span="12">
-                  <el-form-item label="归属部门" prop="orgId">
+                  <el-form-item label="归属部门" prop="deptId">
                      <el-tree-select
-                        v-model="form.orgId"
+                        v-model="form.deptId"
                         :data="deptOptions"
-                        :props="{ value: 'id', label: 'name', children: 'children' }"
+                        :props="{ value: 'id', label: 'label', children: 'children' }"
                         value-key="id"
                         placeholder="请选择归属部门"
                         check-strictly
@@ -251,31 +251,21 @@
             </el-row>
             <el-row>
                <el-col :span="12">
-                  <el-form-item label="出生日期">
-                     <el-date-picker
-                        v-model="form.birthDate"
-                        type="date"
-                        placeholder="选择日期"
-                        format="YYYY-MM-DD"
-                        value-format="YYYY-MM-DD"
-                     />
+                  <el-form-item label="岗位">
+                     <el-select v-model="form.postIds" multiple placeholder="请选择">
+                        <el-option
+                           v-for="item in postOptions"
+                           :key="item.postId"
+                           :label="item.postName"
+                           :value="item.postId"
+                           :disabled="item.status == 1"
+                        ></el-option>
+                     </el-select>
                   </el-form-item>
                </el-col>
-               <el-col :span="12">
-                  <el-form-item label="地址" prop="address">
-                     <el-input v-model="form.address" placeholder="请输入地址" maxlength="30" />
-                  </el-form-item>
-               </el-col>
-               <el-col :span="12">
-                  <el-form-item label="医保码" prop="ybNo">
-                     <el-input v-model="form.ybNo" placeholder="请输入医保码" maxlength="30" />
-                  </el-form-item>
-               </el-col>
-            </el-row>
-            <el-row>
                <el-col :span="12">
                   <el-form-item label="角色">
-                     <el-select v-model="form.roleIds" multiple placeholder="请选择" @change="handleRoleChange">
+                     <el-select v-model="form.roleIds" multiple placeholder="请选择">
                         <el-option
                            v-for="item in roleOptions"
                            :key="item.roleId"
@@ -284,48 +274,6 @@
                            :disabled="item.status == 1"
                         ></el-option>
                      </el-select>
-                  </el-form-item>
-               </el-col>
-            </el-row>
-            <div v-if="form.roleIds.length > 0">
-               角色信息
-            </div>
-            <el-row v-for="(item, index) in form.roleIds" :key="index">
-               <el-col :span="12">
-                  <el-form-item label="角色" :prop="`childList.${index}.roleCode`" :rules="data.rules.childList[index].roleCode">
-                     <el-select v-model="form.childList[index].roleCode" placeholder="请选择">
-                        <el-option
-                           v-for="item in selectRole"
-                           :key="item.roleKey"
-                           :label="item.roleName"
-                           :value="item.roleKey"
-                           :disabled="item.status == 1"
-                        ></el-option>
-                     </el-select>
-                  </el-form-item>
-               </el-col>
-               <el-col :span="12">
-                  <el-form-item label="归属部门" :prop="`childList.${index}.orgId`" :rules="data.rules.childList[index].orgId">
-                     <el-tree-select
-                        v-model="form.childList[index].orgId"
-                        :data="deptOptions"
-                        :props="{ value: 'id', label: 'name', children: 'children' }"
-                        value-key="id"
-                        placeholder="请选择归属部门"
-                        check-strictly
-                     />
-                  </el-form-item>
-               </el-col>
-               <el-col :span="12">
-                  <el-form-item label="位置" :prop="`childList.${index}.locationId`" :rules="data.rules.childList[index].locationId">
-                     <el-tree-select
-                        v-model="form.childList[index].locationId"
-                        :data="locationOptions"
-                        :props="{ value: 'id', label: 'name', children: 'children' }"
-                        value-key="id"
-                        placeholder="请选择位置"
-                        check-strictly
-                     />
                   </el-form-item>
                </el-col>
             </el-row>
@@ -383,7 +331,7 @@
 
 <script setup name="User">
 import { getToken } from "@/utils/auth";
-import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, getRole, updateUser, addUser, deptTreeSelect, locationTreeSelect } from "@/api/system/user";
+import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user copy";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -401,11 +349,9 @@ const title = ref("");
 const dateRange = ref([]);
 const deptName = ref("");
 const deptOptions = ref(undefined);
-const locationOptions = ref([]);
 const initPassword = ref(undefined);
 const postOptions = ref([]);
 const roleOptions = ref([]);
-const selectRole = ref([]);
 /*** 用户导入参数 */
 const upload = reactive({
   // 是否显示弹出层（用户导入）
@@ -435,20 +381,19 @@ const columns = ref([
 const data = reactive({
   form: {},
   queryParams: {
-    pageNo: 1,
+    pageNum: 1,
     pageSize: 10,
     userName: undefined,
     phonenumber: undefined,
     status: undefined,
-    orgId: undefined
+    deptId: undefined
   },
   rules: {
     userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
     nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
     password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }, { pattern: /^[^<>"'|\\]+$/, message: "不能包含非法字符：< > \" ' \\\ |", trigger: "blur" }],
     email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }],
-    childList: []
+    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
   }
 });
 
@@ -466,13 +411,7 @@ watch(deptName, val => {
 /** 查询部门下拉树结构 */
 function getDeptTree() {
   deptTreeSelect().then(response => {
-    deptOptions.value = response.data.records;
-  });
-};
-/** 查询位置下拉树结构 */
-function getLocationTree() {
-   locationTreeSelect().then(response => {
-      locationOptions.value = response.data.records;
+    deptOptions.value = response.data;
   });
 };
 /** 查询用户列表 */
@@ -480,25 +419,25 @@ function getList() {
   loading.value = true;
   listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false;
-    userList.value = res.data.records
-    total.value = res.data.total;
+    userList.value = res.rows;
+    total.value = res.total;
   });
-}
+};
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.orgId = data.id;
+  queryParams.value.deptId = data.id;
   handleQuery();
 };
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.pageNo = 1;
+  queryParams.value.pageNum = 1;
   getList();
 };
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
-  queryParams.value.orgId = undefined;
+  queryParams.value.deptId = undefined;
   proxy.$refs.deptTreeRef.setCurrentKey(null);
   handleQuery();
 };
@@ -520,7 +459,6 @@ function handleExport() {
 };
 /** 用户状态修改  */
 function handleStatusChange(row) {
-   console.log(row)
   let text = row.status === "0" ? "启用" : "停用";
   proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
     return changeUserStatus(row.userId, row.status);
@@ -603,7 +541,7 @@ function submitFileForm() {
 function reset() {
   form.value = {
     userId: undefined,
-    orgId: undefined,
+    deptId: undefined,
     userName: undefined,
     nickName: undefined,
     password: undefined,
@@ -612,10 +550,9 @@ function reset() {
     sex: undefined,
     status: "0",
     remark: undefined,
-    roleIds: [],
-    childList:[]
+    postIds: [],
+    roleIds: []
   };
-  data.rules.childList = []; // 清空现有的校验规则
   proxy.resetForm("userRef");
 };
 /** 取消按钮 */
@@ -626,7 +563,7 @@ function cancel() {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
-  getRole().then(response => {
+  getUser().then(response => {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
     open.value = true;
@@ -639,88 +576,19 @@ function handleUpdate(row) {
   reset();
   const userId = row.userId || ids.value;
   getUser(userId).then(response => {
-   selectRole.value = []
     form.value = response.data;
-    form.value.roleIds = response.data.childList.map(res => res.roleId);
-    response.data.childList.forEach(res => {
-      const role = roleOptions.value.find(role => role.roleId === res.roleId);
-      if (role) {
-         // 将角色对象插入到 selectRole 数组中
-         selectRole.value.push(role);
-      }
-    })
-
-   data.rules.childList = form.value.childList.map((_, index) => ({
-      roleCode: [
-        { required: true, message: "请选择角色", trigger: "change" },
-        { validator: validateUniqueRole, trigger: "change" }
-      ],
-      orgId: [
-        { required: true, message: "请选择归属部门", trigger: "change" }
-      ],
-      locationId: [
-        { required: true, message: "请选择位置", trigger: "change" }
-      ]
-   }));
-
+    postOptions.value = response.posts;
+    roleOptions.value = response.roles;
+    form.value.postIds = response.postIds;
+    form.value.roleIds = response.roleIds;
     open.value = true;
     title.value = "修改用户";
     form.password = "";
   });
-  getRole().then(response => {
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-  });
 };
-
-function handleRoleChange(e) {
-  selectRole.value = [];
-  form.value.childList = []
-  data.rules.childList = []; // 清空现有的校验规则
-  console.log(e)
-   // 遍历选中的角色 ID 数组
-   e.forEach(roleId => {
-      // 从 roleOptions 中找到对应的角色对象
-      const role = roleOptions.value.find(role => role.roleId === roleId);
-      if (role) {
-         // 将角色对象插入到 selectRole 数组中
-         selectRole.value.push(role);
-         form.value.childList.push({
-            roleCode: '', // 确保 role 对象中有 roleCode 属性
-            orgId: undefined,       // 初始化 orgId
-            locationId: undefined   // 初始化 locationId
-         });
-         data.rules.childList.push({
-            roleCode: [
-               { required: true, message: "请选择角色", trigger: "change" },
-               { validator: validateUniqueRole, trigger: "change" }
-            ],
-            orgId: [
-               { required: true, message: "请选择归属部门", trigger: "change" }
-            ],
-            locationId: [
-               { required: true, message: "请选择位置", trigger: "change" }
-            ]
-         });
-      }
-   });
-}
-
-// 自定义校验规则：确保 roleCode 不重复
-function validateUniqueRole(rule, value, callback) {
-  const roleCodes = form.value.childList.map(child => child.roleCode);
-  const duplicates = roleCodes.filter((item, index) => roleCodes.indexOf(item) !== index);
-  if (duplicates.length > 0) {
-    callback(new Error("角色不能重复"));
-  } else {
-    callback();
-  }
-}
-
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
-   console.log(form.value)
     if (valid) {
       if (form.value.userId != undefined) {
         updateUser(form.value).then(response => {
@@ -740,6 +608,5 @@ function submitForm() {
 };
 
 getDeptTree();
-getLocationTree()
 getList();
 </script>
