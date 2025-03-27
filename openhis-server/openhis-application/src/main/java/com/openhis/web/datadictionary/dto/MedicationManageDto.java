@@ -142,7 +142,9 @@ public class MedicationManageDto {
     private String merchandiseWbStr;
 
     /** 药品单位 */
+    @Dict(dictCode = "unit_code")
     private String unitCode;
+    private String unitCode_dictText;
 
     /** 最小单位 */
     @Dict(dictCode = "unit_code")
@@ -156,8 +158,9 @@ public class MedicationManageDto {
     private BigDecimal partPercent;
 
     /** 剂量形式 */
+    @Dict(dictCode = "dose_from_code")
     private Integer doseFrom;
-    private String doseFrom_enumText;
+    private String doseFrom_dictText;
 
     /** 批准文号 */
     private String approvalNumber;
@@ -236,11 +239,6 @@ public class MedicationManageDto {
     /** 生产厂家名称 */
     private String manufacturerName;
 
-    /** 常规单位 */
-    @Dict(dictCode = "unit_code")
-    private String baseUnitCode;
-    private String baseUnitCode_dictText;
-
     /** 当前库存数量(常规单位) */
     private String baseQuantity;
 
@@ -256,5 +254,12 @@ public class MedicationManageDto {
     /** 单次最大用药频次 */
     private String maxRateCode;
 
+    /** 医保类别 */
+    private String ybType;
+
+    /** 财务类别 */
+    @Dict(dictCode = "fin_type_code")
+    private String typeCode;
+    private String typeCode_dictText;
 
 }

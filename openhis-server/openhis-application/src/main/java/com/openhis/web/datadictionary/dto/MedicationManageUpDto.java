@@ -121,7 +121,9 @@ public class MedicationManageUpDto {
     private String merchandiseWbStr;
 
     /** 药品单位 */
+    @Dict(dictCode = "unit_code")
     private String unitCode;
+    private String unitCode_dictText;
 
     /** 最小单位 */
     private String minUnitCode;
@@ -136,7 +138,9 @@ public class MedicationManageUpDto {
     private BigDecimal partPercent;
 
     /** 剂量形式 */
+    @Dict(dictCode = "dose_from_code")
     private Integer doseFrom;
+    private String doseFrom_dictText;
 
     /** 批准文号 */
     private String approvalNumber;
@@ -194,8 +198,10 @@ public class MedicationManageUpDto {
     /** 医保类别 */
     private String ybType;
 
-    /** 最小费用 */
-    private String minimalFee;
+    /** 财务类别 */
+    @Dict(dictCode = "fin_type_code")
+    private String typeCode;
+    private String typeCode_dictText;
 
     /** 单次最小用药频次 */
     private String minRateCode;
@@ -205,6 +211,7 @@ public class MedicationManageUpDto {
 
     /** 药品状态 */
     private Integer statusEnum;
+    private String statusEnum_enumText;
 
     /** 拆分属性 */
     private Integer partAttributeEnum;
@@ -226,6 +233,8 @@ public class MedicationManageUpDto {
 
     /** 用量限定 */
     private BigDecimal usageLimit;
+
+
 
     /** 系统类别???? */
 }

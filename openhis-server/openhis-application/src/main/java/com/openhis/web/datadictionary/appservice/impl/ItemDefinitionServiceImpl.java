@@ -3,6 +3,8 @@ package com.openhis.web.datadictionary.appservice.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.openhis.common.enums.ConditionCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,7 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
     @Autowired
     IChargeItemDefDetailService chargeItemDefDetailService;
 
+
     /**
      * 添加项目定价
      *
@@ -52,7 +55,7 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
             // .setOrgId(SecurityUtils.getLoginUser().getOrgId())
             .setOrgId(1l)// todo 没数据先写死
             // 财务类别
-            .setTypeCode(medicationManageUpDto.getMinimalFee())
+            .setTypeCode(medicationManageUpDto.getTypeCode())
             // 医保类别
             .setYbType(medicationManageUpDto.getYbType()).setConditionFlag(Whether.YES.getValue())
             .setPrice(medicationManageUpDto.getRetailPrice());
@@ -62,17 +65,17 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
             List<ChargeItemDefDetail> shargeItemDefDetails = new ArrayList<>();
             ChargeItemDefDetail chargeItemDefDetail1 = new ChargeItemDefDetail();
             chargeItemDefDetail1.setDefinitionId(chargeItemDefinition.getId())
-                // 单位+批次（unit,pici） 用,符号拼装
-                .setConditionCode(StringUtils.joinStrings(
-                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber()))
+                // 条件:采购
+                .setConditionCode(ConditionCode.PROCUREMENT.getCode())
                 // 购入价
                 .setAmount(medicationManageUpDto.getPurchasePrice());
 
             ChargeItemDefDetail chargeItemDefDetail2 = new ChargeItemDefDetail();
             chargeItemDefDetail2.setDefinitionId(chargeItemDefinition.getId())
-                // 单位+批次（unit,pici） 用,符号拼装
-                .setConditionCode(StringUtils.joinStrings(
-                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber()))
+                // 条件:单位
+                .setConditionCode(ConditionCode.UNIT.getCode())
+                //单位枚举
+                .setConditionValue(medicationManageUpDto.getUnitCode())
                 // 零售价
                 .setAmount(medicationManageUpDto.getRetailPrice());
 
@@ -80,9 +83,8 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
 
             ChargeItemDefDetail chargeItemDefDetail3 = new ChargeItemDefDetail();
             chargeItemDefDetail3.setDefinitionId(chargeItemDefinition.getId())
-                // 单位+批次（unit,pici） 用,符号拼装
-                .setConditionCode(StringUtils.joinStrings(
-                    medicationManageUpDto.getDoseUnitCode_dictText() + "," + medicationManageUpDto.getLotNumber()))
+                // 条件:限制
+                .setConditionCode(ConditionCode.LIMIT.getCode())
                 // 最高零售价
                 .setAmount(medicationManageUpDto.getMaximumRetailPrice());
 
@@ -92,6 +94,24 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
         }
 
         return false;
+    }
+
+    /**
+     * 修改项目定价表
+     *
+     * @param chargeItemDefinition 项目定价表信息
+     */
+    @Override
+    public boolean updateItem(ChargeItemDefinition chargeItemDefinition) {
+
+        // 关联项目和代码位为key，更新表
+        LambdaUpdateWrapper<ChargeItemDefinition> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(ChargeItemDefinition::getInstanceId, chargeItemDefinition.getInstanceId());
+        updateWrapper.eq(ChargeItemDefinition::getInstanceTable, chargeItemDefinition.getInstanceTable())
+            .set(ChargeItemDefinition::getYbType, chargeItemDefinition.getYbType())
+            .set(ChargeItemDefinition::getTypeCode, chargeItemDefinition.getTypeCode());
+
+        return chargeItemDefinitionService.update(null, updateWrapper);
     }
 
 }
