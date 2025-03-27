@@ -197,13 +197,13 @@
             label="医保对码标志"
             align="center"
             key="ybMatchFlag"
-            prop="ybMatchFlag"
+            prop="ybMatchFlag_enumText"
           />
           <el-table-column
-            label="停用"
+            label="状态"
             align="center"
             key="statusEnum"
-            prop="statusEnum"
+            prop="statusEnum_enumText"
             width="160"
           />
           <el-table-column

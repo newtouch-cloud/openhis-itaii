@@ -34,14 +34,15 @@
             </el-form-item>
           </el-col> -->
           <el-col :span="8">
-            <el-form-item label="地点" prop="locationId">
+            <el-form-item label="器材分类" prop="categoryEnum">
               <el-tree-select
-                v-model="form.locationId"
-                :data="locationOptions"
-                :props="{ value: 'id', label: 'name', children: 'children' }"
-                value-key="id"
-                placeholder="请选择地点"
+                v-model="form.categoryEnum"
+                :data="deviceCategories"
+                :props="{ value: 'value', label: 'info', children: 'children' }"
+                value-key="value"
+                placeholder=""
                 check-strictly
+                disabled
               />
             </el-form-item>
           </el-col>
@@ -52,18 +53,7 @@
               <el-input v-model="form.wbStr" placeholder="" />
             </el-form-item>
           </el-col> -->
-          <el-col :span="8">
-            <el-form-item label="器材分类" prop="categoryEnum">
-              <el-tree-select
-                v-model="form.categoryEnum"
-                :data="deviceCategories"
-                :props="{ value: 'value', label: 'info', children: 'children' }"
-                value-key="value"
-                placeholder=""
-                check-strictly
-              />
-            </el-form-item>
-          </el-col>
+
           <el-col :span="8">
             <el-form-item label="器材种类" prop="typeCode">
               <el-select v-model="form.typeCode" placeholder="请选择">
@@ -88,6 +78,18 @@
               />
             </el-form-item>
           </el-col>
+          <el-col :span="8">
+            <el-form-item label="地点" prop="locationId">
+              <el-tree-select
+                v-model="form.locationId"
+                :data="locationOptions"
+                :props="{ value: 'id', label: 'name', children: 'children' }"
+                value-key="id"
+                placeholder="请选择地点"
+                check-strictly
+              />
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
@@ -103,8 +105,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="包装规格" prop="size">
-              <el-input v-model="form.size" placeholder="" />
+            <el-form-item label="销售单位" prop="salesUnitCode">
+              <el-select v-model="form.salesUnitCode" placeholder="请选择">
+                <el-option
+                  v-for="dict in unit_code"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -122,6 +131,11 @@
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
+            <el-form-item label="包装规格" prop="size">
+              <el-input v-model="form.size" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="拆零比" prop="partPercent">
               <el-input v-model="form.partPercent" placeholder="" />
             </el-form-item>
@@ -131,51 +145,33 @@
               <el-input v-model="form.modelNumber" placeholder="" />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="高值器材标志" prop="hvcmFlag">
-              <!-- <el-input
-                v-model="form.hvcmFlag"
-                placeholder=""
-                :disabled="form.id != undefined"
-              /> -->
-              <el-checkbox v-model="form.hvcmFlag"></el-checkbox>
-            </el-form-item>
-          </el-col>
         </el-row>
         <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="销售单位" prop="salesUnitCode">
-              <el-select v-model="form.salesUnitCode" placeholder="请选择">
-                <el-option
-                  v-for="dict in unit_code"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
           <el-col :span="8">
             <el-form-item label="批准文号" prop="approvalNumber">
               <el-input v-model="form.approvalNumber" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="医保标记" prop="ybFlag">
-              <!-- <el-input v-model="form.ybFlag" placeholder="" /> -->
-              <el-checkbox v-model="form.ybFlag"></el-checkbox>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <el-col :span="8">
             <el-form-item label="医保编码" prop="ybNo">
               <el-input v-model="form.ybNo" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="医保对码标记" prop="ybMatchFlag">
-              <el-checkbox v-model="form.ybMatchFlag"></el-checkbox>
+            <el-form-item label="器材版本" prop="version">
+              <el-input v-model="form.version" placeholder="" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="主要成分" prop="substanceText">
+              <el-input v-model="form.substanceText" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="适用范围" prop="jurisdiction">
+              <el-input v-model="form.jurisdiction" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -216,32 +212,77 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="适用范围" prop="jurisdiction">
-              <el-input v-model="form.jurisdiction" placeholder="" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <!-- <el-col :span="8">
-            <el-form-item label="执行科室" prop="ruleId">
-              <el-input v-model="form.ruleId" placeholder="" />
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="8">
-            <el-form-item label="器材版本" prop="version">
-              <el-input v-model="form.version" placeholder="" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="主要成分" prop="substanceText">
-              <el-input v-model="form.substanceText" placeholder="" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <el-col :span="8">
             <el-form-item label="过敏标记" prop="allergenFlag">
               <el-checkbox v-model="form.allergenFlag"></el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="医保标记" prop="ybFlag">
+              <el-checkbox v-model="form.ybFlag"></el-checkbox>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="医保对码标记" prop="ybMatchFlag">
+              <el-checkbox v-model="form.ybMatchFlag"></el-checkbox>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="高值器材标志" prop="hvcmFlag">
+              <el-checkbox v-model="form.hvcmFlag"></el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="财务统计类型" prop="minimalFee">
+              <el-select
+                v-model="form.minimalFee"
+                clearable
+                :disabled="form.id != undefined"
+              >
+                <el-option
+                  v-for="category in fin_type_code"
+                  :key="category.value"
+                  :label="category.label"
+                  :value="category.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="医保类别" prop="ybType">
+              <el-select
+                v-model="form.ybType"
+                placeholder="医保类别"
+                clearable
+                style="width: 240px"
+              >
+                <el-option
+                  v-for="dict in yb_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="购入价" prop="purchasePrice">
+              <el-input v-model="form.purchasePrice" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="零售价" prop="retailPrice">
+              <el-input v-model="form.retailPrice" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="最高零售价" prop="maximumRetailPrice">
+              <el-input v-model="form.maximumRetailPrice" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -374,6 +415,10 @@ const props = defineProps({
     type: Object,
     required: false,
   },
+  currentCategoryEnum: {
+    type: String,
+    required: true,
+  },
 });
 
 // 显示弹框
@@ -385,6 +430,7 @@ function show() {
   title.value = props.title;
   deviceCategories.value = props.deviceCategories;
   statusFlagOptions.value = props.statusFlagOptions;
+  form.value.categoryEnum = props.currentCategoryEnum;
   console.log(props, "22222", title.value, props.deviceCategories);
   getDeptTree();
   getLocationTree();
@@ -453,6 +499,11 @@ function reset() {
     allergenFlag: undefined, // 过敏标记
     orgId: undefined, // 科室ID
     locationId: undefined, // 地点ID
+    ybType: undefined, // 医保类型
+    minimalFee: undefined, // 最小收费
+    purchasePrice: undefined, // 购入价
+    retailPrice: undefined, // 零售价
+    maximumRetailPrice: undefined, // 最高零售价
   };
   proxy.resetForm("medicationRef");
 }

@@ -383,6 +383,7 @@
       ref="deviceRef"
       :title="title"
       :item="currentData"
+      :currentCategoryEnum="currentCategoryEnum"
       :deviceCategories="deviceCategories"
       :statusFlagOptions="statusFlagOptions"
       @submit="getList()"
@@ -430,6 +431,7 @@ const exeOrganizations = ref(undefined);
 const currentData = ref({});
 // 使用 ref 定义当前查看器材数据
 const viewData = ref({});
+const currentCategoryEnum = ref("");
 
 const data = reactive({
   form: {},
@@ -481,6 +483,7 @@ function getList() {
 /** 节点单击事件 */
 function handleNodeClick(data) {
   queryParams.value.categoryEnum = data.value;
+  currentCategoryEnum.value = data.value;
   handleQuery();
 }
 /** 搜索按钮操作 */
@@ -549,6 +552,9 @@ function importTemplate() {
 
 /** 打开新增弹窗 */
 function openAddDevice() {
+  if (!currentCategoryEnum.value) {
+    return proxy.$modal.msgError("请选择器材目录分类");
+  }
   console.log("打开新增弹窗");
   title.value = "新增";
   nextTick(() => {

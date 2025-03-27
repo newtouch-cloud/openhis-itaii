@@ -411,17 +411,17 @@
             width="90"
           />
           <el-table-column
-            label="药品单位"
+            label="包装单位"
             align="center"
-            key="unitCode"
-            prop="unitCode"
+            key="unitCode_dictText"
+            prop="unitCode_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="财务统计类型"
             align="center"
-            key="minUnitCode_dictText"
-            prop="minUnitCode_dictText"
+            key="typeCode_dictText"
+            prop="typeCode_dictText"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -433,13 +433,13 @@
             :show-overflow-tooltip="true"
             width="110"
           />
-          <el-table-column
+          <!-- <el-table-column
             label="成分"
             align="center"
             key="ingredient"
             prop="ingredient"
             :show-overflow-tooltip="true"
-          />
+          /> -->
           <el-table-column
             label="拆零比"
             align="center"
@@ -451,8 +451,8 @@
           <el-table-column
             label="剂量形式"
             align="center"
-            key="doseFrom"
-            prop="doseFrom"
+            key="doseFrom_dictText"
+            prop="doseFrom_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -501,18 +501,18 @@
             :show-overflow-tooltip="true"
             width="90"
           />
-          <el-table-column
+          <!-- <el-table-column
             label="生产厂家"
             align="center"
             key="manufacturerId"
             prop="manufacturerId"
             :show-overflow-tooltip="true"
-          />
+          /> -->
           <el-table-column
             label="生产厂家名称"
             align="center"
-            key="manufacturerName"
-            prop="manufacturerName"
+            key="manufacturerText"
+            prop="manufacturerText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -589,8 +589,8 @@
           <el-table-column
             label="是否自制"
             align="center"
-            key=" selfFlag_enumText"
-            prop=" selfFlag_enumText"
+            key="selfFlag_enumText"
+            prop="selfFlag_enumText"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -607,14 +607,6 @@
             align="center"
             key="basicFlag_enumText"
             prop="basicFlag_enumText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="常规单位"
-            align="center"
-            key="baseUnitCode"
-            prop="baseUnitCode"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -685,6 +677,8 @@
       :status="statusFlagOptions"
       :supplierListOptions="supplierListOptions"
       :statusRestrictedOptions="statusRestrictedOptions"
+      :currentCategoryEnum="currentCategoryEnum"
+      :partAttributeEnumOptions="partAttributeEnumOptions"
       @submit="submitForm"
     />
     <medicine-view-dialog
@@ -731,6 +725,8 @@ const domainEnumOptions = ref(undefined);
 const supplierListOptions = ref(undefined);
 const statusWeatherOption = ref(undefined);
 const statusRestrictedOptions = ref(undefined);
+const currentCategoryEnum = ref("");
+const partAttributeEnumOptions = ref(undefined);
 // 使用 ref 定义当前药品数据
 const currentData = ref({});
 // 使用 ref 定义当前查看药品数据
@@ -778,6 +774,7 @@ function getMedicationCategoryList() {
     supplierListOptions.value = response.data.supplierListOptions;
     statusWeatherOption.value = response.data.statusWeatherOptions;
     statusRestrictedOptions.value = response.data.statusRestrictedOptions;
+    partAttributeEnumOptions.value = response.data.partAttributeEnumOptions;
   });
 }
 /** 查询病种目录列表 */
@@ -794,6 +791,7 @@ function getList() {
 /** 节点单击事件 */
 function handleNodeClick(data) {
   queryParams.value.categoryCode = data.value;
+  currentCategoryEnum.value = data.value;
   handleQuery();
 }
 /** 搜索按钮操作 */
@@ -876,6 +874,10 @@ function cancel() {
 }
 /** 打开新增弹窗 */
 function openAddMedicine() {
+  console.log(currentCategoryEnum.value, "currentCategoryEnum");
+  if (!currentCategoryEnum.value) {
+    return proxy.$modal.msgError("请选择药品目录分类");
+  }
   proxy.$refs["medicineRef"].show();
 }
 /** 打开编辑弹窗 */
@@ -883,13 +885,14 @@ function openEditMedicine(row) {
   getMedicationOne(row.id).then((response) => {
     console.log(response, "responsebbbb", row.id);
     currentData.value = response.data;
+    nextTick(() => {
+      proxy.$refs["medicineRef"].edit();
+    });
     //  getList();
   });
   console.log(currentData.value, "currentData");
   // 确保子组件已经接收到最新的 props
-  nextTick(() => {
-    proxy.$refs["medicineRef"].edit();
-  });
+
   // proxy.$refs["medicineRef"].edit();
 }
 /** 打开查看弹窗 */
@@ -928,11 +931,9 @@ function submitForm(formData) {
   formData.antibioticFlag == true
     ? (formData.antibioticFlag = 1)
     : (formData.antibioticFlag = 0); //抗生素标志
-  formData.selfFlag == true
-    ? (formData.selfFlag = 1)
-    : (formData.selfFlag = 0); //自制标志
+  formData.selfFlag == true ? (formData.selfFlag = 1) : (formData.selfFlag = 0); //自制标志
   formData.status == true ? (formData.status = 1) : (formData.status = 0); //启用状态
-console.log(formData, "submitForm");
+  console.log(formData, "submitForm");
   if (formData.id != undefined) {
     editMedication(formData).then((response) => {
       proxy.$modal.msgSuccess("修改成功");

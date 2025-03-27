@@ -77,11 +77,7 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item label="药品分类" prop="categoryCode">
-                  <el-select
-                    v-model="form.categoryCode"
-                    clearable
-                    :disabled="form.id != undefined"
-                  >
+                  <el-select v-model="form.categoryCode" clearable disabled>
                     <el-option
                       v-for="category in med_category_code"
                       :key="category.value"
@@ -142,9 +138,9 @@
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="财务统计类型" prop="minimalFee">
+                <el-form-item label="财务统计类型" prop="typeCode">
                   <el-select
-                    v-model="form.minimalFee"
+                    v-model="form.typeCode"
                     clearable
                     :disabled="form.id != undefined"
                   >
@@ -310,7 +306,19 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item label="剂量形式" prop="doseFrom">
-                  <el-input v-model="form.doseFrom" placeholder="" />
+                  <!-- <el-input v-model="form.doseFrom" placeholder="" /> -->
+                  <el-select
+                    v-model="form.doseFrom"
+                    clearable
+                    :disabled="form.id != undefined"
+                  >
+                    <el-option
+                      v-for="category in dose_from_code"
+                      :key="category.value"
+                      :label="category.label"
+                      :value="category.value"
+                    />
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
@@ -405,9 +413,9 @@
                     :disabled="form.id != undefined"
                   >
                     <el-option
-                      v-for="category in unit_code"
+                      v-for="category in partAttributeEnumOptions"
                       :key="category.value"
-                      :label="category.label"
+                      :label="category.info"
                       :value="category.value"
                     />
                   </el-select>
@@ -663,6 +671,7 @@
 
 <script setup name="MedicineDialog">
 import { deptTreeSelect, locationTreeSelect } from "./medicine";
+import moment from 'moment'
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -682,6 +691,7 @@ const {
   fin_type_code,
   antibiotic_type_code,
   ddd_code,
+  dose_from_code,
 } = proxy.useDict(
   "med_category_code",
   "system_categories",
@@ -697,7 +707,8 @@ const {
   "method_code",
   "fin_type_code",
   "antibiotic_type_code",
-  "ddd_code"
+  "ddd_code",
+  "dose_from_code"
 );
 
 const title = ref("");
@@ -709,6 +720,7 @@ const deptOptions = ref(undefined); // 部门树选项
 const locationOptions = ref(undefined); // 地点树选项
 const supplierListOptions = ref(undefined); // 供应商列表选项
 const statusRestrictedOptions = ref(undefined); // 权限级别选项
+const partAttributeEnumOptions = ref(undefined); // 部位属性选项
 const data = reactive({
   form: {},
   antibioticForm: {},
@@ -744,6 +756,14 @@ const props = defineProps({
     type: Object,
     required: false,
   },
+  currentCategoryEnum: {
+    type: String,
+    required: true,
+  },
+  partAttributeEnumOptions: {
+    type: Object,
+    required: false,
+  },
 });
 
 /** 查询部门下拉树结构 */
@@ -772,6 +792,11 @@ function show() {
   domainEnumOptions.value = props.domainEnum;
   supplierListOptions.value = props.supplierListOptions;
   statusRestrictedOptions.value = props.statusRestrictedOptions;
+  form.value.categoryCode = props.currentCategoryEnum;
+  partAttributeEnumOptions.value = props.partAttributeEnumOptions;
+
+  console.log(form.value.categoryCode, "form.value.categoryCode");
+
   // console.log(currentData.value, "currentData");
   visible.value = true;
 }
@@ -786,11 +811,22 @@ function edit() {
   getLocationTree();
   getDeptTree();
   form.value = props.item;
-  setFlag(form.value);
+  if (form.value) {
+    setFlag(form.value);
+  }
   statusFlagOptions.value = props.status;
   domainEnumOptions.value = props.domainEnum;
   supplierListOptions.value = props.supplierListOptions;
   statusRestrictedOptions.value = props.statusRestrictedOptions;
+  partAttributeEnumOptions.value = props.partAttributeEnumOptions;
+  antibioticForm.value.antibioticCode = form.value.antibioticCode;
+  antibioticForm.value.restrictedEnum = form.value.restrictedEnum;
+  antibioticForm.value.dose = form.value.dose;
+  antibioticForm.value.maxUnit = form.value.maxUnit;
+  antibioticForm.value.minRateCode = form.value.maxRateCode;
+  antibioticForm.value.maxRateCode = form.value.maxRateCode;
+  antibioticForm.value.dddUnitCode = form.value.dddUnitCode;
+  antibioticForm.value.dddCode = form.value.dddCode;
   visible.value = true;
 }
 // checkbox值转换
@@ -867,7 +903,7 @@ function reset() {
     retailPrice: undefined,
     maximumRetailPrice: undefined,
     ybType: undefined,
-    minimalFee: undefined,
+    typeCode: undefined,
     nationalDrugCode: undefined,
     antibioticFlag: undefined,
     selfFlag: undefined,
@@ -903,6 +939,11 @@ function submitForm() {
         form.value.dddUnitCode = antibioticForm.value.dddUnitCode;
         form.value.dddCode = antibioticForm.value.dddCode;
       }
+      const effectiveDate = form.value.effectiveDate ? moment(form.value.effectiveDate).format("YYYY-MM-DD HH:mm:ss") : '';
+     const expirationDate = form.value.expirationDate ? moment(form.value.expirationDate).format("YYYY-MM-DD HH:mm:ss") : '';
+     form.value.effectiveDate = effectiveDate;
+     form.value.expirationDate = expirationDate;
+      console.log(form.value.effectiveDate,form.value.expirationDate,'====================');
       // 将表单数据发送给父组件
       emits("submit", form.value);
       visible.value = false;
