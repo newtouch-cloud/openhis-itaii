@@ -455,6 +455,11 @@
                   </el-select>
                 </el-form-item>
               </el-col>
+              <el-col :span="6">
+                <el-form-item label="基药标识" prop="basicFlag">
+                  <el-checkbox v-model="form.basicFlag"></el-checkbox>
+                </el-form-item>
+              </el-col>
             </el-row>
             <el-row :gutter="24">
               <el-col :span="6">
@@ -849,6 +854,7 @@ function setFlag(data) {
     ? (data.antibioticFlag = true)
     : (data.antibioticFlag = false); //抗生素
   data.selfFlag == 1 ? (data.selfFlag = true) : (data.selfFlag = false); //自制
+  data.basicFlag == 1 ? (data.basicFlag = true) : (data.basicFlag = false); //自制
 }
 /** 重置操作表单 */
 function reset() {
@@ -911,6 +917,7 @@ function reset() {
     // maxRateCode: undefined,
     partAttributeEnum: undefined,
     usageLimit: undefined,
+    basicFlag: undefined,
   };
   proxy.resetForm("medicationRef");
   antibioticForm.value = {
