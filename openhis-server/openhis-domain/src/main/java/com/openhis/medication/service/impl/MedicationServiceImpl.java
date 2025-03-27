@@ -93,4 +93,5 @@ public class MedicationServiceImpl extends ServiceImpl<MedicationMapper, Medicat
     public boolean addYbMedicatione(MedicationDetail medicationDetail) {
         return false;
     }
+    
 }
