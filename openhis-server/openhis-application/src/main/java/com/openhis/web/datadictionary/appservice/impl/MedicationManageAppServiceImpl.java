@@ -210,6 +210,7 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         Medication medication = new Medication();
         BeanUtils.copyProperties(medicationManageUpDto, medication); // 子表信息
         BeanUtils.copyProperties(medicationManageUpDto, medicationDefinition);// 主表信息
+        medicationDefinition.setId(medicationManageUpDto.getMedicationDefId());
         // 拼音码
         medicationDefinition.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(medicationDefinition.getName()));
         medicationDefinition
