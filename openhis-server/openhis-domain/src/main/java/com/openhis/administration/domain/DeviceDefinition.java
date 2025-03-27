@@ -42,7 +42,7 @@ public class DeviceDefinition extends HisBaseEntity {
     private String wbStr;
 
     /** 器材分类 */
-    private DeviceCategory categoryEnum;
+    private String categoryCode;
 
     /** 器材种类 */
     private String typeCode;
