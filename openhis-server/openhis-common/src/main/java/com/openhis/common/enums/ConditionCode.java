@@ -12,7 +12,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ConditionCode implements HisEnumInterface {
 
-    UNIT_PRODUCT_BATCH_NUM(1, "unit_product_batch_num", "单位,产品批号");
+    UNIT_PRODUCT_BATCH_NUM(1, "1", "单位,产品批号"),
+    PROCUREMENT(2,"2","采购"),
+    UNIT(3,"3","单位"),
+    LIMIT(4,"4","限制");
 
     @EnumValue
     private final Integer value;
