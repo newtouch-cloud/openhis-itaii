@@ -131,7 +131,7 @@ public class MedicationManageDto {
 
     /** 药品分类 */
     @Dict(dictCode = "med_category_code")
-    private Integer categoryCode;
+    private String categoryCode;
     private String categoryCode_dictText;
 
     /** 商品名称 */

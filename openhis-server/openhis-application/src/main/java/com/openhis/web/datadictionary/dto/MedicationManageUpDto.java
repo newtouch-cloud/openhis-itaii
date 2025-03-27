@@ -109,7 +109,7 @@ public class MedicationManageUpDto {
     private String wbStr;
 
     /** 药品分类 */
-    private Integer categoryCode;
+    private String categoryCode;
 
     /** 商品名称 */
     private String merchandiseName;
