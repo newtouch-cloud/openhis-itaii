@@ -48,7 +48,7 @@ public interface IMedicationManageAppService {
      * @param id 查询条件
      * @return 药品目录查询结果
      */
-    R<?> getMedicationOne(@PathVariable("id") Long id);
+    R<?> getMedicationOne(@RequestParam Long id);
 
     /**
      * 编辑药品目录信息

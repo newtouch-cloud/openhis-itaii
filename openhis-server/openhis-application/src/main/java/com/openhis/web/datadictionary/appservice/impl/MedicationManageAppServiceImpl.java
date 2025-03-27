@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.openhis.common.enums.PermissionLimit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +32,7 @@ import com.openhis.administration.service.ISupplierService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.ApplicableScope;
+import com.openhis.common.enums.PermissionLimit;
 import com.openhis.common.enums.PublicationStatus;
 import com.openhis.common.enums.Whether;
 import com.openhis.common.utils.EnumUtils;
@@ -168,13 +168,13 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             e.setActiveFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getActiveFlag()));
             // 医保是否对码
             e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
-            //是否皮试
+            // 是否皮试
             e.setSkinTestFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getSkinTestFlag()));;
-            //是否为注射药物
+            // 是否为注射药物
             e.setInjectFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getInjectFlag()));
-            //是否限制使用
+            // 是否限制使用
             e.setRestrictedFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getRestrictedFlag()));
-            //儿童用药标志
+            // 儿童用药标志
             e.setChildrenFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getChildrenFlag()));
             // 适用范围
             e.setDomainEnum_enumText(EnumUtils.getInfoByValue(ApplicableScope.class, e.getDomainEnum()));
@@ -186,9 +186,8 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             // 基药标识
             e.setBasicFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getBasicFlag()));
 
-            
-//            // 活动标记
-//             e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
+            // // 活动标记
+            // e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
 
         });
 
@@ -210,8 +209,12 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         BeanUtils.copyProperties(medicationManageUpDto, medicationDefinition);// 主表信息
         // 拼音码
         medicationDefinition.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(medicationDefinition.getName()));
+        medicationDefinition
+            .setMerchandisePyStr(ChineseConvertUtils.toPinyinFirstLetter(medicationDefinition.getMerchandiseName()));
         // 五笔码
         medicationDefinition.setWbStr(ChineseConvertUtils.toWBFirstLetter(medicationDefinition.getName()));
+        medicationDefinition
+            .setMerchandiseWbStr(ChineseConvertUtils.toWBFirstLetter(medicationDefinition.getMerchandiseName()));
 
         // 更新子表药品信息
         if (medicationService.updateById(medication)) {
@@ -231,7 +234,7 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
      * @return 药品目录查询结果
      */
     @Override
-    public R<?> getMedicationOne(@PathVariable("id") Long id) {
+    public R<?> getMedicationOne(@RequestParam Long id) {
 
         // 获取租户ID
         Integer tenantId = SecurityUtils.getLoginUser().getTenantId();
@@ -299,8 +302,12 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         BeanUtils.copyProperties(medicationManageUpDto, medicationDetail);
         // 拼音码
         medicationDetail.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(medicationDetail.getName()));
+        medicationDetail
+            .setMerchandisePyStr(ChineseConvertUtils.toPinyinFirstLetter(medicationDetail.getMerchandiseName()));
         // 五笔码
         medicationDetail.setWbStr(ChineseConvertUtils.toWBFirstLetter(medicationDetail.getName()));
+        medicationDetail
+            .setMerchandiseWbStr(ChineseConvertUtils.toWBFirstLetter(medicationDetail.getMerchandiseName()));
 
         // 新增主表外来药品目录
         if (medicationDefinitionService.addMedication(medicationDetail)) {
