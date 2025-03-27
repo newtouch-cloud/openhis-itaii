@@ -234,7 +234,9 @@ public class MedicationManageUpDto {
     /** 用量限定 */
     private BigDecimal usageLimit;
 
+    /** 抗生素分类 */
+    @Dict(dictCode = "antibiotic_type_code")
+    private String antibioticCode;
+    private String antibioticCode_dictText;
 
-
-    /** 系统类别???? */
 }

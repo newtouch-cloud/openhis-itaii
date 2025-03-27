@@ -120,12 +120,18 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
             .collect(Collectors.toList());
 
+        //拆分属性
+        List<MedicationManageInitDto.statusEnumOption> partAttributeEnumOptions = Stream.of(SplitPropertyCode.values())
+            .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+
         medicationManageInitDto.setStatusFlagOptions(statusEnumOptions);
         medicationManageInitDto.setDomainFlagOptions(domainEnumOptions);
         medicationManageInitDto.setSupplierListOptions(supplierListOptions);
         medicationManageInitDto.setMedicationCategoryCodeOptions(medicationCategories);
         medicationManageInitDto.setStatusWeatherOptions(statusWeatherOption);
         medicationManageInitDto.setStatusRestrictedOptions(statusRestrictedOptions);
+        medicationManageInitDto.setPartAttributeEnumOptions(partAttributeEnumOptions);
 
         return R.ok(medicationManageInitDto);
     }

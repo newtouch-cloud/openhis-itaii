@@ -175,7 +175,7 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
      * @return 器材目录查询结果
      */
     @Override
-    public R<?> getDeviceOne(@PathVariable("id") Long id) {
+    public R<?> getDeviceOne(@RequestParam Long id) {
         // 根据ID查询【器材目录】
         DeviceDefinition byId = deviceDefinitionService.getById(id);
         return R.ok(byId);

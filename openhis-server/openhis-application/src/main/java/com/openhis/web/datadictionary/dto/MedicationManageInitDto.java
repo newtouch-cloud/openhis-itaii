@@ -27,6 +27,8 @@ public class MedicationManageInitDto {
     private List<statusEnumOption> statusWeatherOptions;
     // 权限限制
     private List<statusEnumOption> statusRestrictedOptions;
+    // 拆分属性
+    private List<statusEnumOption> partAttributeEnumOptions;
 
     /**
      * 状态
