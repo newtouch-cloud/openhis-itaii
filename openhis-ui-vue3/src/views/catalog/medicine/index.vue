@@ -931,6 +931,9 @@ function submitForm(formData) {
   formData.antibioticFlag == true
     ? (formData.antibioticFlag = 1)
     : (formData.antibioticFlag = 0); //抗生素标志
+    formData.basicFlag == true
+    ? (formData.basicFlag = 1)
+    : (formData.basicFlag = 0); //抗生素标志
   formData.selfFlag == true ? (formData.selfFlag = 1) : (formData.selfFlag = 0); //自制标志
   formData.status == true ? (formData.status = 1) : (formData.status = 0); //启用状态
   console.log(formData, "submitForm");
