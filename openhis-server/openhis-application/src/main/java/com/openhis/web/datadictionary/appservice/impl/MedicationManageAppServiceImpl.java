@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.openhis.common.enums.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -35,10 +36,6 @@ import com.openhis.administration.domain.Supplier;
 import com.openhis.administration.service.ISupplierService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.ApplicableScope;
-import com.openhis.common.enums.PermissionLimit;
-import com.openhis.common.enums.PublicationStatus;
-import com.openhis.common.enums.Whether;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.medication.domain.Medication;
@@ -184,7 +181,8 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             e.setAntibioticFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getAntibioticFlag()));
             // 基药标识
             e.setBasicFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getBasicFlag()));
-
+            //拆分分属性
+            e.setPartAttributeEnum_enumText(EnumUtils.getInfoByValue(SplitPropertyCode.class, e.getPartAttributeEnum()));
             // // 活动标记
             // e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
 
