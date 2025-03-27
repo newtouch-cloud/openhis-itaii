@@ -236,8 +236,8 @@ public class MedicationManageDto {
     private Integer basicFlag;
     private String basicFlag_enumText;
 
-    /** 生产厂家名称 */
-    private String manufacturerName;
+    /** 生产厂商文本 */
+    private String manufacturerText;
 
     /** 当前库存数量(常规单位) */
     private String baseQuantity;
@@ -261,5 +261,8 @@ public class MedicationManageDto {
     @Dict(dictCode = "fin_type_code")
     private String typeCode;
     private String typeCode_dictText;
+
+    /** 成分 */
+    private String ingredient;
 
 }
