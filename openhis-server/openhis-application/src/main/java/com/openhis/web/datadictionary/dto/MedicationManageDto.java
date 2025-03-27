@@ -10,6 +10,8 @@ import com.openhis.common.annotation.Dict;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 药品目录Dto
  *
@@ -265,4 +267,13 @@ public class MedicationManageDto {
     /** 成分 */
     private String ingredient;
 
+    /** 购入价 */
+    private BigDecimal purchasePrice;
+
+    /** 零售价 */
+    private BigDecimal retailPrice;
+
+    /** 最高零售价 */
+    private BigDecimal maximumRetailPrice;
+    
 }
