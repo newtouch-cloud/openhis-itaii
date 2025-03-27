@@ -134,7 +134,7 @@
                <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
                <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
                <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-               <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+               <el-table-column label="部门" align="center" key="orgId_dictText" prop="orgId_dictText" v-if="columns[3].visible" :show-overflow-tooltip="true" />
                <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
                <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
                   <template #default="scope">
@@ -181,6 +181,9 @@
       <!-- 添加或修改用户配置对话框 -->
       <el-dialog :title="title" v-model="open" width="600px" append-to-body>
          <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
+            <div class="form-subtitle">
+               用户信息
+            </div>
             <el-row>
                <el-col :span="12">
                   <el-form-item label="用户昵称" prop="nickName">
@@ -287,7 +290,7 @@
                   </el-form-item>
                </el-col>
             </el-row>
-            <div v-if="form.roleIds.length > 0">
+            <div v-if="form.roleIds.length > 0" class="form-subtitle">
                角色信息
             </div>
             <el-row v-for="(item, index) in form.roleIds" :key="index">
@@ -330,6 +333,9 @@
                </el-col>
             </el-row>
             <el-row>
+               <div class="form-subtitle">
+                  备注
+               </div>
                <el-col :span="24">
                   <el-form-item label="备注">
                      <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
@@ -743,3 +749,12 @@ getDeptTree();
 getLocationTree()
 getList();
 </script>
+
+<style lang="less" scoped>
+.form-subtitle {
+  margin-bottom: 12px;
+  border-left: 5px solid #2969ff;
+  padding-left: 12px;
+  height: 22px;
+}
+</style>
