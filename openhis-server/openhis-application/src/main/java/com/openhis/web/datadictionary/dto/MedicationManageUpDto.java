@@ -239,4 +239,10 @@ public class MedicationManageUpDto {
     private String antibioticCode;
     private String antibioticCode_dictText;
 
+    /** 权限限制 */
+    private Integer restrictedEnum;
+
+    /** 基药标识 */
+    private Integer basicFlag;
+
 }

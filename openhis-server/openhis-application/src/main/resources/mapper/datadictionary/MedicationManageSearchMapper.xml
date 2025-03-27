@@ -235,12 +235,16 @@
             FROM adm_charge_item_definition T3
             LEFT JOIN  adm_charge_item_def_detail T4 ON  T4.definition_id = T3.id
             WHERE   T4.condition_code = '2'--2:采购价
+            AND T3.instance_id = T2.medication_def_id
+            AND T3.instance_table = 'med_medication_definition'
         ) as purchase_price,--购入价
         (
         SELECT T4.amount
         FROM adm_charge_item_definition T3
         LEFT JOIN  adm_charge_item_def_detail T4 ON  T4.definition_id = T3.id
         WHERE   T4.condition_code = '4'--4:限制
+        AND T3.instance_id = T2.medication_def_id
+        AND T3.instance_table = 'med_medication_definition'
         ) as maximum_retail_price--最高零售价
         FROM med_medication_definition T1
         LEFT JOIN med_medication T2 on T1.id = T2.medication_def_id
