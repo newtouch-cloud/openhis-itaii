@@ -227,7 +227,6 @@
               <el-select
                 v-model="form.itemTypeCode"
                 clearable
-                :disabled="form.id != undefined"
               >
                 <el-option
                   v-for="category in fin_type_code"
@@ -259,17 +258,17 @@
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="购入价" prop="purchasePrice">
-              <el-input v-model="form.purchasePrice" placeholder="" />
+              <el-input v-model="form.purchasePrice" placeholder="" :disabled="form.id != undefined"/>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="零售价" prop="retailPrice">
-              <el-input v-model="form.retailPrice" placeholder="" />
+              <el-input v-model="form.retailPrice" placeholder="" :disabled="form.id != undefined"/>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="最高零售价" prop="maximumRetailPrice">
-              <el-input v-model="form.maximumRetailPrice" placeholder="" />
+              <el-input v-model="form.maximumRetailPrice" placeholder="" :disabled="form.id != undefined"/>
             </el-form-item>
           </el-col>
         </el-row>

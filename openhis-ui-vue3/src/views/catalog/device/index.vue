@@ -116,7 +116,7 @@
               >查询</el-button
             >
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button
               type="warning"
               plain
@@ -125,7 +125,7 @@
               v-hasPermi="['system:user:export']"
               >导出Excel</el-button
             >
-          </el-col>
+          </el-col> -->
         </el-row>
 
         <el-table
