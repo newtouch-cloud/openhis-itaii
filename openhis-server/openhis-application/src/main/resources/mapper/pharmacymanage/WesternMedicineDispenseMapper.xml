@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.pharmacymanage.mapper.WesternMedicineDispenseMapper">
+    <select id="selectEncounterInfoListPage" resultType="com.openhis.web.pharmacymanage.dto.EncounterInfoPageDto">
+        SELECT
+          encounter_id,
+          organization_id,
+          department_name,
+          id_card,
+          patient_name,
+          gender_enum,
+          encounter_date
+
+        FROM
+          (
+            SELECT
+              DISTINCT
+                T2.id AS encounter_id,
+                TO_CHAR(T2.start_time,'YYYY-MM-DD') AS encounter_date,
+                T2.organization_id,
+                T3.gender_enum,
+                T3.name AS patient_name,
+                T3.id_card,
+                T6.name AS department_name
+
+            FROM med_medication_dispense AS T1
+
+            INNER JOIN adm_encounter AS T2
+            ON T1.encounter_id = T2.id
+
+            INNER JOIN adm_patient AS T3
+            ON T1.patient_id = T3.id
+
+            INNER JOIN med_medication AS T4
+            ON T1.medication_id = T4.id
+
+            INNER JOIN med_medication_definition AS T5
+            ON T4.medication_def_id = T5.id
+            AND T5.category_code IN ('1','2')
+
+            INNER JOIN adm_organization AS T6
+            ON T2.organization_id = T6.id
+
+            WHERE
+              T1.status_enum = 3
+
+            ORDER BY
+              T2.start_time desc,
+              T2.organization_id
+         )
+      ${ew.customSqlSegment}
+    </select>
+    <select id="selectPrescriptionPatientInfo" resultType="com.openhis.web.pharmacymanage.dto.PrescriptionPatientInfoDto">
+        SELECT
+          DISTINCT
+            T1.name AS patient_name,
+            T1.gender_enum,
+            T1.birth_date,
+            T4.category_enum,
+            T1.id_card,
+            T5.name AS organization_name,
+            TO_CHAR(T2.start_time,'YYYY-MM-DD') AS encounter_date
+
+        FROM adm_encounter AS T1
+
+        INNER JOIN adm_patient AS T2
+        ON T1.id = T2.encounter_id
+
+        INNER JOIN med_medication_request AS T3
+        ON T1.id = T3.encounter_id
+
+        INNER JOIN fin_contract AS T4
+        ON T3.contract_no = T4.bus_no
+
+        INNER JOIN adm_organization AS T5
+        ON T1.organization_id = T5.id
+
+        WHERE
+          T1.id = #{encounterId}
+    </select>
+    <select id="selectPrescriptionMedicineInfoList" resultType="com.openhis.web.pharmacymanage.dto.PrescriptionMedicineInfoDto">
+        SELECT
+          T7.name AS department_name,
+          T8.name AS doctor_name,
+          T1.prescription_no,
+          T3.name AS medicine_name,
+          T2.total_volume,
+          T1.dose,
+          T1.rate_code,
+          T1.method_code,
+          T1.dose_unit_code,
+          T1.max_dose,
+          T1.first_dose,
+          T1.first_duration,
+          T1.dispense_interval,
+          T1.dispense_per_quantity,
+          T1.dispense_per_duration,
+          T1.quantity,
+          T4.unit_price,
+          T4.total_price
+
+        FROM med_medication_request AS T1
+
+        INNER JOIN med_medication AS T2
+        ON T1.medication_id = T2.id
+
+        INNER JOIN med_medication_definition AS T3
+        ON T2.medication_def_id = T3.id
+        AND T3.category_code IN ('1','2')
+
+        INNER JOIN adm_charge_item AS T4
+        ON T1.id = T4.service_id
+
+        INNER JOIN med_medication_dispense AS T5
+        ON T1.id = T5.med_req_id
+
+        INNER JOIN adm_encounter AS T6
+        ON T1.encounter_id = T6.id
+
+        INNER JOIN adm_organization AS T7
+        ON T6.organization_id = T7.id
+
+        INNER JOIN adm_practitioner AS T8
+        ON T1.practitioner_id = T8.id
+
+        WHERE
+          T1.encountId = #{encounterId}
+          AND T5.status_enum = 3
+
+        ORDER BY
+          T1.prescription_no,
+          T1.medication_id
+    </select>
+    <select id="selectDispenseInventoryInfoByPrescriptionNo" resultType="com.openhis.web.pharmacymanage.dto.DispenseInventoryDto">
+        SELECT
+          T1.id AS dispense_id,
+          T1.unit_code AS dispense_unit_code,
+          T1.quantity AS dispense_quantity,
+          T3.Id AS inventory_id,
+          T3.base_unit_code AS inventory_base_unit_code,
+          T3.base_quantity AS inventory_base_quantity,
+          T3.min_unit_code AS inventory_min_unit_code,
+          T3.min_quantity AS inventory_min_quantity,
+          T5.part_percent
+
+        FROM med_medication_dispense AS T1
+
+        INNER JOIN med_medication_request AS T2
+        ON T1.med_req_id = T2.id
+
+        INNER JOIN wor_inventory_item AS T3
+        ON T1.medication_id = T3.item_id
+        AND T1.item_table = 'med_medication_definition'
+
+        INNER JOIN med_medication AS T4
+           ON T1.medication_id = T4.id
+
+        INNER JOIN med_medication_definition AS T5
+           ON T4.medication_def_id = T5.id
+
+        WHERE
+          T2.prescription_no = #{prescriptionNo}
+    </select>
+</mapper>
