@@ -36,7 +36,6 @@ public class PatientEmrDto implements Serializable {
     private String emrStatus;
 
     /** 记录人 */
-    @NotNull
     private Long recordId;
 
 

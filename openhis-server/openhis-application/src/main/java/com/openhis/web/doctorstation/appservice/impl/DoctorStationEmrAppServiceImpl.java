@@ -13,8 +13,11 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
+import com.core.common.utils.SecurityUtils;
+import com.openhis.common.enums.BindingType;
 import com.openhis.document.domain.Emr;
 import com.openhis.document.domain.EmrDetail;
 import com.openhis.document.domain.EmrDict;
@@ -56,7 +59,16 @@ public class DoctorStationEmrAppServiceImpl implements IDoctorStationEmrAppServi
         Emr emr = new Emr();
         BeanUtils.copyProperties(patientEmrDto, emr);
         String contextStr = patientEmrDto.getContextJson().toString();
-        boolean saveSuccess = emrService.save(emr.setContextJson(contextStr));
+        Emr patientEmr = emrService.getOne(new LambdaQueryWrapper<Emr>().eq(Emr::getEncounterId, emr.getEncounterId()));
+        boolean saveSuccess;
+        // 如果已经保存病历，再次保存走更新
+        if (patientEmr != null) {
+            saveSuccess = emrService.update(new LambdaUpdateWrapper<Emr>().eq(Emr::getEncounterId, emr.getEncounterId())
+                .set(Emr::getContextJson, contextStr));
+        } else {
+            saveSuccess =
+                emrService.save(emr.setContextJson(contextStr).setRecordId(SecurityUtils.getLoginUser().getUserId()));
+        }
         if (!saveSuccess) {
             return R.fail();
         }
@@ -69,14 +81,18 @@ public class DoctorStationEmrAppServiceImpl implements IDoctorStationEmrAppServi
         // 遍历病历内容map
         for (Map.Entry<String, String> entry : emrContextMap.entrySet()) {
             EmrDetail emrDetail = new EmrDetail();
-            emrDetail.setEmrId(emr.getId());
             if (!emrDictList.isEmpty() && emrDictList.contains(entry.getKey())) {
+                emrDetail.setEmrId(emr.getId());
                 emrDetail.setEmrKey(entry.getKey());
                 emrDetail.setEmrValue(entry.getValue());
             }
             emrDetailList.add(emrDetail);
         }
-        boolean save = emrDetailService.saveBatch(emrDetailList);
+        boolean save = true;
+        if (!emrDictList.isEmpty()) {
+            save = emrDetailService.saveBatch(emrDetailList);
+        }
+
         return save ? R.ok() : R.fail();
     }
 
@@ -96,6 +112,18 @@ public class DoctorStationEmrAppServiceImpl implements IDoctorStationEmrAppServi
     }
 
     /**
+     * 获取病历详情
+     *
+     * @param encounterId 就诊id
+     * @return 病历详情
+     */
+    @Override
+    public R<?> getEmrDetail(Long encounterId) {
+        Emr emrDetail = emrService.getOne(new LambdaQueryWrapper<Emr>().eq(Emr::getEncounterId, encounterId));
+        return R.ok(emrDetail);
+    }
+
+    /**
      * 保存病历模板
      *
      * @param emrTemplateDto 病历模板信息
@@ -104,7 +132,11 @@ public class DoctorStationEmrAppServiceImpl implements IDoctorStationEmrAppServi
     @Override
     public R<?> addEmrTemplate(EmrTemplateDto emrTemplateDto) {
         EmrTemplate emrTemplate = new EmrTemplate();
+        String contextStr = emrTemplateDto.getContextJson().toString();
         BeanUtils.copyProperties(emrTemplateDto, emrTemplate);
+        // todo 获取当前登录用户的科室id
+        emrTemplate.setUserId(SecurityUtils.getLoginUser().getUserId());
+        emrTemplate.setContextJson(contextStr);
         return emrTemplateService.save(emrTemplate) ? R.ok() : R.fail();
     }
 
@@ -119,9 +151,14 @@ public class DoctorStationEmrAppServiceImpl implements IDoctorStationEmrAppServi
     @Override
     public R<?> getEmrTemplate(EmrTemplateDto emrTemplateDto, Integer pageNo, Integer pageSize) {
         LambdaQueryWrapper<EmrTemplate> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(EmrTemplate::getTemplateName, emrTemplateDto.getTemplateName())
-            .eq(EmrTemplate::getUseScopeCode, emrTemplateDto.getUseScopeCode())
-            .eq(EmrTemplate::getUserId, emrTemplateDto.getUserId());
+        queryWrapper
+            .eq(EmrTemplate::getUseScopeCode, emrTemplateDto.getUseScopeCode());
+        if (emrTemplateDto.getTemplateName() != null){
+            queryWrapper.like(EmrTemplate::getTemplateName, emrTemplateDto.getTemplateName());
+        }
+        if (BindingType.PERSONAL.getValue().toString().equals(emrTemplateDto.getUseScopeCode())) {
+            queryWrapper.eq(EmrTemplate::getUserId, SecurityUtils.getLoginUser().getUserId());
+        }
         Page<EmrTemplate> emrTemplatePage = emrTemplateService.page(new Page<>(pageNo, pageSize), queryWrapper);
         return R.ok(emrTemplatePage);
     }

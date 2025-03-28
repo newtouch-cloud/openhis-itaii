@@ -3,6 +3,7 @@
  */
 package com.openhis.web.doctorstation.dto;
 
+import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -26,7 +27,7 @@ public class EmrTemplateDto implements Serializable {
     private String templateName;
 
     /** 模板类型 */
-    private String templateTypeEnum;
+    private String templateTypeCode;
 
     /** 使用范围 */
     @NotBlank
@@ -36,6 +37,6 @@ public class EmrTemplateDto implements Serializable {
     private Long userId;
 
     /** 病历内容 */
-    private String contextJson;
+    private JSONObject contextJson;
 
 }
