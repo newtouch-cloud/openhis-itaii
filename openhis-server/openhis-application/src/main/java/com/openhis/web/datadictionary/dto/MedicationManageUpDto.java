@@ -245,4 +245,6 @@ public class MedicationManageUpDto {
     /** 基药标识 */
     private Integer basicFlag;
 
+    /** 住院临时医嘱拆分属性 */
+    private Integer thoPartAttributeEnum;
 }

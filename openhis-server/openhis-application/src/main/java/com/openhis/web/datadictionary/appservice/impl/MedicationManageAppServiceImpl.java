@@ -125,6 +125,11 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
             .collect(Collectors.toList());
 
+        //住院临时医嘱拆分属性的枚举
+        List<MedicationManageInitDto.statusEnumOption> tempOrderSplitPropertyOptions = Stream.of(TempOrderSplitPropertyCode.values())
+            .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+
         medicationManageInitDto.setStatusFlagOptions(statusEnumOptions);
         medicationManageInitDto.setDomainFlagOptions(domainEnumOptions);
         medicationManageInitDto.setSupplierListOptions(supplierListOptions);
@@ -132,6 +137,7 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         medicationManageInitDto.setStatusWeatherOptions(statusWeatherOption);
         medicationManageInitDto.setStatusRestrictedOptions(statusRestrictedOptions);
         medicationManageInitDto.setPartAttributeEnumOptions(partAttributeEnumOptions);
+        medicationManageInitDto.setTempOrderSplitPropertyEnumOptions(tempOrderSplitPropertyOptions);
 
         return R.ok(medicationManageInitDto);
     }

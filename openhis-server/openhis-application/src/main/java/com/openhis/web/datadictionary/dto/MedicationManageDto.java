@@ -190,8 +190,8 @@ public class MedicationManageDto {
     private Long manufacturerId;
 
     /** 供应商 */
-    @JsonSerialize(using = ToStringSerializer.class)
     @Dict(dictTable = "adm_supplier", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long supplyId;
     private String supplyId_dictText;
 
@@ -275,5 +275,9 @@ public class MedicationManageDto {
 
     /** 最高零售价 */
     private BigDecimal maximumRetailPrice;
+
+    /** 住院临时医嘱拆分属性 */
+    private Integer thoPartAttributeEnum;
+    private String thoPartAttributeEnum_enumText;
 
 }

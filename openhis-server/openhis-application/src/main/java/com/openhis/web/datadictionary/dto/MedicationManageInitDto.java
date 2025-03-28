@@ -3,6 +3,8 @@ package com.openhis.web.datadictionary.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -29,6 +31,8 @@ public class MedicationManageInitDto {
     private List<statusEnumOption> statusRestrictedOptions;
     // 拆分属性
     private List<statusEnumOption> partAttributeEnumOptions;
+    //住院临时医嘱拆分属性
+    private List<statusEnumOption> tempOrderSplitPropertyEnumOptions;
 
     /**
      * 状态
@@ -63,6 +67,8 @@ public class MedicationManageInitDto {
      */
     @Data
     public static class supplierListOption {
+
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long value;
         private String label;
 
