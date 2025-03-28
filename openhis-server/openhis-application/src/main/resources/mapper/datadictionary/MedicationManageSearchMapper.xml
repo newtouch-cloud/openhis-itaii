@@ -72,6 +72,7 @@
         T6.min_unit_code,
         T6.min_quantity,
         T6.yb_type,
+        T6.type_code,
         T6.retail_price,
         T6.purchase_price,
         T6.retail_price,
@@ -145,6 +146,7 @@
         T4.min_unit_code,
         T4.min_quantity,
         T5.yb_type,
+        T5.type_code,
         T1.tenant_id,
         T5.price as retail_price,--零售价
         (SELECT T7.amount
