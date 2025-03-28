@@ -121,9 +121,6 @@ public class DeviceManageController {
     public R<?> getDeviceOne(@RequestParam Long id) {
 
         return deviceManageAppService.getDeviceOne(id);
-        // // 根据ID查询【器材目录】
-        // DeviceDefinition byId = iDeviceDefinitionService.getById(id);
-        // return R.ok(byId);
     }
 
     /**
@@ -137,13 +134,6 @@ public class DeviceManageController {
 
         return deviceManageAppService.editDevice(deviceManageDto);
 
-        // DeviceDefinition DeviceDefinition = new DeviceDefinition();
-        // BeanUtils.copyProperties(deviceManageDto, DeviceDefinition);
-        //
-        // // 更新器材信息
-        // return iDeviceDefinitionService.updateById(DeviceDefinition)
-        // ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"器材目录"}))
-        // : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
     }
 
     /**

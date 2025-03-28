@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import com.openhis.web.datadictionary.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -26,10 +25,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.core.domain.entity.SysDictData;
-import com.core.common.utils.MessageUtils;
-import com.core.common.utils.SecurityUtils;
+import com.core.common.utils.*;
 import com.core.common.utils.bean.BeanUtils;
 import com.core.system.service.ISysDictTypeService;
+import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.domain.DeviceDefinition;
 import com.openhis.administration.domain.Organization;
 import com.openhis.administration.mapper.DeviceDefinitionMapper;
@@ -37,6 +36,7 @@ import com.openhis.administration.service.IDeviceDefinitionService;
 import com.openhis.administration.service.IOrganizationService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.AssignSeqEnum;
 import com.openhis.common.enums.OrganizationType;
 import com.openhis.common.enums.PublicationStatus;
 import com.openhis.common.enums.Whether;
@@ -44,6 +44,7 @@ import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.datadictionary.appservice.IDeviceManageAppService;
 import com.openhis.web.datadictionary.appservice.IItemDefinitionService;
+import com.openhis.web.datadictionary.dto.*;
 import com.openhis.web.datadictionary.mapper.DeviceManageMapper;
 
 /**
@@ -72,6 +73,9 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
 
     @Autowired
     private IItemDefinitionService itemDefinitionServic;
+
+    @Autowired(required = false)
+    AssignSeqUtil assignSeqUtil;
 
     /**
      * 器材目录初始化
@@ -136,17 +140,6 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
-        // // 构建查询条件
-        // QueryWrapper<DeviceDefinition> queryWrapper = HisQueryUtils.buildQueryWrapper(deviceManageSelParam,
-        // searchKey,
-        // new HashSet<>(Arrays.asList("bus_no", "name", "py_str", "wb_str")), request);
-        // // 设置排序
-        // queryWrapper.orderByAsc("bus_no");
-        //
-        // // 分页查询
-        // Page<DeviceManageDto> deviceManagePage =
-        // HisPageUtils.selectPage(deviceDefinitionMapper, queryWrapper, pageNo, pageSize, DeviceManageDto.class);
-
         // 构建查询条件
         QueryWrapper<DeviceManageDto> queryWrapper = HisQueryUtils.buildQueryWrapper(deviceManageSelParam, searchKey,
             new HashSet<>(Arrays.asList("bus_no", "name", "py_str", "wb_str")), request);
@@ -166,6 +159,7 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
             e.setAllergenFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getAllergenFlag()));
             // 器材分类
             // e.setCategoryEnum_enumText(EnumUtils.getInfoByValue(DeviceCategory.class, e.getCategoryEnum()));
+
             // 器材状态
             e.setStatusEnum_enumText(EnumUtils.getInfoByValue(PublicationStatus.class, e.getStatusEnum()));
         });
@@ -184,11 +178,24 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
 
         DeviceDefinition deviceDefinition = new DeviceDefinition();
         BeanUtils.copyProperties(deviceManageDto, deviceDefinition);
+        // 拼音码
+        deviceDefinition.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(deviceDefinition.getName()));
+        // 五笔码
+        deviceDefinition.setWbStr(ChineseConvertUtils.toWBFirstLetter(deviceDefinition.getName()));
 
         // 更新器材信息
-        return deviceDefinitionService.updateById(deviceDefinition)
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"器材目录"}))
-            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+        if (deviceDefinitionService.updateById(deviceDefinition)) {
+            ChargeItemDefinition chargeItemDefinition = new ChargeItemDefinition();
+            chargeItemDefinition.setYbType(deviceManageDto.getItemTypeCode()).setTypeCode(deviceManageDto.getTypeCode())
+                .setInstanceTable(CommonConstants.TableName.ADM_DEVICE_DEFINITION)
+                .setInstanceId(deviceDefinition.getId());
+
+            // 更新价格表
+            return itemDefinitionServic.updateItem(chargeItemDefinition)
+                ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"器材目录"}))
+                : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+        }
+        return R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
     }
 
     /**
@@ -269,12 +276,26 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
         DeviceDefinition deviceDefinition = new DeviceDefinition();
         BeanUtils.copyProperties(deviceManageUpDto, deviceDefinition);
 
+        // 使用10位数基础采番
+        String code = assignSeqUtil.getSeq(AssignSeqEnum.DEVICE_NUM.getPrefix(), 10);
+        deviceDefinition.setBusNo(code);
+        // 拼音码
+        deviceDefinition.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(deviceDefinition.getName()));
+        // 五笔码
+        deviceDefinition.setWbStr(ChineseConvertUtils.toWBFirstLetter(deviceDefinition.getName()));
+
         // 新增外来器材目录
         deviceDefinition.setStatusEnum(PublicationStatus.DRAFT.getValue());
 
         if (deviceDefinitionService.addDevice(deviceDefinition)) {
-            ItemUpFromDirectoryDto itemUpFromDirectoryDto =new ItemUpFromDirectoryDto();
+            ItemUpFromDirectoryDto itemUpFromDirectoryDto = new ItemUpFromDirectoryDto();
             BeanUtils.copyProperties(deviceManageUpDto, itemUpFromDirectoryDto);
+            itemUpFromDirectoryDto.setTypeCode(deviceManageUpDto.getItemTypeCode())
+                .setInstanceTable(CommonConstants.TableName.ADM_DEVICE_DEFINITION)
+                .setEffectiveStart(DateUtils.getNowDate()).setStatusEnum(PublicationStatus.ACTIVE.getValue())
+                .setConditionFlag(Whether.YES.getValue()).setChargeName(deviceManageUpDto.getName())
+                .setInstanceId(deviceDefinition.getId())
+                .setPrice(deviceManageUpDto.getRetailPrice());
 
             return itemDefinitionServic.addItem(itemUpFromDirectoryDto)
                 ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"器材目录"}))

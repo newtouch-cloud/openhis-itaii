@@ -21,7 +21,5 @@ public class DeviceManageSelParam {
 
     /** 状态 */
     private Integer statusEnum;
-
-    /** 执行科室 */
-    private Long ruleId;
+    
 }

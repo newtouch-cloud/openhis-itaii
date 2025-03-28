@@ -54,7 +54,12 @@ public enum AssignSeqEnum {
     /**
      * 药品项目编码
      */
-    MEDICATION_NUM("8", "药品项目编码", "MD");
+    MEDICATION_NUM("9", "药品项目编码", "MD"),
+
+    /**
+     * 器材项目编码
+     */
+    DEVICE_NUM("10", "项目编码", "DD");
 
     private final String code;
     private final String info;

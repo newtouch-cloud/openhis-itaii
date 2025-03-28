@@ -47,7 +47,9 @@ public class DeviceManageDto {
     private String typeCode_dictText;
 
     /** 包装单位 */
+    @Dict(dictCode = "unit_code")
     private String unitCode;
+    private String unitCode_dictText;
 
     /** 包装规格 */
     private String size;
@@ -56,7 +58,9 @@ public class DeviceManageDto {
     private BigDecimal partPercent;
 
     /** 最小使用单位 */
+    @Dict(dictCode = "unit_code")
     private String minUnitCode;
+    private String minUnitCode_dictText;
 
     /** 所属科室 */
     @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
