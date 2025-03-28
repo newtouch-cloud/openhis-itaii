@@ -103,7 +103,7 @@
     </select>
 
     <select id="getOne" resultType="com.openhis.web.datadictionary.dto.DeviceManageDto">
-        SELECT
+    SELECT
         T1.id,
         T1.bus_no,
         T1.name,
@@ -158,7 +158,7 @@
             AND  T2.instance_table = 'adm_device_definition'
 
             <if test="id!= null">
-                AND T2.id = #{id}
+                AND T1.id = #{id}
             </if>
             <if test="tenantId!= null">
                 AND T1.tenant_id = #{tenantId}

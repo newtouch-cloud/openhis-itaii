@@ -109,7 +109,7 @@ public class DeviceManageDto {
     private Long manufacturerId;
 
     /** 生产厂商文本 */
-    private Long manufacturerText;
+    private String manufacturerText;
 
     /** 供应商 */
     @JsonSerialize(using = ToStringSerializer.class)

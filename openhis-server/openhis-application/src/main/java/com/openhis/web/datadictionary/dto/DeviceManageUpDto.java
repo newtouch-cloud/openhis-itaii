@@ -107,7 +107,7 @@ public class DeviceManageUpDto {
 
     /** 生产厂商文本 */
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long manufacturerText;
+    private String manufacturerText;
 
     /** 供应商 */
     @NotNull(message = "供应商不能为空")
