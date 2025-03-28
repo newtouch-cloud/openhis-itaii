@@ -77,6 +77,18 @@ public class DiagnosisTreatmentUpDto {
     /** 规则id */
     private Integer ruleId;
 
+    /** 所属科室 */
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orgId;
+    private String orgId_dictText;
+
+    /** 所在位置 */
+    @Dict(dictTable = "adm_location", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long locationId;
+    private String locationId_dictText;
+
     /** 财务类别 */
     @Dict(dictCode = "fin_type_code")
     private String itemTypeCode;

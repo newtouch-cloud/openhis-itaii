@@ -199,7 +199,7 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
         // 更新器材信息
         if (deviceDefinitionService.updateById(deviceDefinition)) {
             ChargeItemDefinition chargeItemDefinition = new ChargeItemDefinition();
-            chargeItemDefinition.setYbType(deviceManageDto.getItemTypeCode()).setTypeCode(deviceManageDto.getTypeCode())
+            chargeItemDefinition.setYbType(deviceManageDto.getYbType()).setTypeCode(deviceManageDto.getItemTypeCode())
                 .setInstanceTable(CommonConstants.TableName.ADM_DEVICE_DEFINITION)
                 .setInstanceId(deviceDefinition.getId());
 

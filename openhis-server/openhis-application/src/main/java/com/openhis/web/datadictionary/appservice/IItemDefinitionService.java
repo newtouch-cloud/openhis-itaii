@@ -22,15 +22,6 @@ public interface IItemDefinitionService {
      */
     boolean addItem(ItemUpFromDirectoryDto itemUpFromDirectoryDto);
 
-
-//    /**
-//     * 添加器材的项目定价
-//     *
-//     * @param deviceManageUpDto 器材目录信息
-//     * @param deviceDefinition 器材信息
-//     */
-//    boolean addItem(ItemUpFromDirectoryDto itemUpFromDirectoryDto, DeviceDefinition deviceDefinition);
-//
     /**
      * 修改项目定价表
      *
