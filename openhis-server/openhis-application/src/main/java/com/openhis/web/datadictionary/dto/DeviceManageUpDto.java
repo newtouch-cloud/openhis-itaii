@@ -27,7 +27,6 @@ public class DeviceManageUpDto {
     private Long id;
 
     /** 编码 */
-    @NotBlank(message = "器材编码不能为空")
     private String busNo;
 
     /** 器材名称 */
@@ -35,11 +34,9 @@ public class DeviceManageUpDto {
     private String name;
 
     /** 器材名称拼音 */
-    @NotBlank(message = "器材名称拼音不能为空")
     private String pyStr;
 
     /** 器材五笔拼音 */
-    @NotBlank(message = "器材五笔拼音不能为空")
     private String wbStr;
 
     /** 器材分类 */
@@ -67,14 +64,14 @@ public class DeviceManageUpDto {
     private String minUnitCode;
 
     /** 所属科室 */
-    @NotBlank(message = "所属科室不能为空")
+    @NotNull(message = "所属科室不能为空")
     @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long orgId;
     private String orgId_dictText;
 
     /** 所在位置 */
-    @NotBlank(message = "所在位置不能为空")
+    @NotNull(message = "所在位置不能为空")
     @Dict(dictTable = "adm_location", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;

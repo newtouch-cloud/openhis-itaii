@@ -139,7 +139,7 @@ public class DeviceManageDto {
     private String itemTypeCode_dictText;
 
     /** 医保类别 */
-    @Dict(dictCode = "med_chrgitm_type")
+    @Dict(dictCode = "yb_type")
     private String ybType;
     private String ybType_dictText;
 
