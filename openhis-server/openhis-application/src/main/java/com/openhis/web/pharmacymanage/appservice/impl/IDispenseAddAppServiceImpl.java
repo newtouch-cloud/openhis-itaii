@@ -1,7 +1,7 @@
 package com.openhis.web.pharmacymanage.appservice.impl;
 
 import com.core.common.utils.DateUtils;
-import com.openhis.common.enums.DispenseStatus;
+import com.openhis.common.enums.DispenseStatusEnum;
 import com.openhis.medication.domain.MedicationDispense;
 import com.openhis.medication.domain.MedicationRequest;
 import com.openhis.medication.service.IMedicationDispenseService;
@@ -43,7 +43,7 @@ public class IDispenseAddAppServiceImpl implements IDispenseAddAppService {
             // 药品发放id
             medicationDispense.setBusNo(medicationRequest.getBusNo());
             // 药品发放状态
-            medicationDispense.setStatusEnum(DispenseStatus.DRAFT.getValue());
+            medicationDispense.setStatusEnum(DispenseStatusEnum.DRAFT.getValue());
             // 状态变更时间
             medicationDispense.setStatusChangedTime(DateUtils.getNowDate());
             // 发药类型
