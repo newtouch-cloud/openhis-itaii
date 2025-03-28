@@ -354,7 +354,7 @@
   </div>
 </template>
   
-  <script setup name="DiagnosisTreatment">
+<script setup name="DiagnosisTreatment">
 import {
   getDiagnosisTreatmentList,
   stopDiseaseTreatment,
@@ -414,7 +414,7 @@ function getDiseaseTreatmentList() {
   getDiseaseTreatmentInit().then((response) => {
     console.log(response, "response器材目录分类查询下拉树结构");
     diseaseTreatmentCategoryList.value =
-      response.data.diseaseTreatmentCategoryList;
+      response.data.diseaseTreatmentCategoryList.sort((a, b) => { return parseInt(a.value) - parseInt(b.value) });
     statusFlagOptions.value = response.data.statusFlagOptions;
     exeOrganizations.value = response.data.exeOrganizations;
     typeEnumOptions.value = response.data.typeEnumOptions;

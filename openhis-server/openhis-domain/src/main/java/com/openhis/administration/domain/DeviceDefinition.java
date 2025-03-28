@@ -87,7 +87,7 @@ public class DeviceDefinition extends HisBaseEntity {
     private Integer ybMatchFlag;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
 
     /** 生产厂家 */
     private Long manufacturerId;

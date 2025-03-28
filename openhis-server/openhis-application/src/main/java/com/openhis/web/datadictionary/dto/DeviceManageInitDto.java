@@ -3,6 +3,8 @@ package com.openhis.web.datadictionary.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -16,8 +18,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class DeviceManageInitDto {
     private List<statusEnumOption> statusFlagOptions;
-    private List<deviceCategory> deviceCategories;
+    private List<dictCategoryCode> deviceCategories;
     private List<exeOrganization> exeOrganizations;
+    // 供应商
+    private List<supplierListOption> supplierListOptions;
+    // 是/否 状态
+    private List<statusEnumOption> statusYBWeatherOptions;
 
     /**
      * 状态
@@ -49,6 +55,21 @@ public class DeviceManageInitDto {
     }
 
     /**
+     * 器材分类
+     */
+    @Data
+    public static class dictCategoryCode {
+        private String value;
+        private String info;
+        private List<dictCategoryCode> children = new ArrayList<>();
+
+        public dictCategoryCode(String value, String info) {
+            this.value = value;
+            this.info = info;
+        }
+    }
+
+    /**
      * 执行机构
      */
     @Data
@@ -61,4 +82,21 @@ public class DeviceManageInitDto {
             this.label = label;
         }
     }
+
+    /**
+     * 供应商
+     */
+    @Data
+    public static class supplierListOption {
+
+        @JsonSerialize(using = ToStringSerializer.class)
+        private Long value;
+        private String label;
+
+        public supplierListOption(Long value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
+
 }

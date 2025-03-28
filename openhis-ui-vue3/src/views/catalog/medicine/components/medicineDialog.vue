@@ -291,9 +291,9 @@
                   <el-input v-model="form.version" placeholder="" />
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="6"  v-if="form.id != undefined">
                 <el-form-item label="药品编号" prop="busNo">
-                  <el-input v-model="form.busNo" placeholder="" />
+                  <el-input v-model="form.busNo" placeholder="" disabled/>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
@@ -737,7 +737,10 @@ const data = reactive({
     thoPartAttributeEnum:[{ required: true, message: "住院临时医嘱拆分属性不能为空", trigger: "blur" }],
     basicFlag:[{ required: true, message: "基药标识不能为空", trigger: "blur" }],
     antibioticFlag:[{ required: true, message: "抗生素不能为空", trigger: "blur" }],
-    selfFlag:[{ required: true, message: "自制不能为空", trigger: "blur" }]
+    selfFlag:[{ required: true, message: "自制不能为空", trigger: "blur" }],
+    purchasePrice:[{ required: true, message: "购入价不能为空", trigger: "blur" }],
+    retailPrice:[{ required: true, message: "零售价不能为空", trigger: "blur" }],
+    maximumRetailPrice:[{ required: true, message: "最高零售价不能为空", trigger: "blur" }],
   },
 });
 
@@ -936,6 +939,32 @@ function reset() {
 }
 /** 提交按钮 */
 function submitForm() {
+  form.value.activeFlag == true
+    ? (form.value.activeFlag = 1)
+    : (form.value.activeFlag = 0); //是否为活性
+    form.value.ybMatchFlag == true
+    ? (form.value.ybMatchFlag = 1)
+    : (form.value.ybMatchFlag = 0); //医保是否对码
+    form.value.skinTestFlag == true
+    ? (form.value.skinTestFlag = 1)
+    : (form.value.skinTestFlag = 0); //是否皮试
+    form.value.injectFlag == true
+    ? (form.value.injectFlag = 1)
+    : (form.value.injectFlag = 0); //是否为注射药物
+    form.value.restrictedFlag == true
+    ? (form.value.restrictedFlag = 1)
+    : (form.value.restrictedFlag = 0); //是否限制使用
+    form.value.childrenFlag == true
+    ? (form.value.childrenFlag = 1)
+    : (form.value.childrenFlag = 0); //儿童用药标志
+    form.value.antibioticFlag == true
+    ? (form.value.antibioticFlag = 1)
+    : (form.value.antibioticFlag = 0); //抗生素标志v
+    form.value.basicFlag == true
+    ? (form.value.basicFlag = 1)
+    : (form.value.basicFlag = 0); //抗生素标志
+    form.value.selfFlag == true ? (form.value.selfFlag = 1) : (form.value.selfFlag = 0); //自制标志
+    form.value.status == true ? (form.value.status = 1) : (form.value.status = 0); //启用状态
   proxy.$refs["medicationRef"].validate((valid) => {
     if (valid) {
       if (form.value.activeFlag == true) {

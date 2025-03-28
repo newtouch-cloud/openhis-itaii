@@ -1,19 +1,5 @@
 package com.openhis.web.pharmacymanage.appservice.impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
@@ -34,6 +20,18 @@ import com.openhis.web.pharmacymanage.dto.*;
 import com.openhis.web.pharmacymanage.mapper.WesternMedicineDispenseMapper;
 import com.openhis.workflow.domain.InventoryItem;
 import com.openhis.workflow.service.IInventoryItemService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 西药发放 应用实现类
@@ -42,7 +40,7 @@ import com.openhis.workflow.service.IInventoryItemService;
  * @date 2025/3/14
  */
 @Service
-public class WesternMedicineDispenseAppServiceImpl implements IWesternMedicineDispenseAppService {
+public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineDispenseAppService {
 
     @Autowired
     private IOrganizationService iOrganizationService;
@@ -69,15 +67,14 @@ public class WesternMedicineDispenseAppServiceImpl implements IWesternMedicineDi
         // 获取科室下拉选列表
         List<Organization> organizationList = iOrganizationService.getList(OrganizationClass.CLINIC.getValue());
         List<PageInitDto.DepartmentOption> organizationOptions = organizationList.stream()
-            .map(organization -> new PageInitDto.DepartmentOption(organization.getId(), organization.getName()))
-            .collect(Collectors.toList());
+                .map(organization -> new PageInitDto.DepartmentOption(organization.getId(),
+                        organization.getName())).collect(Collectors.toList());
 
         // 未发药原因下拉选列表
         List<PageInitDto.NotPerformedReasonOption> notPerformedReasonOptions =
-            Stream.of(NotPerformedReasonEnum.values())
-                .map(notPerformedReason -> new PageInitDto.NotPerformedReasonOption(notPerformedReason.getValue(),
-                    notPerformedReason.getInfo()))
-                .collect(Collectors.toList());
+                Stream.of(NotPerformedReasonEnum.values()).map(notPerformedReason ->
+                        new PageInitDto.NotPerformedReasonOption(notPerformedReason.getValue(),
+                                notPerformedReason.getInfo())).collect(Collectors.toList());
 
         initDto.setDepartmentOptions(organizationOptions).setNotPerformedReasonOptions(notPerformedReasonOptions);
         return R.ok(initDto);
@@ -93,32 +90,33 @@ public class WesternMedicineDispenseAppServiceImpl implements IWesternMedicineDi
      * @return 就诊病人列表
      */
     @Override
-    public R<?> getEncounterInfoListPage(EncounterInfoSearchParam encounterInfoSearchParam, Integer pageNo,
-        Integer pageSize, HttpServletRequest request) {
+    public R<?> getEncounterInfoListPage(EncounterInfoSearchParam encounterInfoSearchParam,
+                                         Integer pageNo,
+                                         Integer pageSize,
+                                         HttpServletRequest request) {
 
         // 查询条件设定
         String condition = encounterInfoSearchParam.getCondition();
-        if (!condition.isEmpty()) {
+        if (!condition.isEmpty()){
             Pattern pattern = Pattern.compile(".*\\d.*");
             Matcher matcher = pattern.matcher(encounterInfoSearchParam.getCondition());
-            encounterInfoSearchParam.setIdCard(matcher.find() ? condition : "");
-            encounterInfoSearchParam.setPatientName(!matcher.find() ? condition : "");
+            encounterInfoSearchParam.setIdCard(matcher.find() ? condition:"");
+            encounterInfoSearchParam.setPatientName(!matcher.find() ? condition:"");
         }
 
         // 构建查询条件
         QueryWrapper<EncounterInfoSearchParam> queryWrapper =
-            HisQueryUtils.buildQueryWrapper(encounterInfoSearchParam, null, null, request);
+                HisQueryUtils.buildQueryWrapper(encounterInfoSearchParam,null,null, request);
 
         // 查询就诊病人列表
-        Page<EncounterInfoPageDto> encounterInfoPageDto =
-            westernMedicineDispenseMapper.selectEncounterInfoListPage(new Page<>(pageNo, pageSize), queryWrapper);
+        Page<EncounterInfoPageDto> encounterInfoPageDto = westernMedicineDispenseMapper.selectEncounterInfoListPage(
+                new Page<>(pageNo, pageSize), queryWrapper);
 
         return R.ok(encounterInfoPageDto);
     }
 
     /**
      * 查询处方单列表
-     * 
      * @param encounterId 就诊号
      * @return 处方单列表
      */
@@ -126,15 +124,15 @@ public class WesternMedicineDispenseAppServiceImpl implements IWesternMedicineDi
     public R<?> getPrescriptionInfo(Long encounterId) {
 
         // 患者基本信息查询
-        PrescriptionPatientInfoDto prescriptionPatientInfoDto =
-            westernMedicineDispenseMapper.selectPrescriptionPatientInfo(encounterId);
+        PrescriptionPatientInfoDto prescriptionPatientInfoDto = westernMedicineDispenseMapper.
+                selectPrescriptionPatientInfo(encounterId);
 
         // 处方单信息查询
-        List<PrescriptionMedicineInfoDto> prescriptionMedicineInfoList =
-            westernMedicineDispenseMapper.selectPrescriptionMedicineInfoList(encounterId);
+        List<PrescriptionMedicineInfoDto> prescriptionMedicineInfoList = westernMedicineDispenseMapper.
+                selectPrescriptionMedicineInfoList(encounterId);
 
         // 计算合计金额
-        if (!prescriptionMedicineInfoList.isEmpty()) {
+        if(!prescriptionMedicineInfoList.isEmpty()) {
             BigDecimal totalPrice = new BigDecimal(0);
             for (PrescriptionMedicineInfoDto item : prescriptionMedicineInfoList) {
                 totalPrice.add(item.getTotal_price());
@@ -151,7 +149,6 @@ public class WesternMedicineDispenseAppServiceImpl implements IWesternMedicineDi
 
     /**
      * 处方单核对发药
-     * 
      * @param prescriptionNo 处方号
      * @return 处理结果
      */
@@ -164,9 +161,9 @@ public class WesternMedicineDispenseAppServiceImpl implements IWesternMedicineDi
         boolean iInventoryItemUpdFlg = true;
 
         // 获取药品待发放和库存信息
-        List<DispenseInventoryDto> dispenseInventoryList =
-            westernMedicineDispenseMapper.selectDispenseInventoryInfoByPrescriptionNo(prescriptionNo);
-        if (!dispenseInventoryList.isEmpty()) {
+        List<DispenseInventoryDto> dispenseInventoryList = westernMedicineDispenseMapper.
+                selectDispenseInventoryInfoByPrescriptionNo(prescriptionNo);
+        if(!dispenseInventoryList.isEmpty()){
             MedicationDispense medicationDispense;
             InventoryItem inventoryItem;
             for (DispenseInventoryDto dispenseInventoryDto : dispenseInventoryList) {
@@ -192,23 +189,28 @@ public class WesternMedicineDispenseAppServiceImpl implements IWesternMedicineDi
                 // 库存表项目设定
                 inventoryItem = new InventoryItem();
                 // 库存数量
-                if (dispenseInventoryDto.getDispenseUnitCode()
-                    .equals(dispenseInventoryDto.getInventoryBaseUnitCode())) {
-
+                if (dispenseInventoryDto.getDispenseUnitCode().equals(dispenseInventoryDto.
+                        getInventoryBaseUnitCode())) {
                     // id
                     inventoryItem.setId(dispenseInventoryDto.getInventoryId());
                     // 包装数量
-                    inventoryItem.setBaseQuantity(new BigDecimal(dispenseInventoryDto.getDispenseQuantity()));
+                    inventoryItem.setBaseQuantity(dispenseInventoryDto.getInventoryBaseQuantity().
+                            min(new BigDecimal(dispenseInventoryDto.getDispenseQuantity())));
                     // 拆零数量（拆零比×包装数量）
-                    inventoryItem.setMinQuantity(dispenseInventoryDto.getPartPercent()
-                        .multiply(new BigDecimal(dispenseInventoryDto.getDispenseQuantity())));
-                } else if (dispenseInventoryDto.getDispenseUnitCode()
-                    .equals(dispenseInventoryDto.getInventoryMinUnitCode())) {
+                    inventoryItem.setMinQuantity(dispenseInventoryDto.getInventoryMinQuantity().
+                            min(dispenseInventoryDto.getPartPercent().multiply(
+                                    new BigDecimal(dispenseInventoryDto.getDispenseQuantity()))));
+                } else if (dispenseInventoryDto.getDispenseUnitCode().equals(dispenseInventoryDto.
+                        getInventoryMinUnitCode())) {
+                    // id
+                    inventoryItem.setId(dispenseInventoryDto.getInventoryId());
                     // 拆零数量
-                    inventoryItem.setMinQuantity(new BigDecimal(dispenseInventoryDto.getDispenseQuantity()));
+                    inventoryItem.setMinQuantity(dispenseInventoryDto.getInventoryMinQuantity().min(
+                            new BigDecimal(dispenseInventoryDto.getDispenseQuantity())));
                     // 包装数量（拆零数量÷拆零比）
-                    inventoryItem.setBaseQuantity(new BigDecimal(dispenseInventoryDto.getDispenseQuantity())
-                        .divide(dispenseInventoryDto.getPartPercent(), RoundingMode.HALF_UP));
+                    inventoryItem.setBaseQuantity(dispenseInventoryDto.getInventoryBaseQuantity().min(
+                            new BigDecimal(dispenseInventoryDto.getDispenseQuantity()).
+                                    divide(dispenseInventoryDto.getPartPercent(),RoundingMode.HALF_UP)));
                 }
                 inventoryItemList.add(inventoryItem);
             }
@@ -218,28 +220,28 @@ public class WesternMedicineDispenseAppServiceImpl implements IWesternMedicineDi
             // 库存更新
             iInventoryItemUpdFlg = iInventoryItemService.updateBatchById(inventoryItemList);
         }
-        return iMedicationDispenseUpdFlg && iInventoryItemUpdFlg
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, null))
-            : R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00010, null));
+        return iMedicationDispenseUpdFlg && iInventoryItemUpdFlg ?
+                R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, null))
+                : R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00010, null));
     }
 
     /**
      * 作废
-     * 
      * @param prescriptionNo 处方号
      * @param notPerformedReasonEnum 未发药原因
      * @return 处理结果
      */
     @Override
-    public R<?> medicineCancel(String prescriptionNo, Integer notPerformedReasonEnum) {
+    public R<?> medicineCancel(String prescriptionNo,
+                               Integer notPerformedReasonEnum) {
 
         List<MedicationDispense> medicationDispenseList = new ArrayList<>();
         boolean iMedicationDispenseUpdFlg = true;
 
         // 获取药品待发放记录
-        List<DispenseInventoryDto> dispenseInventoryList =
-            westernMedicineDispenseMapper.selectDispenseInventoryInfoByPrescriptionNo(prescriptionNo);
-        if (!dispenseInventoryList.isEmpty()) {
+        List<DispenseInventoryDto> dispenseInventoryList = westernMedicineDispenseMapper.
+                selectDispenseInventoryInfoByPrescriptionNo(prescriptionNo);
+        if(!dispenseInventoryList.isEmpty()){
             MedicationDispense medicationDispense;
             for (DispenseInventoryDto dispenseInventoryDto : dispenseInventoryList) {
 
@@ -260,7 +262,8 @@ public class WesternMedicineDispenseAppServiceImpl implements IWesternMedicineDi
             // 药品发放更新
             iMedicationDispenseUpdFlg = iMedicationDispenseService.updateBatchById(medicationDispenseList);
         }
-        return iMedicationDispenseUpdFlg ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, null))
-            : R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00010, null));
+        return iMedicationDispenseUpdFlg?
+                R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, null))
+                : R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00010, null));
     }
 }

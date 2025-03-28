@@ -49,7 +49,12 @@ public enum AssignSeqEnum {
     /**
      * 费用项目编码
      */
-    CHARGE_ITEM_NO("8", "费用项目编码", "CI");
+    CHARGE_ITEM_NO("8", "费用项目编码", "CI"),
+
+    /**
+     * 药品项目编码
+     */
+    MEDICATION_NUM("8", "药品项目编码", "MD");
 
     private final String code;
     private final String info;

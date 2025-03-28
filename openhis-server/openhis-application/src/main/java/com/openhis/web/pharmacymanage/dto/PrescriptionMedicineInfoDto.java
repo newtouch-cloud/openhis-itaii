@@ -3,11 +3,11 @@
  */
 package com.openhis.web.pharmacymanage.dto;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 就诊人员列表
@@ -23,6 +23,9 @@ public class PrescriptionMedicineInfoDto implements Serializable {
 
     /** 科室 */
     private String departmentName;
+
+    /** 项目类型 */
+    private String itemType;
 
     /** 开单医生 */
     private String doctorName;
