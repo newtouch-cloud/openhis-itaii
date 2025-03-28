@@ -14,11 +14,12 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class DiagnosisTreatmentSelParam {
+
     /** 目录类别 */
     private Integer categoryEnum;
 
     /** 类型 */
-    private String typeCode;
+    private Integer typeEnum;
 
     /** 医保对码标记 */
     private Integer ybMatchFlag;

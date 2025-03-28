@@ -86,7 +86,6 @@ public class MedicationManageUpDto {
     private String definition;
 
     /** 药品编号 */
-    @NotBlank(message = "药品编号不能为空")
     private String busNo;
 
     /** 药品名称 */

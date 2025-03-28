@@ -4,6 +4,7 @@ import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.domain.DeviceDefinition;
 import com.openhis.medication.domain.MedicationDetail;
 import com.openhis.web.datadictionary.dto.DeviceManageUpDto;
+import com.openhis.web.datadictionary.dto.ItemUpFromDirectoryDto;
 import com.openhis.web.datadictionary.dto.MedicationManageUpDto;
 
 /**
@@ -15,12 +16,11 @@ import com.openhis.web.datadictionary.dto.MedicationManageUpDto;
 public interface IItemDefinitionService {
 
     /**
-     * 添加药品的项目定价
+     * 添加药品/器材/诊疗的项目定价
      *
-     * @param medicationManageUpDto 药品目录信息
-     * @param medicationDetail 药品信息
+     * @param itemUpFromDirectoryDto 药品/器材/诊疗目录信息
      */
-    boolean addItem(MedicationManageUpDto medicationManageUpDto, MedicationDetail medicationDetail);
+    boolean addItem(ItemUpFromDirectoryDto itemUpFromDirectoryDto);
 
 
 //    /**
@@ -29,8 +29,8 @@ public interface IItemDefinitionService {
 //     * @param deviceManageUpDto 器材目录信息
 //     * @param deviceDefinition 器材信息
 //     */
-//    boolean addItem(DeviceManageUpDto deviceManageUpDto, DeviceDefinition deviceDefinition);
-
+//    boolean addItem(ItemUpFromDirectoryDto itemUpFromDirectoryDto, DeviceDefinition deviceDefinition);
+//
     /**
      * 修改项目定价表
      *

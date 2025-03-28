@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.core.common.utils.SecurityUtils;
+import com.core.common.utils.bean.BeanUtils;
+import com.openhis.administration.domain.DeviceDefinition;
 import com.openhis.common.enums.ConditionCode;
+import com.openhis.web.datadictionary.dto.DeviceManageUpDto;
+import com.openhis.web.datadictionary.dto.ItemUpFromDirectoryDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,55 +43,48 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
 
 
     /**
-     * 添加项目定价
+     * 添加药品/器材/诊疗的项目定价
      *
-     * @param medicationManageUpDto 药品目录信息
-     * @param medicationDetail 药品信息
+     * @param itemUpFromDirectoryDto 药品/器材/诊疗目录信息
      */
     @Override
-    public boolean addItem(MedicationManageUpDto medicationManageUpDto, MedicationDetail medicationDetail) {
+    public boolean addItem(ItemUpFromDirectoryDto itemUpFromDirectoryDto) {
+
 
         ChargeItemDefinition chargeItemDefinition = new ChargeItemDefinition();
-        chargeItemDefinition.setChargeName(medicationDetail.getName())
-            .setStatusEnum(PublicationStatus.ACTIVE.getValue())
-            .setInstanceTable(CommonConstants.TableName.MED_MEDICATION_DEFINITION)
-            .setInstanceId(medicationDetail.getMedicationDefId()).setEffectiveStart(DateUtils.getNowDate())
-            // 机构ID
-            // .setOrgId(SecurityUtils.getLoginUser().getOrgId())
-            .setOrgId(1l)// todo 没数据先写死
-            // 财务类别
-            .setTypeCode(medicationManageUpDto.getTypeCode())
-            // 医保类别
-            .setYbType(medicationManageUpDto.getYbType()).setConditionFlag(Whether.YES.getValue())
-            .setPrice(medicationManageUpDto.getRetailPrice());
+        BeanUtils.copyProperties(itemUpFromDirectoryDto, chargeItemDefinition);
+
         boolean insertCIDSuccess = chargeItemDefinitionService.save(chargeItemDefinition);
 
         if (insertCIDSuccess) {
             List<ChargeItemDefDetail> shargeItemDefDetails = new ArrayList<>();
+            //插入购入价
             ChargeItemDefDetail chargeItemDefDetail1 = new ChargeItemDefDetail();
             chargeItemDefDetail1.setDefinitionId(chargeItemDefinition.getId())
                 // 条件:采购
                 .setConditionCode(ConditionCode.PROCUREMENT.getCode())
                 // 购入价
-                .setAmount(medicationManageUpDto.getPurchasePrice());
-
+                .setAmount(itemUpFromDirectoryDto.getPurchasePrice());
+            shargeItemDefDetails.add(chargeItemDefDetail1);
+            //插入零售价
             ChargeItemDefDetail chargeItemDefDetail2 = new ChargeItemDefDetail();
             chargeItemDefDetail2.setDefinitionId(chargeItemDefinition.getId())
                 // 条件:单位
                 .setConditionCode(ConditionCode.UNIT.getCode())
                 //单位枚举
-                .setConditionValue(medicationManageUpDto.getUnitCode())
+                .setConditionValue(itemUpFromDirectoryDto.getUnitCode())
                 // 零售价
-                .setAmount(medicationManageUpDto.getRetailPrice());
+                .setAmount(itemUpFromDirectoryDto.getRetailPrice());
 
             shargeItemDefDetails.add(chargeItemDefDetail2);
 
+            //插入最高零售价
             ChargeItemDefDetail chargeItemDefDetail3 = new ChargeItemDefDetail();
             chargeItemDefDetail3.setDefinitionId(chargeItemDefinition.getId())
                 // 条件:限制
                 .setConditionCode(ConditionCode.LIMIT.getCode())
                 // 最高零售价
-                .setAmount(medicationManageUpDto.getMaximumRetailPrice());
+                .setAmount(itemUpFromDirectoryDto.getMaximumRetailPrice());
 
             shargeItemDefDetails.add(chargeItemDefDetail3);
 
@@ -95,6 +93,7 @@ public class ItemDefinitionServiceImpl implements IItemDefinitionService {
 
         return false;
     }
+
 
     /**
      * 修改项目定价表

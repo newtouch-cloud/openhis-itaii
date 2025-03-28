@@ -189,9 +189,13 @@ public class CommonConstants {
      */
     public interface DictName {
         /**
-         * 药品分类
+         * 器材
          */
         String MED_CATEGORY_CODE = "med_category_code";
+        /**
+         * 药品分类
+         */
+        String DEVICE_CATEGORY_CODE = "device_category_code";
 
     }
 
