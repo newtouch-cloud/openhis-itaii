@@ -3,10 +3,10 @@
  */
 package com.openhis.web.pharmacymanage.dto;
 
+import java.util.List;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.util.List;
 
 /**
  *

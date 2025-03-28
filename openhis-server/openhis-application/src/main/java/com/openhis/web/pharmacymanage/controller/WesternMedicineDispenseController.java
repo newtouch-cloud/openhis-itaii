@@ -1,17 +1,19 @@
 package com.openhis.web.pharmacymanage.controller;
 
-import com.core.common.core.domain.R;
-import com.openhis.web.pharmacymanage.appservice.IWesternMedicineDispenseAppService;
-import com.openhis.web.pharmacymanage.dto.EncounterInfoSearchParam;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import com.core.common.core.domain.R;
+import com.openhis.web.pharmacymanage.appservice.IWesternMedicineDispenseAppService;
+import com.openhis.web.pharmacymanage.dto.EncounterInfoSearchParam;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 西药发药
@@ -49,11 +51,10 @@ public class WesternMedicineDispenseController {
      */
     @GetMapping("/encounter-list")
     public R<?> getEncounterInfoList(EncounterInfoSearchParam encounterInfoSearchParam,
-                                     @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-                                     HttpServletRequest request) {
-        return iWesternMedicineDispenseService.getEncounterInfoListPage(encounterInfoSearchParam,
-                pageNo, pageSize, request);
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
+        return iWesternMedicineDispenseService.getEncounterInfoListPage(encounterInfoSearchParam, pageNo, pageSize,
+            request);
     }
 
     /**
@@ -65,6 +66,8 @@ public class WesternMedicineDispenseController {
     public R<?> getPatientInfoList(@RequestParam(value = "encounterId") Long encounterId) {
         return iWesternMedicineDispenseService.getPrescriptionInfo(encounterId);
     }
+
+    // todo：配药逻辑
 
     /**
      * 核对发药
@@ -84,7 +87,7 @@ public class WesternMedicineDispenseController {
      */
     @GetMapping("/medicine-cancel")
     public R<?> medicineCancel(@RequestParam(value = "prescriptionNo") String prescriptionNo,
-                               @RequestParam(value = "prescriptionNo") Integer notPerformedReasonEnum) {
-        return iWesternMedicineDispenseService.medicineCancel(prescriptionNo,notPerformedReasonEnum);
+        @RequestParam(value = "prescriptionNo") Integer notPerformedReasonEnum) {
+        return iWesternMedicineDispenseService.medicineCancel(prescriptionNo, notPerformedReasonEnum);
     }
 }

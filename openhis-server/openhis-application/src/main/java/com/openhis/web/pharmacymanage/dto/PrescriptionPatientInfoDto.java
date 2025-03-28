@@ -3,12 +3,12 @@
  */
 package com.openhis.web.pharmacymanage.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 患者基本信息

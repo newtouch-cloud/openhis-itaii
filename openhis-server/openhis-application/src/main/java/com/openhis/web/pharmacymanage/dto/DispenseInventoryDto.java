@@ -3,10 +3,10 @@
  */
 package com.openhis.web.pharmacymanage.dto;
 
+import java.math.BigDecimal;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.math.BigDecimal;
 
 /**
  * 药品发放和库存表连接信息

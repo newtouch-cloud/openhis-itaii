@@ -3,10 +3,10 @@
  */
 package com.openhis.web.pharmacymanage.dto;
 
+import java.io.Serializable;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
  * 处方列表查询条件
