@@ -83,7 +83,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
         IPage<AdviceBaseDto> adviceBaseInfo =
             doctorStationAdviceAppMapper.getAdviceBaseInfo(new Page<>(pageNo, pageSize),
                 CommonConstants.TableName.MED_MEDICATION_DEFINITION, CommonConstants.TableName.ADM_DEVICE_DEFINITION,
-                CommonConstants.TableName.WOR_ACTIVITY_DEFINITION, DeviceCategory.SINGLE_USE.getInfo(), queryWrapper);
+                CommonConstants.TableName.WOR_ACTIVITY_DEFINITION, DeviceCategory.SINGLE_USE.getCode(), queryWrapper);
         List<AdviceBaseDto> adviceBaseDtoList = adviceBaseInfo.getRecords();
         // 医嘱定义ID集合
         List<Long> adviceDefinitionIdList =
@@ -123,16 +123,17 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
                     String finalUnitCode = unitCode;
                     // 匹配包装单位
                     List<AdvicePriceDto> advicePrice1 = childCharge.stream()
-                        .filter(e -> e.getDefinitionId().equals(finalChargeItemDefinitionId) && e.getConditionValue()
-                            .equals(String.format(CommonConstants.Common.COMMA_FORMAT, finalUnitCode,
-                                adviceInventoryDto.getLotNumber())))
+                        .filter(e -> e.getDefinitionId().equals(finalChargeItemDefinitionId)
+                            && e.getConditionValue().equals(adviceInventoryDto.getLotNumber()))
                         .peek(e -> e.setUnitCode(finalUnitCode)) // 设置 unitCode
                         .collect(Collectors.toList());
                     priceDtoList.addAll(advicePrice1);
                 }
+                // 价格信息
+                baseDto.setPriceList(priceDtoList);
             }
             // 诊疗活动
-            else {
+            else if (CommonConstants.TableName.WOR_ACTIVITY_DEFINITION.equals(baseDto.getAdviceTableName())) {
                 List<AdvicePriceDto> priceList =
                     mainCharge.stream().filter(e -> baseDto.getChargeItemDefinitionId().equals(e.getDefinitionId()))
                         .collect(Collectors.toList());
@@ -143,6 +144,8 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
                     .setActivityType_enumText(EnumUtils.getInfoByValue(ActivityType.class, baseDto.getActivityType()));
             }
         }
+
+        return adviceBaseInfo;
 
         // 下面的注释不要删除 2025.03.27
         // // 药品和耗材
@@ -206,7 +209,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
         // // 价格信息
         // baseDto.setPriceList(priceList);
         // }
-        return adviceBaseInfo;
+
     }
 
     /**

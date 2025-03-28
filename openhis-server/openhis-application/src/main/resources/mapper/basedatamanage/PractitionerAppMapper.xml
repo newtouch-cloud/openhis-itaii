@@ -48,6 +48,7 @@
     <select id="getPractitionerRolesDtoList" resultType="com.openhis.web.basedatamanage.dto.PractitionerRolesDto">
         SELECT
         sr.role_id,
+        sr.role_key AS role_code,
         sr.role_name,
         ap.ID AS practitioner_id
         FROM

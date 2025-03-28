@@ -18,6 +18,12 @@ public class PractitionerRolesDto {
      */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long roleId;
+
+    /**
+     * 角色code
+     */
+    private String roleCode;
+
     /**
      * 角色名称
      */
