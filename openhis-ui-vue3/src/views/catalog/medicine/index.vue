@@ -393,7 +393,7 @@
             :show-overflow-tooltip="true"
           />
           <el-table-column
-            label="财务统计类型"
+            label="财务类型"
             align="center"
             key="typeCode_dictText"
             prop="typeCode_dictText"

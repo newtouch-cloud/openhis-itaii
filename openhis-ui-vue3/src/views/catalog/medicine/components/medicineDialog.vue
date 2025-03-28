@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" v-model="visible" width="1000px" append-to-body>
+    <el-dialog :title="title" v-model="visible" width="1150px" append-to-body>
       <el-tabs type="border-card">
         <el-tab-pane label="基本信息">
           <el-form
@@ -136,7 +136,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="财务统计类型" prop="typeCode">
+                <el-form-item label="财务类型" prop="typeCode">
                   <el-select v-model="form.typeCode" clearable>
                     <el-option
                       v-for="category in fin_type_code"
@@ -741,6 +741,8 @@ const data = reactive({
     purchasePrice:[{ required: true, message: "购入价不能为空", trigger: "blur" }],
     retailPrice:[{ required: true, message: "零售价不能为空", trigger: "blur" }],
     maximumRetailPrice:[{ required: true, message: "最高零售价不能为空", trigger: "blur" }],
+    ybType:[{ required: true, message: "医保类型不能为空", trigger: "blur" }],
+    typeCode:[{ required: true, message: "财务类型不能为空", trigger: "blur" }],
   },
 });
 

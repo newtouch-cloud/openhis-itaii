@@ -27,7 +27,7 @@
           label-width="68px"
         >
           <el-row :gutter="24">
-            <el-col :span="5">
+            <el-col :span="6">
               <el-form-item label="项目名" prop="searchKey" label-width="55">
                 <el-input
                   v-model="queryParams.searchKey"
@@ -50,7 +50,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item
                 label="医保是否对码"
                 prop="ybMatchFlag"
@@ -62,25 +62,9 @@
                   clearable
                 >
                   <el-option
-                    v-for="item in exeOrganizations"
+                    v-for="item in statusYBWeatherOptions"
                     :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item label="执行科室" prop="ruleId" label-width="100">
-                <el-select
-                  v-model="queryParams.ruleId"
-                  placeholder=""
-                  clearable
-                >
-                  <el-option
-                    v-for="item in exeOrganizations"
-                    :key="item.value"
-                    :label="item.label"
+                    :label="item.info"
                     :value="item.value"
                   />
                 </el-select>
@@ -175,24 +159,24 @@
           <el-table-column
             label="器材分类"
             align="center"
-            key="categoryEnum"
-            prop="categoryEnum"
+            key="categoryCode_dictText"
+            prop="categoryCode_dictText"
             :show-overflow-tooltip="true"
             width="100"
           />
           <el-table-column
             label="器材种类"
             align="center"
-            key="typeCode"
-            prop="typeCode"
+            key="typeCode_dictText"
+            prop="typeCode_dictText"
             :show-overflow-tooltip="true"
             width="50"
           />
           <el-table-column
             label="包装单位"
             align="center"
-            key="unitCode"
-            prop="unitCode"
+            key="unitCode_dictText"
+            prop="unitCode_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -212,8 +196,22 @@
           <el-table-column
             label="最小使用单位"
             align="center"
-            key="minUnitCode"
-            prop="minUnitCode"
+            key="minUnitCode_dictText"
+            prop="minUnitCode_dictText"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="所属科室"
+            align="center"
+            key="orgId_dictText"
+            prop="orgId_dictText"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="所在位置"
+            align="center"
+            key="locationId_dictText"
+            prop="locationId_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -234,8 +232,8 @@
           <el-table-column
             label="销售单位"
             align="center"
-            key="salesUnitCode"
-            prop="salesUnitCode"
+            key="salesUnitCode_dictText"
+            prop="salesUnitCode_dictText"
             :show-overflow-tooltip="true"
             width="100"
           />
@@ -272,24 +270,32 @@
           <el-table-column
             label="状态"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="statusEnum_enumText"
+            prop="statusEnum_enumText"
             :show-overflow-tooltip="true"
             width="90"
           />
-          <el-table-column
+          <!-- <el-table-column
             label="生产厂家"
             align="center"
             key="manufacturerId"
             prop="manufacturerId"
             :show-overflow-tooltip="true"
             width="90"
+          /> -->
+          <el-table-column
+            label="生产厂家"
+            align="center"
+            key="manufacturerText"
+            prop="manufacturerText"
+            :show-overflow-tooltip="true"
+            width="90"
           />
           <el-table-column
             label="供应商"
             align="center"
-            key="supplyId"
-            prop="supplyId"
+            key="supplyId_dictText"
+            prop="supplyId_dictText"
             :show-overflow-tooltip="true"
             width="110"
           />
@@ -307,13 +313,6 @@
             prop="jurisdiction"
             :show-overflow-tooltip="true"
             width="120"
-          />
-          <el-table-column
-            label="执行科室"
-            align="center"
-            key="ruleId"
-            prop="ruleId"
-            :show-overflow-tooltip="true"
           />
           <el-table-column
             label="器材版本"
@@ -335,6 +334,30 @@
             align="center"
             key="allergenFlag_enumText"
             prop="allergenFlag_enumText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="售价"
+            align="center"
+            key="retailPrice"
+            prop="retailPrice"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="财务类别"
+            align="center"
+            key="itemTypeCode_dictText"
+            prop="itemTypeCode_dictText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="医保类别"
+            align="center"
+            key="ybType_dictText"
+            prop="ybType_dictText"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -381,6 +404,7 @@
       :currentCategoryEnum="currentCategoryEnum"
       :deviceCategories="deviceCategories"
       :statusFlagOptions="statusFlagOptions"
+      :supplierListOptions="supplierListOptions"
       @submit="getList()"
     />
     <!-- <device-view-dialog
@@ -415,7 +439,8 @@ const total = ref(0);
 const title = ref("");
 const deviceCategories = ref(undefined);
 const statusFlagOptions = ref(undefined);
-const exeOrganizations = ref(undefined);
+const statusYBWeatherOptions = ref(undefined);
+const supplierListOptions = ref(undefined);
 // 使用 ref 定义当前器材数据
 const currentData = ref({});
 // 使用 ref 定义当前查看器材数据
@@ -432,7 +457,7 @@ const data = reactive({
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
     ybMatchFlag: undefined, // 是否医保匹配（包括 1：是，0：否）
     ruleId: undefined, // 执行科室
-    categoryEnum: undefined, // 目录分类
+    categoryCode: undefined, // 目录分类
   },
   rules: {},
 });
@@ -449,24 +474,27 @@ const filterNode = (value, data) => {
 function getDiseaseTreatmentList() {
   getDiseaseTreatmentInit().then((response) => {
     console.log(response, "response器材目录分类查询下拉树结构");
-    deviceCategories.value = response.data.deviceCategories.sort((a, b) => { return parseInt(a.value) - parseInt(b.value) });
+    deviceCategories.value = response.data.deviceCategories.sort((a, b) => {
+      return parseInt(a.value) - parseInt(b.value);
+    });
     statusFlagOptions.value = response.data.statusFlagOptions;
-    exeOrganizations.value = response.data.exeOrganizations;
+    statusYBWeatherOptions.value = response.data.statusYBWeatherOptions;
+    supplierListOptions.value = response.data.supplierListOptions;
   });
 }
 /** 查询器材目录列表 */
 function getList() {
-  console.log(getList, "getList");
   loading.value = true;
   getDeviceList(queryParams.value).then((res) => {
     loading.value = false;
     deviceList.value = res.data.records;
     total.value = res.data.total;
+    console.log(deviceList.value, "getList", total.value);
   });
 }
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.categoryEnum = data.value;
+  queryParams.value.categoryCode = data.value;
   currentCategoryEnum.value = data.value;
   handleQuery();
 }
@@ -541,19 +569,22 @@ function openEditDevice(row) {
   currentData.value = {};
   console.log("打开编辑弹窗");
   getDeviceOne(row.id).then((response) => {
+    console.log(response, "currentDataform");
     currentData.value = response.data;
-    currentData.value.hvcmFlag == 1
-      ? (currentData.value.hvcmFlag = true)
-      : (currentData.value.hvcmFlag = false);
-    currentData.value.ybFlag == 1
-      ? (currentData.value.ybFlag = true)
-      : (currentData.value.ybFlag = false);
-    currentData.value.ybMatchFlag == 1
-      ? (currentData.value.ybMatchFlag = true)
-      : (currentData.value.ybMatchFlag = false);
-    currentData.value.allergenFlag == 1
-      ? (currentData.value.allergenFlag = true)
-      : (currentData.value.allergenFlag = false);
+    if (currentData.value) {
+      currentData.value.hvcmFlag == 1
+        ? (currentData.value.hvcmFlag = true)
+        : (currentData.value.hvcmFlag = false);
+      currentData.value.ybFlag == 1
+        ? (currentData.value.ybFlag = true)
+        : (currentData.value.ybFlag = false);
+      currentData.value.ybMatchFlag == 1
+        ? (currentData.value.ybMatchFlag = true)
+        : (currentData.value.ybMatchFlag = false);
+      currentData.value.allergenFlag == 1
+        ? (currentData.value.allergenFlag = true)
+        : (currentData.value.allergenFlag = false);
+    }
     title.value = "编辑";
     nextTick(() => {
       proxy.$refs["deviceRef"].edit();

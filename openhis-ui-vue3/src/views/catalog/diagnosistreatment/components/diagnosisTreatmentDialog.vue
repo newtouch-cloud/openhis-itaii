@@ -201,7 +201,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="财务统计类型" prop="minimalFee">
+            <el-form-item label="财务类型" prop="minimalFee">
               <el-select
                 v-model="form.minimalFee"
                 clearable

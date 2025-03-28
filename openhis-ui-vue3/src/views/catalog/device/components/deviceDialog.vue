@@ -5,17 +5,17 @@
       <el-form
         :model="form"
         :rules="rules"
-        ref="medicationRef"
+        ref="deviceDialogRef"
         label-width="110px"
         label-position="left"
       >
         <el-row :gutter="24">
-          <el-col :span="8">
+          <el-col :span="8" v-if="form.id != undefined">
             <el-form-item label="编号" prop="busNo">
               <el-input
                 v-model="form.busNo"
                 placeholder="请输入编码"
-                :disabled="form.id != undefined"
+                disabled
               />
             </el-form-item>
           </el-col>
@@ -25,9 +25,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="器材分类" prop="categoryEnum">
+            <el-form-item label="器材分类" prop="categoryCode">
               <el-tree-select
-                v-model="form.categoryEnum"
+                v-model="form.categoryCode"
                 :data="deviceCategories"
                 :props="{ value: 'value', label: 'info', children: 'children' }"
                 value-key="value"
@@ -184,7 +184,7 @@
           <el-col :span="8">
             <el-form-item label="供应商" prop="supplyId">
               <el-select
-                v-model="form.supplierId"
+                v-model="form.supplyId"
                 placeholder=""
                 clearable
                 style="width: 150px"
@@ -223,9 +223,9 @@
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="财务统计类型" prop="minimalFee">
+            <el-form-item label="财务类型" prop="itemTypeCode">
               <el-select
-                v-model="form.minimalFee"
+                v-model="form.itemTypeCode"
                 clearable
                 :disabled="form.id != undefined"
               >
@@ -305,9 +305,11 @@ import {
 } from "./device";
 
 const { proxy } = getCurrentInstance();
-const { device_type_code, unit_code } = proxy.useDict(
+const { device_type_code, unit_code,fin_type_code,yb_type } = proxy.useDict(
   "device_type_code",
-  "unit_code"
+  "unit_code",
+  "fin_type_code",
+  "yb_type"
 );
 
 const title = ref("");
@@ -326,7 +328,7 @@ const data = reactive({
     name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
     pyStr: [{ required: true, message: "拼音不能为空", trigger: "blur" }],
     wbStr: [{ required: true, message: "五笔拼音不能为空", trigger: "blur" }],
-    categoryEnum: [
+    categoryCode: [
       { required: true, message: "器材分类不能为空", trigger: "blur" },
     ],
     typeCode: [
@@ -376,6 +378,11 @@ const data = reactive({
     ],
     orgId: [{ required: true, message: "提供部门不能为空", trigger: "blur" }],
     locationId: [{ required: true, message: "地点不能为空", trigger: "blur" }],
+    purchasePrice:[{ required: true, message: "购入价不能为空", trigger: "blur" }],
+    retailPrice:[{ required: true, message: "零售价不能为空", trigger: "blur" }],
+    maximumRetailPrice:[{ required: true, message: "最高零售价不能为空", trigger: "blur" }],
+    ybType:[{ required: true, message: "医保类型不能为空", trigger: "blur" }],
+    itemTypeCode:[{ required: true, message: "财务类型不能为空", trigger: "blur" }],
   },
 });
 
@@ -402,6 +409,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  supplierListOptions: {
+    type: Object,
+    required: false,
+  },
 });
 
 // 显示弹框
@@ -411,7 +422,8 @@ function show() {
   title.value = props.title;
   deviceCategories.value = props.deviceCategories;
   statusFlagOptions.value = props.statusFlagOptions;
-  form.value.categoryEnum = props.currentCategoryEnum;
+  form.value.categoryCode = props.currentCategoryEnum;
+  supplierListOptions.value = props.supplierListOptions;
   console.log(props, "22222", title.value, props.deviceCategories);
   getDeptTree();
   getLocationTree();
@@ -440,6 +452,7 @@ function edit() {
   form.value = props.item;
   deviceCategories.value = props.deviceCategories;
   statusFlagOptions.value = props.statusFlagOptions;
+  supplierListOptions.value = props.supplierListOptions;
   getDeptTree();
   getLocationTree();
   visible.value = true;
@@ -452,7 +465,7 @@ function reset() {
     name: undefined, // 名称
     pyStr: undefined, // 拼音码
     wbStr: undefined, // 五笔码
-    categoryEnum: undefined, // 类别
+    categoryCode: undefined, // 类别
     typeCode: undefined, // 类型编码
     unitCode: undefined, // 单位编码
     size: undefined, // 规格
@@ -477,12 +490,12 @@ function reset() {
     orgId: undefined, // 科室ID
     locationId: undefined, // 地点ID
     ybType: undefined, // 医保类型
-    minimalFee: undefined, // 最小收费
+    itemTypeCode: undefined, // 最小收费
     purchasePrice: undefined, // 购入价
     retailPrice: undefined, // 零售价
     maximumRetailPrice: undefined, // 最高零售价
   };
-  proxy.resetForm("medicationRef");
+  proxy.resetForm("deviceDialogRef");
 }
 
 /** 提交按钮 */
