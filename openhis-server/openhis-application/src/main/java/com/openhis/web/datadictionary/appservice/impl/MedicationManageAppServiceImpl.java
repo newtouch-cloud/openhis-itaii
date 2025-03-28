@@ -195,6 +195,8 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             e.setBasicFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getBasicFlag()));
             //拆分分属性
             e.setPartAttributeEnum_enumText(EnumUtils.getInfoByValue(SplitPropertyCode.class, e.getPartAttributeEnum()));
+            //住院临时医嘱拆分属性
+            e.setThoPartAttributeEnum_enumText(EnumUtils.getInfoByValue(TempOrderSplitPropertyCode.class, e.getThoPartAttributeEnum()));
             // // 活动标记
             // e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
 
