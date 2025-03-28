@@ -66,10 +66,14 @@ public class DiagnosisTreatmentDto {
     private String statusEnum_enumText;
 
     /** 身体部位 */
+    @Dict(dictCode = "body_site_code")
     private String bodySiteCode;
+    private String bodySiteCode_dictText;
 
     /** 所需标本 */
+    @Dict(dictCode = "specimen_code")
     private String specimenCode;
+    private String specimenCode_dictText;
 
     /** 说明 */
     private String descriptionText;
