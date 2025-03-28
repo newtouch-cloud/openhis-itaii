@@ -86,7 +86,6 @@ public class MedicationManageUpDto {
     private String definition;
 
     /** 药品编号 */
-    @NotBlank(message = "药品编号不能为空")
     private String busNo;
 
     /** 药品名称 */
@@ -109,7 +108,7 @@ public class MedicationManageUpDto {
     private String wbStr;
 
     /** 药品分类 */
-    private Integer categoryCode;
+    private String categoryCode;
 
     /** 商品名称 */
     private String merchandiseName;
@@ -121,7 +120,9 @@ public class MedicationManageUpDto {
     private String merchandiseWbStr;
 
     /** 药品单位 */
+    @Dict(dictCode = "unit_code")
     private String unitCode;
+    private String unitCode_dictText;
 
     /** 最小单位 */
     private String minUnitCode;
@@ -136,7 +137,9 @@ public class MedicationManageUpDto {
     private BigDecimal partPercent;
 
     /** 剂量形式 */
+    @Dict(dictCode = "dose_from_code")
     private Integer doseFrom;
+    private String doseFrom_dictText;
 
     /** 批准文号 */
     private String approvalNumber;
@@ -194,8 +197,10 @@ public class MedicationManageUpDto {
     /** 医保类别 */
     private String ybType;
 
-    /** 最小费用 */
-    private String minimalFee;
+    /** 财务类别 */
+    @Dict(dictCode = "fin_type_code")
+    private String typeCode;
+    private String typeCode_dictText;
 
     /** 单次最小用药频次 */
     private String minRateCode;
@@ -205,6 +210,7 @@ public class MedicationManageUpDto {
 
     /** 药品状态 */
     private Integer statusEnum;
+    private String statusEnum_enumText;
 
     /** 拆分属性 */
     private Integer partAttributeEnum;
@@ -227,5 +233,17 @@ public class MedicationManageUpDto {
     /** 用量限定 */
     private BigDecimal usageLimit;
 
-    /** 系统类别???? */
+    /** 抗生素分类 */
+    @Dict(dictCode = "antibiotic_type_code")
+    private String antibioticCode;
+    private String antibioticCode_dictText;
+
+    /** 权限限制 */
+    private Integer restrictedEnum;
+
+    /** 基药标识 */
+    private Integer basicFlag;
+
+    /** 住院临时医嘱拆分属性 */
+    private Integer thoPartAttributeEnum;
 }

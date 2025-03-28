@@ -234,7 +234,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="服务分类" prop="categoryCode">
-              <el-select v-model="form.categoryCode" placeholder="请选择">
+              <el-select v-model="form.categoryCode" placeholder="请选择" clearable>
                 <el-option
                   v-for="dict in category_code"
                   :key="dict.value"
@@ -248,7 +248,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="服务类型" prop="fwTypeCode">
-              <el-select v-model="form.fwTypeCode" placeholder="请选择">
+              <el-select v-model="form.fwTypeCode" placeholder="请选择" clearable>
                 <el-option
                   v-for="dict in service_type_code"
                   :key="dict.value"
@@ -260,7 +260,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="服务专业" prop="specialtyCode">
-              <el-select v-model="form.specialtyCode" placeholder="请选择">
+              <el-select v-model="form.specialtyCode" placeholder="请选择" clearable>
                 <el-option
                   v-for="dict in specialty_code"
                   :key="dict.value"
@@ -281,6 +281,7 @@
                 value-key="id"
                 placeholder="请选择地点"
                 check-strictly
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -293,6 +294,7 @@
                 value-key="id"
                 placeholder="请选择提供部门"
                 check-strictly
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -300,7 +302,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="活动标记" prop="activeFlag">
-              <el-select v-model="form.activeFlag" placeholder="请选择">
+              <el-select v-model="form.activeFlag" placeholder="请选择" clearable>
                 <el-option
                   v-for="item in activeFlagOptions"
                   :key="item.value"
@@ -327,6 +329,7 @@
               <el-select
                 v-model="form.appointmentRequiredFlag"
                 placeholder="请选择"
+                clearable
               >
                 <el-option
                   v-for="item in appointmentRequiredFlagOptions"
@@ -393,7 +396,7 @@
         <el-row v-if="form.id == undefined">
           <el-col :span="12">
             <el-form-item label="财务类型" prop="cwTypeCode">
-              <el-select v-model="form.cwTypeCode" placeholder="请选择">
+              <el-select v-model="form.cwTypeCode" placeholder="请选择" clearable>
                 <el-option
                   v-for="dict in financial_type_code"
                   :key="dict.value"

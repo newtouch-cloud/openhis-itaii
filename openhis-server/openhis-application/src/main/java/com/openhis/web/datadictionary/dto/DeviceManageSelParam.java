@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 public class DeviceManageSelParam {
 
     /** 器材分类 */
-    private Integer categoryEnum;
+    private String categoryCode;
 
     /** 医保对码标记 */
     private Integer ybMatchFlag;
@@ -22,6 +22,4 @@ public class DeviceManageSelParam {
     /** 状态 */
     private Integer statusEnum;
 
-    /** 执行科室 */
-    private Long ruleId;
 }

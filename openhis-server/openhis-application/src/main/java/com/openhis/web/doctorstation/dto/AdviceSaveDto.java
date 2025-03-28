@@ -27,6 +27,12 @@ public class AdviceSaveDto {
      */
     private String categoryCode;
 
+    /** 拆零比 */
+    private BigDecimal partPercent;
+
+    /** 拆分属性 */
+    private Integer partAttributeEnum;
+
     /** 执行次数 */
     private Integer executeNum; // 当医嘱类型为药品时,选填
 

@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.web.datadictionary.dto.DeviceManageDto;
+import com.openhis.web.datadictionary.dto.MedicationManageDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * 器材目录
@@ -14,6 +16,7 @@ import org.apache.ibatis.annotations.Param;
  * @author Wuser
  * @date 2025/3/26
  */
+@Repository
 public interface DeviceManageMapper {
 
     /**
@@ -26,5 +29,14 @@ public interface DeviceManageMapper {
     IPage<DeviceManageDto> getDevicePage(
         @Param("page") Page<DeviceManageDto> page,
         @Param(Constants.WRAPPER) QueryWrapper<DeviceManageDto> queryWrapper);
+
+    /**
+     * 器材详情
+     *
+     * @param id 器材ID
+     * @param tenantId 租户
+     * @return
+     */
+    DeviceManageDto getOne(@Param("id") Long id, @Param("tenantId") Integer tenantId);
 
 }

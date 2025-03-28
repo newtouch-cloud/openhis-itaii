@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.openhis.web.datadictionary.dto.MedicationSearchParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,22 +45,18 @@ public class MedicationManageController {
     /**
      * 查询药品目录分页列表
      *
-     * @param searchKey 查询条件
-     * @param statusEnum 查询条件-状态
-     * @param ybMatchFlag 查询条件-是否对码
-     * @param categoryCode 查询条件-药品分类
+     * @param medicationSearchParam 查询条件
+     * @param searchKey 模糊查询条件
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @return
      */
     @GetMapping("/information-page")
-    public R<?> getMedicationList(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
-        @RequestParam(value = "ybMatchFlag", defaultValue = "-1") Integer ybMatchFlag,
-        @RequestParam(value = "statusEnum", defaultValue = "-1") Integer statusEnum,
-        @RequestParam(value = "categoryCode", defaultValue = "") String categoryCode,
+    public R<?> getMedicationList(
+        MedicationSearchParam medicationSearchParam,@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-        return medicationManageAppService.getMedicationList(searchKey, ybMatchFlag, statusEnum, categoryCode, pageNo,
+        return medicationManageAppService.getMedicationList(medicationSearchParam,searchKey,pageNo,
             pageSize, request);
     }
 

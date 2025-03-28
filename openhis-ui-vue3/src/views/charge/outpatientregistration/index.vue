@@ -339,6 +339,7 @@
                     highlight-current
                     default-expand-all
                     @node-click="handleNodeClick"
+                    clearable
                   />
                 </el-form-item>
               </el-col>

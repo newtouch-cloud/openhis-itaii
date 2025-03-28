@@ -112,7 +112,7 @@ public class DiseaseManageController {
      * @return
      */
     @GetMapping("/information-one")
-    public R<?> getDiseaseOne(@PathVariable("id") Long id) {
+    public R<?> getDiseaseOne(@RequestParam Long id) {
         DiseaseManageDto diseaseManageDto = new DiseaseManageDto();
         // 根据ID查询【病种目录】
         ConditionDefinition conditionDefinition = iConditionDefinitionService.getById(id);

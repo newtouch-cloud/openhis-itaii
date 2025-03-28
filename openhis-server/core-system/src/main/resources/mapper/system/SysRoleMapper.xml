@@ -149,14 +149,14 @@
             <if test="dataScope != null and dataScope != ''">data_scope = #{dataScope},</if>
             <if test="menuCheckStrictly != null">
                 <choose>
-                    <when test="menuCheckStrictly == true">1,</when>
-                    <otherwise>0,</otherwise>
+                    <when test="menuCheckStrictly == true">menu_check_strictly=1,</when>
+                    <otherwise>menu_check_strictly=0,</otherwise>
                 </choose>
             </if>
             <if test="deptCheckStrictly != null">
                 <choose>
-                    <when test="deptCheckStrictly == true">1,</when>
-                    <otherwise>0,</otherwise>
+                    <when test="deptCheckStrictly == true">dept_check_strictly=1,</when>
+                    <otherwise>dept_check_strictly=0,</otherwise>
                 </choose>
             </if>
             <if test="status != null and status != ''">status = #{status},</if>

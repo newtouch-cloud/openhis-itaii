@@ -20,11 +20,4 @@ public interface IMedicationDefinitionService extends IService<MedicationDefinit
      */
     boolean addMedication(MedicationDetail medicationDetail);
 
-    /**
-     * 新增医保药品目录
-     * 
-     * @param medicationDetail
-     * @return
-     */
-    boolean addYbMedicatione(MedicationDetail medicationDetail);
 }

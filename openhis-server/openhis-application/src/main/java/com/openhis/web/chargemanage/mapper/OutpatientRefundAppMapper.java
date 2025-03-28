@@ -36,14 +36,14 @@ public interface OutpatientRefundAppMapper {
     /**
      * 查询退费项目
      * 
-     * @param paymentIdList 支付编号列表
+     * @param chargeItemIdList 收费项列表
      * @param medMedicationRequest 药品请求表
      * @param worServiceRequest 服务请求表
      * @param worDeviceRequest 耗材请求表
      * @param three 用于字符截位
      * @return 退费项目列表
      */
-    List<RefundItemDto> selectRefundItem(@Param("paymentIdList") List<Long> paymentIdList,
+    List<RefundItemDto> selectRefundItem(@Param("chargeItemIdList") List<Long> chargeItemIdList,
         @Param("medMedicationRequest") String medMedicationRequest,
         @Param("worServiceRequest") String worServiceRequest, @Param("worDeviceRequest") String worDeviceRequest,
         @Param("three") Integer three);

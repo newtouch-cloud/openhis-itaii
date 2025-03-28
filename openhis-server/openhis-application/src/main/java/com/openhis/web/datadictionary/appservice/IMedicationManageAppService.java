@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.openhis.web.datadictionary.dto.MedicationSearchParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,14 +33,11 @@ public interface IMedicationManageAppService {
      * 药品目录查询
      *
      * @param searchKey 查询条件
-     * @param ybMatchFlag 查询条件-是否对码
-     * @param statusEnum 查询条件-状态
-     * @param categoryCode 查询条件-药品分类
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @return 药品目录查询结果
      */
-    R<?> getMedicationList(String searchKey, Integer ybMatchFlag, Integer statusEnum, String categoryCode,
+    R<?> getMedicationList(MedicationSearchParam medicationSearchParam,String searchKey,
         Integer pageNo, Integer pageSize, HttpServletRequest request);
 
     /**

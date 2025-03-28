@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/openhis";
 
 // 查询诊疗目录列表
 export function getDiagnosisTreatmentList(query) {
@@ -13,8 +12,9 @@ export function getDiagnosisTreatmentList(query) {
 // 查询诊疗目录详细
 export function getDiagnosisTreatmentOne(id) {
   return request({
-    url: '/data-dictionary/diagnosis-treatment/information-one/' + parseStrEmpty(id),
-    method: 'get'
+    url: '/data-dictionary/diagnosis-treatment/information-one/',
+    method: 'get',
+    params: { id } // 确保参数正确传递
   })
 }
 
@@ -35,14 +35,6 @@ export function editDiagnosisTreatment(data) {
     data: data
   })
 }
-
-// // 删除诊疗目录
-// export function delUser(userId) {
-//   return request({
-//     url: '/system/user/' + userId,
-//     method: 'delete'
-//   })
-// }
 
 // 诊疗目录分类查询
 export function getDiseaseTreatmentInit() {
@@ -69,5 +61,23 @@ export function startDiseaseTreatment(ids) {
     url: '/data-dictionary/diagnosis-treatment/information-start',
     method: 'put',
     data: ids
+  })
+}
+
+// 查询部门树形数据
+export function deptTreeSelect(queryParams) {
+  return request({
+    url: '/base-data-manage/organization/organization',
+    method: 'get',
+    param: queryParams
+  })
+}
+
+// 查询地点树形数据
+export function locationTreeSelect(queryParams) {
+  return request({
+    url: '/base-data-manage/cabinet-location/cabinet-location',
+    method: 'get',
+    param: queryParams
   })
 }

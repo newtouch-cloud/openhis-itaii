@@ -10,13 +10,15 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum PractitionerRole implements HisEnumInterface {
+public enum PractitionerRoles implements HisEnumInterface {
 
     DOCTOR(1, "doctor", "医生"),
 
     NURSE(2, "nurse", "护士"),
 
-    PHARMACIST(3, "pharmacist", "药师");
+    PHARMACIST(3, "pharmacist", "药师"),
+
+    LOCATION_ADMIN(4, "locationAdmin", "库房管理员");
 
     @EnumValue
     private final Integer value;

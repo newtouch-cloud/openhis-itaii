@@ -5,7 +5,7 @@
       <el-form
         :model="form"
         :rules="rules"
-        ref="medicationRef"
+        ref="diagnosisTreatmentRef"
         label-width="110px"
         label-position="left"
       >
@@ -21,101 +21,216 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="项目名称" prop="name">
-              <el-input
-                v-model="form.name"
-                placeholder="请输入器材名称"
-              />
+              <el-input v-model="form.name" placeholder="请输入名称" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item
-              label="拼音码(项目名称)"
-              prop="pyStr"
-              class="custom-label-spacing"
-            >
-              <el-input v-model="form.pyStr" placeholder=""/>
+            <el-form-item label="所属科室" prop="orgId">
+              <el-tree-select
+                v-model="form.orgId"
+                :data="deptOptions"
+                :props="{
+                  value: 'id',
+                  label: 'name',
+                  children: 'children',
+                }"
+                value-key="id"
+                placeholder="请选择提供部门"
+                check-strictly
+                clearable
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="五笔拼音" prop="wbStr">
-              <el-input v-model="form.wbStr" placeholder=""/>
+            <el-form-item label="地点" prop="locationId">
+              <el-tree-select
+                v-model="form.locationId"
+                :data="locationOptions"
+                :props="{
+                  value: 'id',
+                  label: 'name',
+                  children: 'children',
+                }"
+                value-key="id"
+                placeholder="请选择地点"
+                check-strictly
+                clearable
+              />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="目录分类" prop="categoryEnum">
-              <el-input
+              <el-tree-select
                 v-model="form.categoryEnum"
-                placeholder=""
+                :data="diseaseTreatmentCategoryList"
+                :props="{
+                  value: 'id',
+                  label: 'info',
+                  children: 'children',
+                }"
+                value-key="id"
+                placeholder="请选择地点"
+                check-strictly
+                clearable
               />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="类型" prop="typeCode">
-              <el-input v-model="form.typeCode" placeholder=""/>
+              <el-select v-model="form.typeCode" placeholder="" clearable>
+                <el-option
+                  v-for="item in typeEnumOptions"
+                  :key="item.value"
+                  :label="item.info"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="状态" prop="statusEnum">
+              <el-select v-model="form.statusEnum" clearable>
+                <el-option
+                  v-for="status in statusFlagOptions"
+                  :key="status.value"
+                  :label="status.info"
+                  :value="status.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="使用单位" prop="permittedUnitCode">
-              <el-input
-                v-model="form.permittedUnitCode"
-                placeholder=""
-              />
-            </el-form-item>
-          </el-col>
           <el-col :span="8">
             <el-form-item label="医保标记" prop="ybFlag">
-              <!-- <el-input v-model="form.ybFlag" placeholder=""/> -->
               <el-checkbox v-model="form.ybFlag"></el-checkbox>
-              <!-- <el-input v-model="form.ybFlag" placeholder=""/> -->
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="医保编码" prop="conditionCode">
-              <el-input v-model="form.ybNo" placeholder=""/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="医保对码标记" prop="ybMatchFlag">
               <el-checkbox v-model="form.ybMatchFlag"></el-checkbox>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="状态" prop="statusEnum">
-              <el-input
-                v-model="form.statusEnum"
-                placeholder=""
-              />
+            <el-form-item label="医保编码" prop="conditionCode">
+              <el-input v-model="form.ybNo" placeholder="" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="医保类别" prop="ybType">
+              <el-select
+                v-model="form.ybType"
+                placeholder="医保类别"
+                clearable
+                style="width: 240px"
+              >
+                <el-option
+                  v-for="dict in yb_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="身体部位" prop="bodySiteCode">
-              <!-- <el-input v-model="form.ybFlag" placeholder=""/> -->
-              <el-input
+              <el-select
                 v-model="form.bodySiteCode"
-                placeholder=""
-              />
+                clearable
+                :disabled="form.id != undefined"
+              >
+                <el-option
+                  v-for="category in body_site_code"
+                  :key="category.value"
+                  :label="category.label"
+                  :value="category.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="所需标本" prop="specimenCode">
+              <el-select
+                v-model="form.specimenCode"
+                clearable
+                :disabled="form.id != undefined"
+              >
+                <el-option
+                  v-for="category in specimen_code"
+                  :key="category.value"
+                  :label="category.label"
+                  :value="category.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="所需标本" prop="specimenCode">
-              <el-input
-                v-model="form.specimenCode"
-                placeholder=""
-              />
+            <el-form-item label="执行科室" prop="ruleId">
+              <el-select v-model="form.ruleId" placeholder="" clearable>
+                <el-option
+                  v-for="item in exeOrganizations"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="规则id" prop="ruleId">
-              <el-checkbox v-model="form.ruleId"></el-checkbox>
+            <el-form-item label="使用单位" prop="permittedUnitCode">
+              <el-select
+                v-model="form.permittedUnitCode"
+                clearable
+                :disabled="form.id != undefined"
+              >
+                <el-option
+                  v-for="category in unit_code"
+                  :key="category.value"
+                  :label="category.label"
+                  :value="category.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="财务类型" prop="minimalFee">
+              <el-select
+                v-model="form.minimalFee"
+                clearable
+                :disabled="form.id != undefined"
+              >
+                <el-option
+                  v-for="category in fin_type_code"
+                  :key="category.value"
+                  :label="category.label"
+                  :value="category.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="购入价" prop="purchasePrice">
+              <el-input v-model="form.purchasePrice" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="零售价" prop="retailPrice">
+              <el-input v-model="form.retailPrice" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="最高零售价" prop="maximumRetailPrice">
+              <el-input v-model="form.maximumRetailPrice" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -142,42 +257,52 @@
   </div>
 </template>
 
-<script setup name="MedicineDialog">
+<script setup name="DiagnosisTreatmentDialog">
 import {
   getDiagnosisTreatmentList,
   editDiagnosisTreatment,
   addDiagnosisTreatment,
-  getDiseaseTreatmentInit,
-  getDiagnosisTreatmentOne,
+  deptTreeSelect,
+  locationTreeSelect,
 } from "./diagnosistreatment";
 
-const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict(
-  "sys_normal_disable",
-  "sys_user_sex"
+const { unit_code, yb_type, fin_type_code } = proxy.useDict(
+  "unit_code",
+  "yb_type",
+  "fin_type_code"
 );
 
 const title = ref("");
 const visible = ref(false);
 const emits = defineEmits(["submit"]); // 声明自定义事件
+const categoryEnum = ref("");
+const deptOptions = ref(undefined); // 部门树选项
+const locationOptions = ref(undefined); // 地点树选项
+const diseaseTreatmentCategoryList = ref(undefined);
+const statusFlagOptions = ref(undefined);
+const exeOrganizations = ref(undefined);
+const typeEnumOptions = ref(undefined);
 
 const data = reactive({
   form: {},
   rules: {
-    // busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
-    // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    // pyStr: [{ required: true, message: "拼音不能为空", trigger: "blur" }],
-    // wbStr: [{ required: true, message: "五笔拼音不能为空", trigger: "blur" }],
-    // categoryEnum: [{ required: true, message: "器材分类不能为空", trigger: "blur" }],
-    // typeCode: [{ required: true, message: "器材种类不能为空", trigger: "blur" }],
-    // unitCode: [{ required: true, message: "包装单位不能为空", trigger: "blur" }],
-    // size: [{ required: true, message: "包装规格不能为空", trigger: "blur" }],
-    // partPercent: [{ required: true, message: "拆零比不能为空", trigger: "blur" }],
-    // minUnitCode: [{ required: true, message: "最小使用单位不能为空", trigger: "blur" }],
-    // modelNumber: [{ required: true, message: "产品型号不能为空", trigger: "blur" }],
-    // hvcmFlag: [{ required: true, message: "高值器材标志不能为空", trigger: "blur" }],    
-    // salesUnitCode: [{ required: true, message: "销售单位不能为空", trigger: "blur" }],
+    busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
+    name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
+    statusEnum: [{ required: true, message: "状态不能为空", trigger: "blur" }],
+    categoryEnum: [
+      { required: true, message: "诊疗目录不能为空", trigger: "blur" },
+    ],
+    typeCode: [
+      { required: true, message: "器材种类不能为空", trigger: "blur" },
+    ],
+    permittedUnitCode: [
+      { required: true, message: "使用单位不能为空", trigger: "blur" },
+    ],
+    ybFlag: [{ required: true, message: "医保标记不能为空", trigger: "blur" }],
+    ybMatchFlag: [
+      { required: true, message: "医保对码标记不能为空", trigger: "blur" },
+    ],
   },
 });
 
@@ -192,26 +317,56 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  currentCategoryEnum: {
+    type: String,
+    required: true,
+  },
+  diseaseTreatmentCategoryList: {
+    type: Object,
+    required: false,
+  },
+  statusFlagOptions: {
+    type: Object,
+    required: false,
+  },
+  exeOrganizations: {
+    type: Object,
+    required: false,
+  },
+  typeEnumOptions: {
+    type: Object,
+    required: false,
+  },
 });
 
 // 显示弹框
 function show() {
   reset();
-  // queryParams.roleId = props.roleId;
-  // getList();
+  getLocationTree();
+  getDeptTree();
   title.value = "";
   title.value = props.title;
+  diseaseTreatmentCategoryList.value = props.diseaseTreatmentCategoryList;
+  statusFlagOptions.value = props.statusFlagOptions;
+  exeOrganizations.value = props.exeOrganizations;
+  typeEnumOptions.value = props.typeEnumOptions;
+  form.value.categoryEnum = props.currentCategoryEnum;
+  console.log(props.currentCategoryEnum, "11111");
   console.log(props, "22222", title.value);
   visible.value = true;
 }
 // 显示弹框
 function edit() {
   reset();
-  // queryParams.roleId = props.roleId;
-  // getList();
+  getLocationTree();
+  getDeptTree();
   title.value = "";
   title.value = props.title;
   form.value = props.item;
+  diseaseTreatmentCategoryList.value = props.diseaseTreatmentCategoryList;
+  statusFlagOptions.value = props.statusFlagOptions;
+  exeOrganizations.value = props.exeOrganizations;
+  typeEnumOptions.value = props.typeEnumOptions;
   visible.value = true;
 }
 /** 重置操作表单 */
@@ -220,46 +375,74 @@ function reset() {
     id: undefined,
     busNo: undefined, // 编码
     name: undefined, // 名称
+    locationId: undefined, // 地点
+    orgId: undefined, // 执行科室
     pyStr: undefined, // 拼音码
     wbStr: undefined, // 五笔码
     categoryEnum: undefined, // 类别
     typeCode: undefined, // 类型编码
-    permittedUnitCode: undefined, // 使用单位
-    ybFlag: undefined, // 医保标记
-    ybNo: undefined, // 医保编码
-    ybMatchFlag: undefined, // 医保对码标记
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
+    ybFlag: undefined, // 医保标记
+    ybMatchFlag: undefined, // 医保对码标记
+    ybNo: undefined, // 医保编码
+    ybType: undefined, // 医保类型
     bodySiteCode: undefined, // 身体部位
     specimenCode: undefined, // 所需标本
-    description: undefined, // 说明
     ruleId: undefined, // 执行科室
+    permittedUnitCode: undefined, // 使用单位
+    minimalFee: undefined, // 最小收费
+    purchasePrice: undefined, // 购入价
+    retailPrice: undefined, // 零售价
+    maximumRetailPrice: undefined, // 最高零售价
+    description: undefined, // 说明
   };
-  proxy.resetForm("medicationRef");
+  proxy.resetForm("diagnosisTreatmentRef");
 }
 
 /** 提交按钮 */
 function submitForm() {
   form.value.ybFlag ? (form.value.ybFlag = 1) : (form.value.ybFlag = 0);
-  form.value.ybMatchFlag ? (form.value.ybMatchFlag = 1) : (form.value.ybMatchFlag = 0);
+  form.value.ybMatchFlag
+    ? (form.value.ybMatchFlag = 1)
+    : (form.value.ybMatchFlag = 0);
   form.value.ruleId ? (form.value.ruleId = 1) : (form.value.ruleId = 0);
-  if (form.value.id != undefined) {
-    editDiagnosisTreatment(form.value).then((response) => {
-      // 触发自定义事件，并传递数据给父组件
-      emits("submit");
-      proxy.$modal.msgSuccess("修改成功");
-      visible.value = false;
-      reset(); // 重置表单数据
-    });
-  } else {
-    addDiagnosisTreatment(form.value).then((response) => {
-      // 触发自定义事件，并传递数据给父组件
-      emits("submit");
-      proxy.$modal.msgSuccess("新增成功");
-      visible.value = false;
-      reset(); // 重置表单数据
-    });
-  }
+  proxy.$refs["diagnosisTreatmentRef"].validate((valid) => {
+    if (valid) {
+      if (form.value.id != undefined) {
+        editDiagnosisTreatment(form.value).then((response) => {
+          // 触发自定义事件，并传递数据给父组件
+          emits("submit");
+          proxy.$modal.msgSuccess("修改成功");
+          visible.value = false;
+          reset(); // 重置表单数据
+        });
+      } else {
+        addDiagnosisTreatment(form.value).then((response) => {
+          // 触发自定义事件，并传递数据给父组件
+          emits("submit");
+          proxy.$modal.msgSuccess("新增成功");
+          visible.value = false;
+          reset(); // 重置表单数据
+        });
+      }
+    }
+  });
 }
+/** 查询部门下拉树结构 */
+function getDeptTree() {
+  deptTreeSelect().then((response) => {
+    console.log(response, "response查询部门下拉树结构");
+    deptOptions.value = response.data.records;
+  });
+}
+/** 查询地点下拉树结构 */
+function getLocationTree() {
+  locationTreeSelect().then((response) => {
+    console.log(response, "response查询部门下拉树结构");
+    locationOptions.value = response.data.records;
+  });
+}
+
 /** 取消按钮 */
 function cancel() {
   visible.value = false;

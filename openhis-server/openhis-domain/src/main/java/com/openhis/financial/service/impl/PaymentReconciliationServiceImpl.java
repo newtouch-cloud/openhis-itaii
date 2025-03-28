@@ -1,5 +1,6 @@
 package com.openhis.financial.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,21 +31,28 @@ public class PaymentReconciliationServiceImpl extends ServiceImpl<PaymentReconci
     /**
      * 根据支付id获取对应收费项目的id列表
      *
-     * @param paymentId 支付id
+     * @param paymentIdList 支付id列表
      * @return 收费项目的id列表
      */
     @Override
-    public List<Long> getChargeItemIdListByPayment(Long paymentId) {
+    public List<Long> getChargeItemIdListByPayment(List<Long> paymentIdList) {
 
         // 根据支付id获取支付信息
-        PaymentReconciliation paymentReconciliation =
-            paymentReconciliationMapper.selectOne(new LambdaQueryWrapper<PaymentReconciliation>()
-                .select(PaymentReconciliation::getChargeItemIds).eq(PaymentReconciliation::getId, paymentId));
-        if (paymentReconciliation == null) {
+        List<PaymentReconciliation> paymentReconciliationList =
+            paymentReconciliationMapper.selectList(new LambdaQueryWrapper<PaymentReconciliation>()
+                .select(PaymentReconciliation::getChargeItemIds).in(PaymentReconciliation::getId, paymentIdList));
+        if (paymentReconciliationList.isEmpty()) {
             return null;
         }
+        // 拆解所有的chargeItemId，拼装成一个集合
+        List<String> chargeItemIdList = paymentReconciliationList.stream().map(PaymentReconciliation::getChargeItemIds)
+            .collect(Collectors.toList());
+        List<Long> chargeItemIds = new ArrayList<>();
+        for (String chargeItemId : chargeItemIdList) {
+            chargeItemIds.addAll(Arrays.stream(chargeItemId.split(CommonConstants.Common.COMMA)).map(Long::parseLong)
+                .collect(Collectors.toList()));
+        }
         // 将收费项目集合转换成列表
-        return Arrays.stream(paymentReconciliation.getChargeItemIds().split(CommonConstants.Common.COMMA))
-            .map(Long::parseLong).collect(Collectors.toList());
+        return chargeItemIds;
     }
 }

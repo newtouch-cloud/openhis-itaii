@@ -5,10 +5,13 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 import com.openhis.common.enums.ActivityDefCategory;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
 
 /**
  * 诊疗目录分页更新
@@ -73,4 +76,24 @@ public class DiagnosisTreatmentUpDto {
 
     /** 规则id */
     private Integer ruleId;
+
+    /** 财务类别 */
+    @Dict(dictCode = "fin_type_code")
+    private String itemTypeCode;
+    private String itemTypeCode_dictText;
+
+    /** 医保类别 */
+    @Dict(dictCode = "yb_type")
+    private String ybType;
+    private String ybType_dictText;
+
+    /** 购入价 */
+    private BigDecimal purchasePrice;
+
+    /** 零售价 */
+    private BigDecimal retailPrice;
+
+    /** 最高零售价 */
+    private BigDecimal maximumRetailPrice;
+
 }

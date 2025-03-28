@@ -9,8 +9,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.openhis.web.doctorstation.dto.UserAndPractitionerChildDto;
-import com.openhis.web.doctorstation.dto.UserAndPractitionerDto;
+import com.openhis.web.basedatamanage.dto.PractitionerOrgAndLocationDto;
+import com.openhis.web.basedatamanage.dto.PractitionerRolesDto;
+import com.openhis.web.basedatamanage.dto.UserAndPractitionerDto;
 
 /**
  * 参与者 应用Mapper
@@ -29,12 +30,21 @@ public interface PractitionerAppAppMapper {
         @Param(Constants.WRAPPER) QueryWrapper<UserAndPractitionerDto> queryWrapper);
 
     /**
-     * 查询子集合
+     * 查询参与者的角色信息
      * 
      * @param practitionerIdList 参与者id集合
-     * @return 子集合
+     * @return 参与者的角色信息
      */
-    List<UserAndPractitionerChildDto> getChildList(@Param("practitionerIdList") List<Long> practitionerIdList);
+    List<PractitionerRolesDto> getPractitionerRolesDtoList(@Param("practitionerIdList") List<Long> practitionerIdList);
+
+    /**
+     * 查询科室和位置集合
+     * 
+     * @param practitionerIdList 参与者id集合
+     * @return 科室和位置集合
+     */
+    List<PractitionerOrgAndLocationDto>
+        getOrgAndLocationDtoList(@Param("practitionerIdList") List<Long> practitionerIdList);
 
     /**
      * 物理删除系统用户与角色的关系

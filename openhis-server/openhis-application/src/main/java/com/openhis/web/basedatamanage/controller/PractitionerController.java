@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.core.common.core.domain.R;
 import com.openhis.web.basedatamanage.appservice.IPractitionerAppService;
-import com.openhis.web.doctorstation.dto.UserAndPractitionerDto;
+import com.openhis.web.basedatamanage.dto.UserAndPractitionerDto;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

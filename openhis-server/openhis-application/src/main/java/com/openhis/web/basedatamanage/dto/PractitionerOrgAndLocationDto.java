@@ -1,4 +1,4 @@
-package com.openhis.web.doctorstation.dto;
+package com.openhis.web.basedatamanage.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -8,19 +8,11 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * 用户 及 参与者 子dto
+ * 参与者机构和位置 dto
  */
 @Data
 @Accessors(chain = true)
-public class UserAndPractitionerChildDto {
-
-    /**
-     * 机构id
-     */
-    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long orgId;
-    private String orgId_dictText;
+public class PractitionerOrgAndLocationDto {
 
     /**
      * 位置id
@@ -36,14 +28,12 @@ public class UserAndPractitionerChildDto {
     private String roleCode;
 
     /**
-     * 角色id
+     * 机构id
      */
-    private Long roleId;
-
-    /**
-     * 角色name
-     */
-    private String roleName;
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orgId;
+    private String orgId_dictText;
 
     /**
      * 参与者id

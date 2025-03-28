@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/openhis";
 
 // 查询器材目录列表
 export function getDeviceList(query) {
@@ -14,8 +13,9 @@ export function getDeviceList(query) {
 // 查询器材目录详细
 export function getDeviceOne(id) {
   return request({
-    url: '/data-dictionary/device/information-one/' + parseStrEmpty(id),
-    method: 'get'
+    url: '/data-dictionary/device/information-one',
+    method: 'get',
+    params: { id } // 确保参数正确传递
   })
 }
 

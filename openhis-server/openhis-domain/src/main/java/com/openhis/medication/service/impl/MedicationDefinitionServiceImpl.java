@@ -60,8 +60,5 @@ public class MedicationDefinitionServiceImpl extends ServiceImpl<MedicationDefin
         return true;
     }
 
-    @Override
-    public boolean addYbMedicatione(MedicationDetail medicationDetail) {
-        return false;
-    }
+
 }

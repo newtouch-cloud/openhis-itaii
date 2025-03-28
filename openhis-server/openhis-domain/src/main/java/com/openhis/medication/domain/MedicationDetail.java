@@ -99,7 +99,7 @@ public class MedicationDetail extends HisBaseEntity {
     private String wbStr;
 
     /** 药品分类 */
-    private Integer categoryCode;
+    private String categoryCode;
 
     /** 商品名称 */
     private String merchandiseName;
@@ -198,5 +198,6 @@ public class MedicationDetail extends HisBaseEntity {
     private String manufacturerText;
     /** 用量限定 */
     private BigDecimal usageLimit;
-
+    /** 住院临时医嘱拆分属性 */
+    private Integer thoPartAttributeEnum;
 }

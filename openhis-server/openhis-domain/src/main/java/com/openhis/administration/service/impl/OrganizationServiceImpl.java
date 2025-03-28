@@ -1,7 +1,10 @@
 package com.openhis.administration.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.openhis.administration.domain.Organization;
@@ -45,4 +48,15 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         return updateCount > 0;
     }
 
+    /**
+     * 获取机构下拉列表
+     *
+     * @param classEnum 机构分类
+     * @return 机构下拉列表
+     */
+    @Override
+    public List<Organization> getList(Integer classEnum) {
+        return baseMapper.selectList(new LambdaQueryWrapper<Organization>()
+            .select(Organization::getId, Organization::getName).eq(Organization::getClassEnum, classEnum));
+    }
 }
