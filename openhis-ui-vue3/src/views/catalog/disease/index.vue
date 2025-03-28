@@ -192,14 +192,14 @@
                 v-hasPermi="['system:user:edit']"
                 >编辑</el-button
               >
-              <el-button
+              <!-- <el-button
                 link
                 type="primary"
                 icon="View"
                 @click="handleView(scope.row)"
                 v-hasPermi="['system:user:remove']"
                 >查看</el-button
-              >
+              > -->
             </template>
           </el-table-column>
         </el-table>
@@ -332,7 +332,6 @@ import {
   startDisease,
 } from "./components/disease";
 
-const router = useRouter();
 const { proxy } = getCurrentInstance();
 
 const diseaseList = ref([]);
@@ -348,9 +347,6 @@ const conditionDefinitionOptions = ref(undefined);
 const conditionDefinition = ref(undefined);
 // 是否停用
 const statusFlagOptions = ref(undefined);
-// const initPassword = ref(undefined);
-// const postOptions = ref([]);
-// const roleOptions = ref([]);
 
 const data = reactive({
   form: {},
@@ -366,15 +362,6 @@ const data = reactive({
     conditionCode: [
       { required: true, message: "编码不能为空", trigger: "blur" },
     ],
-    // typeCode: [
-    //   { required: true, message: "编码不能为空", trigger: "blur" },
-    // ],
-    // description: [
-    //   { required: true, message: "编码不能为空", trigger: "blur" },
-    // ],
-    // conditionCode: [
-    //   { required: true, message: "编码不能为空", trigger: "blur" },
-    // ],
   },
 });
 
@@ -385,29 +372,23 @@ const filterNode = (value, data) => {
   if (!value) return true;
   return data.label.indexOf(value) !== -1;
 };
-// /** 根据名称筛选部门树 */
-// watch(deptName, val => {
-//   proxy.$refs["deptTreeRef"].filter(val);
-// });
+
 /** 病种目录分类查询下拉树结构 */
 function getDiseaseCategoryList() {
   getDiseaseCategory().then((response) => {
     console.log(response, "response病种目录分类查询下拉树结构");
-    conditionDefinitionOptions.value = response.data.diseaseCategoryList;
+    conditionDefinitionOptions.value = response.data.diseaseCategoryList.sort((a, b) => { return parseInt(a.value) - parseInt(b.value) });
     statusFlagOptions.value = response.data.statusFlagOptions;
   });
 }
 /** 查询病种目录列表 */
 function getList() {
   loading.value = true;
-  // queryParams.value.statusEnum = +queryParams.value.statusEnum
-  console.log(queryParams.value, "queryParams.value");
   getDiseaseList(queryParams.value).then((res) => {
     loading.value = false;
-    console.log(res, "res");
     diseaseList.value = res.data.records;
     total.value = res.data.total;
-    console.log(total.value, "total.value");
+    console.log(total.value, "total.value", res, "res");
   });
 }
 /** 节点单击事件 */
@@ -421,14 +402,7 @@ function handleQuery() {
   queryParams.value.pageNo = 1;
   getList();
 }
-// /** 重置按钮操作 */
-// function resetQuery() {
-//    dateRange.value = [];
-//    proxy.resetForm("queryRef");
-//    queryParams.value.deptId = undefined;
-//    proxy.$refs.deptTreeRef.setCurrentKey(null);
-//    handleQuery();
-// };
+
 /** 启用按钮操作 */
 function handleStart(row) {
   const stardIds = row.id || ids.value;
@@ -467,22 +441,9 @@ function handleExport() {
     `user_${new Date().getTime()}.xlsx`
   );
 }
-// /** 用户状态修改  */
-// function handleStatusChange(row) {
-//    let text = row.status === "0" ? "启用" : "停用";
-//    proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
-//       return changeUserStatus(row.userId, row.status);
-//    }).then(() => {
-//       proxy.$modal.msgSuccess(text + "成功");
-//    }).catch(function () {
-//       row.status = row.status === "0" ? "1" : "0";
-//    });
-// };
 
 /** 选择条数  */
 function handleSelectionChange(selection) {
-  console.log(selection, "selection");
-  // selectedData.value = selection.map((item) => ({ ...item })); // 存储选择的行数据
   ids.value = selection.map((item) => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
@@ -522,14 +483,19 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  console.log(row, "row");
-  form.value = JSON.parse(JSON.stringify(row));
-  form.value.ybFlag == 1
-    ? (form.value.ybFlag = true)
-    : (form.value.ybFlag = false);
-  form.value.ybMatchFlag == 1
-    ? (form.value.ybMatchFlag = true)
-    : (form.value.ybMatchFlag = false);
+  getDiseaseOne(row.id).then((response) => {
+    console.log(response, "responsebbbb", row.id);
+    form.value = response.data;
+    form.value.ybFlag == 1
+      ? (form.value.ybFlag = true)
+      : (form.value.ybFlag = false);
+    form.value.ybMatchFlag == 1
+      ? (form.value.ybMatchFlag = true)
+      : (form.value.ybMatchFlag = false);
+    //  getList();
+  });
+  // console.log(row, "row");
+  // form.value = JSON.parse(JSON.stringify(row));
   open.value = true;
   title.value = "病种编辑";
 }
@@ -543,9 +509,6 @@ function submitForm() {
         ? (form.value.ybMatchFlag = 1)
         : (form.value.ybMatchFlag = 0);
       if (form.value.id != undefined) {
-        // form.value.status
-        //   ? (form.value.statusEnum = "3")
-        //   : (form.value.statusEnum = "2");
         console.log(form.value, "editDisease", form.value.statusEnum);
         editDisease(form.value).then((response) => {
           proxy.$modal.msgSuccess("修改成功");

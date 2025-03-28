@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/openhis";
 
 // 查询诊疗目录列表
 export function getDiagnosisTreatmentList(query) {
@@ -36,14 +35,6 @@ export function editDiagnosisTreatment(data) {
     data: data
   })
 }
-
-// // 删除诊疗目录
-// export function delUser(userId) {
-//   return request({
-//     url: '/system/user/' + userId,
-//     method: 'delete'
-//   })
-// }
 
 // 诊疗目录分类查询
 export function getDiseaseTreatmentInit() {

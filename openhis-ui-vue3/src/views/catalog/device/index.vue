@@ -449,7 +449,7 @@ const filterNode = (value, data) => {
 function getDiseaseTreatmentList() {
   getDiseaseTreatmentInit().then((response) => {
     console.log(response, "response器材目录分类查询下拉树结构");
-    deviceCategories.value = response.data.deviceCategories;
+    deviceCategories.value = response.data.deviceCategories.sort((a, b) => { return parseInt(a.value) - parseInt(b.value) });
     statusFlagOptions.value = response.data.statusFlagOptions;
     exeOrganizations.value = response.data.exeOrganizations;
   });

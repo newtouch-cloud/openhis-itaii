@@ -732,7 +732,7 @@ const filterNode = (value, data) => {
 function getMedicationCategoryList() {
   getMedicationCategory().then((response) => {
     console.log(response, "response药品目录分类查询下拉树结构");
-    medicationOptions.value = response.data.medicationCategoryCodeOptions;
+    medicationOptions.value = response.data.medicationCategoryCodeOptions.sort((a, b) => { return parseInt(a.value) - parseInt(b.value) });
     statusFlagOptions.value = response.data.statusFlagOptions;
     domainEnumOptions.value = response.data.domainFlagOptions;
     supplierListOptions.value = response.data.supplierListOptions;

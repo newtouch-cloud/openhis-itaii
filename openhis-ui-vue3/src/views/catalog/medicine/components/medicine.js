@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/openhis";
 
 // 查询药品目录列表
 export function getMedicationList(query) {

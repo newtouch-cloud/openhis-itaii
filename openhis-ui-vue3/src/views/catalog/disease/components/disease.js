@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/openhis";
 
 // 查询病种目录列表
 export function getDiseaseList(query) {
@@ -13,8 +12,9 @@ export function getDiseaseList(query) {
 // 查询病种目录详细
 export function getDiseaseOne(id) {
   return request({
-    url: '/data-dictionary/disease/information-one/' + parseStrEmpty(id),
-    method: 'get'
+    url: '/data-dictionary/disease/information-one',
+    method: 'get',
+    params: { id } // 确保参数正确传递
   })
 }
 
