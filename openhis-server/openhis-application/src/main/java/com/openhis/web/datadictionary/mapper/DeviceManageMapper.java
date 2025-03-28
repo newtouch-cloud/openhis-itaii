@@ -8,6 +8,7 @@ import com.openhis.web.datadictionary.dto.DeviceManageDto;
 import com.openhis.web.datadictionary.dto.MedicationManageDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * 器材目录
@@ -15,6 +16,7 @@ import org.apache.ibatis.annotations.Param;
  * @author Wuser
  * @date 2025/3/26
  */
+@Repository
 public interface DeviceManageMapper {
 
     /**

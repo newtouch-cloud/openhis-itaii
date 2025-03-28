@@ -124,11 +124,6 @@ public class DeviceManageUpDto {
     @NotBlank(message = "适用范围不能为空")
     private String jurisdiction;
 
-    /** 执行科室 */
-    @NotNull(message = "执行科室不能为空")
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long ruleId;
-
     /** 器材版本 */
     private String version;
 
@@ -155,8 +150,7 @@ public class DeviceManageUpDto {
     private String itemTypeCode;
 
     /** 医保类别 */
-    @NotNull(message = "财务类别不能为空")
+    @NotNull(message = "医保类别不能为空")
     private String ybType;
-
 
 }

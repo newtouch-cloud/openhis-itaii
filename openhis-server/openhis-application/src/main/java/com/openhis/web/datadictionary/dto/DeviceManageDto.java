@@ -133,13 +133,23 @@ public class DeviceManageDto {
     private Integer allergenFlag;
     private String allergenFlag_enumText;
 
-    /** 售价 */
-    private BigDecimal price;
-
     /** 财务类别 */
+    @Dict(dictCode = "fin_type_code")
     private String itemTypeCode;
+    private String itemTypeCode_dictText;
 
     /** 医保类别 */
+    @Dict(dictCode = "med_chrgitm_type")
     private String ybType;
+    private String ybType_dictText;
+
+    /** 购入价 */
+    private BigDecimal purchasePrice;
+
+    /** 零售价 */
+    private BigDecimal retailPrice;
+
+    /** 最高零售价 */
+    private BigDecimal maximumRetailPrice;
 
 }

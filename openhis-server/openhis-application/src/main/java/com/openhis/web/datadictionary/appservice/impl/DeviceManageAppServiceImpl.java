@@ -13,6 +13,8 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import com.openhis.administration.domain.Supplier;
+import com.openhis.administration.service.ISupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -74,6 +76,9 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
     @Autowired
     private IItemDefinitionService itemDefinitionServic;
 
+    @Autowired
+    private ISupplierService supplierService;
+
     @Autowired(required = false)
     AssignSeqUtil assignSeqUtil;
 
@@ -93,14 +98,14 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
             .collect(Collectors.toList());
         deviceManageInitDto.setStatusFlagOptions(statusEnumOptions);
 
-        // 获取执行科室
-        LambdaQueryWrapper<Organization> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Organization::getTypeEnum, OrganizationType.HOSPITAL_DEPARTMENT);
-        List<Organization> organizations = organizationService.list(queryWrapper);
-        List<DeviceManageInitDto.exeOrganization> exeOrganizations = organizations.stream()
-            .map(exeOrg -> new DeviceManageInitDto.exeOrganization(exeOrg.getId(), exeOrg.getName()))
-            .collect(Collectors.toList());
-        deviceManageInitDto.setExeOrganizations(exeOrganizations);
+//        // 获取执行科室
+//        LambdaQueryWrapper<Organization> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(Organization::getTypeEnum, OrganizationType.HOSPITAL_DEPARTMENT);
+//        List<Organization> organizations = organizationService.list(queryWrapper);
+//        List<DeviceManageInitDto.exeOrganization> exeOrganizations = organizations.stream()
+//            .map(exeOrg -> new DeviceManageInitDto.exeOrganization(exeOrg.getId(), exeOrg.getName()))
+//            .collect(Collectors.toList());
+//        deviceManageInitDto.setExeOrganizations(exeOrganizations);
         // // 从枚举中获取器材分类
         // List<DeviceManageInitDto.deviceCategory> deviceCategories = Stream.of(DeviceCategory.values())
         // .map(category -> new DeviceManageInitDto.deviceCategory(category.getValue(), category.getInfo()))
@@ -108,10 +113,10 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
         // deviceManageInitDto.setDeviceCategories(deviceCategories);
 
         // 获取器材
-        List<SysDictData> devicelList =
+        List<SysDictData> deviceList =
             sysDictTypeService.selectDictDataByType(CommonConstants.DictName.DEVICE_CATEGORY_CODE);
         // 从字典中获取器材分类
-        List<DeviceManageInitDto.dictCategoryCode> deviceCategories = devicelList.stream()
+        List<DeviceManageInitDto.dictCategoryCode> deviceCategories = deviceList.stream()
             .map(category -> new DeviceManageInitDto.dictCategoryCode(category.getDictValue(), category.getDictLabel()))
             .collect(Collectors.toList());
         deviceManageInitDto.setDeviceCategories(deviceCategories);
@@ -121,6 +126,14 @@ public class DeviceManageAppServiceImpl implements IDeviceManageAppService {
             .map(status -> new DeviceManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
             .collect(Collectors.toList());
         deviceManageInitDto.setStatusYBWeatherOptions(statusYBWeatherOption);
+
+        // 查询供应商列表
+        List<Supplier> supplierList = supplierService.getList();
+        // 供应商信息
+        List<DeviceManageInitDto.supplierListOption> supplierListOptions = supplierList.stream()
+            .map(supplier -> new DeviceManageInitDto.supplierListOption(supplier.getId(), supplier.getName()))
+            .collect(Collectors.toList());
+        deviceManageInitDto.setSupplierListOptions(supplierListOptions);
 
         return R.ok(deviceManageInitDto);
     }

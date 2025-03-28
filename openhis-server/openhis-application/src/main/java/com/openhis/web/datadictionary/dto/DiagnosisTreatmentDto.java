@@ -2,6 +2,7 @@ package com.openhis.web.datadictionary.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 import com.openhis.common.enums.ActivityDefCategory;
 import com.openhis.common.enums.PublicationStatus;
 
@@ -45,7 +46,9 @@ public class DiagnosisTreatmentDto {
     private String typeEnum_enumText;
 
     /** 使用单位 */
+    @Dict(dictCode = "rate_code")
     private String permittedUnitCode;
+    private String permittedUnitCode_dictText;
 
     /** 医保标记 */
     private Integer ybFlag;
@@ -74,15 +77,38 @@ public class DiagnosisTreatmentDto {
     /** 规则id */
     private Integer ruleId;
 
-    /** 归属科室 */
+    /** 所属科室 */
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long orgId;
+    private String orgId_dictText;
 
     /** 所在位置 */
+    @Dict(dictTable = "adm_location", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
+    private String locationId_dictText;
 
     /** 售价 */
     private BigDecimal price;
+
+    /** 财务类别 */
+    @Dict(dictCode = "fin_type_code")
+    private String typeCode;
+    private String typeCode_dictText;
+
+    /** 医保类别 */
+    @Dict(dictCode = "med_chrgitm_type")
+    private String ybType;
+    private String ybType_dictText;
+
+    /** 购入价 */
+    private BigDecimal purchasePrice;
+
+    /** 零售价 */
+    private BigDecimal retailPrice;
+
+    /** 最高零售价 */
+    private BigDecimal maximumRetailPrice;
 
 }

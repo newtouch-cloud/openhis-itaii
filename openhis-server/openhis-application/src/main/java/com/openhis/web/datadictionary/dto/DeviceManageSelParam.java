@@ -21,5 +21,5 @@ public class DeviceManageSelParam {
 
     /** 状态 */
     private Integer statusEnum;
-    
+
 }
