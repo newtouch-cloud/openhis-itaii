@@ -844,32 +844,6 @@ function openViewMedicine(row) {
 
 /** 提交按钮 */
 function submitForm(formData) {
-  formData.activeFlag == true
-    ? (formData.activeFlag = 1)
-    : (formData.activeFlag = 0); //是否为活性
-  formData.ybMatchFlag == true
-    ? (formData.ybMatchFlag = 1)
-    : (formData.ybMatchFlag = 0); //医保是否对码
-  formData.skinTestFlag == true
-    ? (formData.skinTestFlag = 1)
-    : (formData.skinTestFlag = 0); //是否皮试
-  formData.injectFlag == true
-    ? (formData.injectFlag = 1)
-    : (formData.injectFlag = 0); //是否为注射药物
-  formData.restrictedFlag == true
-    ? (formData.restrictedFlag = 1)
-    : (formData.restrictedFlag = 0); //是否限制使用
-  formData.childrenFlag == true
-    ? (formData.childrenFlag = 1)
-    : (formData.childrenFlag = 0); //儿童用药标志
-  formData.antibioticFlag == true
-    ? (formData.antibioticFlag = 1)
-    : (formData.antibioticFlag = 0); //抗生素标志
-  formData.basicFlag == true
-    ? (formData.basicFlag = 1)
-    : (formData.basicFlag = 0); //抗生素标志
-  formData.selfFlag == true ? (formData.selfFlag = 1) : (formData.selfFlag = 0); //自制标志
-  formData.status == true ? (formData.status = 1) : (formData.status = 0); //启用状态
   console.log(formData, "submitForm");
   if (formData.id != undefined) {
     editMedication(formData).then((response) => {
