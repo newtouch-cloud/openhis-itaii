@@ -1,4 +1,4 @@
-package com.openhis.web.doctorstation.dto;
+package com.openhis.web.basedatamanage.dto;
 
 import java.util.Date;
 import java.util.List;
@@ -103,13 +103,23 @@ public class UserAndPractitionerDto {
     private String orgId_dictText;
 
     /**
-     * 角色id集合
+     * 责任科室
      */
-    private List<Long> roleIds;
+    private List<PractitionerOrgAndLocationDto> responsibilityOrgDtoList;
 
     /**
-     * 子集合
+     * 参与者角色集合
      */
-    private List<UserAndPractitionerChildDto> childList;
+    private List<PractitionerRolesDto> practitionerRolesDtoList;
+
+    /**
+     * 医生出诊科室集合
+     */
+    private List<PractitionerOrgAndLocationDto> doctorVisitOrgDtoList;
+
+    /**
+     * 管理库房集合
+     */
+    private List<PractitionerOrgAndLocationDto> manageLocationDtoList;
 
 }

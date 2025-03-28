@@ -2,7 +2,7 @@ package com.openhis.web.basedatamanage.appservice;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.core.common.core.domain.R;
-import com.openhis.web.doctorstation.dto.UserAndPractitionerDto;
+import com.openhis.web.basedatamanage.dto.UserAndPractitionerDto;
 
 /**
  * 参与者 应该服务类

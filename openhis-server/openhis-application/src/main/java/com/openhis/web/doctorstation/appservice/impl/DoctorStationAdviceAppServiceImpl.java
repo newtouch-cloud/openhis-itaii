@@ -98,70 +98,114 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
 
         // 费用定价子表信息
         List<AdvicePriceDto> childCharge = doctorStationAdviceAppMapper
-            .getChildCharge(ConditionCode.UNIT_PRODUCT_BATCH_NUM.getInfo(), chargeItemDefinitionIdList);
+            .getChildCharge(ConditionCode.UNIT_PRODUCT_BATCH_NUM.getCode(), chargeItemDefinitionIdList);
         // 费用定价主表信息
         List<AdvicePriceDto> mainCharge = doctorStationAdviceAppMapper.getMainCharge(chargeItemDefinitionIdList);
-        // 药品和耗材
-        List<AdviceBaseDto> medicationAndDeviceList = adviceBaseDtoList.stream()
-            .filter(e -> CommonConstants.TableName.MED_MEDICATION_DEFINITION.equals(e.getAdviceTableName())
-                || CommonConstants.TableName.ADM_DEVICE_DEFINITION.equals(e.getAdviceTableName()))
-            .collect(Collectors.toList());
-        // 药品和耗材-赋值
+
         String unitCode = ""; // 包装单位
-        String minUnitCode; // 小单位
         Long chargeItemDefinitionId; // 费用定价主表ID
-        for (AdviceBaseDto baseDto : medicationAndDeviceList) {
-            // 每一条医嘱的库存集合信息
-            List<AdviceInventoryDto> inventoryList =
-                adviceInventory.stream().filter(e -> baseDto.getAdviceDefinitionId().equals(e.getItemId())
-                    && baseDto.getAdviceTableName().equals(e.getItemTable())).collect(Collectors.toList());
-            // 库存信息
-            baseDto.setInventoryList(inventoryList);
-
-            unitCode = baseDto.getUnitCode();
-            minUnitCode = baseDto.getMinUnitCode();
-            chargeItemDefinitionId = baseDto.getChargeItemDefinitionId();
-
-            List<AdvicePriceDto> priceDtoList = new ArrayList<>();
-            // 库存信息里取 单位,产品批号 去匹配价格
-            for (AdviceInventoryDto adviceInventoryDto : inventoryList) {
-                Long finalChargeItemDefinitionId = chargeItemDefinitionId;
-                String finalUnitCode = unitCode;
-                String finalMinUnitCode = minUnitCode;
-                // 匹配包装单位
-                List<AdvicePriceDto> advicePrice1 = childCharge.stream()
-                    .filter(e -> e.getDefinitionId().equals(finalChargeItemDefinitionId) && e.getConditionValue()
-                        .equals(String.format(CommonConstants.Common.COMMA_FORMAT, finalUnitCode,
-                            adviceInventoryDto.getLotNumber())))
-                    .peek(e -> e.setUnitCode(finalUnitCode)) // 设置 unitCode
-                    .collect(Collectors.toList());
-                // 匹配最小单位
-                List<AdvicePriceDto> advicePrice2 = childCharge.stream()
-                    .filter(e -> e.getDefinitionId().equals(finalChargeItemDefinitionId) && e.getConditionValue()
-                        .equals(String.format(CommonConstants.Common.COMMA_FORMAT, finalMinUnitCode,
-                            adviceInventoryDto.getLotNumber())))
-                    .peek(e -> e.setUnitCode(finalMinUnitCode)) // 设置 unitCode
-                    .collect(Collectors.toList());
-                priceDtoList.addAll(advicePrice1);
-                priceDtoList.addAll(advicePrice2);
+        for (AdviceBaseDto baseDto : adviceBaseDtoList) {
+            // 药品和耗材
+            if (CommonConstants.TableName.MED_MEDICATION_DEFINITION.equals(baseDto.getAdviceTableName())
+                || CommonConstants.TableName.ADM_DEVICE_DEFINITION.equals(baseDto.getAdviceTableName())) {
+                // 每一条医嘱的库存集合信息 , 包装单位库存前端计算
+                List<AdviceInventoryDto> inventoryList =
+                    adviceInventory.stream().filter(e -> baseDto.getAdviceDefinitionId().equals(e.getItemId())
+                        && baseDto.getAdviceTableName().equals(e.getItemTable())).collect(Collectors.toList());
+                // 库存信息
+                baseDto.setInventoryList(inventoryList);
+                unitCode = baseDto.getUnitCode();
+                chargeItemDefinitionId = baseDto.getChargeItemDefinitionId();
+                List<AdvicePriceDto> priceDtoList = new ArrayList<>();
+                // 库存信息里取 命中条件 去匹配价格
+                for (AdviceInventoryDto adviceInventoryDto : inventoryList) {
+                    Long finalChargeItemDefinitionId = chargeItemDefinitionId;
+                    String finalUnitCode = unitCode;
+                    // 匹配包装单位
+                    List<AdvicePriceDto> advicePrice1 = childCharge.stream()
+                        .filter(e -> e.getDefinitionId().equals(finalChargeItemDefinitionId) && e.getConditionValue()
+                            .equals(String.format(CommonConstants.Common.COMMA_FORMAT, finalUnitCode,
+                                adviceInventoryDto.getLotNumber())))
+                        .peek(e -> e.setUnitCode(finalUnitCode)) // 设置 unitCode
+                        .collect(Collectors.toList());
+                    priceDtoList.addAll(advicePrice1);
+                }
             }
-            // 价格信息
-            baseDto.setPriceList(priceDtoList);
+            // 诊疗活动
+            else {
+                List<AdvicePriceDto> priceList =
+                    mainCharge.stream().filter(e -> baseDto.getChargeItemDefinitionId().equals(e.getDefinitionId()))
+                        .collect(Collectors.toList());
+                // 价格信息
+                baseDto.setPriceList(priceList);
+                // 活动类型
+                baseDto
+                    .setActivityType_enumText(EnumUtils.getInfoByValue(ActivityType.class, baseDto.getActivityType()));
+            }
         }
-        // 诊疗
-        List<AdviceBaseDto> activityList = adviceBaseDtoList.stream()
-            .filter(e -> CommonConstants.TableName.WOR_ACTIVITY_DEFINITION.equals(e.getAdviceTableName()))
-            .collect(Collectors.toList());
-        // 诊疗-赋值
-        for (AdviceBaseDto baseDto : activityList) {
-            // 活动类型
-            baseDto.setActivityType_enumText(EnumUtils.getInfoByValue(ActivityType.class, baseDto.getActivityType()));
-            List<AdvicePriceDto> priceList =
-                mainCharge.stream().filter(e -> baseDto.getChargeItemDefinitionId().equals(e.getDefinitionId()))
-                    .collect(Collectors.toList());
-            // 价格信息
-            baseDto.setPriceList(priceList);
-        }
+
+        // 下面的注释不要删除 2025.03.27
+        // // 药品和耗材
+        // List<AdviceBaseDto> medicationAndDeviceList = adviceBaseDtoList.stream()
+        // .filter(e -> CommonConstants.TableName.MED_MEDICATION_DEFINITION.equals(e.getAdviceTableName())
+        // || CommonConstants.TableName.ADM_DEVICE_DEFINITION.equals(e.getAdviceTableName()))
+        // .collect(Collectors.toList());
+        // // 药品和耗材-赋值
+        // String unitCode = ""; // 包装单位
+        // String minUnitCode; // 小单位
+        // Long chargeItemDefinitionId; // 费用定价主表ID
+        // for (AdviceBaseDto baseDto : medicationAndDeviceList) {
+        // // 每一条医嘱的库存集合信息
+        // List<AdviceInventoryDto> inventoryList =
+        // adviceInventory.stream().filter(e -> baseDto.getAdviceDefinitionId().equals(e.getItemId())
+        // && baseDto.getAdviceTableName().equals(e.getItemTable())).collect(Collectors.toList());
+        // // 库存信息
+        // baseDto.setInventoryList(inventoryList);
+        //
+        // unitCode = baseDto.getUnitCode();
+        // minUnitCode = baseDto.getMinUnitCode();
+        // chargeItemDefinitionId = baseDto.getChargeItemDefinitionId();
+        //
+        // List<AdvicePriceDto> priceDtoList = new ArrayList<>();
+        // // 库存信息里取 单位,产品批号 去匹配价格
+        // for (AdviceInventoryDto adviceInventoryDto : inventoryList) {
+        // Long finalChargeItemDefinitionId = chargeItemDefinitionId;
+        // String finalUnitCode = unitCode;
+        // String finalMinUnitCode = minUnitCode;
+        // // 匹配包装单位
+        // List<AdvicePriceDto> advicePrice1 = childCharge.stream()
+        // .filter(e -> e.getDefinitionId().equals(finalChargeItemDefinitionId) && e.getConditionValue()
+        // .equals(String.format(CommonConstants.Common.COMMA_FORMAT, finalUnitCode,
+        // adviceInventoryDto.getLotNumber())))
+        // .peek(e -> e.setUnitCode(finalUnitCode)) // 设置 unitCode
+        // .collect(Collectors.toList());
+        // // 匹配最小单位
+        // List<AdvicePriceDto> advicePrice2 = childCharge.stream()
+        // .filter(e -> e.getDefinitionId().equals(finalChargeItemDefinitionId) && e.getConditionValue()
+        // .equals(String.format(CommonConstants.Common.COMMA_FORMAT, finalMinUnitCode,
+        // adviceInventoryDto.getLotNumber())))
+        // .peek(e -> e.setUnitCode(finalMinUnitCode)) // 设置 unitCode
+        // .collect(Collectors.toList());
+        // priceDtoList.addAll(advicePrice1);
+        // priceDtoList.addAll(advicePrice2);
+        // }
+        // // 价格信息
+        // baseDto.setPriceList(priceDtoList);
+        // }
+        // // 诊疗
+        // List<AdviceBaseDto> activityList = adviceBaseDtoList.stream()
+        // .filter(e -> CommonConstants.TableName.WOR_ACTIVITY_DEFINITION.equals(e.getAdviceTableName()))
+        // .collect(Collectors.toList());
+        // // 诊疗-赋值
+        // for (AdviceBaseDto baseDto : activityList) {
+        // // 活动类型
+        // baseDto.setActivityType_enumText(EnumUtils.getInfoByValue(ActivityType.class, baseDto.getActivityType()));
+        // List<AdvicePriceDto> priceList =
+        // mainCharge.stream().filter(e -> baseDto.getChargeItemDefinitionId().equals(e.getDefinitionId()))
+        // .collect(Collectors.toList());
+        // // 价格信息
+        // baseDto.setPriceList(priceList);
+        // }
         return adviceBaseInfo;
     }
 
