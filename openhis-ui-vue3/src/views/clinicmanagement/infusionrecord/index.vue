@@ -227,16 +227,6 @@
         </el-table>
       </div>
     </div>
-    <div>
-      <el-dialog
-        title="处方信息"
-        v-model="showPrescription"
-        width="60vw"
-        :before-close="handleClose"
-      >
-        <prescriptioncard></prescriptioncard>
-      </el-dialog>
-    </div>
   </div>
 </template>
 
@@ -252,7 +242,6 @@ import {
 } from "./component/api";
 
 const showSearch = ref(true);
-const showPrescription = ref(false);
 const total = ref(1);
 const selectedItems = ref(new Set());
 

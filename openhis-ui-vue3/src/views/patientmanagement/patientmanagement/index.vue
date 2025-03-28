@@ -608,6 +608,8 @@ function submitForm() {
         if (addressCom.value !== newAddress) {
           form.value.address = getAddress(form);
         }
+        console.log("/***/*/*/*/*/*/*/*/*/",form.value)
+        return;
         updatePatient(form.value).then((response) => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
