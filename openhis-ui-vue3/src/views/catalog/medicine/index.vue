@@ -4,6 +4,7 @@
       <!--药品目录-->
       <el-col :span="4" :xs="24">
         <div class="head-container">
+          <div class="head-title">药品目录</div>
           <el-tree
             :data="medicationOptions"
             :props="{ label: 'info', children: 'children' }"
@@ -120,7 +121,7 @@
               >查询</el-button
             >
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button
               type="warning"
               plain
@@ -129,7 +130,7 @@
               v-hasPermi="['system:user:export']"
               >导出Excel</el-button
             >
-          </el-col>
+          </el-col> -->
         </el-row>
 
         <el-table
@@ -156,40 +157,10 @@
             width="110"
           />
           <el-table-column
-            label="药品编码"
-            align="center"
-            key="medicationDefId"
-            prop="medicationDefId"
-            :show-overflow-tooltip="true"
-            width="200px"
-          />
-          <el-table-column
             label="药品状态"
             align="center"
             key="statusEnum_enumText"
             prop="statusEnum_enumText"
-            :show-overflow-tooltip="true"
-          />
-          <!-- <el-table-column
-            label="医保类别"
-            align="center"
-            key="ybType_enumText"
-            prop="ybType_enumText"
-            :show-overflow-tooltip="true"
-          /> -->
-          <el-table-column
-            label="药品名称拼音码"
-            align="center"
-            key="pyStr"
-            prop="pyStr"
-            :show-overflow-tooltip="true"
-            width="120"
-          />
-          <el-table-column
-            label="药品五笔码"
-            align="center"
-            key="wbStr"
-            prop="wbStr"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -200,25 +171,18 @@
             :show-overflow-tooltip="true"
             width="90"
           />
-          <el-table-column
+          <!-- <el-table-column
             label="所属科室"
             align="center"
             key="orgId_dictText"
             prop="orgId_dictText"
             :show-overflow-tooltip="true"
-          />
+          /> -->
           <el-table-column
-            label="地点"
+            label="采购入库位置"
             align="center"
             key="locationId_dictText"
             prop="locationId_dictText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="剂型"
-            align="center"
-            key="doseFormCode_dictText"
-            prop="doseFormCode_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -230,215 +194,6 @@
             width="200px"
           />
           <el-table-column
-            label="成分"
-            align="center"
-            key="ingredientItem"
-            prop="ingredientItem"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="是否为活性"
-            align="center"
-            key="activeFlag_enumText"
-            prop="activeFlag_enumText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="批次号"
-            align="center"
-            key="lotNumber"
-            prop="lotNumber"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="生效日期"
-            align="center"
-            key="effectiveDate"
-            prop="effectiveDate"
-            :show-overflow-tooltip="true"
-          >
-            <template #default="scope">
-              <span>{{ parseTime(scope.row.effectiveDate) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="到期日期"
-            align="center"
-            key="expirationDate"
-            prop="expirationDate"
-            :show-overflow-tooltip="true"
-          >
-            <template #default="scope">
-              <span>{{ parseTime(scope.row.expirationDate) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="用法"
-            align="center"
-            key="methodCode_dictText"
-            prop="methodCode_dictText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="用药频次"
-            align="center"
-            key="rateCode_dictText"
-            prop="rateCode_dictText"
-            :show-overflow-tooltip="true"
-            width="100"
-          />
-          <el-table-column
-            label="单次剂量"
-            align="center"
-            key="dose"
-            prop="dose"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="剂量单位"
-            align="center"
-            key="doseUnitCode_dictText"
-            prop="doseUnitCode_dictText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="单次最大剂量"
-            align="center"
-            key="maxUnit"
-            prop="maxUnit"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="药品定义"
-            align="center"
-            key="definition"
-            prop="definition"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="用量限定"
-            align="center"
-            key="usageLimit"
-            prop="usageLimit"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="DDD值"
-            align="center"
-            key="dddCode_dictText"
-            prop="dddCode_dictText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="DDD单位"
-            align="center"
-            key="dddUnitCode_dictText"
-            prop="dddUnitCode_dictText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="适用范围"
-            align="center"
-            key="domainEnum_enumText"
-            prop="domainEnum_enumText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="药品版本"
-            align="center"
-            key="version"
-            prop="version"
-            :show-overflow-tooltip="true"
-            width="120"
-          />
-          <el-table-column
-            label="英文药名"
-            align="center"
-            key="nameEn"
-            prop="nameEn"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="商品名称"
-            align="center"
-            key="merchandiseName"
-            prop="merchandiseName"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="商品名称拼音码"
-            align="center"
-            key="merchandisePyStr"
-            prop="merchandisePyStr"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="商品五笔码"
-            align="center"
-            key="merchandiseWbStr"
-            prop="merchandiseWbStr"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="包装单位"
-            align="center"
-            key="unitCode_dictText"
-            prop="unitCode_dictText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="财务类型"
-            align="center"
-            key="typeCode_dictText"
-            prop="typeCode_dictText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="所含耗材"
-            align="center"
-            key="comprisedText"
-            prop="comprisedText"
-            :show-overflow-tooltip="true"
-            width="110"
-          />
-          <el-table-column
-            label="拆零比"
-            align="center"
-            key="partPercent"
-            prop="partPercent"
-            :show-overflow-tooltip="true"
-            width="120"
-          />
-          <el-table-column
-            label="剂量形式"
-            align="center"
-            key="doseFrom_dictText"
-            prop="doseFrom_dictText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="批准文号"
-            align="center"
-            key="approvalNumber"
-            prop="approvalNumber"
-            :show-overflow-tooltip="true"
-            width="120"
-          />
-          <el-table-column
-            label="医保是否对码"
-            align="center"
-            key="ybMatchFlag_enumText"
-            prop="ybMatchFlag_enumText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
             label="医保编码"
             align="center"
             key="ybNo"
@@ -447,158 +202,25 @@
             width="90"
           />
           <el-table-column
-            label="药理作用分类"
+            label="医保是否对码"
             align="center"
-            key="pharmacologyCategoryCode"
-            prop="pharmacologyCategoryCode"
+            key="ybMatchFlag_enumText"
+            prop="ybMatchFlag_enumText"
             :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="是否皮试"
-            align="center"
-            key="skinTestFlag_enumText"
-            prop="skinTestFlag_enumText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="是否为注射药物"
-            align="center"
-            key="injectFlag_enumText"
-            prop="injectFlag_enumText"
-            :show-overflow-tooltip="true"
-            width="90"
           />
           <!-- <el-table-column
-            label="生产厂家"
+            label="医保上传"
             align="center"
-            key="manufacturerId"
-            prop="manufacturerId"
+            key="ybNo"
+            prop="ybNo"
             :show-overflow-tooltip="true"
+            width="90"
           /> -->
           <el-table-column
-            label="生产厂家名称"
+            label="采购价"
             align="center"
-            key="manufacturerText"
-            prop="manufacturerText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="供应商"
-            align="center"
-            key="supplyId_dictText"
-            prop="supplyId_dictText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="是否限制使用"
-            align="center"
-            key="restrictedFlag_enumText"
-            prop="restrictedFlag_enumText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="限制使用范围"
-            align="center"
-            key="restrictedScope"
-            prop="restrictedScope"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="儿童用药标志"
-            align="center"
-            key="childrenFlag_enumText"
-            prop="childrenFlag_enumText"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="产品特性"
-            align="center"
-            key="characteristic"
-            prop="characteristic"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="贯标国家编码"
-            align="center"
-            key="nationalDrugCode"
-            prop="nationalDrugCode"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="拆分属性"
-            align="center"
-            key="partAttributeEnum_enumText"
-            prop="partAttributeEnum_enumText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="住院临时医嘱拆分属性"
-            align="center"
-            key="thoPartAttributeEnum_enumText"
-            prop="thoPartAttributeEnum_enumText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="抗生素分类"
-            align="center"
-            key="antibioticCode_dictText"
-            prop="antibioticCode_dictText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="权限限制"
-            align="center"
-            key="restrictedEnum_enumText"
-            prop="restrictedEnum_enumText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="是否自制"
-            align="center"
-            key="selfFlag_enumText"
-            prop="selfFlag_enumText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="是否抗生素"
-            align="center"
-            key="antibioticFlag_enumText"
-            prop="antibioticFlag_enumText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="基药标识"
-            align="center"
-            key="basicFlag_enumText"
-            prop="basicFlag_enumText"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="当前库存数量(常规单位)"
-            align="center"
-            key="baseQuantity"
-            prop="baseQuantity"
-            :show-overflow-tooltip="true"
-            width="90"
-          />
-          <el-table-column
-            label="当前库存数量(最小单位数量)"
-            align="center"
-            key="minQuantity"
-            prop="minQuantity"
+            key="purchasePrice"
+            prop="purchasePrice"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -732,7 +354,12 @@ const filterNode = (value, data) => {
 function getMedicationCategoryList() {
   getMedicationCategory().then((response) => {
     console.log(response, "response药品目录分类查询下拉树结构");
-    medicationOptions.value = response.data.medicationCategoryCodeOptions.sort((a, b) => { return parseInt(a.value) - parseInt(b.value) });
+    medicationOptions.value = response.data.medicationCategoryCodeOptions.sort(
+      (a, b) => {
+        return parseInt(a.value) - parseInt(b.value);
+      }
+    );
+    medicationOptions.value.push({ info: "全部", value: "" });
     statusFlagOptions.value = response.data.statusFlagOptions;
     domainEnumOptions.value = response.data.domainFlagOptions;
     supplierListOptions.value = response.data.supplierListOptions;
@@ -816,9 +443,9 @@ function handleSelectionChange(selection) {
 
 /** 打开新增弹窗 */
 function openAddMedicine() {
-  if (!currentCategoryEnum.value) {
-    return proxy.$modal.msgError("请选择药品目录分类");
-  }
+  // if (!currentCategoryEnum.value) {
+  //   return proxy.$modal.msgError("请选择药品目录分类");
+  // }
   proxy.$refs["medicineRef"].show();
 }
 /** 打开编辑弹窗 */
