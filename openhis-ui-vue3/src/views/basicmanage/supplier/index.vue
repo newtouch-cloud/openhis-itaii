@@ -278,6 +278,7 @@
                   value-key="id"
                   placeholder="请选择提供部门"
                   check-strictly
+                  clearable
                 />
               <!-- </el-form-item> -->
             </el-form-item>
@@ -449,14 +450,6 @@ function handleSelectionChange(selection) {
   multiple.value = !selection.length;
 }
 
-/** 下载模板操作 */
-function importTemplate() {
-  proxy.download(
-    "system/user/importTemplate",
-    {},
-    `user_template_${new Date().getTime()}.xlsx`
-  );
-}
 /** 重置操作表单 */
 function reset() {
   form.value = {
