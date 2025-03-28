@@ -116,15 +116,6 @@
               >添加新项目</el-button
             >
           </el-col>
-          <!-- <el-col :span="1.5">
-                    <el-button
-                       type="primary"
-                       plain
-                       icon="Plus"
-                       @click="handleAdd"
-                       v-hasPermi="['system:user:add']"
-                    >添加为本机构项目</el-button>
-                 </el-col> -->
           <el-col :span="1.5">
             <el-button
               type="danger"
@@ -375,15 +366,9 @@ import diagnosisTreatmentDialog from "./components/diagnosisTreatmentDialog";
 import diagnosisTreatmentViewDialog from "./components/diagnosisTreatmentViewDialog";
 import { nextTick } from "vue";
 
-const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict(
-  "sys_normal_disable",
-  "sys_user_sex"
-);
 
 const diagnosisTreatmentList = ref([]);
-const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]); // 存储选择的行数据
@@ -413,12 +398,7 @@ const data = reactive({
     ruleId: undefined, // 执行科室
     categoryEnum: undefined, // 目录分类
   },
-  rules: {
-    // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    // conditionCode: [
-    //   { required: true, message: "编码不能为空", trigger: "blur" },
-    // ],
-  },
+  rules: {},
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -455,7 +435,6 @@ function handleNodeClick(data) {
   console.log(data, "节点单击事件");
   queryParams.value.categoryEnum = data.value;
   currentCategoryEnum.value = data.value;
-  console.log(queryParams, "queryParams节点单击事件");
   handleQuery();
 }
 /** 搜索按钮操作 */
@@ -514,15 +493,6 @@ function handleSelectionChange(selection) {
   multiple.value = !selection.length;
 }
 
-/** 下载模板操作 */
-function importTemplate() {
-  proxy.download(
-    "system/user/importTemplate",
-    {},
-    `user_template_${new Date().getTime()}.xlsx`
-  );
-}
-
 /** 打开新增弹窗 */
 function openAddDiagnosisTreatment() {
   if (currentCategoryEnum.value) {
@@ -537,16 +507,6 @@ function openAddDiagnosisTreatment() {
 }
 /** 打开编辑弹窗 */
 function openEditDiagnosisTreatment(row) {
-  console.log("打开新增弹窗");
-  // currentData.value = JSON.parse(JSON.stringify(row));
-  // currentData.value.ybFlag == 1
-  //   ? (currentData.value.ybFlag = true)
-  //   : (currentData.value.ybFlag = false);
-  // currentData.value.ybMatchFlag == 1
-  //   ? (currentData.value.ybMatchFlag = true)
-  //   : (currentData.value.ybMatchFlag = false);
-  // console.log(currentData.value, "currentData");
-  title.value = "编辑";
   getDiagnosisTreatmentOne(row.id).then((response) => {
     currentData.value = response.data;
     currentData.value.ybFlag == 1
@@ -555,7 +515,7 @@ function openEditDiagnosisTreatment(row) {
     currentData.value.ybMatchFlag == 1
       ? (currentData.value.ybMatchFlag = true)
       : (currentData.value.ybMatchFlag = false);
-    title.value = "查看";
+    title.value = "编辑";
     nextTick(() => {
       proxy.$refs["diagnosisTreatmentRef"].edit();
     });
@@ -579,12 +539,6 @@ function openViewDiagnosisTreatment(row) {
     });
     getList();
   });
-  // console.log(viewData.value, "currentData");
-  // // 确保子组件已经接收到最新的 props
-  // nextTick(() => {
-  //   proxy.$refs["diagnosisTreatmentViewRef"].edit();
-  // });
-  // proxy.$refs["diagnosisTreatmentRef"].edit();
 }
 
 getDiseaseTreatmentList();

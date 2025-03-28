@@ -24,15 +24,6 @@
               <el-input v-model="form.name" placeholder="请输入器材名称" />
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="8">
-            <el-form-item
-              label="拼音码(器材名称)"
-              prop="pyStr"
-              class="custom-label-spacing"
-            >
-              <el-input v-model="form.pyStr" placeholder="" />
-            </el-form-item>
-          </el-col> -->
           <el-col :span="8">
             <el-form-item label="器材分类" prop="categoryEnum">
               <el-tree-select
@@ -43,20 +34,15 @@
                 placeholder=""
                 check-strictly
                 disabled
+                clearable
               />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
-          <!-- <el-col :span="8">
-            <el-form-item label="器材五笔拼音" prop="wbStr">
-              <el-input v-model="form.wbStr" placeholder="" />
-            </el-form-item>
-          </el-col> -->
-
           <el-col :span="8">
             <el-form-item label="器材种类" prop="typeCode">
-              <el-select v-model="form.typeCode" placeholder="请选择">
+              <el-select v-model="form.typeCode" placeholder="请选择" clearable>
                 <el-option
                   v-for="dict in device_type_code"
                   :key="dict.value"
@@ -75,6 +61,7 @@
                 value-key="id"
                 placeholder="请选择提供部门"
                 check-strictly
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -87,6 +74,7 @@
                 value-key="id"
                 placeholder="请选择地点"
                 check-strictly
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -94,7 +82,7 @@
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="包装单位" prop="unitCode">
-              <el-select v-model="form.unitCode" placeholder="请选择">
+              <el-select v-model="form.unitCode" placeholder="请选择" clearable>
                 <el-option
                   v-for="dict in unit_code"
                   :key="dict.value"
@@ -106,7 +94,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="销售单位" prop="salesUnitCode">
-              <el-select v-model="form.salesUnitCode" placeholder="请选择">
+              <el-select v-model="form.salesUnitCode" placeholder="请选择" clearable>
                 <el-option
                   v-for="dict in unit_code"
                   :key="dict.value"
@@ -118,7 +106,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="最小单位" prop="minUnitCode">
-              <el-select v-model="form.minUnitCode" placeholder="请选择">
+              <el-select v-model="form.minUnitCode" placeholder="请选择" clearable>
                 <el-option
                   v-for="dict in unit_code"
                   :key="dict.value"
@@ -176,7 +164,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="状态" prop="statusEnum">
-              <el-select v-model="form.statusEnum" placeholder="请选择">
+              <el-select v-model="form.statusEnum" placeholder="请选择" clearable>
                 <el-option
                   v-for="dict in statusFlagOptions"
                   :key="dict.value"
@@ -195,7 +183,6 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="供应商" prop="supplyId">
-              <!-- <el-input v-model="form.supplyId" placeholder="" /> -->
               <el-select
                 v-model="form.supplierId"
                 placeholder=""
@@ -311,16 +298,12 @@
 
 <script setup name="MedicineDialog">
 import {
-  getDeviceList,
   editDevice,
   addDevice,
-  getDiseaseTreatmentInit,
-  getDeviceOne,
   deptTreeSelect,
   locationTreeSelect,
 } from "./device";
 
-const router = useRouter();
 const { proxy } = getCurrentInstance();
 const { device_type_code, unit_code } = proxy.useDict(
   "device_type_code",
@@ -424,8 +407,6 @@ const props = defineProps({
 // 显示弹框
 function show() {
   reset();
-  // queryParams.roleId = props.roleId;
-  // getList();
   title.value = "";
   title.value = props.title;
   deviceCategories.value = props.deviceCategories;
@@ -441,7 +422,6 @@ function getDeptTree() {
   deptTreeSelect().then((response) => {
     console.log(response, "response查询部门下拉树结构");
     deptOptions.value = response.data.records;
-    console.log(deptOptions.value, "部门下拉树结构");
   });
 }
 
@@ -450,13 +430,10 @@ function getLocationTree() {
   locationTreeSelect().then((response) => {
     console.log(response, "response查询部门下拉树结构");
     locationOptions.value = response.data.records;
-    console.log(locationOptions.value, "部门下拉树结构");
   });
 }
 // 显示弹框
 function edit() {
-  // queryParams.roleId = props.roleId;
-  // getList();
   reset();
   title.value = "";
   title.value = props.title;

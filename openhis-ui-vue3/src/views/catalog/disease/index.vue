@@ -3,15 +3,6 @@
     <el-row :gutter="20">
       <!--疾病目录数据-->
       <el-col :span="4" :xs="24">
-        <!-- <div class="head-container">
-               <el-input
-                  v-model="deptName"
-                  placeholder="请输入部门名称"
-                  clearable
-                  prefix-icon="Search"
-                  style="margin-bottom: 20px"
-               />
-            </div> -->
         <div class="head-container">
           <el-tree
             :data="conditionDefinitionOptions"
@@ -59,7 +50,11 @@
             />
           </el-form-item>
           <el-form-item label="是否停用" prop="statusEnum">
-            <el-select v-model="queryParams.statusEnum" style="width: 240px">
+            <el-select
+              v-model="queryParams.statusEnum"
+              style="width: 240px"
+              clearable
+            >
               <el-option
                 v-for="status in statusFlagOptions"
                 :key="status.value"
@@ -68,21 +63,6 @@
               />
             </el-select>
           </el-form-item>
-          <!-- <el-form-item label="是否系统预置：" prop="status" label-width="120">
-                  <el-select
-                     v-model="queryParams.status"
-                     placeholder="用户状态"
-                     clearable
-                     style="width: 240px"
-                  >
-                     <el-option
-                        v-for="dict in sys_normal_disable"
-                        :key="dict.value"
-                        :label="dict.label"
-                        :value="dict.value"
-                     />
-                  </el-select>
-               </el-form-item> -->
           <!-- <el-form-item>
                   <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
                   <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -100,15 +80,6 @@
               >添加新项目</el-button
             >
           </el-col>
-          <!-- <el-col :span="1.5">
-                  <el-button
-                     type="primary"
-                     plain
-                     icon="Plus"
-                     @click="handleAdd"
-                     v-hasPermi="['system:user:add']"
-                  >添加为本机构项目</el-button>
-               </el-col> -->
           <el-col :span="1.5">
             <el-button
               type="danger"
@@ -273,7 +244,6 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="医保标记" prop="ybFlag">
-              <!-- <el-input v-model="form.ybFlag" placeholder="" /> -->
               <el-checkbox v-model="form.ybFlag"></el-checkbox>
             </el-form-item>
           </el-col>
@@ -281,7 +251,11 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="类型" prop="ybNo">
-              <el-select v-model="form.statusEnum" placeholder="请选择">
+              <el-select
+                v-model="form.statusEnum"
+                placeholder="请选择"
+                clearable
+              >
                 <el-option
                   v-for="dict in statusFlagOptions"
                   :key="dict.value"
@@ -293,7 +267,11 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="医保标记" prop="ybFlag">
-              <el-select v-model="form.statusEnum" placeholder="请选择">
+              <el-select
+                v-model="form.statusEnum"
+                placeholder="请选择"
+                clearable
+              >
                 <el-option
                   v-for="dict in statusFlagOptions"
                   :key="dict.value"
@@ -314,11 +292,6 @@
               <el-checkbox v-model="form.ybMatchFlag"></el-checkbox>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="12">
-            <el-form-item label="拼音" prop="pyStr">
-              <el-input v-model="form.pyStr" maxlength="11" />
-            </el-form-item>
-          </el-col> -->
           <!-- <el-col :span="12">
             <el-form-item label="停用" prop="status">
               <el-checkbox v-model="form.status"></el-checkbox>
@@ -361,10 +334,6 @@ import {
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict(
-  "sys_normal_disable",
-  "sys_user_sex"
-);
 
 const diseaseList = ref([]);
 const open = ref(false);
@@ -519,14 +488,6 @@ function handleSelectionChange(selection) {
   multiple.value = !selection.length;
 }
 
-/** 下载模板操作 */
-function importTemplate() {
-  proxy.download(
-    "system/user/importTemplate",
-    {},
-    `user_template_${new Date().getTime()}.xlsx`
-  );
-}
 /** 重置操作表单 */
 function reset() {
   form.value = {

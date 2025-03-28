@@ -222,6 +222,7 @@
                     v-model="scope.row.itemId"
                     placeholder="请选择"
                     :class="{ 'error-border': scope.row.error }"
+                    clearable
                   >
                     <el-option label="项目1" value="1" />
                     <el-option label="项目2" value="2" />
@@ -271,6 +272,7 @@
                     v-model="scope.row.unitCode"
                     placeholder="请选择计量单位"
                     :class="{ 'error-border': scope.row.error }"
+                    clearable
                   >
                     <el-option label="单位1" value="1" />
                     <el-option label="单位2" value="2" />
@@ -297,6 +299,7 @@
                     v-model="scope.row.purposeLocationId"
                     placeholder="请选择仓库"
                     :class="{ 'error-border': scope.row.error }"
+                    clearable
                   >
                     <el-option label="仓库1" value="1" />
                     <el-option label="仓库2" value="2" />
@@ -322,6 +325,7 @@
                     v-model="scope.row.purposeLocationStoreId"
                     placeholder="请选择货位"
                     :class="{ 'error-border': scope.row.error }"
+                    clearable
                   >
                     <el-option label="货位1" value="1" />
                     <el-option label="货位2" value="2" />

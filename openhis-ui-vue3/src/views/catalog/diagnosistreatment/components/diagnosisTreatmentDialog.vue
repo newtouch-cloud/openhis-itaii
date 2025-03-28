@@ -5,7 +5,7 @@
       <el-form
         :model="form"
         :rules="rules"
-        ref="medicationRef"
+        ref="diagnosisTreatmentRef"
         label-width="110px"
         label-position="left"
       >
@@ -37,6 +37,7 @@
                 value-key="id"
                 placeholder="请选择提供部门"
                 check-strictly
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -55,6 +56,7 @@
                 value-key="id"
                 placeholder="请选择地点"
                 check-strictly
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -71,6 +73,7 @@
                 value-key="id"
                 placeholder="请选择地点"
                 check-strictly
+                clearable
               />
             </el-form-item>
           </el-col>
@@ -198,21 +201,21 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-                <el-form-item label="财务统计类型" prop="minimalFee">
-                  <el-select
-                    v-model="form.minimalFee"
-                    clearable
-                    :disabled="form.id != undefined"
-                  >
-                    <el-option
-                      v-for="category in fin_type_code"
-                      :key="category.value"
-                      :label="category.label"
-                      :value="category.value"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
+            <el-form-item label="财务统计类型" prop="minimalFee">
+              <el-select
+                v-model="form.minimalFee"
+                clearable
+                :disabled="form.id != undefined"
+              >
+                <el-option
+                  v-for="category in fin_type_code"
+                  :key="category.value"
+                  :label="category.label"
+                  :value="category.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
@@ -263,10 +266,12 @@ import {
   locationTreeSelect,
 } from "./diagnosistreatment";
 
-const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { unit_code, yb_type,fin_type_code } = proxy.useDict("unit_code", "yb_type","fin_type_code");
-
+const { unit_code, yb_type, fin_type_code } = proxy.useDict(
+  "unit_code",
+  "yb_type",
+  "fin_type_code"
+);
 
 const title = ref("");
 const visible = ref(false);
@@ -285,7 +290,6 @@ const data = reactive({
     busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
     name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
     statusEnum: [{ required: true, message: "状态不能为空", trigger: "blur" }],
-    // wbStr: [{ required: true, message: "五笔拼音不能为空", trigger: "blur" }],
     categoryEnum: [
       { required: true, message: "诊疗目录不能为空", trigger: "blur" },
     ],
@@ -299,10 +303,6 @@ const data = reactive({
     ybMatchFlag: [
       { required: true, message: "医保对码标记不能为空", trigger: "blur" },
     ],
-    // minUnitCode: [{ required: true, message: "最小使用单位不能为空", trigger: "blur" }],
-    // modelNumber: [{ required: true, message: "产品型号不能为空", trigger: "blur" }],
-    // hvcmFlag: [{ required: true, message: "高值器材标志不能为空", trigger: "blur" }],
-    // salesUnitCode: [{ required: true, message: "销售单位不能为空", trigger: "blur" }],
   },
 });
 
@@ -342,8 +342,6 @@ const props = defineProps({
 // 显示弹框
 function show() {
   reset();
-  // queryParams.roleId = props.roleId;
-  // getList();
   getLocationTree();
   getDeptTree();
   title.value = "";
@@ -360,8 +358,6 @@ function show() {
 // 显示弹框
 function edit() {
   reset();
-  // queryParams.roleId = props.roleId;
-  // getList();
   getLocationTree();
   getDeptTree();
   title.value = "";
@@ -400,7 +396,7 @@ function reset() {
     maximumRetailPrice: undefined, // 最高零售价
     description: undefined, // 说明
   };
-  proxy.resetForm("medicationRef");
+  proxy.resetForm("diagnosisTreatmentRef");
 }
 
 /** 提交按钮 */
@@ -410,31 +406,33 @@ function submitForm() {
     ? (form.value.ybMatchFlag = 1)
     : (form.value.ybMatchFlag = 0);
   form.value.ruleId ? (form.value.ruleId = 1) : (form.value.ruleId = 0);
-  if (form.value.id != undefined) {
-    editDiagnosisTreatment(form.value).then((response) => {
-      // 触发自定义事件，并传递数据给父组件
-      emits("submit");
-      proxy.$modal.msgSuccess("修改成功");
-      visible.value = false;
-      reset(); // 重置表单数据
-    });
-  } else {
-    addDiagnosisTreatment(form.value).then((response) => {
-      // 触发自定义事件，并传递数据给父组件
-      emits("submit");
-      proxy.$modal.msgSuccess("新增成功");
-      visible.value = false;
-      reset(); // 重置表单数据
-    });
-  }
+  proxy.$refs["diagnosisTreatmentRef"].validate((valid) => {
+    if (valid) {
+      if (form.value.id != undefined) {
+        editDiagnosisTreatment(form.value).then((response) => {
+          // 触发自定义事件，并传递数据给父组件
+          emits("submit");
+          proxy.$modal.msgSuccess("修改成功");
+          visible.value = false;
+          reset(); // 重置表单数据
+        });
+      } else {
+        addDiagnosisTreatment(form.value).then((response) => {
+          // 触发自定义事件，并传递数据给父组件
+          emits("submit");
+          proxy.$modal.msgSuccess("新增成功");
+          visible.value = false;
+          reset(); // 重置表单数据
+        });
+      }
+    }
+  });
 }
 /** 查询部门下拉树结构 */
 function getDeptTree() {
-  console.log("查询部门下拉树结构");
   deptTreeSelect().then((response) => {
     console.log(response, "response查询部门下拉树结构");
     deptOptions.value = response.data.records;
-    console.log(deptOptions.value, "部门下拉树结构");
   });
 }
 /** 查询地点下拉树结构 */
@@ -442,7 +440,6 @@ function getLocationTree() {
   locationTreeSelect().then((response) => {
     console.log(response, "response查询部门下拉树结构");
     locationOptions.value = response.data.records;
-    console.log(locationOptions.value, "部门下拉树结构");
   });
 }
 

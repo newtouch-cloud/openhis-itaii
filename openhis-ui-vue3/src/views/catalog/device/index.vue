@@ -56,7 +56,11 @@
                 prop="ybMatchFlag"
                 label-width="100"
               >
-                <el-select v-model="queryParams.ybMatchFlag" placeholder="">
+                <el-select
+                  v-model="queryParams.ybMatchFlag"
+                  placeholder=""
+                  clearable
+                >
                   <el-option
                     v-for="item in exeOrganizations"
                     :key="item.value"
@@ -96,15 +100,6 @@
               >添加新项目</el-button
             >
           </el-col>
-          <!-- <el-col :span="1.5">
-                  <el-button
-                     type="primary"
-                     plain
-                     icon="Plus"
-                     @click="handleAdd"
-                     v-hasPermi="['system:user:add']"
-                  >添加为本机构项目</el-button>
-               </el-col> -->
           <el-col :span="1.5">
             <el-button
               type="danger"
@@ -359,14 +354,14 @@
                 v-hasPermi="['system:user:edit']"
                 >编辑</el-button
               >
-              <el-button
+              <!-- <el-button
                 link
                 type="primary"
                 icon="View"
                 @click="openViewDevice(scope.row)"
                 v-hasPermi="['system:user:remove']"
                 >查看</el-button
-              >
+              > -->
             </template>
           </el-table-column>
         </el-table>
@@ -408,15 +403,9 @@ import deviceDialog from "./components/deviceDialog";
 import deviceViewDialog from "./components/deviceViewDialog";
 import { nextTick } from "vue";
 
-const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict(
-  "sys_normal_disable",
-  "sys_user_sex"
-);
 
 const deviceList = ref([]);
-const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]); // 存储选择的行数据
@@ -445,12 +434,7 @@ const data = reactive({
     ruleId: undefined, // 执行科室
     categoryEnum: undefined, // 目录分类
   },
-  rules: {
-    // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    // conditionCode: [
-    //   { required: true, message: "编码不能为空", trigger: "blur" },
-    // ],
-  },
+  rules: {},
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -541,15 +525,6 @@ function handleSelectionChange(selection) {
   multiple.value = !selection.length;
 }
 
-/** 下载模板操作 */
-function importTemplate() {
-  proxy.download(
-    "system/user/importTemplate",
-    {},
-    `user_template_${new Date().getTime()}.xlsx`
-  );
-}
-
 /** 打开新增弹窗 */
 function openAddDevice() {
   if (!currentCategoryEnum.value) {
@@ -565,27 +540,47 @@ function openAddDevice() {
 function openEditDevice(row) {
   currentData.value = {};
   console.log("打开编辑弹窗");
-  currentData.value = JSON.parse(JSON.stringify(row));
-  console.log(currentData.value, "currentData");
-  currentData.value.hvcmFlag == 1
-    ? (currentData.value.hvcmFlag = true)
-    : (currentData.value.hvcmFlag = false);
-  currentData.value.ybFlag == 1
-    ? (currentData.value.ybFlag = true)
-    : (currentData.value.ybFlag = false);
-  currentData.value.ybMatchFlag == 1
-    ? (currentData.value.ybMatchFlag = true)
-    : (currentData.value.ybMatchFlag = false);
-  currentData.value.allergenFlag == 1
-    ? (currentData.value.allergenFlag = true)
-    : (currentData.value.allergenFlag = false);
-  console.log(currentData.value, "currentDataform");
-
-  title.value = "编辑";
-  // 确保子组件已经接收到最新的 props
-  nextTick(() => {
-    proxy.$refs["deviceRef"].edit();
+  getDeviceOne(row.id).then((response) => {
+    currentData.value = response.data;
+    currentData.value.hvcmFlag == 1
+      ? (currentData.value.hvcmFlag = true)
+      : (currentData.value.hvcmFlag = false);
+    currentData.value.ybFlag == 1
+      ? (currentData.value.ybFlag = true)
+      : (currentData.value.ybFlag = false);
+    currentData.value.ybMatchFlag == 1
+      ? (currentData.value.ybMatchFlag = true)
+      : (currentData.value.ybMatchFlag = false);
+    currentData.value.allergenFlag == 1
+      ? (currentData.value.allergenFlag = true)
+      : (currentData.value.allergenFlag = false);
+    title.value = "编辑";
+    nextTick(() => {
+      proxy.$refs["deviceRef"].edit();
+    });
+    getList();
   });
+  // currentData.value = JSON.parse(JSON.stringify(row));
+  // console.log(currentData.value, "currentData");
+  // currentData.value.hvcmFlag == 1
+  //   ? (currentData.value.hvcmFlag = true)
+  //   : (currentData.value.hvcmFlag = false);
+  // currentData.value.ybFlag == 1
+  //   ? (currentData.value.ybFlag = true)
+  //   : (currentData.value.ybFlag = false);
+  // currentData.value.ybMatchFlag == 1
+  //   ? (currentData.value.ybMatchFlag = true)
+  //   : (currentData.value.ybMatchFlag = false);
+  // currentData.value.allergenFlag == 1
+  //   ? (currentData.value.allergenFlag = true)
+  //   : (currentData.value.allergenFlag = false);
+  // console.log(currentData.value, "currentDataform");
+
+  // title.value = "编辑";
+  // // 确保子组件已经接收到最新的 props
+  // nextTick(() => {
+  //   proxy.$refs["deviceRef"].edit();
+  // });
   // proxy.$refs["deviceRef"].edit();
 }
 /** 打开查看弹窗 */
