@@ -114,5 +114,6 @@ public class DiagnosisTreatmentDto {
 
     /** 最高零售价 */
     private BigDecimal maximumRetailPrice;
+    
 
 }
