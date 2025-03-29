@@ -14,7 +14,8 @@
         T10.phone,
         T10.birth_date,
         T10.status_enum,
-        T10.allergy_history_flag
+        T10.allergy_history_flag,
+        T10.account_id
         from
         (
         SELECT T1.tenant_id AS tenant_id,
@@ -24,6 +25,7 @@
         T3.NAME AS healthcare_name,
         T5.user_id AS practitioner_user_id,
         T5.NAME AS practitioner_name,
+        T6.id AS account_id,
         T7.contract_name AS contract_name,
         T8.ID AS patient_id,
         T8.NAME AS patient_name,

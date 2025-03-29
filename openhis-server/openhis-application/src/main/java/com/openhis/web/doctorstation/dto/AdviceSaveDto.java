@@ -42,11 +42,17 @@ public class AdviceSaveDto {
     /** 请求数量 */
     private Integer quantity;
 
+    /** 每次发药供应天数 */
+    private Integer dispensePerDuration;
+
     /** 请求单位编码 */
     private String unitCode;
 
     /** 单价 */
     private BigDecimal unitPrice;
+
+    /** 总价 */
+    private BigDecimal totalPrice;
 
     /** 费用定价主表ID */
     @JsonSerialize(using = ToStringSerializer.class)
@@ -71,6 +77,11 @@ public class AdviceSaveDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long adviceDefinitionId;
 
+    /**
+     * 医嘱对应表名
+     */
+    private String adviceTableName;
+
     /** 患者 */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long patientId;
@@ -94,6 +105,12 @@ public class AdviceSaveDto {
     /** 就诊id */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long encounterId;
+
+    /**
+     * 账户id
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long accountId;
 
     /**
      * 诊断ID

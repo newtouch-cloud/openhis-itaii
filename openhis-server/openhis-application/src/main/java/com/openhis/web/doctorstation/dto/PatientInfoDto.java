@@ -28,6 +28,12 @@ public class PatientInfoDto {
     private Long patientId;
 
     /**
+     * 账户id
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long accountId;
+
+    /**
      * 患者姓名
      */
     private String patientName;

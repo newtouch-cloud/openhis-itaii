@@ -1,11 +1,6 @@
 package com.openhis.web.doctorstation.appservice.impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -238,8 +233,9 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             // TODO: 药品分方;待做
             prescriptionNo = assignSeqUtil.getSeq(AssignSeqEnum.PRESCRIPTION_NO.getPrefix(), 8);
         }
+        // 声明费用项
+        ChargeItem chargeItem;
         // 保存药品请求
-        List<MedicationRequest> medicationRequestList = new ArrayList<>();
         MedicationRequest medicationRequest;
         for (AdviceSaveDto adviceSaveDto : medicineList) {
             medicationRequest = new MedicationRequest();
@@ -270,16 +266,40 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             medicationRequest.setRateCode(adviceSaveDto.getRateCode()); // 用药频次
             medicationRequest.setDose(adviceSaveDto.getDose()); // 单次剂量
             medicationRequest.setDoseUnitCode(adviceSaveDto.getDoseUnitCode()); // 剂量单位
+            medicationRequest.setDispensePerDuration(adviceSaveDto.getDispensePerDuration()); // 每次发药供应天数
             medicationRequest.setSkinTestFlag(adviceSaveDto.getSkinTestFlag()); // 皮试标记
             medicationRequest.setGroupId(adviceSaveDto.getGroupId());// 分组id
             // medicationRequest.setPackageId(adviceSaveDto.getPackageId());
 
-            medicationRequestList.add(medicationRequest);
+            iMedicationRequestService.save(medicationRequest);
+
+            // 保存药品费用项
+            chargeItem = new ChargeItem();
+            chargeItem.setStatusEnum(ChargeItemStatus.PLANNED.getValue()); // 默认-待收费
+            chargeItem.setBusNo(AssignSeqEnum.CHARGE_ITEM_NO.getPrefix().concat(medicationRequest.getBusNo()));
+            chargeItem.setPrescriptionNo(prescriptionNo); // 处方号
+            chargeItem.setPatientId(adviceSaveDto.getPatientId()); // 患者
+            chargeItem.setContextEnum(adviceSaveDto.getAdviceType()); // 类型
+            chargeItem.setEncounterId(adviceSaveDto.getEncounterId()); // 就诊id
+            chargeItem.setDefinitionId(adviceSaveDto.getDefinitionId()); // 费用定价ID
+            chargeItem.setDefDetailId(adviceSaveDto.getDefinitionDetailId()); // 定价子表主键
+            chargeItem.setEntererId(adviceSaveDto.getPractitionerId());// 开立人ID
+            chargeItem.setEnteredDate(new Date()); // 开立时间
+            chargeItem.setServiceTable("med_medication_request");// 医疗服务类型
+            chargeItem.setServiceId(medicationRequest.getId()); // 医疗服务ID
+            chargeItem.setProductTable(adviceSaveDto.getAdviceTableName());// 产品所在表
+            chargeItem.setProductId(adviceSaveDto.getAdviceDefinitionId());// 收费项id
+            chargeItem.setAccountId(adviceSaveDto.getAccountId());// 关联账户ID
+
+            chargeItem.setQuantityValue(adviceSaveDto.getQuantity()); // 数量
+            chargeItem.setQuantityUnit(adviceSaveDto.getUnitCode()); // 单位
+            chargeItem.setUnitPrice(adviceSaveDto.getUnitPrice()); // 单价
+            chargeItem.setTotalPrice(adviceSaveDto.getTotalPrice()); // 总价
+
+            iChargeItemService.save(chargeItem);
         }
-        iMedicationRequestService.saveBatch(medicationRequestList);
 
         // 保存耗材请求
-        List<DeviceRequest> deviceRequestList = new ArrayList<>();
         DeviceRequest deviceRequest;
         for (AdviceSaveDto adviceSaveDto : deviceList) {
             deviceRequest = new DeviceRequest();
@@ -306,12 +326,35 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             // deviceRequest.setPackageId(adviceSaveDto.getPackageId());
             // deviceRequest.setActivityId(adviceSaveDto.getActivityId());
 
-            deviceRequestList.add(deviceRequest);
+            iDeviceRequestService.save(deviceRequest);
+
+            // 保存耗材费用项
+            chargeItem = new ChargeItem();
+            chargeItem.setStatusEnum(ChargeItemStatus.PLANNED.getValue()); // 默认-待收费
+            chargeItem.setBusNo(AssignSeqEnum.CHARGE_ITEM_NO.getPrefix().concat(deviceRequest.getBusNo()));
+            chargeItem.setPrescriptionNo(prescriptionNo); // 处方号
+            chargeItem.setPatientId(adviceSaveDto.getPatientId()); // 患者
+            chargeItem.setContextEnum(adviceSaveDto.getAdviceType()); // 类型
+            chargeItem.setEncounterId(adviceSaveDto.getEncounterId()); // 就诊id
+            chargeItem.setDefinitionId(adviceSaveDto.getDefinitionId()); // 费用定价ID
+            chargeItem.setDefDetailId(adviceSaveDto.getDefinitionDetailId()); // 定价子表主键
+            chargeItem.setEntererId(adviceSaveDto.getPractitionerId());// 开立人ID
+            chargeItem.setEnteredDate(new Date()); // 开立时间
+            chargeItem.setServiceTable("wor_device_request");// 医疗服务类型
+            chargeItem.setServiceId(deviceRequest.getId()); // 医疗服务ID
+            chargeItem.setProductTable(adviceSaveDto.getAdviceTableName());// 产品所在表
+            chargeItem.setProductId(adviceSaveDto.getAdviceDefinitionId());// 收费项id
+            chargeItem.setAccountId(adviceSaveDto.getAccountId());// 关联账户ID
+
+            chargeItem.setQuantityValue(adviceSaveDto.getQuantity()); // 数量
+            chargeItem.setQuantityUnit(adviceSaveDto.getUnitCode()); // 单位
+            chargeItem.setUnitPrice(adviceSaveDto.getUnitPrice()); // 单价
+            chargeItem.setTotalPrice(adviceSaveDto.getTotalPrice()); // 总价
+
+            iChargeItemService.save(chargeItem);
         }
-        iDeviceRequestService.saveBatch(deviceRequestList);
 
         // 保存诊疗项目请求
-        List<ServiceRequest> serviceRequestList = new ArrayList<>();
         ServiceRequest serviceRequest;
         for (AdviceSaveDto adviceSaveDto : activityList) {
             serviceRequest = new ServiceRequest();
@@ -328,35 +371,34 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             serviceRequest.setRequesterId(adviceSaveDto.getPractitionerId()); // 开方医生
             serviceRequest.setEncounterId(adviceSaveDto.getEncounterId()); // 就诊id
 
-            serviceRequestList.add(serviceRequest);
-        }
-        iServiceRequestService.saveBatch(serviceRequestList);
+            iServiceRequestService.save(serviceRequest);
 
-        // 保存费用项管理
-        List<ChargeItem> chargeItemList = new ArrayList<>();
-        ChargeItem chargeItem;
-        for (AdviceSaveDto adviceSaveDto : adviceSaveList) {
+            // 保存诊疗费用项
             chargeItem = new ChargeItem();
-            chargeItem.setStatusEnum(ChargeItemStatus.PLANNED.getValue()); // 默认-代收费
-            chargeItem.setBusNo(assignSeqUtil.getSeq(AssignSeqEnum.CHARGE_ITEM_NO.getPrefix(), 10));
+            chargeItem.setStatusEnum(ChargeItemStatus.PLANNED.getValue()); // 默认-待收费
+            chargeItem.setBusNo(AssignSeqEnum.CHARGE_ITEM_NO.getPrefix().concat(serviceRequest.getBusNo()));
             chargeItem.setPrescriptionNo(prescriptionNo); // 处方号
             chargeItem.setPatientId(adviceSaveDto.getPatientId()); // 患者
             chargeItem.setContextEnum(adviceSaveDto.getAdviceType()); // 类型
-            chargeItem.setEncounterId(adviceSaveDto.getEncounterId()); // 诊疗定义id
+            chargeItem.setEncounterId(adviceSaveDto.getEncounterId()); // 就诊id
+            chargeItem.setDefinitionId(adviceSaveDto.getDefinitionId()); // 费用定价ID
+            chargeItem.setDefDetailId(adviceSaveDto.getDefinitionDetailId()); // 定价子表主键
+            chargeItem.setEntererId(adviceSaveDto.getPractitionerId());// 开立人ID
+            chargeItem.setEnteredDate(new Date()); // 开立时间
+            chargeItem.setServiceTable("wor_service_request");// 医疗服务类型
+            chargeItem.setServiceId(serviceRequest.getId()); // 医疗服务ID
+            chargeItem.setProductTable(adviceSaveDto.getAdviceTableName());// 产品所在表
+            chargeItem.setProductId(adviceSaveDto.getAdviceDefinitionId());// 收费项id
+            chargeItem.setAccountId(adviceSaveDto.getAccountId());// 关联账户ID
 
             chargeItem.setQuantityValue(adviceSaveDto.getQuantity()); // 数量
             chargeItem.setQuantityUnit(adviceSaveDto.getUnitCode()); // 单位
             chargeItem.setUnitPrice(adviceSaveDto.getUnitPrice()); // 单价
-            chargeItem
-                .setTotalPrice((new BigDecimal(adviceSaveDto.getQuantity()).multiply(adviceSaveDto.getUnitPrice()))
-                    .setScale(4, RoundingMode.HALF_UP)); // 总价
+            chargeItem.setTotalPrice(adviceSaveDto.getTotalPrice()); // 总价
 
-            chargeItem.setDefinitionId(adviceSaveDto.getDefinitionId()); // 费用定价ID
-            chargeItem.setDefDetailId(adviceSaveDto.getDefinitionDetailId()); // 定价子表主键
-
-            chargeItemList.add(chargeItem);
+            iChargeItemService.save(chargeItem);
         }
-        iChargeItemService.saveBatch(chargeItemList);
+
         // TODO: 此处调用请求发放接口
 
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"门诊医嘱"}));

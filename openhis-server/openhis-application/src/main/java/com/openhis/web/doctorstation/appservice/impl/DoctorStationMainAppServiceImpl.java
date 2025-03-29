@@ -53,6 +53,7 @@ public class DoctorStationMainAppServiceImpl implements IDoctorStationMainAppSer
         // TODO: userId(当前登录账号ID) 和 currentUserOrganizationId(当前登录账号所属的科室ID) 待补充
         // 当前登录账号ID
         Long userId = SecurityUtils.getLoginUser().getUserId();
+        Long currentUserOrganizationId = SecurityUtils.getLoginUser().getOrgId();
         IPage<PatientInfoDto> patientInfo = doctorStationMainAppMapper.getPatientInfo(new Page<>(pageNo, pageSize),
             ParticipantType.ADMITTER.getCode(), ClinicalStatus.INACTIVE.getValue(), null, null, queryWrapper);
         patientInfo.getRecords().forEach(e -> {
