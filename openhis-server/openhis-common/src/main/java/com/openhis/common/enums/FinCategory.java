@@ -21,7 +21,7 @@ public enum FinCategory implements HisEnumInterface {
     /**
      * 市医保
      */
-    MUNICIPAL_MEDICAL_INSURANCE(4, "4", "市医保");
+    MUNICIPAL_MEDICAL_INSURANCE(3, "3", "市医保");
 
     private Integer value;
     private String code;
