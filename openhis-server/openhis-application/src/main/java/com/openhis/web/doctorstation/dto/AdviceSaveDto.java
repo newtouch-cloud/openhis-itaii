@@ -143,7 +143,7 @@ public class AdviceSaveDto {
         this.categoryEnum = EncounterClass.AMB.getValue();
         this.therapyEnum = TherapyTimeType.TEMPORARY.getValue();
         this.practitionerId = SecurityUtils.getLoginUser().getPractitionerId();
-        this.orgId = SecurityUtils.getLoginUser().getOrgId(); // 开发人科室
+        this.orgId = SecurityUtils.getLoginUser().getOrgId(); // 开方人科室
     }
 
 }
