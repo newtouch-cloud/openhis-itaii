@@ -90,7 +90,7 @@ public class MedicationRequest extends HisBaseEntity {
      */
     private Long performLocation;
 
-    /** 发放科室 */
+    /** 开方人科室 */
     private Long orgId;
 
     /** 就诊id */
