@@ -59,7 +59,12 @@ public enum AssignSeqEnum {
     /**
      * 器材项目编码
      */
-    DEVICE_NUM("10", "项目编码", "DD");
+    DEVICE_NUM("10", "项目编码", "DD"),
+
+    /**
+     * 支付编码
+     */
+    PAYMENT_NO("11", "支付编码", "SF");
 
     private final String code;
     private final String info;

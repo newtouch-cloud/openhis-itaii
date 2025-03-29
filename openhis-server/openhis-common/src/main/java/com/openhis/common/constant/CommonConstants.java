@@ -166,6 +166,21 @@ public class CommonConstants {
          * 药品id
          */
         String MedicationId = "medication_id";
+
+        /**
+         * 就诊Id
+         */
+        String encouterId = "encouter_id";
+
+        /**
+         * 合同编码
+         */
+        String contractNo = "contract_no";
+
+        /**
+         * 支付流水
+         */
+        String paymentNo = "payment_no";
     }
 
     /**
