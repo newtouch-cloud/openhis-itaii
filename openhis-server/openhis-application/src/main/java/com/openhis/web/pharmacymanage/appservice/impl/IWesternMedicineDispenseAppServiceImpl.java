@@ -3,15 +3,12 @@ package com.openhis.web.pharmacymanage.appservice.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
-import com.core.common.utils.DateUtils;
-import com.core.common.utils.MessageUtils;
-import com.core.common.utils.SecurityUtils;
+import com.core.common.utils.*;
 import com.openhis.administration.domain.Organization;
 import com.openhis.administration.service.IOrganizationService;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.DispenseStatus;
-import com.openhis.common.enums.NotPerformedReasonEnum;
-import com.openhis.common.enums.OrganizationClass;
+import com.openhis.common.enums.*;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.medication.domain.MedicationDispense;
 import com.openhis.medication.service.IMedicationDispenseService;
@@ -27,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,7 +95,7 @@ public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineD
 
         // 查询条件设定
         String condition = encounterInfoSearchParam.getCondition();
-        if (!condition.isEmpty()){
+        if (StringUtils.isNotEmpty(condition)){
             Pattern pattern = Pattern.compile(".*\\d.*");
             Matcher matcher = pattern.matcher(encounterInfoSearchParam.getCondition());
             encounterInfoSearchParam.setIdCard(matcher.find() ? condition:"");
@@ -126,11 +124,19 @@ public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineD
         // 患者基本信息查询
         PrescriptionPatientInfoDto prescriptionPatientInfoDto = westernMedicineDispenseMapper.
                 selectPrescriptionPatientInfo(encounterId);
-
+        // 年龄
+        prescriptionPatientInfoDto.setAge(AgeCalculatorUtil.getAge(prescriptionPatientInfoDto.getBirth_date()));
+        // 性别
+        prescriptionPatientInfoDto.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class,
+                prescriptionPatientInfoDto.getGenderEnum()));
+        // 合同类型
+        if (StringUtils.isNull(prescriptionPatientInfoDto.getCategoryEnum())){
+            prescriptionPatientInfoDto.setCategoryEnum_enumText(EnumUtils.getInfoByValue(FinCategory.class,
+                    prescriptionPatientInfoDto.getCategoryEnum()));
+        }
         // 处方单信息查询
         List<PrescriptionMedicineInfoDto> prescriptionMedicineInfoList = westernMedicineDispenseMapper.
                 selectPrescriptionMedicineInfoList(encounterId);
-
         // 计算合计金额
         if(!prescriptionMedicineInfoList.isEmpty()) {
             BigDecimal totalPrice = new BigDecimal(0);
@@ -139,11 +145,9 @@ public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineD
             }
             prescriptionPatientInfoDto.setTotalPrice(totalPrice);
         }
-
         PrescriptionInfoDto prescriptionInfoDto = new PrescriptionInfoDto();
         prescriptionInfoDto.setPrescriptionPatientInfoDto(prescriptionPatientInfoDto);
         prescriptionInfoDto.setPrescriptionMedicineInfoDtoList(prescriptionMedicineInfoList);
-
         return R.ok(prescriptionInfoDto);
     }
 
