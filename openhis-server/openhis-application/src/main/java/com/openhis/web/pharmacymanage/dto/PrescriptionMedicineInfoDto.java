@@ -24,11 +24,14 @@ public class PrescriptionMedicineInfoDto implements Serializable {
     /** 科室 */
     private String departmentName;
 
+    /** 开单医生 */
+    private String doctorName;
+
     /** 项目类型 */
     private String itemType;
 
-    /** 开单医生 */
-    private String doctorName;
+    /** 诊断名称 */
+    private String conditionName;
 
     /** 处方号 */
     private String prescriptionNo;

@@ -3,10 +3,7 @@ package com.openhis.web.pharmacymanage.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
 import com.openhis.web.pharmacymanage.appservice.IWesternMedicineDispenseAppService;
@@ -74,7 +71,7 @@ public class WesternMedicineDispenseController {
      *
      * @param prescriptionNo 处方号
      */
-    @GetMapping("/medicine-dispense")
+    @PutMapping("/medicine-dispense")
     public R<?> medicineDispense(@RequestParam(value = "prescriptionNo") String prescriptionNo) {
         return iWesternMedicineDispenseService.medicineDispense(prescriptionNo);
     }
@@ -85,9 +82,10 @@ public class WesternMedicineDispenseController {
      * @param prescriptionNo 处方号
      * @param notPerformedReasonEnum 未发药原因
      */
-    @GetMapping("/medicine-cancel")
+    @PutMapping("/medicine-cancel")
     public R<?> medicineCancel(@RequestParam(value = "prescriptionNo") String prescriptionNo,
-        @RequestParam(value = "prescriptionNo") Integer notPerformedReasonEnum) {
-        return iWesternMedicineDispenseService.medicineCancel(prescriptionNo, notPerformedReasonEnum);
+        @RequestParam(value = "notPerformedReasonEnum") Integer notPerformedReasonEnum) {
+        //return iWesternMedicineDispenseService.medicineCancel(prescriptionNo, notPerformedReasonEnum);
+        return R.ok();
     }
 }
