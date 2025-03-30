@@ -49,5 +49,5 @@ public class PrescriptionPatientInfoDto implements Serializable {
     private String encounterDate;
 
     /** 总金额 */
-    private BigDecimal totalPrice;
+    private double totalPrice;
 }
