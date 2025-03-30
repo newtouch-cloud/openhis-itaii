@@ -54,12 +54,12 @@ public class EncounterPatientPageParam {
     private Date startTime;
 
     /**
+     * 收费时间
+     */
+    private Date billTime;
+
+    /**
      * 收费状态
      */
     private Integer statusEnum;
-
-    /**
-     * 退款标识
-     */
-    private Integer refundFlag;
 }
