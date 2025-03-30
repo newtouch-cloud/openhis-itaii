@@ -374,6 +374,8 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             queryWrapper.isNull(CommonConstants.FieldName.BasedOnId);
             // 状态是进行中
             queryWrapper.eq(CommonConstants.FieldName.RequestStatus, EventStatus.IN_PROGRESS.getValue());
+            //筛选当前ID的患者历史执行记录
+            queryWrapper.eq(CommonConstants.FieldName.PatientId,patientId);
 
             return editRecords(queryWrapper);
         }
