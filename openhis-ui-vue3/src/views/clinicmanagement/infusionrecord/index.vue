@@ -64,25 +64,7 @@
         :inline="true"
         v-show="showSearch"
       >
-        <el-form-item label="执行时间">
-          <el-date-picker
-            v-model="dateRangeRight"
-            type="datetimerange"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            style="width: auto"
-            value-format="YYYY-MM-DD HH:mm:ss"
-          />
-        </el-form-item>
         <el-form-item>
-          <el-button
-            type="primary"
-            icon="Search"
-            @click="handleQueryRight"
-            style="margin-left: 10px"
-            >搜索</el-button
-          >
-          <el-button icon="Refresh" @click="resetQueryRight">重置</el-button>
           <el-button type="primary" icon="SuccessFilled" @click="handleSubmit"
             >确认执行</el-button
           >
@@ -237,7 +219,6 @@ import {
   updateInfusionRecord,
   listInfusionRecord,
   editPatientInfusionTime,
-  listPatientInfusionRecord,
   listPatientInfusionPerformRecord,
 } from "./component/api";
 
@@ -274,21 +255,6 @@ const { queryParams } = toRefs(data);
 
 /** 查询门诊输液列表 */
 function getList() {
-  listInfusionRecord(queryParams.value).then((response) => {
-    console.log("Full response1:", response);
-    infusionList.value = response.data;
-    // 为每个 groupId 分配固定颜色
-    response.data.forEach((item) => {
-      const colorIndex = item.groupId % 2; // 奇偶性决定颜色索引
-      item.color = groupColors[colorIndex];
-    });
-    // 更新表格行的样式
-    updateTableRowStyles();
-    // 统计每个 groupId 的行数
-    const groupCounts = countGroupRows(infusionList.value);
-    // 设置每行的标记
-    markers.value = getRowMarkers(groupCounts, infusionList.value);
-  });
   listPatients().then((response) => {
     patientList.value = response.data.records;
   });
@@ -317,54 +283,13 @@ function handleQuery() {
     patientList.value = response.data.records;
   });
 }
-/** 右边搜索按钮操作 */
-function handleQueryRight() {
-  const createTimeSTime = dateRangeRight.value[0];
-  const createTimeETime = dateRangeRight.value[1];
-  timeRightStart.value = createTimeSTime;
-  timeRightEnd.value = createTimeETime;
-  listInfusionRecord(createTimeSTime, createTimeETime).then((response) => {
-    infusionList.value = response.data;
-  });
-  listPatientInfusionPerformRecord(createTimeSTime, createTimeETime).then((response) => {
-      historyRecordsList.value = response.data;
-    }
-  );
-}
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
   getList();
-  listPatientInfusionPerformRecord().then((response) => {
-    historyRecordsList.value = response.data;
-  });
 }
 
-/** 右边重置按钮操作 */
-function resetQueryRight() {
-  if (historyRecordsList.value.length > 0) {
-    dateRangeRight.value = [];
-    listInfusionRecord().then((response) => {
-      infusionList.value = response.data;
-    });
-    listPatientInfusionPerformRecord().then((response) => {
-      historyRecordsList.value = response.data;
-    });
-  } else {
-    // 清空选中状态
-    selectedItems.value.clear();
-    selectedGroupIds.value.clear();
-    dateRangeRight.value = [];
-    // 取消表格所有行的选中状态
-    infusionList.value.forEach((row) => {
-      tableRef.value.toggleRowSelection(row, false);
-    });
-    listPatientInfusionRecord(currentRow.value).then((response) => {
-      infusionList.value = response.data;
-    });
-  }
-}
 
 function getRowMarkers(groupCounts, data) {
   const markers = new Array(data.length).fill("");
@@ -463,19 +388,11 @@ function handleSelectionChange(selection) {
   });
 }
 function clearSelections() {
-  dateRangeRight.value = [];
-  if (!currentRow.value) {
-    const createTimeSTime = timeRightStart.value || null;
-    const createTimeETime = timeRightEnd.value || null;
-    listInfusionRecord(createTimeSTime, createTimeETime).then((response) => {
+  currentRow.value.patientId= Number(currentRow.value.patientId)
+    listInfusionRecord(currentRow.value.patientId).then((response) => {
       infusionList.value = response.data;
     });
-  } else {
-    listPatientInfusionRecord(currentRow.value).then((response) => {
-      infusionList.value = response.data;
-    });
-  }
-  listPatientInfusionPerformRecord().then((response) => {
+  listPatientInfusionPerformRecord(currentRow.value.patientId).then((response) => {
     historyRecordsList.value = response.data;
   });
 }
@@ -494,15 +411,24 @@ function handleUpdateTime(row) {
 
 function handleCurrentChange(row) {
   currentRow.value = row; // 更新当前选中行的数据
-  console.log("当前选中行的数据：", currentRow.value);
-  listPatientInfusionRecord(currentRow.value).then((response) => {
+  currentRow.value.patientId= Number(currentRow.value.patientId)
+  console.log("当前选中行的数据：", currentRow.value.patientId,typeof currentRow.value.patientId);
+  listInfusionRecord(currentRow.value.patientId).then((response) => {
+    console.log("Full response1:", response);
     infusionList.value = response.data;
-	// 统计每个 groupId 的行数
+    // 为每个 groupId 分配固定颜色
+    response.data.forEach((item) => {
+      const colorIndex = item.groupId % 2; // 奇偶性决定颜色索引
+      item.color = groupColors[colorIndex];
+    });
+    // 更新表格行的样式
+    updateTableRowStyles();
+    // 统计每个 groupId 的行数
     const groupCounts = countGroupRows(infusionList.value);
     // 设置每行的标记
     markers.value = getRowMarkers(groupCounts, infusionList.value);
   });
-  listPatientInfusionPerformRecord(currentRow.value).then((response) => {
+  listPatientInfusionPerformRecord(Number(currentRow.value.patientId)).then((response) => {
     historyRecordsList.value = response.data;
   });
 }
