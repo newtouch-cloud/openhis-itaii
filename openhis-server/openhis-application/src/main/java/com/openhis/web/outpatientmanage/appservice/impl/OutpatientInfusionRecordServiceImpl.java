@@ -354,16 +354,17 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             queryWrapper.eq(CommonConstants.FieldName.RequestStatus, EventStatus.COMPLETED.getValue());
             //筛选当前ID的患者历史执行记录
             queryWrapper.eq(CommonConstants.FieldName.PatientId,patientId);
+            //执行次数大于0
+            queryWrapper.gt("done_num", 0);
 
-            List<OutpatientInfusionRecordDto> infusionPerformList = editRecords(queryWrapper);
-            List<Long> medicationIds = checkServiceRequestIsCompleted(infusionPerformList);
-            // 未产生执行历史
-            if (medicationIds == null || medicationIds.isEmpty()) {
-                return infusionPerformList;
-            }
-            // 筛选一下执行的药品
-            queryWrapper.in(CommonConstants.FieldName.MedicationId, medicationIds);
-
+//            List<OutpatientInfusionRecordDto> infusionPerformList = editRecords(queryWrapper);
+//            List<Long> medicationIds = checkServiceRequestIsCompleted(infusionPerformList);
+//            // 未产生执行历史
+//            if (medicationIds == null || medicationIds.isEmpty()) {
+//                return infusionPerformList;
+//            }
+//            // 筛选一下执行的药品
+//            queryWrapper.in(CommonConstants.FieldName.MedicationId, medicationIds);
             return editRecords(queryWrapper);
 
             // 门诊输液待执行记录查询
