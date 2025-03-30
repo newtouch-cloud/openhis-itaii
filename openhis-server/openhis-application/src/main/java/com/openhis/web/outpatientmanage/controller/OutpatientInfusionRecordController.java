@@ -12,7 +12,6 @@ import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.web.outpatientmanage.appservice.IOutpatientInfusionRecordService;
-import com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto;
 
 import lombok.AllArgsConstructor;
@@ -50,18 +49,18 @@ public class OutpatientInfusionRecordController {
             .ok(outpatientInfusionRecordService.getOutpatientInfusionPatientList(searchKey, pageNo, pageSize, request));
     }
 
-//    /**
-//     * 点击患者，查询该患者的输液记录
-//     *
-//     * @param outpatientInfusionPatientDto 患者输液信息
-//     * @return 当前患者门诊输液待执行列表
-//     */
-//    @GetMapping(value = "/patient-infusion-record")
-//    public R<?> getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto,
-//        HttpServletRequest request) {
-//
-//        return R.ok(outpatientInfusionRecordService.getPatientInfusionRecord(outpatientInfusionPatientDto, request));
-//    }
+    // /**
+    // * 点击患者，查询该患者的输液记录
+    // *
+    // * @param outpatientInfusionPatientDto 患者输液信息
+    // * @return 当前患者门诊输液待执行列表
+    // */
+    // @GetMapping(value = "/patient-infusion-record")
+    // public R<?> getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto,
+    // HttpServletRequest request) {
+    //
+    // return R.ok(outpatientInfusionRecordService.getPatientInfusionRecord(outpatientInfusionPatientDto, request));
+    // }
 
     /**
      * 批量执行患者门诊输液
@@ -102,9 +101,10 @@ public class OutpatientInfusionRecordController {
      * @return 门诊输液待执行记录列表
      */
     @GetMapping(value = "/infusion-wait-perform-record")
-    public R<?> getPatientInfusionRecords(@RequestParam Long patientId,HttpServletRequest request) {
+    public R<?> getPatientInfusionRecords(@RequestParam(value = "patientId", required = false) Long patientId,
+        HttpServletRequest request) {
 
-        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(patientId,request, false));
+        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(patientId, request, false));
     }
 
     /**
@@ -114,9 +114,10 @@ public class OutpatientInfusionRecordController {
      * @return 门诊输液执行历史记录列表
      */
     @GetMapping(value = "/infusion-perform-record")
-    public R<?> getPatientInfusionPerformRecord(@RequestParam Long patientId,HttpServletRequest request) {
+    public R<?> getPatientInfusionPerformRecord(@RequestParam(value = "patientId", required = false) Long patientId,
+        HttpServletRequest request) {
 
-        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(patientId,request, true));
+        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(patientId, request, true));
     }
 
 }
