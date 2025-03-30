@@ -64,7 +64,11 @@ public enum AssignSeqEnum {
     /**
      * 支付编码
      */
-    PAYMENT_NO("11", "支付编码", "SF");
+    PAYMENT_NO("11", "支付编码", "SF"),
+    /**
+     * 诊疗项目编码
+     */
+    ACTIVITY_DEFINITION_NUM("11", "诊疗编码", "AD");;
 
     private final String code;
     private final String info;
