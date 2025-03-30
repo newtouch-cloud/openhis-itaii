@@ -8,6 +8,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -72,7 +73,9 @@ public class EncounterPatientPageDto {
     /**
      * 账户类型编码
      */
+    @Dict(dictCode = "account_code")
     private String typeCode;
+    private String typeCode_dictText;
 
     /**
      * 账户余额
@@ -92,4 +95,28 @@ public class EncounterPatientPageDto {
     /** 收费状态 */
     private Integer statusEnum;
     private String statusEnum_enumText;
+
+    /**
+     * 医保总额
+     */
+    private BigDecimal insurancePrice;
+
+    /**
+     * 自费总额
+     */
+    private BigDecimal selfPrice;
+
+    /**
+     * 付款总额
+     */
+    private BigDecimal totalAmount;
+
+    /** 合同类型 */
+    private Integer categoryEnum;
+    private String categoryEnum_enumText;
+
+    /**
+     * 结算时间
+     */
+    private Date billDate;
 }

@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.openhis.administration.domain.ChargeItem;
 import com.openhis.administration.mapper.ChargeItemMapper;
 import com.openhis.administration.service.IChargeItemService;
+import com.openhis.common.enums.ChargeItemStatus;
 
 import lombok.AllArgsConstructor;
 
@@ -56,8 +57,8 @@ public class ChargeItemServiceImpl extends ServiceImpl<ChargeItemMapper, ChargeI
      */
     @Override
     public boolean updateAccountType(Long encounterId, Long accountId) {
-        int update = baseMapper.update(null, new LambdaUpdateWrapper<ChargeItem>()
-            .eq(ChargeItem::getEncounterId, encounterId).set(ChargeItem::getAccountId, accountId));
+        int update = baseMapper.update(new ChargeItem().setAccountId(accountId),
+            new LambdaUpdateWrapper<ChargeItem>().eq(ChargeItem::getEncounterId, encounterId));
         return update > 0;
     }
 
@@ -70,5 +71,16 @@ public class ChargeItemServiceImpl extends ServiceImpl<ChargeItemMapper, ChargeI
     @Override
     public List<ChargeItem> getChargeItemInfo(List<Long> chargeItemIdList) {
         return baseMapper.selectBatchIds(chargeItemIdList);
+    }
+
+    /**
+     * 更新收费状态：已退费
+     *
+     * @param chargeItemIdList 收费id列表
+     */
+    @Override
+    public void updateRefundChargeStatus(List<Long> chargeItemIdList) {
+        baseMapper.update(new ChargeItem().setStatusEnum(ChargeItemStatus.REFUNDED.getValue()),
+            new LambdaUpdateWrapper<ChargeItem>().in(ChargeItem::getId, chargeItemIdList));
     }
 }

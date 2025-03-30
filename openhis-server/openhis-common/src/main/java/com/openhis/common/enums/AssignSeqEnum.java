@@ -29,7 +29,7 @@ public enum AssignSeqEnum {
     /**
      * 处方号
      */
-    PRESCRIPTION_NO("4", "处方号", "P"),
+    PRESCRIPTION_NO("4", "处方号", "PR"),
 
     /**
      * 药品请求编码
@@ -64,7 +64,11 @@ public enum AssignSeqEnum {
     /**
      * 支付编码
      */
-    PAYMENT_NO("11", "支付编码", "SF");
+    PAYMENT_NO("11", "支付编码", "SF"),
+    /**
+     * 诊疗项目编码
+     */
+    ACTIVITY_DEFINITION_NUM("11", "诊疗编码", "AD");;
 
     private final String code;
     private final String info;

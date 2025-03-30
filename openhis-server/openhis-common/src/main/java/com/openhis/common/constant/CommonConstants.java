@@ -211,6 +211,10 @@ public class CommonConstants {
          * 药品分类
          */
         String DEVICE_CATEGORY_CODE = "device_category_code";
+        /**
+         * 诊疗分类
+         */
+        String DIAGNOSIS_CATEGORY_CODE = "activity_category_code";
 
     }
 

@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 public class DiagnosisTreatmentSelParam {
 
     /** 目录类别 */
-    private Integer categoryEnum;
+    private Integer categoryCode;
 
     /** 类型 */
     private Integer typeEnum;

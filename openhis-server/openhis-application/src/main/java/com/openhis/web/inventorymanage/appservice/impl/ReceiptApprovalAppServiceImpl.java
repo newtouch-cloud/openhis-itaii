@@ -246,6 +246,7 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
         List<ItemChargeDetailDto> chargeDetailList) {
         List<ChargeItemDefDetail> resultList = new ArrayList<>();
 
+        // todo：同一批次不能改价
         // 将各个项目的定价信息按项目id分组
         Map<Long, List<ItemChargeDetailDto>> chargeDetailGroup =
             chargeDetailList.stream().collect(Collectors.groupingBy(ItemChargeDetailDto::getInstanceId));
@@ -307,7 +308,7 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
      */
     private ChargeItemDefDetail addChargeItemDefApp(String conditionValue, BigDecimal sellPrice, Long definitionId) {
         ChargeItemDefDetail chargeItemDefDetail = new ChargeItemDefDetail();
-        // todo：命中条件或建成字典枚举，此处为批次号，单位
+        // todo：命中条件或建成字典枚举，此处为批次号，单位，优先级加一
         chargeItemDefDetail
             // 命中值
             .setConditionValue(conditionValue)

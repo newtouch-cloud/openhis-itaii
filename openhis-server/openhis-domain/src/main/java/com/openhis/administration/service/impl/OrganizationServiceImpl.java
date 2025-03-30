@@ -30,8 +30,8 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
      */
     @Override
     public boolean activeOrg(Long orgId) {
-        int updateCount = baseMapper.update(null, new LambdaUpdateWrapper<Organization>().eq(Organization::getId, orgId)
-            .set(Organization::getActiveFlag, AccountStatus.ACTIVE.getValue()));
+        int updateCount = baseMapper.update(new Organization().setActiveFlag(AccountStatus.ACTIVE.getValue()),
+            new LambdaUpdateWrapper<Organization>().eq(Organization::getId, orgId));
         return updateCount > 0;
     }
 
@@ -43,8 +43,8 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
      */
     @Override
     public boolean inactiveOrg(Long orgId) {
-        int updateCount = baseMapper.update(null, new LambdaUpdateWrapper<Organization>().eq(Organization::getId, orgId)
-            .set(Organization::getActiveFlag, AccountStatus.INACTIVE.getValue()));
+        int updateCount = baseMapper.update(new Organization().setActiveFlag(AccountStatus.INACTIVE.getValue()),
+            new LambdaUpdateWrapper<Organization>().eq(Organization::getId, orgId));
         return updateCount > 0;
     }
 

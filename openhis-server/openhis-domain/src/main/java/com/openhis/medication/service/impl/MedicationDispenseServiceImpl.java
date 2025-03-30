@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.core.common.utils.DateUtils;
 import com.openhis.common.enums.DispenseStatus;
@@ -73,5 +74,18 @@ public class MedicationDispenseServiceImpl extends ServiceImpl<MedicationDispens
             medicationDispense.setMaxUnit(medicationRequest.getMaxDose());
             baseMapper.insert(medicationDispense);
         }
+    }
+
+    /**
+     * 更新未发放药品状态：停止发放
+     *
+     * @param medDisIdList 发放id列表
+     * @param refund 停止原因：退费
+     */
+    @Override
+    public void updateStopDispenseStatus(List<Long> medDisIdList, Integer refund) {
+        baseMapper.update(
+            new MedicationDispense().setStatusEnum(DispenseStatus.STOPPED.getValue()).setNotPerformedReasonEnum(refund),
+            new LambdaUpdateWrapper<MedicationDispense>().in(MedicationDispense::getId, medDisIdList));
     }
 }

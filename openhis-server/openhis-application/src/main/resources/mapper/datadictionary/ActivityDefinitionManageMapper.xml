@@ -6,7 +6,7 @@
 
         SELECT
         T3.id,
-        T3.category_enum,
+        T3.category_code,
         T3.bus_no,
         T3.name,
         T3.py_str,
@@ -33,7 +33,7 @@
         (
         SELECT
         T1.id,
-        T1.category_enum,
+        T1.category_code,
         T1.bus_no,
         T1.name,
         T1.py_str,
@@ -83,7 +83,7 @@
     <select id="getDiseaseTreatmentOne" resultType="com.openhis.web.datadictionary.dto.DiagnosisTreatmentDto">
         SELECT
         T1.id,
-        T1.category_enum,
+        T1.category_code,
         T1.bus_no,
         T1.name,
         T1.py_str,

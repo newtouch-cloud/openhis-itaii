@@ -8,6 +8,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.openhis.web.chargemanage.dto.EncounterPatientPageDto;
+import com.openhis.web.chargemanage.dto.EncounterPatientPageParam;
 import com.openhis.web.chargemanage.dto.EncounterPatientPaymentDto;
 import com.openhis.web.chargemanage.dto.RefundItemDto;
 
@@ -47,4 +52,17 @@ public interface OutpatientRefundAppMapper {
         @Param("medMedicationRequest") String medMedicationRequest,
         @Param("worServiceRequest") String worServiceRequest, @Param("worDeviceRequest") String worDeviceRequest,
         @Param("three") Integer three);
+
+    /**
+     * 查询已结算就诊患者分页列表
+     *
+     * @param page 分页
+     * @param queryWrapper 查询条件
+     * @param billed 收费状态：已结算
+     * @param insurance 账户类型：医保
+     * @return 已结算就诊患者分页列表
+     */
+    Page<EncounterPatientPageDto> selectBilledEncounterPatientPage(@Param("page") Page<EncounterPatientPageDto> page,
+        @Param(Constants.WRAPPER) QueryWrapper<EncounterPatientPageParam> queryWrapper, @Param("billed") Integer billed,
+        @Param("insurance") Integer insurance);
 }

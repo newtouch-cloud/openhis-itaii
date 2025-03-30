@@ -6,8 +6,8 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -30,6 +30,9 @@ public class PaymentRecDetail extends HisBaseEntity {
 
     /** 先前支付明细id */
     private Long predecessorId;
+
+    /** 付款id */
+    private Long reconciliationId;
 
     /** 付款类型 */
     private Integer targetEnum;
@@ -72,6 +75,5 @@ public class PaymentRecDetail extends HisBaseEntity {
 
     /** 单笔交易结果 */
     private Integer resultEnum;
-
 
 }

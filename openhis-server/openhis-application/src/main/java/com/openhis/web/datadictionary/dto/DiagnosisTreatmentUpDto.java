@@ -22,13 +22,14 @@ import java.math.BigDecimal;
 @Data
 @Accessors(chain = true)
 public class DiagnosisTreatmentUpDto {
+
     /** ID */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 目录类别 */
     @NotNull(message = "目录类别不能为空")
-    private ActivityDefCategory categoryEnum;
+    private String categoryCode;
 
     /** 编码 */
     @NotBlank(message = "项目编码不能为空")
