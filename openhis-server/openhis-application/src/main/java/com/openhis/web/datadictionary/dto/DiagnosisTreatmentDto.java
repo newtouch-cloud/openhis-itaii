@@ -26,8 +26,9 @@ public class DiagnosisTreatmentDto {
     private Long id;
 
     /** 目录类别 */
-    private Integer categoryEnum;
-    private String category_enumText;
+    @Dict(dictCode = "activity_category_code")
+    private String categoryCode;
+    private String categoryCode_dictText;
 
     /** 编码 */
     private String busNo;
@@ -93,9 +94,6 @@ public class DiagnosisTreatmentDto {
     private Long locationId;
     private String locationId_dictText;
 
-    /** 售价 */
-    private BigDecimal price;
-
     /** 财务类别 */
     @Dict(dictCode = "fin_type_code")
     private String typeCode;
@@ -114,6 +112,6 @@ public class DiagnosisTreatmentDto {
 
     /** 最高零售价 */
     private BigDecimal maximumRetailPrice;
-    
+
 
 }

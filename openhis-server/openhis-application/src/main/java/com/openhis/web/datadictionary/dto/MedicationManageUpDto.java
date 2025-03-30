@@ -53,7 +53,6 @@ public class MedicationManageUpDto {
     private Integer activeFlag;
 
     /** 批次号 */
-    @NotBlank(message = "批次号不能为空")
     private String lotNumber;
 
     /** 生效日期 */

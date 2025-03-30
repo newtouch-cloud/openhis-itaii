@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import com.openhis.administration.domain.Supplier;
+import com.openhis.administration.service.ISupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,21 +22,20 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.core.domain.entity.SysDictData;
-import com.core.common.utils.MessageUtils;
-import com.core.common.utils.SecurityUtils;
+import com.core.common.utils.*;
 import com.core.common.utils.bean.BeanUtils;
 import com.core.system.service.ISysDictTypeService;
+import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.domain.Organization;
 import com.openhis.administration.service.IOrganizationService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.*;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.datadictionary.appservice.IDiagnosisTreatmentManageAppService;
-import com.openhis.web.datadictionary.dto.DiagnosisTreatmentDto;
-import com.openhis.web.datadictionary.dto.DiagnosisTreatmentInitDto;
-import com.openhis.web.datadictionary.dto.DiagnosisTreatmentSelParam;
-import com.openhis.web.datadictionary.dto.DiagnosisTreatmentUpDto;
+import com.openhis.web.datadictionary.appservice.IItemDefinitionService;
+import com.openhis.web.datadictionary.dto.*;
 import com.openhis.web.datadictionary.mapper.ActivityDefinitionManageMapper;
 import com.openhis.workflow.domain.ActivityDefinition;
 import com.openhis.workflow.mapper.ActivityDefinitionMapper;
@@ -59,6 +60,13 @@ public class DiagnosisTreatmentManageAppServiceImpl implements IDiagnosisTreatme
     private ISysDictTypeService iSysDictTypeService;
     @Resource
     private ActivityDefinitionManageMapper activityDefinitionManageMapper;
+    @Autowired
+    private IItemDefinitionService itemDefinitionServic;
+    @Autowired
+    private ISysDictTypeService sysDictTypeService;
+
+    @Autowired(required = false)
+    AssignSeqUtil assignSeqUtil;
 
     /**
      * 诊疗目录初期查询
@@ -82,7 +90,15 @@ public class DiagnosisTreatmentManageAppServiceImpl implements IDiagnosisTreatme
             .collect(Collectors.toList());
         diagnosisTreatmentInitDto.setExeOrganizations(exeOrganizations);
 
-        // 获取诊疗分类
+        // 获取诊目录疗分类
+        List<SysDictData> diagnosisList =
+            sysDictTypeService.selectDictDataByType(CommonConstants.DictName.DIAGNOSIS_CATEGORY_CODE);
+        // 获取诊疗录疗分类
+        List<DiagnosisTreatmentInitDto.dictCategoryCode> diagnosisCategories = diagnosisList.stream().map(
+                category -> new DiagnosisTreatmentInitDto.dictCategoryCode(category.getDictValue(), category.getDictLabel()))
+            .collect(Collectors.toList());
+        diagnosisTreatmentInitDto.setDiagnosisCategoryOptions(diagnosisCategories);
+
         // 查询医疗服务项类型
         List<SysDictData> medical_service_items =
             iSysDictTypeService.selectDictDataByType(ActivityDefCategory.MEDICAL_SERVICE_ITEM.getCode());
@@ -92,30 +108,31 @@ public class DiagnosisTreatmentManageAppServiceImpl implements IDiagnosisTreatme
                 status.getDictLabel()))
             .collect(Collectors.toList());
         List<DiagnosisTreatmentInitDto.diseaseTreatmentCategory> diseaseTreatmentCategories = new ArrayList<>();
-
-        DiagnosisTreatmentInitDto.diseaseTreatmentCategory diseaseTreatmentCategory =
-            new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(ActivityDefCategory.MEDICAL_SERVICE_ITEM.getValue(),
-                ActivityDefCategory.MEDICAL_SERVICE_ITEM.getInfo());
-        diseaseTreatmentCategory.setChildren(diseaseTreatmentCategoryList);
-        diseaseTreatmentCategories.add(diseaseTreatmentCategory);
-        diagnosisTreatmentInitDto.setDiseaseTreatmentCategoryList(diseaseTreatmentCategories);
-
-        // 查询手术与治疗类型
-        List<SysDictData> medical_service_items2 =
-            iSysDictTypeService.selectDictDataByType(ActivityDefCategory.TREATMENT_SURGERY.getCode());
-        // 获取手术与治疗List
-        List<DiagnosisTreatmentInitDto.diseaseTreatmentType> diseaseTreatmentCategoryList2 = medical_service_items2
-            .stream().map(status -> new DiagnosisTreatmentInitDto.diseaseTreatmentType(status.getDictValue(),
-                status.getDictLabel()))
-            .collect(Collectors.toList());
-
-        DiagnosisTreatmentInitDto.diseaseTreatmentCategory diseaseTreatmentCategory2 =
-            new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(ActivityDefCategory.TREATMENT_SURGERY.getValue(),
-                ActivityDefCategory.TREATMENT_SURGERY.getInfo());
-        diseaseTreatmentCategory2.setChildren(diseaseTreatmentCategoryList2);
-        diseaseTreatmentCategories.add(diseaseTreatmentCategory2);
-
-        diagnosisTreatmentInitDto.setDiseaseTreatmentCategoryList(diseaseTreatmentCategories);
+//
+//        //获取目录分类
+//        DiagnosisTreatmentInitDto.diseaseTreatmentCategory diseaseTreatmentCategory =
+//            new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(ActivityDefCategory.MEDICAL_SERVICE_ITEM.getValue(),
+//                ActivityDefCategory.MEDICAL_SERVICE_ITEM.getInfo());
+//        diseaseTreatmentCategory.setChildren(diseaseTreatmentCategoryList);
+//        diseaseTreatmentCategories.add(diseaseTreatmentCategory);
+//        diagnosisTreatmentInitDto.setDiseaseTreatmentCategoryList(diseaseTreatmentCategories);
+//
+//        // 查询手术与治疗类型
+//        List<SysDictData> medical_service_items2 =
+//            iSysDictTypeService.selectDictDataByType(ActivityDefCategory.TREATMENT_SURGERY.getCode());
+//        // 获取手术与治疗List
+//        List<DiagnosisTreatmentInitDto.diseaseTreatmentType> diseaseTreatmentCategoryList2 = medical_service_items2
+//            .stream().map(status -> new DiagnosisTreatmentInitDto.diseaseTreatmentType(status.getDictValue(),
+//                status.getDictLabel()))
+//            .collect(Collectors.toList());
+//
+//        DiagnosisTreatmentInitDto.diseaseTreatmentCategory diseaseTreatmentCategory2 =
+//            new DiagnosisTreatmentInitDto.diseaseTreatmentCategory(ActivityDefCategory.TREATMENT_SURGERY.getValue(),
+//                ActivityDefCategory.TREATMENT_SURGERY.getInfo());
+//        diseaseTreatmentCategory2.setChildren(diseaseTreatmentCategoryList2);
+//        diseaseTreatmentCategories.add(diseaseTreatmentCategory2);
+//
+//        diagnosisTreatmentInitDto.setDiseaseTreatmentCategoryList(diseaseTreatmentCategories);
 
         // 获取类型
         List<DiagnosisTreatmentInitDto.statusEnumOption> typeEnumOptions = Stream.of(ActivityType.values())
@@ -138,15 +155,6 @@ public class DiagnosisTreatmentManageAppServiceImpl implements IDiagnosisTreatme
     @Override
     public R<?> getDiseaseTreatmentPage(DiagnosisTreatmentSelParam DiagnosisTreatmentSelParam, String searchKey,
         Integer pageNo, Integer pageSize, HttpServletRequest request) {
-        //
-        // // 构建查询条件
-        // QueryWrapper<ActivityDefinition> queryWrapper = HisQueryUtils.buildQueryWrapper(DiagnosisTreatmentSelParam,
-        // searchKey, new HashSet<>(Arrays.asList("bus_no", "name", "py_str", "wb_str")), request);
-        // // 设置排序
-        // queryWrapper.orderByAsc("bus_no");
-        // // 分页查询
-        // Page<DiagnosisTreatmentDto> diseaseTreatmentPage = HisPageUtils.selectPage(activityDefinitionMapper,
-        // queryWrapper, pageNo, pageSize, DiagnosisTreatmentDto.class);
 
         // 构建查询条件
         QueryWrapper<DiagnosisTreatmentDto> queryWrapper = HisQueryUtils.buildQueryWrapper(DiagnosisTreatmentSelParam,
@@ -163,8 +171,6 @@ public class DiagnosisTreatmentManageAppServiceImpl implements IDiagnosisTreatme
             e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
             // 类型举类回显赋值
             e.setTypeEnum_enumText(EnumUtils.getInfoByValue(ActivityType.class, e.getTypeEnum()));
-            // 目录类别举类回显赋值
-            e.setCategory_enumText(EnumUtils.getInfoByValue(ActivityDefCategory.class, e.getCategoryEnum()));
             // 状态举类回显赋值
             e.setStatusEnum_enumText(EnumUtils.getInfoByValue(PublicationStatus.class, e.getStatusEnum()));
         });
@@ -198,14 +204,32 @@ public class DiagnosisTreatmentManageAppServiceImpl implements IDiagnosisTreatme
     @Override
     public R<?> editDiseaseTreatment(DiagnosisTreatmentUpDto diagnosisTreatmentUpDto) {
 
-        ActivityDefinition ActivityDefinition = new ActivityDefinition();
-        BeanUtils.copyProperties(diagnosisTreatmentUpDto, ActivityDefinition);
+        ActivityDefinition activityDefinition = new ActivityDefinition();
+        BeanUtils.copyProperties(diagnosisTreatmentUpDto, activityDefinition);
+
+        // 使用10位数基础采番
+        String code = assignSeqUtil.getSeq(AssignSeqEnum.DEVICE_NUM.getPrefix(), 10);
+        activityDefinition.setBusNo(code);
+        // 拼音码
+        activityDefinition.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(activityDefinition.getName()));
+        // 五笔码
+        activityDefinition.setWbStr(ChineseConvertUtils.toWBFirstLetter(activityDefinition.getName()));
 
         // 更新诊疗信息
-        return iActivityDefinitionService.updateById(ActivityDefinition)
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"诊疗目录"}))
-            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+        if (iActivityDefinitionService.updateById(activityDefinition)) {
+            ChargeItemDefinition chargeItemDefinition = new ChargeItemDefinition();
+            chargeItemDefinition.setYbType(diagnosisTreatmentUpDto.getYbType())
+                .setTypeCode(diagnosisTreatmentUpDto.getItemTypeCode())
+                .setInstanceTable(CommonConstants.TableName.WOR_ACTIVITY_DEFINITION)
+                .setInstanceId(diagnosisTreatmentUpDto.getId());
 
+            // 更新价格表
+            return itemDefinitionServic.updateItem(chargeItemDefinition)
+                ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"诊疗目录"}))
+                : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+
+        }
+        return R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
     }
 
     /**
@@ -267,13 +291,31 @@ public class DiagnosisTreatmentManageAppServiceImpl implements IDiagnosisTreatme
     @Override
     public R<?> addDiseaseTreatment(DiagnosisTreatmentUpDto diagnosisTreatmentUpDto) {
 
-        ActivityDefinition ActivityDefinition = new ActivityDefinition();
-        BeanUtils.copyProperties(diagnosisTreatmentUpDto, ActivityDefinition);
+        ActivityDefinition activityDefinition = new ActivityDefinition();
+        BeanUtils.copyProperties(diagnosisTreatmentUpDto, activityDefinition);
+        // 拼音码
+        activityDefinition.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(activityDefinition.getName()));
+        // 五笔码
+        activityDefinition.setWbStr(ChineseConvertUtils.toWBFirstLetter(activityDefinition.getName()));
+
         // 新增外来诊疗目录
-        ActivityDefinition.setStatusEnum(PublicationStatus.DRAFT.getValue());
-        return iActivityDefinitionService.addDiagnosisTreatment(ActivityDefinition)
-            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"诊疗目录"}))
-            : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
+        activityDefinition.setStatusEnum(PublicationStatus.DRAFT.getValue());
+        if (iActivityDefinitionService.addDiagnosisTreatment(activityDefinition)) {
+
+            ItemUpFromDirectoryDto itemUpFromDirectoryDto = new ItemUpFromDirectoryDto();
+            BeanUtils.copyProperties(diagnosisTreatmentUpDto, itemUpFromDirectoryDto);
+            itemUpFromDirectoryDto.setTypeCode(diagnosisTreatmentUpDto.getItemTypeCode())
+                .setInstanceTable(CommonConstants.TableName.WOR_ACTIVITY_DEFINITION)
+                .setEffectiveStart(DateUtils.getNowDate()).setStatusEnum(PublicationStatus.ACTIVE.getValue())
+                .setConditionFlag(Whether.YES.getValue()).setChargeName(diagnosisTreatmentUpDto.getName())
+                .setInstanceId(activityDefinition.getId()).setPrice(diagnosisTreatmentUpDto.getRetailPrice());
+
+            return itemDefinitionServic.addItem(itemUpFromDirectoryDto)
+                ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"诊疗目录"}))
+                : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
+
+        }
+        return R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));
 
     }
 }
