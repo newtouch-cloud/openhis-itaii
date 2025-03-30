@@ -269,7 +269,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             medicationRequest.setDispensePerDuration(adviceSaveDto.getDispensePerDuration()); // 每次发药供应天数
             medicationRequest.setSkinTestFlag(adviceSaveDto.getSkinTestFlag()); // 皮试标记
             medicationRequest.setGroupId(adviceSaveDto.getGroupId());// 分组id
-            // medicationRequest.setPackageId(adviceSaveDto.getPackageId());
+            // medicationRequest.setPackageId(adviceSaveDto.getPackageId()); // 组套id
 
             iMedicationRequestService.save(medicationRequest);
 
@@ -323,7 +323,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             }
             // deviceRequest.setLocationId(adviceSaveDto.getLocationId()); 请求发起的位置
             deviceRequest.setEncounterId(adviceSaveDto.getEncounterId()); // 就诊id
-            // deviceRequest.setPackageId(adviceSaveDto.getPackageId());
+            // deviceRequest.setPackageId(adviceSaveDto.getPackageId()); // 组套id
             // deviceRequest.setActivityId(adviceSaveDto.getActivityId());
 
             iDeviceRequestService.save(deviceRequest);

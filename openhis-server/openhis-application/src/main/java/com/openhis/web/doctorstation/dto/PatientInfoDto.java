@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -75,5 +76,15 @@ public class PatientInfoDto {
      * 过敏史标记
      */
     private Integer allergyHistoryFlag;
+
+    /**
+     * 挂号时间
+     */
+    private Date registerTime;
+
+    /** 账户类型编码 */
+    @Dict(dictCode = "account_code")
+    private String typeCode;
+    private String typeCode_dictText;
 
 }
