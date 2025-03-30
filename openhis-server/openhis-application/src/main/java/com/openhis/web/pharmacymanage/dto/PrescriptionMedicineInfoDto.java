@@ -76,5 +76,5 @@ public class PrescriptionMedicineInfoDto implements Serializable {
     private BigDecimal unitPrice;
 
     /** 金额 */
-    private BigDecimal total_price;
+    private BigDecimal totalPrice;
 }

@@ -8,16 +8,17 @@
           patient_name,
           gender_enum,
           encounter_date,
-          organization_id,
+          department_id,
           id_card,
           start_time
         FROM
           (
             SELECT
+              T1.tenant_id,
               T1.id AS encounter_id,
               T1.start_time,
               TO_CHAR(T1.start_time,'YYYY-MM-DD') AS encounter_date,
-              T1.organization_id,
+              T1.organization_id AS department_id,
               T2.gender_enum,
               T2.name AS patient_name,
               T2.id_card,
