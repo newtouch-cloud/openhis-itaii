@@ -24,20 +24,24 @@ export function listWesternmedicine(query) {
   })
 }
 
-
-export function updateMedicion(data) {
+export function updateMedicion(prescriptionNo) {
     return request({
       url: '/pharmacy-manage/western-medicine-dispense/medicine-dispense',
       method: 'put',
-      data: data
+      params: {
+        prescriptionNo: prescriptionNo
+      }
     })
   }
 
   
-  export function backMedicion(data) {
+  export function backMedicion(prescriptionNo,notPerformedReasonEnum) {
       return request({
         url: '/pharmacy-manage/western-medicine-dispense/medicine-cancel',
         method: 'put',
-        data: data
+        params: {
+          prescriptionNo: prescriptionNo,
+          notPerformedReasonEnum:notPerformedReasonEnum
+        }
       })
     }

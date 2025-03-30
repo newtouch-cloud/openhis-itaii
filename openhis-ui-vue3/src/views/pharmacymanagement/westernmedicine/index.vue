@@ -38,10 +38,8 @@
         <div class="right">
             <div style="display: flex; align-items: center;">
                 <p style="margin-right: 60px;font-size: 19px;">患者基本信息</p>
-                <el-button type="primary" plain @click="submitMedicine" icon="SuccessFilled">发药</el-button>
-                <el-button type="warning" plain @click="backMedicine" icon="CircleClose"
-                    style="margin-left: 30px;">作废</el-button>
-                <el-button type="success" plain @click="print" icon="Printer" style="margin-left: 30px;">打印</el-button>
+                
+                <!-- <el-button type="success" plain @click="print" icon="Printer" style="margin-left: 30px;">打印</el-button> -->
             </div>
             <div class="top">
                 <el-row>
@@ -49,25 +47,31 @@
                     <el-col :span="3">性别：{{ personInfo.genderEnum_enumText }}</el-col>
                     <el-col :span="3">年龄：{{ personInfo.age }}</el-col>
                     <el-col :span="5">合同类型：{{ personInfo.categoryEnum_enumText }}</el-col>
-                    <el-col :span="6">证件号：{{ personInfo.idCard }}</el-col>
                 </el-row><br>
                 <el-row>
-                    <el-col :span="4">就诊科室：{{ personInfo.organizationName }}</el-col>
+                    <el-col :span="5">就诊科室：{{ personInfo.organizationName }}</el-col>
                     <el-col :span="5">就诊日期：{{ personInfo.encounterDate }}</el-col>
-                    <el-col :span="6">门诊诊断：{{ personInfo.patientName }}</el-col>
+                    <el-col :span="7">证件号：{{ personInfo.idCard }}</el-col>
+
+                    <!-- <el-col :span="6">门诊诊断：{{ personInfo.patientName }}</el-col> -->
                 </el-row><br>
                 <el-row>
-                    <el-col :span="4">总金额：{{ totalPrice ? totalPrice.toFixed(2) : '0.00' }}元</el-col>
+                    <el-col :span="4">总金额：{{ personInfo.totalPrice ? personInfo.totalPrice.toFixed(2) : '0.00' }}元</el-col>
                 </el-row>
             </div>
             <el-table :data="medicineInfoList" border style="width: 100%; height: 65vh;margin-top: 10px;"
                 :row-style="rowStyle" :span-method="spanMethod" @selection-change="handleSelectionChange"
                 ref="tableRef">
-                <el-table-column type="selection" width="40" align="center" />
+                <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">
+                    <template #default="scope">
+                        <el-button link type="primary" icon="SuccessFilled" @click="submitMedicine(scope.row)">发药</el-button>
+                        <el-button link type="primary"  @click="backMedicine(scope.row)" icon="CircleClose">作废</el-button>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="departmentName" label="科室" width="90" />
                 <el-table-column prop="doctorName" label="开单医生" width="100" />
                 <el-table-column prop="itemType" label="项目类型" width="100" />
-                <el-table-column prop="doneNum" label="诊断" width="120" />
+                <el-table-column prop="conditionName" label="诊断" width="120" />
                 <el-table-column prop="prescriptionNo" label="处方号" width="120" />
                 <el-table-column prop="markers" label="成组" width="60">
                     <template #default="scope">
@@ -114,7 +118,7 @@
 </template>
 
 <script setup name="westernmedicine">
-import { ref, computed } from "vue";
+import { ref, computed,onMounted,onBeforeMount  } from "vue";
 import { ElMessage } from 'element-plus';
 import {
     listWesternmedicine,
@@ -138,7 +142,9 @@ const selectedPrescriptionNo = ref('');
 const showDialog = ref(false);
 const notPerformedReasonEnum = ref();
 const currentRow = ref(null);
-
+const tableRef = ref(null);
+const selectedGroupIds = ref(new Set());
+const selectedItems = ref(new Set());
 
 const { proxy } = getCurrentInstance();
 
@@ -153,14 +159,30 @@ const data = reactive({
 });
 const { queryParams } = toRefs(data);
 
+// 在组件挂载后调用 getList
+onMounted(() => {
+  setDefaultDateRange();
+  getList();
+});
+
+
+// 设置默认日期范围为当天
+function setDefaultDateRange() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+  dateRange.value = [formattedDate, formattedDate];
+  console.log("222",dateRange.value)
+
+}
+
+
 function getList() {
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // 月份从 0 开始，需要加 1
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const formattedDateTime = `${year}-${month}-${day}`;
-    queryParams.value.startTimeSTime = formattedDateTime + " 00:00:00";
-    queryParams.value.startTimeETime = formattedDateTime + " 23:59:59";
+    console.log("224555552",dateRange.value)
+    queryParams.value.startTimeSTime = dateRange.value[0] + " 00:00:00";
+    queryParams.value.startTimeETime = dateRange.value[1] + " 23:59:59";
 
     console.log("222",queryParams.value)
     listPatient(queryParams.value).then((response) => {
@@ -178,6 +200,14 @@ function getList() {
     });
 }
 
+/** 重置按钮操作 */
+function resetQuery() {
+setDefaultDateRange()
+medicineInfoList.value = []
+personInfo.value = []
+  proxy.resetForm("queryRef");
+  getList();
+}
 /** 搜索按钮操作 */
 function handleQuery() {
     if (dateRange.value) {
@@ -236,18 +266,34 @@ function getRowMarkers(groupCounts, data) {
 }
 
 function handleSelectionChange(selection) {
-    selectedPrescriptionNo.value = '';
-    if (selection.length > 0) {
-        // 获取选中行的 prescriptionNo
-        selectedPrescriptionNo.value = selection[0].prescriptionNo;
+  // 清空之前选中的数据
+  selectedItems.value.clear();
+  // 将当前选中的数据存到 selectedItems 中
+  selection.forEach((item) => {
+    selectedItems.value.add(item);
+  });
+  // 更新 selectedGroupIds 
+  selection.forEach((item) => {
+    const prescriptionNo = item.prescriptionNo;
+    // 检查 prescriptionNo 是否同时存在
+    if (selectedGroupIds.value.has(prescriptionNo)) {
+      // 如果都存在，则移除它们
+      selectedGroupIds.value.delete(prescriptionNo);
     } else {
-        selectedPrescriptionNo.value = '';
+      // 否则添加它们
+      selectedGroupIds.value.add(prescriptionNo);
     }
+  });
+  // 动态更新表格行的选中状态
+  medicineInfoList.value.forEach((row) => {
+    const isSelected = selectedGroupIds.value.has(row.prescriptionNo);
+    tableRef.value.toggleRowSelection(row, isSelected);
+  });
 }
 
 function spanMethod({ row, column, rowIndex, columnIndex }) {
     // 定义需要合并的列范围（前6列，包括selection列）
-    const columnsToMerge = [0, 1, 2, 3, 4, 5]; // 假设selection列是第0列，其他列依次是1, 2, 3, 4, 5
+    const columnsToMerge = [ 0,1, 2, 3, 4, 5]; // 假设selection列是第0列，其他列依次是1, 2, 3, 4, 5
 
     // 检查当前列是否在需要合并的列范围内
     if (columnsToMerge.includes(columnIndex)) {
@@ -284,7 +330,7 @@ function handleCurrentChange(row) {
         console.log("121212",response)
         personInfo.value = response.data.prescriptionPatientInfoDto;
         medicineInfoList.value = response.data.prescriptionMedicineInfoDtoList;
-        // 统计每个 groupId 的行数
+        // 统计每个 prescriptionNo 的行数
         const groupCounts = countGroupRows(medicineInfoList.value);
         // 设置每行的标记
         markers.value = getRowMarkers(groupCounts, medicineInfoList.value);
@@ -293,12 +339,12 @@ function handleCurrentChange(row) {
     });
 }
 
-function submitMedicine() {
-    updateMedicion(selectedPrescriptionNo.value).then((response) => {
+function submitMedicine(row) {
+    updateMedicion(row.prescriptionNo).then((response) => {
         proxy.$modal.msgSuccess("发药成功");
-        listWesternmedicine(currentRow.value.encounterId).then((response) => {
+        listWesternmedicine(currentRow.value).then((response) => {
             medicineInfoList.value = response.data;
-            // 统计每个 groupId 的行数
+            // 统计每个 prescriptionNo 的行数
             const groupCounts = countGroupRows(medicineInfoList.value);
             // 设置每行的标记
             markers.value = getRowMarkers(groupCounts, medicineInfoList.value);
@@ -306,8 +352,11 @@ function submitMedicine() {
     });
 }
 
-function backMedicine() {
+function backMedicine(row) {
     showDialog.value = true;
+    selectedPrescriptionNo.value = row.prescriptionNo
+  console.log('作废原因:', selectedPrescriptionNo.value,row.prescriptionNo);
+
 }
 
 function handleConfirm() {
@@ -317,9 +366,16 @@ function handleConfirm() {
   }
   // 在这里处理作废逻辑，比如调用 API
   console.log('作废原因:', selectedPrescriptionNo.value,notPerformedReasonEnum.value);
-//   backMedicion(selectedPrescriptionNo.value,notPerformedReasonEnum.value).then((response) => {
-//         proxy.$modal.msgSuccess("作废成功");
-//     });
+  backMedicion(selectedPrescriptionNo.value,notPerformedReasonEnum.value).then((response) => {
+        proxy.$modal.msgSuccess("作废成功");
+    });
+    listWesternmedicine(currentRow.value).then((response) => {
+            medicineInfoList.value = response.data;
+            // 统计每个 prescriptionNo 的行数
+            const groupCounts = countGroupRows(medicineInfoList.value);
+            // 设置每行的标记
+            markers.value = getRowMarkers(groupCounts, medicineInfoList.value);
+        });
   showDialog.value = false;
   notPerformedReasonEnum.value = ''; // 清空选择
 };
@@ -329,7 +385,7 @@ function  handleCancel() {
   notPerformedReasonEnum.value = ''; // 清空选择
 };
 
-getList();
+// getList();
 
 </script>
 
