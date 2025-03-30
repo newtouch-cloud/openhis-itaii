@@ -46,7 +46,7 @@ public enum DispenseStatus implements HisEnumInterface {
     /**
      * 拒绝发药
      */
-    DECLINED(7, "DE", "拒绝发药 已退药"),
+    DECLINED(7, "DE", "拒绝发药"),
 
     /**
      * 已汇总

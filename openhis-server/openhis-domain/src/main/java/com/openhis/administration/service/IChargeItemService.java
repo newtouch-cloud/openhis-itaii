@@ -43,4 +43,11 @@ public interface IChargeItemService extends IService<ChargeItem> {
      * @return 收费信息
      */
     List<ChargeItem> getChargeItemInfo(List<Long> chargeItemIdList);
+
+    /**
+     * 更新收费状态：已退费
+     *
+     * @param chargeItemIdList 收费id列表
+     */
+    void updateRefundChargeStatus(List<Long> chargeItemIdList);
 }

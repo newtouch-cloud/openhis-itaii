@@ -53,10 +53,10 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
     @Override
     public List<SupplyRequest> agreeRequest(String busNo, LoginUser loginUser, Date now) {
         // 更新单据状态
-        baseMapper.update(null,
-            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo)
-                .set(SupplyRequest::getApprovalTime, now).set(SupplyRequest::getApproverId, loginUser.getUserId())
-                .set(SupplyRequest::getStatusEnum, SupplyStatus.AGREE.getValue()));
+        baseMapper.update(
+            new SupplyRequest().setApprovalTime(now).setApproverId(loginUser.getPractitionerId())
+                .setStatusEnum(SupplyStatus.AGREE.getValue()),
+            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
         // 返回单据详情
         return this.getSupplyByBusNo(busNo);
     }
@@ -69,10 +69,9 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
      */
     @Override
     public boolean submitApproval(String busNo) {
-        int updateCount = baseMapper.update(null,
-            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo)
-                .set(SupplyRequest::getStatusEnum, SupplyStatus.APPROVAL.getValue())
-                .set(SupplyRequest::getApplyTime, DateUtils.getNowDate()));
+        int updateCount = baseMapper.update(
+            new SupplyRequest().setApplyTime(DateUtils.getNowDate()).setStatusEnum(SupplyStatus.APPROVAL.getValue()),
+            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
         return updateCount > 0;
     }
 
@@ -84,8 +83,8 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
      */
     @Override
     public boolean withdrawApproval(String busNo) {
-        int updateCount = baseMapper.update(null, new LambdaUpdateWrapper<SupplyRequest>()
-            .eq(SupplyRequest::getBusNo, busNo).set(SupplyRequest::getStatusEnum, SupplyStatus.WITHDRAW.getValue()));
+        int updateCount = baseMapper.update(new SupplyRequest().setStatusEnum(SupplyStatus.WITHDRAW.getValue()),
+            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
         return updateCount > 0;
     }
 
@@ -99,10 +98,10 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
     @Override
     public boolean rejectRequest(String busNo, LoginUser loginUser, Date now) {
         // 更新单据状态
-        int updateCount = baseMapper.update(null,
-            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo)
-                .set(SupplyRequest::getApprovalTime, now).set(SupplyRequest::getApproverId, loginUser.getUserId())
-                .set(SupplyRequest::getStatusEnum, SupplyStatus.REJECT.getValue()));
+        int updateCount = baseMapper.update(
+            new SupplyRequest().setApprovalTime(now).setApproverId(loginUser.getPractitionerId())
+                .setStatusEnum(SupplyStatus.REJECT.getValue()),
+            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
         return updateCount > 0;
     }
 

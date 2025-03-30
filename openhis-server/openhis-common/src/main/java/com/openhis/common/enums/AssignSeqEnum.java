@@ -29,7 +29,7 @@ public enum AssignSeqEnum {
     /**
      * 处方号
      */
-    PRESCRIPTION_NO("4", "处方号", "P"),
+    PRESCRIPTION_NO("4", "处方号", "PR"),
 
     /**
      * 药品请求编码

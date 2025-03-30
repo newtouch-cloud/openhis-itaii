@@ -36,9 +36,9 @@ public enum RequestStatus implements HisEnumInterface {
     ON_HOLD(4, "on_hold", "暂停"),
 
     /**
-     * 撤回
+     * 取消
      */
-    CANCELLED(5, "cancelled", "撤回"),
+    CANCELLED(5, "cancelled", "取消"),
 
     /**
      * 停止

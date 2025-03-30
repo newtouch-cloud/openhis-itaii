@@ -6,8 +6,8 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -88,5 +88,6 @@ public class PaymentReconciliation extends HisBaseEntity {
     /** 就诊ID */
     private Long encounterId;
 
-
+    /** 结算时间 */
+    private Date billDate;
 }
