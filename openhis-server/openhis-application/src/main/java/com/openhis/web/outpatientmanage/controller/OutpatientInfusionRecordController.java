@@ -103,18 +103,19 @@ public class OutpatientInfusionRecordController {
     @GetMapping(value = "/infusion-wait-perform-record")
     public R<?> getPatientInfusionRecords(HttpServletRequest request) {
 
-        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(request, false));
+        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(null,request, false));
     }
 
     /**
      * 门诊输液执行历史记录查询
      *
+     * @param patientId 患者ID
      * @return 门诊输液执行历史记录列表
      */
     @GetMapping(value = "/infusion-perform-record")
-    public R<?> getPatientInfusionPerformRecord(HttpServletRequest request) {
+    public R<?> getPatientInfusionPerformRecord(@RequestParam Long patientId,HttpServletRequest request) {
 
-        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(request, true));
+        return R.ok(outpatientInfusionRecordService.getPatientInfusionPerformRecord(patientId,request, true));
     }
 
 }

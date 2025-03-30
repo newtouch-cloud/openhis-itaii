@@ -114,7 +114,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
 
         // 构建查询条件
         QueryWrapper<OutpatientInfusionRecordDto> queryWrapper =
-            HisQueryUtils.buildQueryWrapper(new OutpatientInfusionPatientDto(), null, null, request);
+            HisQueryUtils.buildQueryWrapper(null, null, null, request);
 
         queryWrapper.eq(CommonConstants.FieldName.PatientId, outpatientInfusionPatientDto.getPatientId());
         // based_on_id 是为空的
@@ -239,7 +239,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     public List<Long> checkServiceRequestIsCompleted() {
 
         //获取全部执行输液记录
-        List<OutpatientInfusionRecordDto> patientInfusionList =getPatientInfusionPerformRecord(null,false);
+        List<OutpatientInfusionRecordDto> patientInfusionList =getPatientInfusionPerformRecord(null,null,false);
         // 按 serviceId 分组
         Map<Long, List<OutpatientInfusionRecordDto>> servicePatientInfusionList = patientInfusionList.stream()
             .collect(Collectors.groupingBy(OutpatientInfusionRecordDto::getServiceId));
@@ -334,16 +334,17 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     /**
      * 显示门诊输液执行记录查询
      *
+     * @param patientId 患者输液信息
      * @param historyFlag 查询的是否为执行履历
      * @return 返回门诊输液执行记录查询
      */
     @Override
-    public List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(HttpServletRequest request,
+    public List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(Long patientId,HttpServletRequest request,
         boolean historyFlag) {
 
         // 构建查询条件
         QueryWrapper<OutpatientInfusionRecordDto> queryWrapper =
-            HisQueryUtils.buildQueryWrapper(new OutpatientInfusionRecordDto(), null, null, request);
+            HisQueryUtils.buildQueryWrapper(null, null, null, request);
 
         // 执行历史查询的条件
         if (historyFlag) {
@@ -351,6 +352,8 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             queryWrapper.isNotNull(CommonConstants.FieldName.BasedOnId);
             // 状态是已完成
             queryWrapper.eq(CommonConstants.FieldName.RequestStatus, EventStatus.COMPLETED.getValue());
+            //筛选当前ID的患者历史执行记录
+            queryWrapper.eq(CommonConstants.FieldName.PatientId,patientId);
 
             List<OutpatientInfusionRecordDto> infusionPerformList = editRecords(queryWrapper);
             List<Long> medicationIds = checkServiceRequestIsCompleted(infusionPerformList);
@@ -365,6 +368,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
 
             // 门诊输液待执行记录查询
         } else {
+
             // based_on_id 为空，此条件筛选控制不显示执行履历
             queryWrapper.isNull(CommonConstants.FieldName.BasedOnId);
             // 状态是进行中

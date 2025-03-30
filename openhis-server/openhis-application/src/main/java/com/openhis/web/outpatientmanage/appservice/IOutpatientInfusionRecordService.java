@@ -55,9 +55,10 @@ public interface IOutpatientInfusionRecordService {
     /**
      * 门诊输液执行历史记录查询
      *
+     * @param patientId 患者ID
      * @param historyFlag 查询的是否为执行履历
      * @return 门诊输液记录列表
      */
-    List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(HttpServletRequest request, boolean historyFlag);
+    List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(Long patientId,HttpServletRequest request, boolean historyFlag);
 
 }
