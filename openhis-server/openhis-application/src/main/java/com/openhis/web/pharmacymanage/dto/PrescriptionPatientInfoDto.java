@@ -30,7 +30,7 @@ public class PrescriptionPatientInfoDto implements Serializable {
     private String genderEnum_enumText;
 
     /** 生日 */
-    private Date birth_date;
+    private Date birthDate;
 
     /** 年龄 */
     private String age;

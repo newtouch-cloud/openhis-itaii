@@ -125,7 +125,7 @@ public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineD
         PrescriptionPatientInfoDto prescriptionPatientInfoDto = westernMedicineDispenseMapper.
                 selectPrescriptionPatientInfo(encounterId);
         // 年龄
-        prescriptionPatientInfoDto.setAge(AgeCalculatorUtil.getAge(prescriptionPatientInfoDto.getBirth_date()));
+        prescriptionPatientInfoDto.setAge(AgeCalculatorUtil.getAge(prescriptionPatientInfoDto.getBirthDate()));
         // 性别
         prescriptionPatientInfoDto.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class,
                 prescriptionPatientInfoDto.getGenderEnum()));
@@ -141,7 +141,7 @@ public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineD
         if(!prescriptionMedicineInfoList.isEmpty()) {
             BigDecimal totalPrice = new BigDecimal(0);
             for (PrescriptionMedicineInfoDto item : prescriptionMedicineInfoList) {
-                totalPrice.add(item.getTotal_price());
+                totalPrice.add(item.getTotalPrice());
             }
             prescriptionPatientInfoDto.setTotalPrice(totalPrice);
         }
