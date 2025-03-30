@@ -7,8 +7,8 @@
                         @keyup.enter="handleQuery" />
                 </el-form-item>
                 <el-form-item label="就诊日期">
-                    <el-date-picker v-model="dateRange" type="datetimerange" start-placeholder="开始日期"
-                        end-placeholder="结束日期" style="width: auto" value-format="YYYY-MM-DD HH:mm:ss" />
+                    <el-date-picker v-model="dateRange" type="daterange" start-placeholder="开始日期"
+                        end-placeholder="结束日期" style="width: auto" value-format="YYYY-MM-DD" />
                 </el-form-item>
                 <el-form-item label="科室" prop="departmentId">
                     <el-select v-model="queryParams.departmentId" placeholder="请选择科室" clearable
@@ -25,11 +25,11 @@
 
             <el-table :data="patientList" border style="width: 100%; height: 60vh" highlight-current-row
                 @current-change="handleCurrentChange">
-                <el-table-column prop="prescriptionNo" label="科室" width="120" />
+                <el-table-column prop="departmentName" label="科室" width="120" />
                 <el-table-column prop="patientName" label="姓名" width="100" />
                 <el-table-column prop="genderEnum_enumText" label="性别" width="80" />
                 <!-- <el-table-column prop="ageString" label="开单医生" width="80" /> -->
-                <el-table-column prop="idCard" label="就诊日期" width="140" />
+                <el-table-column prop="encounterDate" label="就诊日期" width="140" />
             </el-table>
             <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNo"
                 v-model:limit="queryParams.pageSize" @pagination="getList" />
@@ -45,28 +45,28 @@
             </div>
             <div class="top">
                 <el-row>
-                    <el-col :span="4">姓名：</el-col>
-                    <el-col :span="3">性别：</el-col>
-                    <el-col :span="3">年龄：</el-col>
-                    <el-col :span="4">合同类型：</el-col>
-                    <el-col :span="6">证件号：</el-col>
+                    <el-col :span="4">姓名：{{ personInfo.patientName }}</el-col>
+                    <el-col :span="3">性别：{{ personInfo.genderEnum_enumText }}</el-col>
+                    <el-col :span="3">年龄：{{ personInfo.age }}</el-col>
+                    <el-col :span="5">合同类型：{{ personInfo.categoryEnum_enumText }}</el-col>
+                    <el-col :span="6">证件号：{{ personInfo.idCard }}</el-col>
                 </el-row><br>
                 <el-row>
-                    <el-col :span="4">就诊科室：</el-col>
-                    <el-col :span="4">就诊日期：</el-col>
-                    <el-col :span="6">门诊诊断：{{ medicineInfoList.a }}</el-col>
+                    <el-col :span="4">就诊科室：{{ personInfo.organizationName }}</el-col>
+                    <el-col :span="5">就诊日期：{{ personInfo.encounterDate }}</el-col>
+                    <el-col :span="6">门诊诊断：{{ personInfo.patientName }}</el-col>
                 </el-row><br>
                 <el-row>
-                    <el-col :span="4">总金额：{{ price ? price.toFixed(2) : '0.00' }}元</el-col>
+                    <el-col :span="4">总金额：{{ totalPrice ? totalPrice.toFixed(2) : '0.00' }}元</el-col>
                 </el-row>
             </div>
             <el-table :data="medicineInfoList" border style="width: 100%; height: 65vh;margin-top: 10px;"
                 :row-style="rowStyle" :span-method="spanMethod" @selection-change="handleSelectionChange"
                 ref="tableRef">
                 <el-table-column type="selection" width="40" align="center" />
-                <el-table-column prop="executeNum" label="科室" width="90" />
-                <el-table-column prop="executeNum" label="开单医生" width="100" />
-                <el-table-column prop="executeNum" label="项目类型" width="100" />
+                <el-table-column prop="departmentName" label="科室" width="90" />
+                <el-table-column prop="doctorName" label="开单医生" width="100" />
+                <el-table-column prop="itemType" label="项目类型" width="100" />
                 <el-table-column prop="doneNum" label="诊断" width="120" />
                 <el-table-column prop="prescriptionNo" label="处方号" width="120" />
                 <el-table-column prop="markers" label="成组" width="60">
@@ -76,7 +76,7 @@
                 </el-table-column>
                 <el-table-column prop="medicineName" label="药品名称" width="120" />
                 <el-table-column prop="totalVolume" label="规格" width="100" />
-                <el-table-column prop="medicationInformation" label="剂量" width="100" />
+                <el-table-column prop="dose" label="剂量" width="100" />
                 <el-table-column prop="rateCode" label="频次" width="100" />
                 <el-table-column prop="methodCode" label="用法" width="80" />
                 <el-table-column prop="dispensePerDuration" label="天数" width="60" />
@@ -93,7 +93,7 @@
                 </el-table-column> -->
                 <!-- <el-table-column prop="medicationStatusEnum_enumText" label="追溯码" width="100" /> -->
                 <el-table-column prop="unitPrice" label="单价" width="60" :formatter="formatPrice" />
-                <el-table-column prop="total_price" label="金额" width="70" :formatter="formatPrice" />
+                <el-table-column prop="totalPrice" label="金额" width="70" :formatter="formatPrice" />
             </el-table>
         </div>
         <el-dialog title="选择作废原因" v-model="showDialog" width="30%">
@@ -137,6 +137,7 @@ const backReason = ref([]);
 const selectedPrescriptionNo = ref('');
 const showDialog = ref(false);
 const notPerformedReasonEnum = ref();
+const currentRow = ref(null);
 
 
 const { proxy } = getCurrentInstance();
@@ -153,6 +154,14 @@ const data = reactive({
 const { queryParams } = toRefs(data);
 
 function getList() {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // 月份从 0 开始，需要加 1
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const formattedDateTime = `${year}-${month}-${day}`;
+    queryParams.value.startTimeSTime = formattedDateTime + " 00:00:00";
+    queryParams.value.startTimeETime = formattedDateTime + " 23:59:59";
+
     console.log("222",queryParams.value)
     listPatient(queryParams.value).then((response) => {
         console.log("Full response1:", response);
@@ -172,14 +181,19 @@ function getList() {
 /** 搜索按钮操作 */
 function handleQuery() {
     if (dateRange.value) {
-        queryParams.value.startTimeSTime = dateRange.value[0];
-        queryParams.value.startTimeETime = dateRange.value[1];
+        queryParams.value.startTimeSTime = dateRange.value[0] + " 00:00:00";
+        queryParams.value.startTimeETime = dateRange.value[1] + " 23:59:59";
     } else {
         queryParams.value.startTimeSTime = null;
         queryParams.value.startTimeETime = null;
     }
     queryParams.value.pageNo = 1;
-    getList();
+    console.log("222",queryParams.value)
+    listPatient(queryParams.value).then((response) => {
+        console.log("Full response1:", response);
+        patientList.value = response.data.records;
+        total.value = response.data.total;
+    });
 }
 
 function countGroupRows(data) {
@@ -192,6 +206,7 @@ function countGroupRows(data) {
         groupInfo.count++;
         groupInfo.indices.push(index);
     });
+    console.log("F*******:", groupCounts);
     return groupCounts;
 }
 
@@ -216,6 +231,7 @@ function getRowMarkers(groupCounts, data) {
             markers[indices[indices.length - 1]] = "┗ ";
         }
     });
+    console.log("F*******:", markers);
     return markers;
 }
 
@@ -229,17 +245,29 @@ function handleSelectionChange(selection) {
     }
 }
 
-// 行合并逻辑
 function spanMethod({ row, column, rowIndex, columnIndex }) {
-    if (columnIndex === 6) { // 假设药品名称在第7列（索引为6）
-        const medicineName = row.genderEnum_enumText;
-        const count = medicineInfoList.value.filter(item => item.genderEnum_enumText === medicineName).length;
-        if (rowIndex % count === 0) {
-            return [count, 1];
+    // 定义需要合并的列范围（前6列，包括selection列）
+    const columnsToMerge = [0, 1, 2, 3, 4, 5]; // 假设selection列是第0列，其他列依次是1, 2, 3, 4, 5
+
+    // 检查当前列是否在需要合并的列范围内
+    if (columnsToMerge.includes(columnIndex)) {
+        const prescriptionNo = row.prescriptionNo;
+
+        // 查找当前处方号在列表中第一次出现的索引
+        const firstRowIndex = medicineInfoList.value.findIndex(item => item.prescriptionNo === prescriptionNo);
+
+        // 如果当前行是该处方号的首行，则合并count行
+        if (rowIndex === firstRowIndex) {
+            // 计算该处方号的总行数
+            const count = medicineInfoList.value.filter(item => item.prescriptionNo === prescriptionNo).length;
+            return [count, 1]; // 合并count行，1列
         } else {
-            return [0, 0];
+            return [0, 0]; // 其他行不显示
         }
     }
+
+    // 其他列不进行合并
+    return [1, 1];
 }
 
 function formatPrice(row, column, cellValue) {
@@ -253,7 +281,9 @@ function handleCurrentChange(row) {
     currentRow.value = row; // 更新当前选中行的数据
     console.log("当前选中行的数据：", currentRow.value);
     listWesternmedicine(currentRow.value).then((response) => {
-        medicineInfoList.value = response.data;
+        console.log("121212",response)
+        personInfo.value = response.data.prescriptionPatientInfoDto;
+        medicineInfoList.value = response.data.prescriptionMedicineInfoDtoList;
         // 统计每个 groupId 的行数
         const groupCounts = countGroupRows(medicineInfoList.value);
         // 设置每行的标记
