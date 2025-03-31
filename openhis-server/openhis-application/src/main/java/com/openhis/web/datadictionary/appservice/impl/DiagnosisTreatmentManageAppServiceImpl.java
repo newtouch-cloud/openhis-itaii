@@ -293,6 +293,9 @@ public class DiagnosisTreatmentManageAppServiceImpl implements IDiagnosisTreatme
 
         ActivityDefinition activityDefinition = new ActivityDefinition();
         BeanUtils.copyProperties(diagnosisTreatmentUpDto, activityDefinition);
+        // 使用10位数基础采番
+        String code = assignSeqUtil.getSeq(AssignSeqEnum.ACTIVITY_DEFINITION_NUM.getPrefix(), 10);
+        activityDefinition.setBusNo(code);
         // 拼音码
         activityDefinition.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(activityDefinition.getName()));
         // 五笔码

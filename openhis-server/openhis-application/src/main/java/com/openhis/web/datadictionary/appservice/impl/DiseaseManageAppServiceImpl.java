@@ -9,7 +9,9 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.core.common.utils.AssignSeqUtil;
 import com.core.common.utils.ChineseConvertUtils;
+import com.openhis.common.enums.AssignSeqEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +49,8 @@ public class DiseaseManageAppServiceImpl implements IDiseaseManageAppService {
     private ConditionDefinitionMapper conditionDefinitionMapper;
     @Autowired
     private IConditionDefinitionService ConditionDefinitionService;
+    @Autowired(required = false)
+    AssignSeqUtil assignSeqUtil;
 
     /**
      * 病种目录初始化
@@ -191,6 +195,10 @@ public class DiseaseManageAppServiceImpl implements IDiseaseManageAppService {
     public R<?> addDisease(DiseaseManageUpDto diseaseManageUpDto) {
         ConditionDefinition conditionDefinition = new ConditionDefinition();
         BeanUtils.copyProperties(diseaseManageUpDto, conditionDefinition);
+        // 使用10位数基础采番
+        String code = assignSeqUtil.getSeq(AssignSeqEnum.CONDITION_DEFINITION_NUM.getPrefix(), 10);
+        conditionDefinition.setConditionCode(code);
+
         // 新增外来病种目录
         conditionDefinition.setStatusEnum(PublicationStatus.DRAFT.getValue());
         // 拼音码

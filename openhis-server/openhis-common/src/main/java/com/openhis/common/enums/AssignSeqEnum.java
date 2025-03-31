@@ -68,7 +68,12 @@ public enum AssignSeqEnum {
     /**
      * 诊疗项目编码
      */
-    ACTIVITY_DEFINITION_NUM("11", "诊疗编码", "AD");;
+    ACTIVITY_DEFINITION_NUM("11", "诊疗编码", "AD"),
+
+    /**
+     * 诊断定义编码
+     */
+    CONDITION_DEFINITION_NUM("11", "诊断编码", "CD");
 
     private final String code;
     private final String info;
