@@ -85,7 +85,6 @@ public class WesternMedicineDispenseController {
     @PutMapping("/medicine-cancel")
     public R<?> medicineCancel(@RequestParam(value = "prescriptionNo") String prescriptionNo,
         @RequestParam(value = "notPerformedReasonEnum") Integer notPerformedReasonEnum) {
-        //return iWesternMedicineDispenseService.medicineCancel(prescriptionNo, notPerformedReasonEnum);
-        return R.ok();
+        return iWesternMedicineDispenseService.medicineCancel(prescriptionNo, notPerformedReasonEnum);
     }
 }

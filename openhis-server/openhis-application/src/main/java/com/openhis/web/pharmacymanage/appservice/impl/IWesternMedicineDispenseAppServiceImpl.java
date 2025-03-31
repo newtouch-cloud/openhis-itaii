@@ -208,21 +208,21 @@ public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineD
                     // id
                     inventoryItem.setId(dispenseInventoryDto.getInventoryId());
                     // 包装数量
-                    inventoryItem.setBaseQuantity(dispenseInventoryDto.getInventoryBaseQuantity().
-                            min(new BigDecimal(dispenseInventoryDto.getDispenseQuantity())));
+                    inventoryItem.setBaseQuantity(dispenseInventoryDto.getInventoryBaseQuantity().subtract(
+                        new BigDecimal(dispenseInventoryDto.getDispenseQuantity())));
                     // 拆零数量（拆零比×包装数量）
-                    inventoryItem.setMinQuantity(dispenseInventoryDto.getInventoryMinQuantity().
-                            min(dispenseInventoryDto.getPartPercent().multiply(
+                    inventoryItem.setMinQuantity(dispenseInventoryDto.getInventoryMinQuantity().subtract(
+                        dispenseInventoryDto.getPartPercent().multiply(
                                     new BigDecimal(dispenseInventoryDto.getDispenseQuantity()))));
                 } else if (dispenseInventoryDto.getDispenseUnitCode().equals(dispenseInventoryDto.
                         getInventoryMinUnitCode())) {
                     // id
                     inventoryItem.setId(dispenseInventoryDto.getInventoryId());
                     // 拆零数量
-                    inventoryItem.setMinQuantity(dispenseInventoryDto.getInventoryMinQuantity().min(
+                    inventoryItem.setMinQuantity(dispenseInventoryDto.getInventoryMinQuantity().subtract(
                             new BigDecimal(dispenseInventoryDto.getDispenseQuantity())));
                     // 包装数量（拆零数量÷拆零比）
-                    inventoryItem.setBaseQuantity(dispenseInventoryDto.getInventoryBaseQuantity().min(
+                    inventoryItem.setBaseQuantity(dispenseInventoryDto.getInventoryBaseQuantity().subtract(
                             new BigDecimal(dispenseInventoryDto.getDispenseQuantity()).
                                     divide(dispenseInventoryDto.getPartPercent(),RoundingMode.HALF_UP)));
                 }
