@@ -45,7 +45,7 @@ public class DiagnosisTreatmentUpDto {
     private String wbStr;
 
     /** 类型 */
-    @NotBlank(message = "类型不能为空")
+    @NotNull(message = "类型不能为空")
     private Integer typeEnum;
 
     /** 使用单位 */
