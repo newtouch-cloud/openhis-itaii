@@ -54,6 +54,7 @@ public class EncounterPatientPaymentDto {
     /** 支付位置 */
     @Dict(dictTable = "adm_location", dictText = "name", dictCode = "id")
     private Long locationId;
+    private String locationId_dictText;
 
     /** 到期时间 */
     private Date expirationDate;

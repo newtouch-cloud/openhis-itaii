@@ -79,7 +79,7 @@ public class OutpatientRefundController {
      * @return 操作结果
      */
     @PostMapping(value = "/refund-payment")
-    public R<?> refundPayment(@RequestParam List<Long> paymentIdList) {
+    public R<?> refundPayment(@RequestBody List<Long> paymentIdList) {
         return R.ok(outpatientRefundAppService.refundPayment(paymentIdList));
     }
 
