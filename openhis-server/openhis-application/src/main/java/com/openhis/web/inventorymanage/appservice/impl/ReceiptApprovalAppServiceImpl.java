@@ -4,6 +4,7 @@
 package com.openhis.web.inventorymanage.appservice.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -182,6 +183,55 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
         List<SupplyDelivery> deliveredList = supplyDeliveryService.createCompletedSupplyDelivery(agreedList, now);
         if (deliveredList.isEmpty()) {
             return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+        }
+
+        // 商品调拨
+        if (agreedList.get(0).getTypeEnum() == SupplyType.PRODUCT_ALLOCATION.getValue()) {
+
+            // 获取供应项目所在表
+            String itemTable = supplyRequestService.getItemTable(agreedList);
+
+            // 查询供应项目的详细信息
+            List<SupplyItemDetailDto> supplyItemDetailList = this.getSupplyItemDetail(busNo, itemTable);
+
+            for (SupplyItemDetailDto supplyItemDetailDto : supplyItemDetailList) {
+
+                // 根据产品批号，仓库和仓位 查询库存表信息
+                InventoryItem inventoryItem =
+                    inventoryItemService.selectInventoryByLotNumber(supplyItemDetailDto.getLotNumber(),
+                        supplyItemDetailDto.getSourceLocationId(), supplyItemDetailDto.getPurposeLocationStoreId());
+
+                // 包装数量
+                BigDecimal baseQuantity = inventoryItem.getBaseQuantity();
+                // 最小数量
+                BigDecimal minQuantity = inventoryItem.getMinQuantity();
+
+                if (supplyItemDetailDto.getItemUnit().equals(supplyItemDetailDto.getUnitCode())) {
+
+                    baseQuantity = baseQuantity.min(supplyItemDetailDto.getItemQuantity());
+                    minQuantity = minQuantity
+                        .min(supplyItemDetailDto.getPartPercent().multiply(supplyItemDetailDto.getItemQuantity()));
+
+                } else if (supplyItemDetailDto.getItemUnit().equals(supplyItemDetailDto.getMinUnitCode())) {
+
+                    baseQuantity = baseQuantity.min(supplyItemDetailDto.getItemQuantity()
+                        .divide(supplyItemDetailDto.getPartPercent(), RoundingMode.HALF_UP));
+                    minQuantity = minQuantity.min(supplyItemDetailDto.getItemQuantity());
+
+                }
+                // 更新库存数量
+                inventoryItemService.updateInventoryQuantity(inventoryItem.getId(), baseQuantity, minQuantity,
+                    loginUser, now);
+            }
+
+            // 将供应项目的详细信息装配为库存项目和采购账单
+            Pair<List<ChargeItem>, List<InventoryItem>> listPair =
+                InventoryManageAssembler.assembleChargeAndInventory(supplyItemDetailList, now, loginUser);
+
+            // 入库
+            inventoryItemService.stockIn(listPair.getRight());
+
+            return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, null));
         }
 
         // 获取供应项目所在表

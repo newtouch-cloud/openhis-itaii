@@ -32,7 +32,6 @@ public class DiagnosisTreatmentUpDto {
     private String categoryCode;
 
     /** 编码 */
-    @NotBlank(message = "项目编码不能为空")
     private String busNo;
 
     /** 项目名称 */
@@ -40,16 +39,14 @@ public class DiagnosisTreatmentUpDto {
     private String name;
 
     /** 项目名称拼音 */
-    @NotBlank(message = "项目名称拼音不能为空")
     private String pyStr;
 
     /** 五笔拼音 */
-    @NotBlank(message = "五笔拼音不能为空")
     private String wbStr;
 
     /** 类型 */
-    @NotBlank(message = "类型不能为空")
-    private String typeCode;
+    @NotNull(message = "类型不能为空")
+    private Integer typeEnum;
 
     /** 使用单位 */
     @NotBlank(message = "使用单位不能为空")

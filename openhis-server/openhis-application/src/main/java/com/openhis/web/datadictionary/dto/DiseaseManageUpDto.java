@@ -27,7 +27,6 @@ public class DiseaseManageUpDto {
     private ConditionDefinitionSource sourceEnum;
 
     /** 编码 */
-    @NotBlank(message = "疾病编码不能为空")
     private String conditionCode;
 
     /** 诊断名称 */

@@ -8,7 +8,6 @@ import java.util.HashSet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.openhis.web.inventorymanage.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.inventorymanage.appservice.IInventoryDetailsAppService;
+import com.openhis.web.inventorymanage.dto.*;
 import com.openhis.web.inventorymanage.mapper.InventoryDetailsMapper;
 
 /**
@@ -54,7 +54,7 @@ public class InventoryDetailsAppServiceImpl implements IInventoryDetailsAppServi
         // return R.ok(inventoryReceiptPage);
 
         QueryWrapper<PurchaseInSearchParam> queryWrapper = HisQueryUtils.buildQueryWrapper(purchaseInSearchParam,
-            searchKey, new HashSet<>(Arrays.asList("bus_no","item_name","item_no")), request);
+            searchKey, new HashSet<>(Arrays.asList("bus_no", "item_name", "item_no")), request);
         Page<PurchaseInDetailDto> purchaseInInfo =
             inventoryDetailsMapper.selectPurchaseInDetailsPage(new Page<>(pageNo, pageSize), queryWrapper);
 
@@ -72,11 +72,12 @@ public class InventoryDetailsAppServiceImpl implements IInventoryDetailsAppServi
      * @return 领用出库明细分页列表
      */
     @Override
-    public IPage<RequisitionOutDetailDto> requisitionOutGetPage(RequisitionOutSearchParam requisitionOutSearchParam, String searchKey,
-        Integer pageNo, Integer pageSize, HttpServletRequest request) {
+    public IPage<RequisitionOutDetailDto> requisitionOutGetPage(RequisitionOutSearchParam requisitionOutSearchParam,
+        String searchKey, Integer pageNo, Integer pageSize, HttpServletRequest request) {
 
-        QueryWrapper<RequisitionOutSearchParam> queryWrapper = HisQueryUtils.buildQueryWrapper(requisitionOutSearchParam,
-            searchKey, new HashSet<>(Arrays.asList("bus_no","item_name","item_no")), request);
+        QueryWrapper<RequisitionOutSearchParam> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(requisitionOutSearchParam, searchKey,
+                new HashSet<>(Arrays.asList("bus_no", "item_name", "item_no")), request);
 
         Page<RequisitionOutDetailDto> requisitionOutInfo =
             inventoryDetailsMapper.selectRequisitionOutDetailsPage(new Page<>(pageNo, pageSize), queryWrapper);
@@ -95,11 +96,13 @@ public class InventoryDetailsAppServiceImpl implements IInventoryDetailsAppServi
      * @return 商品调拨明细分页列表
      */
     @Override
-    public IPage<InventoryTransferDetailDto> inventoryTransferGetPage(RequisitionOutSearchParam requisitionOutSearchParam, String searchKey,
-        Integer pageNo, Integer pageSize, HttpServletRequest request) {
+    public IPage<InventoryTransferDetailDto> inventoryTransferGetPage(
+        RequisitionOutSearchParam requisitionOutSearchParam, String searchKey, Integer pageNo, Integer pageSize,
+        HttpServletRequest request) {
 
-        QueryWrapper<RequisitionOutSearchParam> queryWrapper = HisQueryUtils.buildQueryWrapper(requisitionOutSearchParam,
-            searchKey, new HashSet<>(Arrays.asList("bus_no","item_name","item_no")), request);
+        QueryWrapper<RequisitionOutSearchParam> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(requisitionOutSearchParam, searchKey,
+                new HashSet<>(Arrays.asList("bus_no", "item_name", "item_no")), request);
 
         Page<InventoryTransferDetailDto> inventoryTransferInfo =
             inventoryDetailsMapper.selectInventoryTransferDetailsPage(new Page<>(pageNo, pageSize), queryWrapper);
@@ -118,11 +121,13 @@ public class InventoryDetailsAppServiceImpl implements IInventoryDetailsAppServi
      * @return 商品调拨明细分页列表
      */
     @Override
-    public IPage<InventoryStockTakeDetailDto> inventoryStockTakeGetPage(RequisitionOutSearchParam requisitionOutSearchParam, String searchKey,
-        Integer pageNo, Integer pageSize, HttpServletRequest request) {
+    public IPage<InventoryStockTakeDetailDto> inventoryStockTakeGetPage(
+        RequisitionOutSearchParam requisitionOutSearchParam, String searchKey, Integer pageNo, Integer pageSize,
+        HttpServletRequest request) {
 
-        QueryWrapper<RequisitionOutSearchParam> queryWrapper = HisQueryUtils.buildQueryWrapper(requisitionOutSearchParam,
-            searchKey, new HashSet<>(Arrays.asList("bus_no","item_name","item_no")), request);
+        QueryWrapper<RequisitionOutSearchParam> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(requisitionOutSearchParam, searchKey,
+                new HashSet<>(Arrays.asList("bus_no", "item_name", "item_no")), request);
 
         Page<InventoryStockTakeDetailDto> inventoryStockTakeInfo =
             inventoryDetailsMapper.selectInventoryStockTakeDetailsPage(new Page<>(pageNo, pageSize), queryWrapper);

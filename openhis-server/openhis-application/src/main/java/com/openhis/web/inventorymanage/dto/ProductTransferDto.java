@@ -3,37 +3,35 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
 /**
- * 入库单据
+ * 商品调拨单据
  *
- * @author ZhangYC
- * @date 2025-02-20
+ * @author MY
+ * @date 2025-03-18
  */
 @Data
 @Accessors(chain = true)
-public class PurchaseInventoryDto {
+public class ProductTransferDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
-
-    /** 单据号 */
-    private String busNo;
 
     /** 项目 */
     private String itemTable;
@@ -58,6 +56,18 @@ public class PurchaseInventoryDto {
     @NotNull
     private Long supplierId;
 
+    /** 源仓库类型 */
+    @NotNull
+    private Integer sourceTypeEnum;
+
+    /** 源仓库 */
+    @NotNull
+    private Long sourceLocationId;
+
+    /** 源仓位 */
+    @NotNull
+    private Long sourceLocationStoreId;
+
     /** 目的仓库类型 */
     @NotNull
     private Integer purposeTypeEnum;
@@ -71,12 +81,8 @@ public class PurchaseInventoryDto {
     private Long purposeLocationStoreId;
 
     /** 申请人 */
-    // @NotNull
-    private Long applicantId;
-
-    /** 经手人 */
     @NotNull
-    private Long practitionerId;
+    private Long applicantId;
 
     /** 申请时间 */
     private Date applyTime;
@@ -88,9 +94,6 @@ public class PurchaseInventoryDto {
     /** 追溯码 */
     @NotNull
     private String traceNo;
-
-    /** 发票号 */
-    private String invoiceNo;
 
     /** 开始时间 */
     @NotNull

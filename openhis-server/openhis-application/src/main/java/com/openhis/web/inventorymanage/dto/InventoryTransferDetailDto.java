@@ -10,7 +10,6 @@ import java.util.Date;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
-import com.sun.jna.platform.unix.solaris.LibKstat;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

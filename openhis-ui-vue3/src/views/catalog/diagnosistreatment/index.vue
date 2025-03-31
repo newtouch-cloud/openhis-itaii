@@ -1,11 +1,12 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <!--器材目录-->
+      <!--诊疗目录-->
       <el-col :span="4" :xs="24">
+        <div class="head-title">诊疗目录</div>
         <div class="head-container">
           <el-tree
-            :data="diseaseTreatmentCategoryList"
+            :data="diagnosisCategoryOptions"
             :props="{ label: 'info', children: 'children' }"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
@@ -17,7 +18,7 @@
           />
         </div>
       </el-col>
-      <!--器材目录-->
+      <!--诊疗目录-->
       <el-col :span="20" :xs="24">
         <el-form
           :model="queryParams"
@@ -62,15 +63,15 @@
                   clearable
                 >
                   <el-option
-                    v-for="item in exeOrganizations"
+                    v-for="item in statusWeatherOption"
                     :key="item.value"
-                    :label="item.label"
+                    :label="item.info"
                     :value="item.value"
                   />
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <!-- <el-col :span="4">
               <el-form-item label="执行科室" prop="ruleId" label-width="100">
                 <el-select
                   v-model="queryParams.ruleId"
@@ -85,11 +86,11 @@
                   />
                 </el-select>
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="4">
-              <el-form-item label="类型" prop="typeCode" label-width="100">
+              <el-form-item label="类型" prop="typeEnum" label-width="100">
                 <el-select
-                  v-model="queryParams.typeCode"
+                  v-model="queryParams.typeEnum"
                   placeholder=""
                   clearable
                 >
@@ -198,8 +199,8 @@
           <el-table-column
             label="目录类别"
             align="center"
-            key="category_enumText"
-            prop="category_enumText"
+            key="categoryCode_dictText"
+            prop="categoryCode_dictText"
             :show-overflow-tooltip="true"
             width="100"
           />
@@ -214,8 +215,8 @@
           <el-table-column
             label="使用单位"
             align="center"
-            key="permittedUnitCode"
-            prop="permittedUnitCode"
+            key="permittedUnitCode_dictText"
+            prop="permittedUnitCode_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -249,38 +250,53 @@
           <el-table-column
             label="归属科室"
             align="center"
-            key="orgId"
-            prop="orgId"
+            key="orgId_dictText"
+            prop="orgId_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="所在位置"
             align="center"
-            key="locationId"
-            prop="locationId"
+            key="locationId_dictText"
+            prop="locationId_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="身体部位"
             align="center"
-            key="bodySiteCode"
-            prop="bodySiteCode"
+            key="bodySiteCode_dictText"
+            prop="bodySiteCode_dictText"
             :show-overflow-tooltip="true"
           />
-
           <el-table-column
             label="所需标本"
             align="center"
-            key="specimenCode"
-            prop="specimenCode"
+            key="specimenCode_dictText"
+            prop="specimenCode_dictText"
+            :show-overflow-tooltip="true"
+            width="100"
+          />
+          <el-table-column
+            label="财务类别"
+            align="center"
+            key="itemTypeCode_dictText"
+            prop="itemTypeCode_dictText"
+            :show-overflow-tooltip="true"
+            width="100"
+          />
+          <el-table-column
+            label="医保类别"
+            align="center"
+            key="ybType_dictText"
+            prop="ybType_dictText"
             :show-overflow-tooltip="true"
             width="100"
           />
           <el-table-column
             label="售价"
             align="center"
-            key="price"
-            prop="price"
+            key="retailPrice"
+            prop="retailPrice"
             :show-overflow-tooltip="true"
             width="100"
           />
@@ -338,7 +354,7 @@
     <diagnosis-treatment-dialog
       ref="diagnosisTreatmentRef"
       :currentCategoryEnum="currentCategoryEnum"
-      :diseaseTreatmentCategoryList="diseaseTreatmentCategoryList"
+      :diagnosisCategoryOptions="diagnosisCategoryOptions"
       :statusFlagOptions="statusFlagOptions"
       :exeOrganizations="exeOrganizations"
       :typeEnumOptions="typeEnumOptions"
@@ -376,13 +392,14 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-const diseaseTreatmentCategoryList = ref(undefined);
+const diagnosisCategoryOptions = ref(undefined);
 const statusFlagOptions = ref(undefined);
 const exeOrganizations = ref(undefined);
 const typeEnumOptions = ref(undefined);
-// 使用 ref 定义当前器材数据
+const statusWeatherOption = ref(undefined);
+// 使用 ref 定义当前诊疗数据
 const currentData = ref({});
-// 使用 ref 定义当前查看器材数据
+// 使用 ref 定义当前查看诊疗数据
 const viewData = ref({});
 const currentCategoryEnum = ref("");
 
@@ -392,11 +409,11 @@ const data = reactive({
     pageNo: 1,
     pageSize: 10,
     searchKey: undefined, // 品名/商品名/英文品名/编码/拼音
-    typeCode: undefined, // 类型（包括 1：中药，2：成药）
+    typeEnum: undefined, // 类型（包括 1：中药，2：成药）
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
     ybMatchFlag: undefined, // 是否医保匹配（包括 1：是，0：否）
     ruleId: undefined, // 执行科室
-    categoryEnum: undefined, // 目录分类
+    categoryCode: undefined, // 目录分类
   },
   rules: {},
 });
@@ -412,16 +429,21 @@ const filterNode = (value, data) => {
 /** 诊断目录分类查询下拉树结构 */
 function getDiseaseTreatmentList() {
   getDiseaseTreatmentInit().then((response) => {
-    console.log(response, "response器材目录分类查询下拉树结构");
-    diseaseTreatmentCategoryList.value =
-      response.data.diseaseTreatmentCategoryList.sort((a, b) => { return parseInt(a.value) - parseInt(b.value) });
+    console.log(response, "response诊疗目录分类查询下拉树结构");
+    diagnosisCategoryOptions.value =
+      response.data.diagnosisCategoryOptions.sort((a, b) => {
+        return parseInt(a.value) - parseInt(b.value);
+      });
+    diagnosisCategoryOptions.value.push({ info: "全部", value: "" });
     statusFlagOptions.value = response.data.statusFlagOptions;
     exeOrganizations.value = response.data.exeOrganizations;
     typeEnumOptions.value = response.data.typeEnumOptions;
+    statusWeatherOption.value = response.data.statusWeatherOption;
   });
 }
 /** 查询诊断目录列表 */
 function getList() {
+  console.log(queryParams.value, "queryParams***********************");
   loading.value = true;
   getDiagnosisTreatmentList(queryParams.value).then((res) => {
     loading.value = false;
@@ -433,7 +455,7 @@ function getList() {
 /** 节点单击事件 */
 function handleNodeClick(data) {
   console.log(data, "节点单击事件");
-  queryParams.value.categoryEnum = data.value;
+  queryParams.value.categoryCode = data.value;
   currentCategoryEnum.value = data.value;
   handleQuery();
 }
@@ -495,19 +517,21 @@ function handleSelectionChange(selection) {
 
 /** 打开新增弹窗 */
 function openAddDiagnosisTreatment() {
-  if (currentCategoryEnum.value) {
-    console.log("打开新增弹窗");
-    title.value = "新增";
-    nextTick(() => {
-      proxy.$refs.diagnosisTreatmentRef.show();
-    });
-  } else {
-    proxy.$modal.msgError("请先选择目录分类！");
-  }
+  // if (currentCategoryEnum.value) {
+  console.log("打开新增弹窗");
+  title.value = "新增";
+  nextTick(() => {
+    proxy.$refs.diagnosisTreatmentRef.show();
+  });
+  // } else {
+  //   proxy.$modal.msgError("请先选择目录分类！");
+  // }
 }
 /** 打开编辑弹窗 */
 function openEditDiagnosisTreatment(row) {
   getDiagnosisTreatmentOne(row.id).then((response) => {
+    console.log(response, "response88888");
+
     currentData.value = response.data;
     currentData.value.ybFlag == 1
       ? (currentData.value.ybFlag = true)

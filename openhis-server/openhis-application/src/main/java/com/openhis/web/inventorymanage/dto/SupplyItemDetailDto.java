@@ -3,7 +3,6 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -47,6 +46,12 @@ public class SupplyItemDetailDto {
 
     /** 审批人 */
     private Long approverId;
+
+    /** 源仓库 */
+    private Long sourceLocationId;
+
+    /** 源仓位 */
+    private Long sourceLocationStoreId;
 
     /** 目的仓库 */
     private Long purposeLocationId;

@@ -70,6 +70,20 @@ public class PurchaseInventoryInitDto {
      * 入库项目类型
      */
     @Data
+    public static class itemTypeOption {
+        private Integer value;
+        private String label;
+
+        public itemTypeOption(Integer value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
+
+    /**
+     * 入库项目类型
+     */
+    @Data
     public static class supplyStatusOption {
         private Integer value;
         private String label;

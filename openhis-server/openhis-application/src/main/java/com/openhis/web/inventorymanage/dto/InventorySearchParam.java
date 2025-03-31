@@ -3,10 +3,10 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
+import java.util.Date;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.util.Date;
 
 /**
  * 入库单据分页查询条件

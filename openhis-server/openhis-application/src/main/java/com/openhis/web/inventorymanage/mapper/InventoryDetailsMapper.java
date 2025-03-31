@@ -3,13 +3,13 @@
  */
 package com.openhis.web.inventorymanage.mapper;
 
-import com.openhis.web.inventorymanage.dto.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.openhis.web.inventorymanage.dto.*;
 
 /**
  * 采购入库查询用 mapper
@@ -47,7 +47,8 @@ public interface InventoryDetailsMapper {
      * @param queryWrapper 查询条件
      * @return 商品调拨分页列表
      */
-    Page<InventoryTransferDetailDto> selectInventoryTransferDetailsPage(@Param("page") Page<InventoryTransferDetailDto> page,
+    Page<InventoryTransferDetailDto> selectInventoryTransferDetailsPage(
+        @Param("page") Page<InventoryTransferDetailDto> page,
         @Param(Constants.WRAPPER) QueryWrapper<RequisitionOutSearchParam> queryWrapper);
 
     /**
@@ -57,6 +58,7 @@ public interface InventoryDetailsMapper {
      * @param queryWrapper 查询条件
      * @return 商品盘点分页列表
      */
-    Page<InventoryStockTakeDetailDto> selectInventoryStockTakeDetailsPage(@Param("page") Page<InventoryTransferDetailDto> page,
+    Page<InventoryStockTakeDetailDto> selectInventoryStockTakeDetailsPage(
+        @Param("page") Page<InventoryTransferDetailDto> page,
         @Param(Constants.WRAPPER) QueryWrapper<RequisitionOutSearchParam> queryWrapper);
 }

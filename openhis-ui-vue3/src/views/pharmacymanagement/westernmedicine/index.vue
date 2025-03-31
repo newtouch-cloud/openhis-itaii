@@ -411,7 +411,11 @@ function handleCurrentChange(row) {
   listWesternmedicine(currentRow.value).then((response) => {
     console.log("121212", response);
     personInfo.value = response.data.prescriptionPatientInfoDto;
-    medicineInfoList.value = response.data.prescriptionMedicineInfoDtoList;
+    medicineInfoList.value = Array.isArray(
+      response.data.prescriptionMedicineInfoDtoList
+    )
+      ? response.data.prescriptionMedicineInfoDtoList
+      : [response.data.prescriptionMedicineInfoDtoList];
     // 统计每个 prescriptionNo 的行数
     const groupCounts = countGroupRows(medicineInfoList.value);
     // 设置每行的标记
@@ -427,7 +431,11 @@ function submitMedicine(row) {
   updateMedicion(row.prescriptionNo).then((response) => {
     proxy.$modal.msgSuccess("发药成功");
     listWesternmedicine(currentRow.value).then((response) => {
-      medicineInfoList.value = response.data;
+      medicineInfoList.value = Array.isArray(
+        response.data.prescriptionMedicineInfoDtoList
+      )
+        ? response.data.prescriptionMedicineInfoDtoList
+        : [response.data.prescriptionMedicineInfoDtoList];
       // 统计每个 prescriptionNo 的行数
       const groupCounts = countGroupRows(medicineInfoList.value);
       // 设置每行的标记
@@ -453,7 +461,13 @@ function handleConfirm() {
     }
   );
   listWesternmedicine(currentRow.value).then((response) => {
-    medicineInfoList.value = response.data;
+    console.log("1212*******12", response);
+    medicineInfoList.value = Array.isArray(
+      response.data.prescriptionMedicineInfoDtoList
+    )
+      ? response.data.prescriptionMedicineInfoDtoList
+      : [response.data.prescriptionMedicineInfoDtoList];
+    // medicineInfoList.value = response.data;
     // 统计每个 prescriptionNo 的行数
     const groupCounts = countGroupRows(medicineInfoList.value);
     // 设置每行的标记

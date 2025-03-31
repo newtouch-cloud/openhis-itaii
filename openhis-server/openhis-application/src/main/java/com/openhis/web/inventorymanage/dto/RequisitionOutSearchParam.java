@@ -4,7 +4,6 @@
 package com.openhis.web.inventorymanage.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -30,7 +29,7 @@ public class RequisitionOutSearchParam implements Serializable {
     private String id;
 
     /** 项目类型 */
-//    @Length(max = 255)
-//    private String busNo;
+    // @Length(max = 255)
+    // private String busNo;
 
 }
