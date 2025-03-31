@@ -89,7 +89,7 @@ public class PurchaseInventoryInitDto {
      * 入库项目类型
      */
     @Data
-    public static class supplyStatusOption {
+        public static class supplyStatusOption {
         private Integer value;
         private String label;
 

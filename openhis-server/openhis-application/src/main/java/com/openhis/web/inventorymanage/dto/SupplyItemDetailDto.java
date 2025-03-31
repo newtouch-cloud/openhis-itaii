@@ -50,6 +50,12 @@ public class SupplyItemDetailDto implements Serializable {
     /** 审批人 */
     private Long approverId;
 
+    /** 源仓库 */
+    private Long sourceLocationId;
+
+    /** 源仓位 */
+    private Long sourceLocationStoreId;
+
     /** 目的仓库 */
     private Long purposeLocationId;
 
