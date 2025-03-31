@@ -5,6 +5,8 @@ package com.openhis.web.pharmacymanage.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,6 +23,7 @@ public class EncounterInfoPageDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** 就诊ID */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long encounterId;
 
     /** 科室 */

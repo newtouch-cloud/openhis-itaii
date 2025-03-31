@@ -8,16 +8,17 @@
           patient_name,
           gender_enum,
           encounter_date,
-          organization_id,
+          department_id,
           id_card,
           start_time
         FROM
           (
             SELECT
+              T1.tenant_id,
               T1.id AS encounter_id,
               T1.start_time,
               TO_CHAR(T1.start_time,'YYYY-MM-DD') AS encounter_date,
-              T1.organization_id,
+              T1.organization_id AS department_id,
               T2.gender_enum,
               T2.name AS patient_name,
               T2.id_card,
@@ -74,8 +75,10 @@
     <select id="selectPrescriptionMedicineInfoList" resultType="com.openhis.web.pharmacymanage.dto.PrescriptionMedicineInfoDto">
         SELECT
           DISTINCT
-            T7.name AS department_name,
-            T8.name AS doctor_name,
+            T8.name AS department_name,
+            T9.name AS doctor_name,
+            '西药开药' AS item_type,
+            T7.name AS condition_name,
             T2.prescription_no,
             T4.name AS medicine_name,
             T3.total_volume,
@@ -104,10 +107,13 @@
         ON T1.med_req_id = T5.service_id
         INNER JOIN adm_encounter AS T6
         ON T1.encounter_id = T6.id
-        LEFT OUTER JOIN adm_organization AS T7
-        ON T6.organization_id = T7.id
-        LEFT OUTER JOIN adm_practitioner AS T8
-        ON T1.practitioner_id = T8.id
+        INNER JOIN cli_condition_definition AS T7
+        ON T2.condition_id = T7.id
+        LEFT OUTER JOIN adm_organization AS T8
+        ON T6.organization_id = T8.id
+        LEFT OUTER JOIN adm_practitioner AS T9
+        ON T1.practitioner_id = T9.id
+
         WHERE
           T1.encounter_id = #{encounterId}
           AND T1.status_enum = 2

@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 public class EncounterInfoSearchParam implements Serializable {
 
     /** 科室 */
-    private long departmentId;
+    private Long departmentId;
 
     /** 患者姓名或者证件号 */
     private String condition;

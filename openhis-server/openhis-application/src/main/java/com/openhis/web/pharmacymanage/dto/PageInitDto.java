@@ -5,6 +5,8 @@ package com.openhis.web.pharmacymanage.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -26,6 +28,7 @@ public class PageInitDto {
     @Data
     public static class DepartmentOption {
 
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long value;
         private String label;
 

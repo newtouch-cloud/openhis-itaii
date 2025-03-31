@@ -28,7 +28,7 @@ public class DiagnosisTreatmentUpDto {
     private Long id;
 
     /** 目录类别 */
-    @NotNull(message = "目录类别不能为空")
+    @NotBlank(message = "目录类别不能为空")
     private String categoryCode;
 
     /** 编码 */

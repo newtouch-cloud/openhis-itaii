@@ -95,11 +95,15 @@ public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineD
 
         // 查询条件设定
         String condition = encounterInfoSearchParam.getCondition();
+        encounterInfoSearchParam.setCondition(null);
         if (StringUtils.isNotEmpty(condition)){
             Pattern pattern = Pattern.compile(".*\\d.*");
-            Matcher matcher = pattern.matcher(encounterInfoSearchParam.getCondition());
-            encounterInfoSearchParam.setIdCard(matcher.find() ? condition:"");
-            encounterInfoSearchParam.setPatientName(!matcher.find() ? condition:"");
+            Matcher matcher = pattern.matcher(condition);
+            if (matcher.find()){
+                encounterInfoSearchParam.setIdCard(condition);
+            } else{
+                encounterInfoSearchParam.setPatientName(condition);
+            }
         }
 
         // 构建查询条件
@@ -110,6 +114,12 @@ public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineD
         Page<EncounterInfoPageDto> encounterInfoPageDto = westernMedicineDispenseMapper.selectEncounterInfoListPage(
                 new Page<>(pageNo, pageSize), queryWrapper);
 
+        // 个别项目设定
+        encounterInfoPageDto.getRecords().forEach(prescriptionPatientInfoDto -> {
+            // 性别
+            prescriptionPatientInfoDto.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class,
+                prescriptionPatientInfoDto.getGenderEnum()));
+        });
         return R.ok(encounterInfoPageDto);
     }
 
@@ -125,12 +135,12 @@ public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineD
         PrescriptionPatientInfoDto prescriptionPatientInfoDto = westernMedicineDispenseMapper.
                 selectPrescriptionPatientInfo(encounterId);
         // 年龄
-        prescriptionPatientInfoDto.setAge(AgeCalculatorUtil.getAge(prescriptionPatientInfoDto.getBirth_date()));
+        prescriptionPatientInfoDto.setAge(AgeCalculatorUtil.getAge(prescriptionPatientInfoDto.getBirthDate()));
         // 性别
         prescriptionPatientInfoDto.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class,
                 prescriptionPatientInfoDto.getGenderEnum()));
         // 合同类型
-        if (StringUtils.isNull(prescriptionPatientInfoDto.getCategoryEnum())){
+        if (StringUtils.isNotNull(prescriptionPatientInfoDto.getCategoryEnum())){
             prescriptionPatientInfoDto.setCategoryEnum_enumText(EnumUtils.getInfoByValue(FinCategory.class,
                     prescriptionPatientInfoDto.getCategoryEnum()));
         }
@@ -139,9 +149,9 @@ public class IWesternMedicineDispenseAppServiceImpl implements IWesternMedicineD
                 selectPrescriptionMedicineInfoList(encounterId);
         // 计算合计金额
         if(!prescriptionMedicineInfoList.isEmpty()) {
-            BigDecimal totalPrice = new BigDecimal(0);
+            double totalPrice = 0d;
             for (PrescriptionMedicineInfoDto item : prescriptionMedicineInfoList) {
-                totalPrice.add(item.getTotal_price());
+                totalPrice += item.getTotalPrice().doubleValue();
             }
             prescriptionPatientInfoDto.setTotalPrice(totalPrice);
         }
