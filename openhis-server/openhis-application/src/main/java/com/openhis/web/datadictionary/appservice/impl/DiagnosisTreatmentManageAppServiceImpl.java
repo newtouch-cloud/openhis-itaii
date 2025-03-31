@@ -140,6 +140,13 @@ public class DiagnosisTreatmentManageAppServiceImpl implements IDiagnosisTreatme
             .collect(Collectors.toList());
         diagnosisTreatmentInitDto.setTypeEnumOptions(typeEnumOptions);
 
+        // 获取是/否 列表
+        // 获取状态
+        List<DiagnosisTreatmentInitDto.statusEnumOption> statusWeatherOption = Stream.of(Whether.values())
+            .map(status -> new DiagnosisTreatmentInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+        diagnosisTreatmentInitDto.setStatusWeatherOption(statusWeatherOption);
+
         return R.ok(diagnosisTreatmentInitDto);
     }
 

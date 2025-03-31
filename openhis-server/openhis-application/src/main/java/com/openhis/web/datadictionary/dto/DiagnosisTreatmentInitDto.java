@@ -23,6 +23,8 @@ public class DiagnosisTreatmentInitDto {
     private List<statusEnumOption> typeEnumOptions;
     //诊疗目录
     private List<dictCategoryCode> diagnosisCategoryOptions;
+    //是否list
+    private List<statusEnumOption> statusWeatherOption;
 
     /**
      * 状态
