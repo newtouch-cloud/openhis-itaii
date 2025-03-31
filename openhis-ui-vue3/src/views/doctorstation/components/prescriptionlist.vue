@@ -1,9 +1,21 @@
 <template>
   <div style="width: 1250px">
-    <el-button type="primary" plain @click="handleAddPrescription()">
+    <el-button
+      type="primary"
+      plain
+      @click="handleAddPrescription()"
+      :disabled="buttonDisabled"
+    >
       新增处方
     </el-button>
-    <el-button type="primary" plain @click="handleSave()"> 发送处方 </el-button>
+    <el-button
+      type="primary"
+      plain
+      @click="handleSave()"
+      :disabled="buttonDisabled"
+    >
+      发送处方
+    </el-button>
     <el-table
       v-horizontal-scroll
       ref="prescriptionRef"
@@ -78,10 +90,10 @@
         </template>
       </el-table-column>
       <el-table-column label="规格" align="center" prop="volume" width="180" />
-      <el-table-column label="单价" align="center" prop="" />
+      <el-table-column label="单价" align="center" prop="unitPrice" />
       <el-table-column label="单次计量" align="center" prop="dose">
         <template #default="scope">
-          <el-input v-model="scope.row.name" placeholder="" />
+          <el-input v-model="scope.row.dose" placeholder="" />
         </template>
       </el-table-column>
       <el-table-column
@@ -91,7 +103,7 @@
         width="90"
       >
         <template #default="scope">
-          <el-select v-model="scope.row.name" placeholder=" " >
+          <el-select v-model="scope.row.unitCode" placeholder=" ">
             <el-option
               v-for="dict in unit_code"
               :key="dict.value"
@@ -108,7 +120,7 @@
         width="130"
       >
         <template #default="scope">
-          <el-select v-model="scope.row.name" placeholder=" " clearable>
+          <el-select v-model="scope.row.methodCode" placeholder=" " clearable>
             <el-option
               v-for="dict in method_code"
               :key="dict.value"
@@ -118,7 +130,7 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="组套" align="center" prop="" />
+      <el-table-column label="组套" align="center" prop="zt" />
       <el-table-column
         label="频次"
         align="center"
@@ -126,7 +138,7 @@
         width="110"
       >
         <template #default="scope">
-          <el-select v-model="scope.row.name" placeholder="">
+          <el-select v-model="scope.row.rateCode" placeholder="">
             <el-option
               v-for="dict in rate_code"
               :key="dict.value"
@@ -137,17 +149,28 @@
         </template>
       </el-table-column>
       <el-table-column label="滴速" align="center" prop="" />
-      <el-table-column label="用药天数" align="center" prop="">
+      <el-table-column label="用药天数" align="center" prop="day">
         <template #default="scope">
-          <el-input v-model="scope.row.name" placeholder="" />
+          <el-input v-model="scope.row.day" placeholder="" />
         </template>
       </el-table-column>
-      <el-table-column label="药品总量" align="center" prop="">
+      <el-table-column label="药品总量" align="center" prop="quantity">
         <template #default="scope">
-          <el-input v-model="scope.row.name" placeholder="" />
+          <el-input v-model="scope.row.quantity" placeholder="" />
         </template>
       </el-table-column>
-      <el-table-column label="单位" align="center" prop="" />
+      <el-table-column label="单位" align="center" prop="" width="90">
+        <template #default="scope">
+          <el-select v-model="scope.row.unitCode" placeholder=" ">
+            <el-option
+              v-for="dict in unit_code"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </template>
+      </el-table-column>
       <el-table-column label="金额" align="center" prop="" />
       <el-table-column label="皮试" align="center" prop="">
         <template #default="scope">
@@ -180,6 +203,9 @@ const queryParams = ref({});
 const prescriptionList = ref([]);
 const searchkey = ref("");
 const rowIndex = ref(-1);
+const buttonDisabled = computed(() => {
+  return !props.patientInfo;
+});
 const props = defineProps({
   patientInfo: {
     type: Object,
@@ -232,6 +258,12 @@ function handleChange(value) {
  */
 function selsectAdviceBase(row) {
   prescriptionList.value[rowIndex.value] = JSON.parse(JSON.stringify(row));
+  prescriptionList.value[rowIndex.value].definitionId = JSON.parse(
+    JSON.stringify(row)
+  ).chargeItemDefinitionId;
+
+  console.log(row, 234567890);
+
   // 库存列表 + 价格列表拼成批次号的下拉框
   prescriptionList.value[rowIndex.value].stockList = row.inventoryList.map(
     (item, index) => {
@@ -244,10 +276,8 @@ function handleDelete(index) {
   prescriptionList.value.splice(index, 1);
 }
 
-function handleNumberClick(value, index) {
-  console.log(value);
-
-  prescriptionList.value[index];
+function handleNumberClick(item, index) {
+  prescriptionList.value[index].unitPrice = item.price;
 }
 
 /**
@@ -257,6 +287,8 @@ function handleSave() {
   prescriptionList.value.forEach((item) => {
     item.patientId = props.patientInfo.patientId;
     item.encounterId = props.patientInfo.encounterId;
+    item.accountId = props.patientInfo.accountId;
+    item.unitPrice = 1;
   });
   savePrescription({ adviceSaveList: prescriptionList.value }).then((res) => {
     if (res.code === 200) {

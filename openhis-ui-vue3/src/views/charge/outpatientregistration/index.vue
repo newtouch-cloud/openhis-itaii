@@ -15,10 +15,27 @@
             <el-row :gutter="24">
               <el-col :span="5">
                 <el-form-item label="病历号/姓名：" prop="searchKey">
-                  <el-input
-                    v-model="form.searchKey"
-                    placeholder="请输入姓名/拼音/身份证"
-                  />
+                  <el-popover
+                    :popper-style="{ padding: '0' }"
+                    placement="bottom-start"
+                    :visible="showPopover"
+                    trigger="manual"
+                    :width="1200"
+                  >
+                    <patientList
+                      :searchkey="patientSearchKey"
+                      @selsectPatient="selsectPatient"
+                    />
+                    <template #reference>
+                      <el-input
+                        @focus="handleFocus"
+                        @blur="handleBlur"
+                        @input="handleSearchPatient"
+                        v-model="form.searchKey"
+                        placeholder="请输入姓名/拼音/身份证"
+                      />
+                    </template>
+                  </el-popover>
                 </el-form-item>
               </el-col>
               <el-col :span="3">
@@ -625,6 +642,7 @@ import {
 } from "./components/outpatientregistration";
 import patientInfoDialog from "./components/patientInfoDialog";
 import PatientAddDialog from "./components/patientAddDialog";
+import patientList from "./components/patientList";
 import { nextTick } from "vue";
 
 const router = useRouter();
@@ -646,6 +664,8 @@ const total = ref(0);
 const title = ref("");
 const priorityLevelOptionOptions = ref(undefined); // 优先级
 const jzyyList = ref([{ value: "1", label: "其他" }]);
+const showPopover = ref(false);
+const patientSearchKey = ref();
 // 键盘事件用
 const contractNameRef = ref(null);
 const jzyyRef = ref(null);
@@ -965,6 +985,39 @@ function handleAdd() {
       });
     }
   });
+}
+
+/**
+ * 姓名表单获取焦点打开列表
+ */
+function handleFocus() {
+  showPopover.value = true;
+}
+/**
+ * 姓名表单失去焦点关闭列表
+ */
+function handleBlur() {
+  showPopover.value = false;
+}
+
+/**
+ * 搜索患者
+ */
+function handleSearchPatient(value) {
+  patientSearchKey.value = value;
+}
+
+/**
+ * 点击患者列表给表单赋值
+ */
+function selsectPatient(row) {
+  form.value.searchKey = row.name;
+  form.value.name = row.name;
+  form.value.idCard = row.idCard;
+  form.value.genderEnum_enumText = row.genderEnum_enumText;
+  form.value.phone = row.phone;
+  form.value.firstEnum_enumText = row.firstEnum_enumText;
+  form.value.age = row.age;
 }
 
 // 设置新增参数

@@ -334,10 +334,10 @@
           </el-col>
           <el-col :span="20" :xs="24">
             <div style="margin-bottom: 10px">
-              <el-button type="primary" plain @click="handleAddDiagnosis()">
+              <el-button type="primary" plain @click="handleAddDiagnosis()" :disabled="buttonDisabled">
                 新增诊断
               </el-button>
-              <el-button type="primary" plain @click="handleSaveDiagnosis()">
+              <el-button type="primary" plain @click="handleSaveDiagnosis()" :disabled="buttonDisabled">
                 保存诊断
               </el-button>
             </div>
@@ -488,7 +488,6 @@ import emrhistory from "./components/emrhistory.vue";
 import diagnosisdialog from "./components/diagnosisdialog.vue";
 import diagnosislist from "./components/diagnosislist.vue";
 import { computed, ref } from "vue";
-import { data } from "province-city-china/data";
 
 const activeTab = ref("wait");
 const form = ref({});
@@ -814,5 +813,9 @@ function toCurrent() {
 .tree-node-actions {
   display: flex;
   align-items: center;
+}
+
+.el-checkbox.is-bordered.el-checkbox--small {
+  background-color: #ffffff;
 }
 </style>

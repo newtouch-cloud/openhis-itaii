@@ -31,6 +31,7 @@
     </div>
   </div>
   <el-table
+    height="630"
     ref="patientTableRef"
     :data="patient"
     row-key="id"
@@ -85,7 +86,7 @@ import { getList, receiveEncounter } from "./api";
 
 const queryParams = ref({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 50,
 });
 const patient = ref([]);
 const loading = ref(false);
@@ -134,7 +135,7 @@ function handleQuery() {
 function handleSelectionChange() {}
 </script>
 
-<style scoped>
+<style>
 .custom-date-picker.el-picker__popper {
   width: 285px !important;
 }
