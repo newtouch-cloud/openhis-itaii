@@ -29,7 +29,7 @@ public enum AssignSeqEnum {
     /**
      * 处方号
      */
-    PRESCRIPTION_NO("4", "处方号", "P"),
+    PRESCRIPTION_NO("4", "处方号", "PR"),
 
     /**
      * 药品请求编码
@@ -49,7 +49,31 @@ public enum AssignSeqEnum {
     /**
      * 费用项目编码
      */
-    CHARGE_ITEM_NO("8", "费用项目编码", "CI");
+    CHARGE_ITEM_NO("8", "费用项目编码", "CI"),
+
+    /**
+     * 药品项目编码
+     */
+    MEDICATION_NUM("9", "药品项目编码", "MD"),
+
+    /**
+     * 器材项目编码
+     */
+    DEVICE_NUM("10", "项目编码", "DD"),
+
+    /**
+     * 支付编码
+     */
+    PAYMENT_NO("11", "支付编码", "SF"),
+    /**
+     * 诊疗项目编码
+     */
+    ACTIVITY_DEFINITION_NUM("11", "诊疗编码", "AD"),
+
+    /**
+     * 诊断定义编码
+     */
+    CONDITION_DEFINITION_NUM("11", "诊断编码", "CD");
 
     private final String code;
     private final String info;

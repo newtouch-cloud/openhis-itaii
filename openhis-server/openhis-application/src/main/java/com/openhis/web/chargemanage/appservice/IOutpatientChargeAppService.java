@@ -52,4 +52,11 @@ public interface IOutpatientChargeAppService {
      * @return 操作结果
      */
     R<?> changeToMedicalInsurance(Long encounterId);
+
+    /**
+     * 门诊收费页面初始化
+     *
+     * @return 初始化信息
+     */
+    R<?> outpatientChargeInit();
 }

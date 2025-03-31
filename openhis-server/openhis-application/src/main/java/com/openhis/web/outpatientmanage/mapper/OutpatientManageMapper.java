@@ -1,7 +1,9 @@
 package com.openhis.web.outpatientmanage.mapper;
 
+import java.util.Date;
 import java.util.List;
 
+import com.openhis.workflow.domain.ServiceRequest;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -57,11 +59,13 @@ public interface OutpatientManageMapper {
     /**
      * 门诊输液记录查询
      *
+     * @param page 分页参数，默认100条记录
      * @param queryWrapper 查询条件
      * @return 门诊输液记录列表
      */
-    List<OutpatientInfusionRecordDto> getOutpatientInfusionRecord(
-        @Param(Constants.WRAPPER) LambdaQueryWrapper<OutpatientInfusionRecordDto> queryWrapper);
+    IPage<OutpatientInfusionRecordDto> getOutpatientInfusionRecord(
+        @Param("page") Page<OutpatientInfusionRecordDto> page,
+        @Param(Constants.WRAPPER) QueryWrapper<OutpatientInfusionRecordDto> queryWrapper);
 
     /**
      * 查询药品已执行数量/查询同组内药品数量
@@ -72,7 +76,7 @@ public interface OutpatientManageMapper {
      * @param flag 控制查询条件
      * @return 查询个数
      */
-    long countMedicationExecuteNum(@Param("paramId") Long paramId, @Param("prefixBusNo") String prefixBusNo,
+    long countExecuteNumOrGroupNum(@Param("paramId") Long paramId, @Param("prefixBusNo") String prefixBusNo,
         @Param("groupId") Long groupId, @Param("flag") boolean flag);
 
 }

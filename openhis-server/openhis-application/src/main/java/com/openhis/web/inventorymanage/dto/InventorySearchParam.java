@@ -3,7 +3,7 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import java.io.Serializable;
+import java.util.Date;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -16,9 +16,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class InventorySearchParam implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class InventorySearchParam {
 
     /** 状态 */
     private Integer statusEnum;
@@ -28,4 +26,9 @@ public class InventorySearchParam implements Serializable {
 
     /** 经手人 */
     private Long practitionerId;
+
+    /**
+     * 单据时间
+     */
+    private Date occurrenceTime;
 }

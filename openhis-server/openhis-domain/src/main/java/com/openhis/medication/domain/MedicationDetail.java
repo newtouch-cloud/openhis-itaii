@@ -99,7 +99,7 @@ public class MedicationDetail extends HisBaseEntity {
     private String wbStr;
 
     /** 药品分类 */
-    private Integer categoryCode;
+    private String categoryCode;
 
     /** 商品名称 */
     private String merchandiseName;
@@ -164,4 +164,40 @@ public class MedicationDetail extends HisBaseEntity {
     /** 产品特性 */
     private Integer characteristic;
 
+    /** 所在位置 */
+    private Long locationId;
+
+    /** 贯标国家编码 */
+    private String nationalDrugCode;
+
+    /** 拆分属性 */
+    private Integer partAttributeEnum;
+
+    /** DDD值 */
+    private String dddCode;
+
+    /** DDD单位 */
+    private String dddUnitCode;
+
+    /** 单次最小用药频次 */
+    private String minRateCode;
+
+    /** 单次最大用药频次 */
+    private String maxRateCode;
+    /** 抗生素分类 */
+    private String antibioticCode;
+    /** 权限限制 */
+    private Integer restrictedEnum;
+    /** 是否自制 */
+    private Integer selfFlag;
+    /** 是否抗生素 */
+    private Integer antibioticFlag;
+    /** 基药标识 */
+    private Integer basicFlag;
+    /** 生产厂商文本 */
+    private String manufacturerText;
+    /** 用量限定 */
+    private BigDecimal usageLimit;
+    /** 住院临时医嘱拆分属性 */
+    private Integer thoPartAttributeEnum;
 }

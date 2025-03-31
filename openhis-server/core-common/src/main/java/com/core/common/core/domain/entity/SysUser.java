@@ -7,6 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -22,6 +23,7 @@ import com.core.common.xss.Xss;
  * 
  * @author system
  */
+@Data
 public class SysUser extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
@@ -90,6 +92,12 @@ public class SysUser extends BaseEntity {
 
     /** 角色ID */
     private Long roleId;
+
+    /** 租户ID */
+    private Integer tenantId;
+
+    /** 删除标识 */
+    private String deleteFlag;
 
     public SysUser() {
 

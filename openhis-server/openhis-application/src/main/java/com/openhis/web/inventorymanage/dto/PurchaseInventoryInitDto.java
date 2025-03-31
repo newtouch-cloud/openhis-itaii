@@ -34,11 +34,6 @@ public class PurchaseInventoryInitDto {
     private List<PurchaseInventoryInitDto.practitionerListOption> practitionerListOptions;
 
     /**
-     * 入库项目类型
-     */
-    private List<PurchaseInventoryInitDto.itemTypeOption> itemTypeOptions;
-
-    /**
      * 审批状态
      */
     private List<PurchaseInventoryInitDto.supplyStatusOption> supplyStatusOptions;
@@ -89,7 +84,7 @@ public class PurchaseInventoryInitDto {
      * 入库项目类型
      */
     @Data
-        public static class supplyStatusOption {
+    public static class supplyStatusOption {
         private Integer value;
         private String label;
 

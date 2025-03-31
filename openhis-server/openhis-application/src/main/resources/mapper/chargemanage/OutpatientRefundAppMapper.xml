@@ -18,53 +18,154 @@
                T2.account_id
         FROM fin_payment_reconciliation AS T1
             LEFT JOIN adm_charge_item AS T2
-                ON T2.id IN (T1.charge_item_ids)
+                -- 因为T2.id是long型，T1.charge_item_ids是例如 "1","2" 的string类型，所以需要先转类型再匹配
+                ON T2.id::TEXT = ANY(string_to_array(T1.charge_item_ids, ','))
         WHERE T1.encouter_id =#{encounterId}
             AND T1.status_enum IN (#{success},#{refundAll},#{refundPart})
             AND T1.delete_flag = '0'
     </select>
     <select id="selectRefundItem" resultType="com.openhis.web.chargemanage.dto.RefundItemDto">
-        SELECT T1.*,
-               T2.name AS service_name
-        FROM fin_payment_reconciliation AS T1
-            LEFT JOIN adm_charge_item AS T2
-                ON T2.id IN T1.charge_item_ids
-            LEFT JOIN med_medication_request AS T3
-                ON T3.bus_no = SUBSTRING(T2.bus_no, #{three})
-            LEFT JOIN med_medication_dispense AS T4
-            ON T4.med_req_id = T3.id
-        WHERE T2.service_table = #{medMedicationRequest}
+        SELECT T1.id AS charge_id,
+               T1.service_table,
+               T1.service_id,
+               T2.bus_no,
+               T2.prescription_no,
+               T2.quantity,
+               T2.medication_id AS item_id,
+               T2.unit_code,
+               T3.status_enum AS refund_status,
+               T3.id AS dispense_id,
+               T7.name AS item_name
+        FROM adm_charge_item AS T1
+            LEFT JOIN med_medication_request AS T2
+                ON T2.bus_no = SUBSTRING(T1.bus_no, #{three})
+            LEFT JOIN med_medication_dispense AS T3
+                ON T3.med_req_id = T2.id
+            LEFT JOIN med_medication_definition AS T7
+                ON T1.product_id = T7.id
+        WHERE T1.service_table = #{medMedicationRequest}
             AND T1.id IN
-            <foreach collection="paymentIdList" item="paymentId" separator="," open="(" close=")">
-                #{paymentId}
+            <foreach collection="chargeItemIdList" item="chargeItemId" separator="," open="(" close=")">
+                #{chargeItemId}
             </foreach>
-         UNION ALL
-        SELECT T1.*,
-               T2.name AS service_name
-        FROM fin_payment_reconciliation AS T1
-            LEFT JOIN adm_charge_item AS T2
-                ON T2.id IN T1.charge_item_ids
-            LEFT JOIN wor_device_request AS T5
-                ON T6.bus_no = SUBSTRING(T2.bus_no, #{three})
-            LEFT JOIN wor_device_dispense AS T6
-                ON T6.device_req_id = T5.id
-        WHERE T2.service_table = #{worDeviceRequest}
+        UNION
+        SELECT T1.id AS charge_id,
+               T1.service_table,
+               T1.service_id,
+               T4.bus_no,
+               T4.prescription_no,
+               T4.quantity,
+               T4.device_def_id AS item_id,
+               T4.unit_code,
+               T5.status_enum AS refund_status,
+               T5.id AS dispense_id,
+               T8.name AS item_name
+        FROM adm_charge_item AS T1
+            LEFT JOIN wor_device_request AS T4
+                ON T4.bus_no = SUBSTRING(T1.bus_no, #{three})
+            LEFT JOIN wor_device_dispense AS T5
+                ON T5.device_req_id = T4.id
+            LEFT JOIN adm_device_definition AS T8
+                ON T1.product_id = T8.id
+        WHERE T1.service_table = #{worDeviceRequest}
             AND T1.id IN
-            <foreach collection="paymentIdList" item="paymentId" separator="," open="(" close=")">
-                #{paymentId}
+            <foreach collection="chargeItemIdList" item="chargeItemId" separator="," open="(" close=")">
+                #{chargeItemId}
             </foreach>
-        UNION ALL
-        SELECT T1.*,
-               T2.name AS service_name
-        FROM fin_payment_reconciliation AS T1
-            LEFT JOIN adm_charge_item AS T2
-                ON T2.id IN T1.charge_item_ids
-            LEFT JOIN wor_service_request AS T7
-                ON T7.bus_no = SUBSTRING(T2.bus_no, #{three})
-        WHERE T2.service_table = #{worServiceRequest}
+        UNION
+        SELECT T1.id AS charge_id,,
+               T1.service_table,
+               T1.service_id,
+               T6.bus_no,
+               T6.prescription_no,
+               T6.quantity,
+               T6.activity_id AS item_id,
+               T6.unit_code,
+               T6.status_enum AS refund_status,
+               null AS dispense_id,
+               T9.name AS item_name
+        FROM adm_charge_item AS T1
+            LEFT JOIN wor_service_request AS T6
+                ON T6.bus_no = SUBSTRING(T1.bus_no, #{three})
+            LEFT JOIN wor_activity_definition AS T9
+                ON T1.product_id = T9.id
+        WHERE T1.service_table = #{worServiceRequest}
             AND T1.id IN
-            <foreach collection="paymentIdList" item="paymentId" separator="," open="(" close=")">
-                #{paymentId}
+            <foreach collection="chargeItemIdList" item="chargeItemId" separator="," open="(" close=")">
+                #{chargeItemId}
             </foreach>
+    </select>
+    <select id="selectBilledEncounterPatientPage"
+            resultType="com.openhis.web.chargemanage.dto.EncounterPatientPageDto">
+        SELECT T8.encounter_id,
+               T8.encounter_bus_no,
+               T8.status_enum,
+               T8.start_time,
+               T8.patient_name,
+               T8.patient_bus_no,
+               T8.gender_enum,
+               T8.birth_date,
+               T8.id_card,
+               T8.patient_py_str,
+               T8.patient_wb_str,
+               T8.type_code,
+               T8.category_enum,
+               T8.total_amount,
+               T8.bill_date
+        FROM (
+                 SELECT T1.id AS encounter_id,
+                        T1.bus_no AS encounter_bus_no,
+                        T1.start_time,
+                        T1.delete_flag,
+                        T1.tenant_id,
+                        T1.status_enum,
+                        T2."name" AS patient_name,
+                        T2.bus_no AS patient_bus_no,
+                        T2.gender_enum,
+                        T2.birth_date,
+                        T2.id_card,
+                        T2.py_str AS patient_py_str,
+                        T2.wb_str AS patient_wb_str,
+                        T4.type_code,
+                        T5.category_enum,
+                        SUM(T6.tendered_amount) AS total_amount,
+                        T6.bill_date,
+                        CASE WHEN T7.account_enum = #{insurance} THEN SUM(T7.amount) ELSE 0 END AS insurance_amount,
+                        CASE WHEN T7.account_enum != #{insurance} THEN SUM(T7.amount) ELSE 0 END AS self_amount
+                 FROM adm_encounter AS T1
+                      LEFT JOIN adm_patient AS T2
+                        ON T1.patient_id = T2.id
+                      LEFT JOIN adm_charge_item AS T3
+                        ON T3.encounter_id = T1.id
+                      LEFT JOIN adm_account AS T4
+                        ON T4.id = T3.account_id
+                      LEFT JOIN fin_contract AS T5
+                        ON T5.bus_no = T4.contract_no
+                      LEFT JOIN fin_payment_reconciliation AS T6
+                        ON T6.encouter_id = T1.id
+                      LEFT JOIN fin_payment_rec_detail AS T7
+                        ON T7.reconciliation_id = T6.id
+                 WHERE T3.status_enum IN (#{billed},#{refunding},#{refunded},#{partRefund})
+                    AND T1.delete_flag = '0'
+                 GROUP BY T1.id,
+                          T1.bus_no,
+                          T1.start_time,
+                          T1.delete_flag,
+                          T1.tenant_id,
+                          T1.status_enum,
+                          T2."name",
+                          T2.bus_no,
+                          T2.gender_enum,
+                          T2.birth_date,
+                          T2.id_card,
+                          T2.py_str,
+                          T2.wb_str,
+                          T4.type_code,
+                          T5.category_enum,
+                          T6.bill_date,
+                          T7.account_enum
+                 ORDER BY T6.bill_date DESC
+             ) AS T8
+            ${ew.customSqlSegment}
     </select>
 </mapper>

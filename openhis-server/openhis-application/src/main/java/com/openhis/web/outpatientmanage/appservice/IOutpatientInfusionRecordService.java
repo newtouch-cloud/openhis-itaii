@@ -2,10 +2,11 @@ package com.openhis.web.outpatientmanage.appservice;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto;
-import com.openhis.web.outpatientmanage.dto.OutpatientInfusionSearchParam;
 
 /**
  * 门诊管理——输液实现类
@@ -18,13 +19,13 @@ public interface IOutpatientInfusionRecordService {
     /**
      * 获取门诊输液记录的患者列表
      *
-     * @param outpatientInfusionSearchParam 门诊输液记录的患者列表查询参数
+     * @param searchKey 模糊查询关键字
      * @param pageNo 当前页
      * @param pageSize 每页多少条
      * @return 分页查询
      */
-    IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(
-        OutpatientInfusionSearchParam outpatientInfusionSearchParam, Integer pageNo, Integer pageSize);
+    IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(String searchKey, Integer pageNo,
+        Integer pageSize, HttpServletRequest request);
 
     /**
      * 点击患者，查询该患者的输液记录
@@ -33,7 +34,7 @@ public interface IOutpatientInfusionRecordService {
      * @return 当前患者门诊输液待执行列表
      */
     List<OutpatientInfusionRecordDto>
-        getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto);
+        getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto, HttpServletRequest request);
 
     /**
      * 执行患者门诊输液
@@ -54,11 +55,10 @@ public interface IOutpatientInfusionRecordService {
     /**
      * 门诊输液执行历史记录查询
      *
-     * @param beginTime 开始时间
-     * @param endTime 结束时间
+     * @param patientId 患者ID
      * @param historyFlag 查询的是否为执行履历
      * @return 门诊输液记录列表
      */
-    List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(String beginTime, String endTime,boolean historyFlag);
+    List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(Long patientId,HttpServletRequest request, boolean historyFlag);
 
 }

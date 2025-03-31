@@ -99,6 +99,9 @@ public class MedicationDefinition extends HisBaseEntity {
     /** 生产厂家 */
     private Long manufacturerId;
 
+    /** 生产厂商文本 */
+    private String manufacturerText;
+
     /** 供应商 */
     private Long supplyId;
 
@@ -136,7 +139,7 @@ public class MedicationDefinition extends HisBaseEntity {
     private String nationalDrugCode;
 
     /** 拆分属性 */
-    private String partAttribute;
+    private Integer partAttributeEnum;
 
     /** 抗生素分类 */
     private String antibioticCode;
@@ -152,5 +155,8 @@ public class MedicationDefinition extends HisBaseEntity {
 
     /** 基药标识 */
     private Integer basicFlag;
+
+    /** 住院临时医嘱拆分属性 */
+    private Integer thoPartAttributeEnum;
 
 }

@@ -2,11 +2,15 @@ package com.openhis.web.datadictionary.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 import com.openhis.common.enums.ActivityDefCategory;
 import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  * 诊疗目录分页检索
@@ -22,7 +26,9 @@ public class DiagnosisTreatmentDto {
     private Long id;
 
     /** 目录类别 */
-    private ActivityDefCategory categoryEnum;
+    @Dict(dictCode = "activity_category_code")
+    private String categoryCode;
+    private String categoryCode_dictText;
 
     /** 编码 */
     private String busNo;
@@ -37,10 +43,13 @@ public class DiagnosisTreatmentDto {
     private String wbStr;
 
     /** 类型 */
-    private String typeCode;
+    private Integer typeEnum;
+    private String typeEnum_enumText;
 
     /** 使用单位 */
+    @Dict(dictCode = "rate_code")
     private String permittedUnitCode;
+    private String permittedUnitCode_dictText;
 
     /** 医保标记 */
     private Integer ybFlag;
@@ -54,17 +63,55 @@ public class DiagnosisTreatmentDto {
     private String ybMatchFlag_enumText;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
+    private String statusEnum_enumText;
 
     /** 身体部位 */
+    @Dict(dictCode = "body_site_code")
     private String bodySiteCode;
+    private String bodySiteCode_dictText;
 
     /** 所需标本 */
+    @Dict(dictCode = "specimen_code")
     private String specimenCode;
+    private String specimenCode_dictText;
 
     /** 说明 */
     private String descriptionText;
 
     /** 规则id */
     private Integer ruleId;
+
+    /** 所属科室 */
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orgId;
+    private String orgId_dictText;
+
+    /** 所在位置 */
+    @Dict(dictTable = "adm_location", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long locationId;
+    private String locationId_dictText;
+
+    /** 财务类别 */
+    @Dict(dictCode = "fin_type_code")
+    private String typeCode;
+    private String typeCode_dictText;
+
+    /** 医保类别 */
+    @Dict(dictCode = "med_chrgitm_type")
+    private String ybType;
+    private String ybType_dictText;
+
+    /** 购入价 */
+    private BigDecimal purchasePrice;
+
+    /** 零售价 */
+    private BigDecimal retailPrice;
+
+    /** 最高零售价 */
+    private BigDecimal maximumRetailPrice;
+
+
 }

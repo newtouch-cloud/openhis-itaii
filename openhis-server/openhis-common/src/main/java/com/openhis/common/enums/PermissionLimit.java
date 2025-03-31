@@ -1,21 +1,21 @@
 package com.openhis.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 参与者角色
+ * 权限限制
+ *
+ * @author liuhr
+ * @date 2025/3/25
  */
 @Getter
 @AllArgsConstructor
-public enum PractitionerRole implements HisEnumInterface {
-    DOCTOR(1, "doctor", "医生"),
-
-    NURSE(2, "nurse", "护士"),
-
-    PHARMACIST(3, "pharmacist", "药师");
+public enum PermissionLimit implements HisEnumInterface  {
+    UNRESTRICTED(1, "unrestricted", "非限制使用"),
+    RESTRICTED(2, "restricted", "限制使用"),
+    SPECIAL(3, "special", "特殊使用");
 
     @EnumValue
     private final Integer value;

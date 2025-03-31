@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import com.openhis.common.annotation.Dict;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -30,7 +33,12 @@ public class MedicationManageUpDto {
     private Long medicationDefId;
 
     /** 所属科室 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long orgId;
+
+    /** 所在位置 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long locationId;
 
     /** 剂型 */
     private String doseFormCode;
@@ -48,9 +56,11 @@ public class MedicationManageUpDto {
     private String lotNumber;
 
     /** 生效日期 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date effectiveDate;
 
     /** 到期日期 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date expirationDate;
 
     /** 用法 */
@@ -63,7 +73,10 @@ public class MedicationManageUpDto {
     private BigDecimal dose;
 
     /** 剂量单位 */
+    @Dict(dictCode = "unit_code")
+    @NotBlank(message = "剂量单位不能为空")
     private String doseUnitCode;
+    private String doseUnitCode_dictText;
 
     /** 单次最大剂量 */
     private BigDecimal maxUnit;
@@ -72,7 +85,6 @@ public class MedicationManageUpDto {
     private String definition;
 
     /** 药品编号 */
-    @NotBlank(message = "药品编号不能为空")
     private String busNo;
 
     /** 药品名称 */
@@ -95,7 +107,7 @@ public class MedicationManageUpDto {
     private String wbStr;
 
     /** 药品分类 */
-    private Integer categoryCode;
+    private String categoryCode;
 
     /** 商品名称 */
     private String merchandiseName;
@@ -107,7 +119,9 @@ public class MedicationManageUpDto {
     private String merchandiseWbStr;
 
     /** 药品单位 */
+    @Dict(dictCode = "unit_code")
     private String unitCode;
+    private String unitCode_dictText;
 
     /** 最小单位 */
     private String minUnitCode;
@@ -122,7 +136,9 @@ public class MedicationManageUpDto {
     private BigDecimal partPercent;
 
     /** 剂量形式 */
+    @Dict(dictCode = "dose_from_code")
     private Integer doseFrom;
+    private String doseFrom_dictText;
 
     /** 批准文号 */
     private String approvalNumber;
@@ -143,9 +159,14 @@ public class MedicationManageUpDto {
     private Integer injectFlag;
 
     /** 生产厂家 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long manufacturerId;
 
+    /** 生产厂商文本 */
+    private String manufacturerText;
+
     /** 供应商 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long supplyId;
 
     /** 是否限制使用 */
@@ -160,4 +181,68 @@ public class MedicationManageUpDto {
     /** 产品特性 */
     private Integer characteristic;
 
+    /** 购入价 */
+    @NotNull(message = "购入价不能为空")
+    private BigDecimal purchasePrice;
+
+    /** 零售价 */
+    @NotNull(message = "零售价不能为空")
+    private BigDecimal retailPrice;
+
+    /** 最高零售价 */
+    @NotNull(message = "最高零售价不能为空")
+    private BigDecimal maximumRetailPrice;
+
+    /** 医保类别 */
+    private String ybType;
+
+    /** 财务类别 */
+    @Dict(dictCode = "fin_type_code")
+    private String typeCode;
+    private String typeCode_dictText;
+
+    /** 单次最小用药频次 */
+    private String minRateCode;
+
+    /** 单次最大用药频次 */
+    private String maxRateCode;
+
+    /** 药品状态 */
+    private Integer statusEnum;
+    private String statusEnum_enumText;
+
+    /** 拆分属性 */
+    private Integer partAttributeEnum;
+
+    /** 贯标国家编码 */
+    private String nationalDrugCode;
+
+    /** 是否抗生素 */
+    private Integer antibioticFlag;
+
+    /** 是否自制 */
+    private Integer selfFlag;
+
+    /** DDD值 */
+    private String dddCode;
+
+    /** DDD单位 */
+    private String dddUnitCode;
+
+    /** 用量限定 */
+    private BigDecimal usageLimit;
+
+    /** 抗生素分类 */
+    @Dict(dictCode = "antibiotic_type_code")
+    private String antibioticCode;
+    private String antibioticCode_dictText;
+
+    /** 权限限制 */
+    private Integer restrictedEnum;
+
+    /** 基药标识 */
+    private Integer basicFlag;
+
+    /** 住院临时医嘱拆分属性 */
+    private Integer thoPartAttributeEnum;
 }

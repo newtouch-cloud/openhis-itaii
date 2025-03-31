@@ -29,7 +29,7 @@ public class MedicationRequest extends HisBaseEntity {
     private Long id;
 
     /** 药品请求编码 */
-    private String bus_no;
+    private String busNo;
 
     /** 处方号 */
     private String prescriptionNo;
@@ -82,14 +82,24 @@ public class MedicationRequest extends HisBaseEntity {
     /** 开方医生 */
     private Long practitionerId;
 
-    /** 发放药房 */
+    /** 所在位置 */
     private Long locationId;
 
-    /** 发放科室 */
+    /**
+     * 发放药房
+     */
+    private Long performLocation;
+
+    /** 开方人科室 */
     private Long orgId;
 
     /** 就诊id */
     private Long encounterId;
+
+    /**
+     * 诊断ID
+     */
+    private Long conditionId;
 
     /** 支持用药信息 */
     private String supportInfo;

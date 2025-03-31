@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.core.common.core.domain.R;
 import com.openhis.web.datadictionary.dto.DeviceManageSelParam;
 import com.openhis.web.datadictionary.dto.DeviceManageUpDto;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 器材目录 service
@@ -63,7 +64,7 @@ public interface IDeviceManageAppService {
      * @param id 查询条件
      * @return 器材目录查询结果
      */
-    R<?> getDeviceOne(@PathVariable("id") Long id);
+    R<?> getDeviceOne(@RequestParam Long id);
 
     /**
      * 器材目录停用

@@ -2,6 +2,11 @@ package com.openhis.web.datadictionary.mapper;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -17,35 +22,18 @@ import com.openhis.web.datadictionary.dto.MedicationManageDto;
  */
 @Repository
 public interface MedicationManageSearchMapper extends BaseMapper<ChargeItemDefinition> {
-    /**
-     * 药品目录分页查询
-     * 
-     * @param searchKey 模糊查询条件
-     * @param ybMatchFlag 是否对码
-     * @param statusEnum 状态
-     * @param categoryCode 分类
-     * @param tenantId 租户
-     * @param pageSize
-     * @param offset
-     * @return
-     */
-    List<MedicationManageDto> getPage(@Param("searchKey") String searchKey, @Param("ybMatchFlag") Integer ybMatchFlag,
-        @Param("statusEnum") Integer statusEnum, @Param("categoryCode") String categoryCode,
-        @Param("tenantId") Integer tenantId, @Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
 
     /**
      * 药品目录分页查询
-     * 
-     * @param searchKey 模糊查询条件
-     * @param ybMatchFlag 是否对码
-     * @param statusEnum 状态
-     * @param categoryCode 分类
-     * @param tenantId 租户
+     *
+     * @param page 分页
+     * @param queryWrapper 查询条件
      * @return
      */
-    Long getPageCount(@Param("searchKey") String searchKey, @Param("ybMatchFlag") Integer ybMatchFlag,
-        @Param("statusEnum") Integer statusEnum, @Param("categoryCode") String categoryCode,
-        @Param("tenantId") Integer tenantId);
+    IPage<MedicationManageDto> getPage(
+        @Param("page") Page<OutpatientInfusionRecordDto> page,
+        @Param(Constants.WRAPPER) QueryWrapper<MedicationManageDto> queryWrapper);
+
 
     /**
      * 药品详情

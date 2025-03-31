@@ -42,7 +42,7 @@ public class DeviceDefinition extends HisBaseEntity {
     private String wbStr;
 
     /** 器材分类 */
-    private DeviceCategory categoryEnum;
+    private String categoryCode;
 
     /** 器材种类 */
     private String typeCode;
@@ -87,10 +87,13 @@ public class DeviceDefinition extends HisBaseEntity {
     private Integer ybMatchFlag;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
 
     /** 生产厂家 */
     private Long manufacturerId;
+
+    /** 生产厂家 */
+    private String manufacturerText;
 
     /** 供应商 */
     private Long supplyId;
@@ -100,9 +103,6 @@ public class DeviceDefinition extends HisBaseEntity {
 
     /** 适用范围 */
     private String jurisdiction;
-
-    /** 执行科室 */
-    private Long ruleId;
 
     /** 器材版本 */
     private String version;

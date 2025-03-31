@@ -7,6 +7,9 @@
     <select id="getAdviceBaseInfo" resultType="com.openhis.web.doctorstation.dto.AdviceBaseDto">
         SELECT abi.tenant_id,
                abi.advice_type,
+               abi.category_code,
+               abi.part_percent,
+               abi.part_attribute_enum,
                abi.advice_definition_id,
                abi.advice_name,
                abi.advice_bus_no,
@@ -30,28 +33,31 @@
                abi.advice_table_name
         from (
                  SELECT T1.tenant_id,
-                        '1'                   AS advice_type,
-                        T1.ID                 AS advice_definition_id,
-                        T1.NAME               AS advice_name,
-                        T1.bus_no             AS advice_bus_no,
-                        T1.py_str             AS py_str,
-                        T1.wb_str             AS wb_str,
-                        T1.yb_no              AS yb_no,
-                        T1.merchandise_name   AS product_name,
-                        0                     AS activity_type,
-                        T1.unit_code          AS unit_code,
-                        T1.min_unit_code      AS min_unit_code,
-                        T2.total_volume       AS volume,
-                        T2.method_code        AS method_code,
-                        T2.rate_code          AS rate_code,
-                        T2.org_id             AS org_id,
-                        T2.location_id        AS location_id,
-                        CAST(T2.dose AS TEXT) AS dose,
-                        T2.dose_unit_code     AS dose_unit_code,
-                        T3.NAME               AS supplier,
-                        T4.NAME               AS manufacturer,
-                        T5.id                 AS charge_item_definition_id,
-                        T5.instance_table     AS advice_table_name
+                        1                      AS advice_type,
+                        T1.category_code       AS category_code,
+                        T1.part_percent        AS part_percent,
+                        T1.part_attribute_enum AS part_attribute_enum,
+                        T1.ID                  AS advice_definition_id,
+                        T1.NAME                AS advice_name,
+                        T1.bus_no              AS advice_bus_no,
+                        T1.py_str              AS py_str,
+                        T1.wb_str              AS wb_str,
+                        T1.yb_no               AS yb_no,
+                        T1.merchandise_name    AS product_name,
+                        0                      AS activity_type,
+                        T1.unit_code           AS unit_code,
+                        T1.min_unit_code       AS min_unit_code,
+                        T2.total_volume        AS volume,
+                        T2.method_code         AS method_code,
+                        T2.rate_code           AS rate_code,
+                        T2.org_id              AS org_id,
+                        T2.location_id         AS location_id,
+                        CAST(T2.dose AS TEXT)  AS dose,
+                        T2.dose_unit_code      AS dose_unit_code,
+                        T3.NAME                AS supplier,
+                        T4.NAME                AS manufacturer,
+                        T5.id                  AS charge_item_definition_id,
+                        T5.instance_table      AS advice_table_name
                  FROM med_medication_definition AS t1
                           LEFT JOIN med_medication AS T2 ON T2.medication_def_id = T1.ID
                      AND T2.delete_flag = '0'
@@ -65,7 +71,10 @@
                  WHERE T1.delete_flag = '0'
                  UNION ALL
                  SELECT T1.tenant_id,
-                        '2'               AS advice_type,
+                        2                 AS advice_type,
+                        T1.category_code  AS category_code,
+                        T1.part_percent   AS part_percent,
+                        null              AS part_attribute_enum,
                         T1.ID             AS advice_definition_id,
                         T1.NAME           AS advice_name,
                         T1.bus_no         AS advice_bus_no,
@@ -96,9 +105,13 @@
                      AND T4.delete_flag = '0'
                      AND T4.instance_table = #{deviceTableName}
                  WHERE T1.delete_flag = '0'
+                   AND T1.category_code = #{singleUse}
                  UNION ALL
                  SELECT T1.tenant_id,
-                        '3'               AS advice_type,
+                        3                 AS advice_type,
+                        ''                AS category_code,
+                        1                 AS part_percent,
+                        null              AS part_attribute_enum,
                         T1.ID             AS advice_definition_id,
                         T1.NAME           AS advice_name,
                         T1.bus_no         AS advice_bus_no,
@@ -132,8 +145,6 @@
         SELECT
         T1.item_id,
         T1.item_table,
-        T1.base_quantity,
-        T1.base_unit_code,
         T1.min_quantity,
         T1.min_unit_code,
         T1.lot_number,
@@ -162,6 +173,7 @@
     <select id="getChildCharge" resultType="com.openhis.web.doctorstation.dto.AdvicePriceDto">
         SELECT
         T1.definition_id,
+        T1.id AS definition_detail_id,
         T2.charge_name,
         T1.condition_value,
         T1.condition_code,

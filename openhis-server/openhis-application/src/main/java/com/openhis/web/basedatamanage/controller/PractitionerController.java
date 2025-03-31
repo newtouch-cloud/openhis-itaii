@@ -3,25 +3,18 @@
  */
 package com.openhis.web.basedatamanage.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.core.common.core.domain.R;
 import com.openhis.web.basedatamanage.appservice.IPractitionerAppService;
-import com.openhis.web.basedatamanage.dto.PractSearchParam;
-import com.openhis.web.basedatamanage.dto.PractitionerDto;
+import com.openhis.web.basedatamanage.dto.UserAndPractitionerDto;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 员工管理Controller业务层处理
- *
- * @author
- * @date 2025-02-21
+ * 参与者 Controller业务层处理
  */
 @RestController
 @RequestMapping("/base-data-manage/practitioner")
@@ -29,54 +22,72 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class PractitionerController {
 
-    @Autowired
-    private IPractitionerAppService practitionerAppService;
+    private final IPractitionerAppService practitionerAppService;
 
     /**
-     * 员工分页列表
-     *
-     * @param practSearchParam 查询条件
-     * @param pageNo 当前页码
-     * @param pageSize 查询条数
-     * @param request 请求数据
-     * @return 员工分页列表
+     * 新增用户及参与者
+     * 
+     * @param userAndPractitionerDto 用户及参与者dto
+     * @return 结果
      */
-    @GetMapping(value = "/practitioner")
-    public R<?> getPractitionerPage(PractSearchParam practSearchParam,
+    @PostMapping(value = "/user-practitioner")
+    public R<?> saveUserPractitioner(@RequestBody UserAndPractitionerDto userAndPractitionerDto) {
+        return practitionerAppService.saveUserPractitioner(userAndPractitionerDto);
+    }
+
+    /**
+     * 查询用户及参与者
+     * 
+     * @param userAndPractitionerDto 查询条件
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 用户及参与者
+     */
+    @GetMapping(value = "/user-practitioner-page")
+    public R<?> getUserPractitionerPage(UserAndPractitionerDto userAndPractitionerDto,
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-        return practitionerAppService.getPractitionerPage(practSearchParam, searchKey, pageNo, pageSize, request);
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return R
+            .ok(practitionerAppService.getUserPractitionerPage(userAndPractitionerDto, searchKey, pageNo, pageSize));
     }
 
     /**
-     * 获取员工需要编辑的信息
-     *
-     * @param practitionerId 员工信息
+     * 查询用户及参与者详情
+     * 
+     * @param userId 系统用户id
+     * @return 用户及参与者详情
      */
-    @GetMapping("/practitioner-getById")
-    public R<?> getPractitionerById(@Validated @RequestParam Long practitionerId) {
-        return practitionerAppService.getPractitionerById(practitionerId);
+    @GetMapping(value = "/user-practitioner-detail")
+    public R<?> getUserPractitionerPage(@RequestParam Long userId) {
+        UserAndPractitionerDto userAndPractitionerDto = new UserAndPractitionerDto();
+        userAndPractitionerDto.setUserId(userId);
+        IPage<UserAndPractitionerDto> userPractitionerPage =
+            practitionerAppService.getUserPractitionerPage(userAndPractitionerDto, "", 1, 1);
+        return R.ok(userPractitionerPage.getRecords().get(0));
     }
 
     /**
-     * 编辑员工信息
+     * 修改用户及参与者
      *
-     * @param practitionerDto 员工信息
+     * @param userAndPractitionerDto 用户及参与者dto
+     * @return 结果
      */
-    @PutMapping("/practitioner")
-    public R<?> addOrEditPractitioner(@Validated @RequestBody PractitionerDto practitionerDto) {
-        return practitionerAppService.addOrEditPractitioner(practitionerDto);
+    @PutMapping(value = "/user-practitioner")
+    public R<?> editUserPractitioner(@RequestBody UserAndPractitionerDto userAndPractitionerDto) {
+        return practitionerAppService.editUserPractitioner(userAndPractitionerDto);
     }
 
     /**
-     * 删除员工信息
-     *
-     * @param practitionerId 主表id
+     * 删除用户及参与者 ; admin不允许删除
+     * 
+     * @param userId 系统用户id
+     * @return 结果
      */
-    @DeleteMapping("/practitioner")
-    public R<?> deletePractitioner(@RequestParam Long practitionerId) {
-        return practitionerAppService.deletePractitioner(practitionerId);
+    @DeleteMapping(value = "/user-practitioner")
+    public R<?> delUserPractitioner(@RequestParam Long userId) {
+        return practitionerAppService.delUserPractitioner(userId);
     }
 
 }

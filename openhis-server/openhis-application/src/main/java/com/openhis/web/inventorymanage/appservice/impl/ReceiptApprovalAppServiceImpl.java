@@ -197,9 +197,9 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
             for (SupplyItemDetailDto supplyItemDetailDto : supplyItemDetailList) {
 
                 // 根据产品批号，仓库和仓位 查询库存表信息
-                InventoryItem inventoryItem = inventoryItemService.selectInventoryByLotNumber(
-                        supplyItemDetailDto.getLotNumber(),supplyItemDetailDto.getSourceLocationId(),
-                        supplyItemDetailDto.getPurposeLocationStoreId());
+                InventoryItem inventoryItem =
+                    inventoryItemService.selectInventoryByLotNumber(supplyItemDetailDto.getLotNumber(),
+                        supplyItemDetailDto.getSourceLocationId(), supplyItemDetailDto.getPurposeLocationStoreId());
 
                 // 包装数量
                 BigDecimal baseQuantity = inventoryItem.getBaseQuantity();
@@ -209,23 +209,24 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
                 if (supplyItemDetailDto.getItemUnit().equals(supplyItemDetailDto.getUnitCode())) {
 
                     baseQuantity = baseQuantity.min(supplyItemDetailDto.getItemQuantity());
-                    minQuantity = minQuantity.min(supplyItemDetailDto.getPartPercent()
-                            .multiply(supplyItemDetailDto.getItemQuantity()));
+                    minQuantity = minQuantity
+                        .min(supplyItemDetailDto.getPartPercent().multiply(supplyItemDetailDto.getItemQuantity()));
 
                 } else if (supplyItemDetailDto.getItemUnit().equals(supplyItemDetailDto.getMinUnitCode())) {
 
-                    baseQuantity = baseQuantity.min(supplyItemDetailDto.getItemQuantity().divide(
-                            supplyItemDetailDto.getPartPercent(),RoundingMode.HALF_UP));
+                    baseQuantity = baseQuantity.min(supplyItemDetailDto.getItemQuantity()
+                        .divide(supplyItemDetailDto.getPartPercent(), RoundingMode.HALF_UP));
                     minQuantity = minQuantity.min(supplyItemDetailDto.getItemQuantity());
 
                 }
                 // 更新库存数量
-                inventoryItemService.updateInventoryQuantity(inventoryItem.getId(),baseQuantity,minQuantity,loginUser,now);
+                inventoryItemService.updateInventoryQuantity(inventoryItem.getId(), baseQuantity, minQuantity,
+                    loginUser, now);
             }
 
             // 将供应项目的详细信息装配为库存项目和采购账单
             Pair<List<ChargeItem>, List<InventoryItem>> listPair =
-                    InventoryManageAssembler.assembleChargeAndInventory(supplyItemDetailList, now, loginUser);
+                InventoryManageAssembler.assembleChargeAndInventory(supplyItemDetailList, now, loginUser);
 
             // 入库
             inventoryItemService.stockIn(listPair.getRight());
@@ -295,6 +296,7 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
         List<ItemChargeDetailDto> chargeDetailList) {
         List<ChargeItemDefDetail> resultList = new ArrayList<>();
 
+        // todo：同一批次不能改价
         // 将各个项目的定价信息按项目id分组
         Map<Long, List<ItemChargeDetailDto>> chargeDetailGroup =
             chargeDetailList.stream().collect(Collectors.groupingBy(ItemChargeDetailDto::getInstanceId));
@@ -356,7 +358,7 @@ public class ReceiptApprovalAppServiceImpl implements IReceiptApprovalAppService
      */
     private ChargeItemDefDetail addChargeItemDefApp(String conditionValue, BigDecimal sellPrice, Long definitionId) {
         ChargeItemDefDetail chargeItemDefDetail = new ChargeItemDefDetail();
-        // todo：命中条件或建成字典枚举，此处为批次号，单位
+        // todo：命中条件或建成字典枚举，此处为批次号，单位，优先级加一
         chargeItemDefDetail
             // 命中值
             .setConditionValue(conditionValue)

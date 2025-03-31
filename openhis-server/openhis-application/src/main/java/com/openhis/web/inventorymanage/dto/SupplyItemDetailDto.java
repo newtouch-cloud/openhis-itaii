@@ -3,7 +3,6 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -21,9 +20,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class SupplyItemDetailDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class SupplyItemDetailDto {
 
     /** ID */
     @JsonSerialize(using = ToStringSerializer.class)

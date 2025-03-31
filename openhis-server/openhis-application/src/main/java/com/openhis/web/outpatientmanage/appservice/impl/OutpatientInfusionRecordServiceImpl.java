@@ -1,16 +1,17 @@
 package com.openhis.web.outpatientmanage.appservice.impl;
 
-import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -25,7 +26,6 @@ import com.openhis.administration.service.IPractitionerRoleService;
 import com.openhis.administration.service.IPractitionerService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.enums.AdministrativeGender;
-import com.openhis.common.enums.ClinicalStatus;
 import com.openhis.common.enums.EventStatus;
 import com.openhis.common.enums.Whether;
 import com.openhis.common.utils.EnumUtils;
@@ -33,7 +33,6 @@ import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.outpatientmanage.appservice.IOutpatientInfusionRecordService;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto;
-import com.openhis.web.outpatientmanage.dto.OutpatientInfusionSearchParam;
 import com.openhis.web.outpatientmanage.mapper.OutpatientManageMapper;
 import com.openhis.workflow.domain.ServiceRequest;
 import com.openhis.workflow.mapper.ServiceRequestMapper;
@@ -67,49 +66,21 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
     /**
      * 获取门诊输液记录的患者列表
      *
-     * @param outpatientInfusionSearchParam 门诊输液记录的患者列表查询参数
+     * @param searchKey 模糊查询关键字
      * @param pageNo 当前页
      * @param pageSize 每页多少条
      * @return 分页查询
      */
     @Override
-    public IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(
-        OutpatientInfusionSearchParam outpatientInfusionSearchParam, Integer pageNo, Integer pageSize) {
-
-        LocalDateTime beginTime;
-        LocalDateTime endTime;
-        String searchKey;
-        // 搜索key为空
-        if (outpatientInfusionSearchParam == null) {
-            searchKey = null;
-        } else {
-            searchKey = outpatientInfusionSearchParam.getSearchKey();
-        }
-        // 任意开始结束时间为空，默认查询当天日期记录
-        if (outpatientInfusionSearchParam.getBeginTime() == null
-            || outpatientInfusionSearchParam.getEndTime() == null) {
-            beginTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), true);
-            endTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), false);
-        } else {// 时间不空，删选时间
-            beginTime = DateUtils.startDayOrEndDay(outpatientInfusionSearchParam.getBeginTime(), true);
-            endTime = DateUtils.startDayOrEndDay(outpatientInfusionSearchParam.getEndTime(), false);
-        }
+    public IPage<OutpatientInfusionPatientDto> getOutpatientInfusionPatientList(String searchKey, Integer pageNo,
+        Integer pageSize, HttpServletRequest request) {
 
         // 构建查询条件
-        QueryWrapper<OutpatientInfusionPatientDto> queryWrapper = HisQueryUtils.buildQueryWrapper(null, searchKey,
-            new HashSet<>(Arrays.asList(CommonConstants.FieldName.PatientBusNo,
-                CommonConstants.FieldName.EncounterBusNo, CommonConstants.FieldName.PatientName)),
-            null);
-        // based_on_id 是为空的
-        queryWrapper.eq(CommonConstants.FieldName.basedOnId, null);
-        // 状态是未完成的
-        queryWrapper.in(CommonConstants.FieldName.requestStatus, EventStatus.IN_PROGRESS.getValue(),
-            EventStatus.NOT_DONE.getValue());
-        // 添加时间段查询条件
-        if (beginTime != null && endTime != null) {
-            queryWrapper.ge(CommonConstants.FieldName.createTime, beginTime);
-            queryWrapper.le(CommonConstants.FieldName.createTime, endTime);
-        }
+        QueryWrapper<OutpatientInfusionPatientDto> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(new OutpatientInfusionPatientDto(), searchKey,
+                new HashSet<>(Arrays.asList(CommonConstants.FieldName.PatientBusNo,
+                    CommonConstants.FieldName.EncounterBusNo, CommonConstants.FieldName.PatientName)),
+                request);
 
         IPage<OutpatientInfusionPatientDto> outpatientInfusionPatientDto =
             outpatientManageMapper.getOutpatientInfusionPatient(new Page<>(pageNo, pageSize), queryWrapper);
@@ -118,7 +89,7 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             // 性别
             e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
             // 计算年龄
-            e.setAgeString(AgeCalculatorUtil.getAge(e.getBirthDate()));
+            e.setAgeString(AgeCalculatorUtil.getAge(DateUtils.parseDate(e.getBirthDate())));
         });
 
         return outpatientInfusionPatientDto;
@@ -131,25 +102,45 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
      * @return 当前患者门诊输液待执行列表
      */
     @Override
-    public List<OutpatientInfusionRecordDto>
-        getPatientInfusionRecord(OutpatientInfusionPatientDto outpatientInfusionPatientDto) {
+    public List<OutpatientInfusionRecordDto> getPatientInfusionRecord(
+        OutpatientInfusionPatientDto outpatientInfusionPatientDto, HttpServletRequest request) {
 
-        if (outpatientInfusionPatientDto == null && outpatientInfusionPatientDto.getPatientId() != null) {
+        // 参数不能为空
+        if (outpatientInfusionPatientDto == null) {
+            return null;
+        } else if (outpatientInfusionPatientDto.getPatientId() == null) {
             return null;
         }
-        // 创建查询包装器
-        LambdaQueryWrapper<OutpatientInfusionRecordDto> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(OutpatientInfusionRecordDto::getPatientId, outpatientInfusionPatientDto.getPatientId());
-        // based_on_id 是为空的
-        queryWrapper.eq(OutpatientInfusionRecordDto::getBasedOnId, null);
-        // 状态是未完成的
-        queryWrapper.in(OutpatientInfusionRecordDto::getRequestStatus, EventStatus.IN_PROGRESS.getValue(),
-            EventStatus.NOT_DONE.getValue());
-        // 从数据库获取输液记录列表
-        List<OutpatientInfusionRecordDto> infusionList =
-            outpatientManageMapper.getOutpatientInfusionRecord(queryWrapper);
 
-        return infusionList;
+        // 构建查询条件
+        QueryWrapper<OutpatientInfusionRecordDto> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(null, null, null, request);
+
+        queryWrapper.eq(CommonConstants.FieldName.PatientId, outpatientInfusionPatientDto.getPatientId());
+        // based_on_id 是为空的
+        queryWrapper.isNull(CommonConstants.FieldName.BasedOnId);
+        // 状态是未完成的
+        queryWrapper.eq(CommonConstants.FieldName.RequestStatus, EventStatus.IN_PROGRESS.getValue());
+
+        // 默认显示100条
+        IPage<OutpatientInfusionRecordDto> OutpatientInfusionRecordPage =
+            outpatientManageMapper.getOutpatientInfusionRecord(new Page<>(1, 100), queryWrapper);
+
+        List<OutpatientInfusionRecordDto> infusionPerformList = OutpatientInfusionRecordPage.getRecords();
+
+        // 遍历列表并处理每个记录
+        infusionPerformList.forEach(e -> {
+            // 性别
+            e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
+            // 药品状态
+            e.setMedicationStatusEnum_enumText(
+                EnumUtils.getInfoByValue(EventStatus.class, e.getMedicationStatusEnum()));
+            // 皮试标志
+            e.setSkinTestFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getSkinTestFlag()));
+
+        });
+
+        return infusionPerformList;
     }
 
     /**
@@ -173,76 +164,152 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
         Map<Long, List<OutpatientInfusionRecordDto>> groupedRecords = outpatientInfusionRecordDtoList.stream()
             .collect(Collectors.groupingBy(OutpatientInfusionRecordDto::getGroupId));
 
+        // 按 serviceId 分组
+        Map<Long, List<OutpatientInfusionRecordDto>> serviceRecords = outpatientInfusionRecordDtoList.stream()
+            .collect(Collectors.groupingBy(OutpatientInfusionRecordDto::getServiceId));
+
+        // 构造批量插入的 ServiceRequest 列表
+        List<ServiceRequest> serviceRequests = new ArrayList<>();
+
         // 遍历每个分组
         for (Map.Entry<Long, List<OutpatientInfusionRecordDto>> entry : groupedRecords.entrySet()) {
             List<OutpatientInfusionRecordDto> groupRecords = entry.getValue();
 
             // 获取组内药品个数
-            Long groupCount = outpatientManageMapper.countMedicationExecuteNum(groupRecords.get(0).getServiceId(), null,
+            Long groupCount = outpatientManageMapper.countExecuteNumOrGroupNum(groupRecords.get(0).getServiceId(), null,
                 groupRecords.get(0).getGroupId(), false);
+
             // 检查组内药品是否全部选中
             if (groupCount != groupRecords.size()) {
                 return false;
             }
 
-            // 构造批量插入的 ServiceRequest 列表
-            List<ServiceRequest> serviceRequests = new ArrayList<>();
             for (OutpatientInfusionRecordDto record : groupRecords) {
-                String prefixBusNo = record.getBusNo() + "." + record.getGroupId() + "." + record.getMedicationId();
+
+                // 判断当前组药品状态不是已领药，有未领药的数据，跳过执行下一组数据
+                if (!(record.getMedicationStatusEnum() == EventStatus.COMPLETED.getValue())) {
+                    // 跳过当前分组的剩余处理，继续下一个分组
+                    break;
+                }
+
+                String prefixBusNo = record.getBusNo() + CommonConstants.Common.DASH + record.getGroupId()
+                    + CommonConstants.Common.DASH + record.getMedicationId();
                 // 获取执行次数
                 Long exeCount =
-                    outpatientManageMapper.countMedicationExecuteNum(record.getServiceId(), prefixBusNo, null, true);
+                    outpatientManageMapper.countExecuteNumOrGroupNum(record.getServiceId(), prefixBusNo, null, true);
 
                 if (exeCount < record.getExecuteNum()) {
                     ServiceRequest serviceRequest = new ServiceRequest();
                     serviceRequest.setPrescriptionNo(record.getPrescriptionNo())
-                        .setBusNo(AssignSeqUtil.formatString(prefixBusNo, exeCount, 3))
+                        .setBusNo(AssignSeqUtil.formatString(prefixBusNo, exeCount + 1, 3))
                         .setBasedOnId(record.getServiceId()).setStatusEnum(EventStatus.COMPLETED.getValue())
                         .setActivityId(record.getActivityId()).setPatientId(record.getPatientId())
                         .setEncounterId(record.getEncounterId()).setPerformerId(practitioner.getId())
                         .setPerformerTypeCode(practitionerRole.getRoleCode())
-                        .setOccurrenceStartTime(DateUtils.getNowDate())
+                        .setOccurrenceStartTime(DateUtils.getNowDate()).setRequesterId(practitioner.getId())
                         .setOccurrenceEndTime(DateUtils.addDateMinute(DateUtils.getNowDate(), 30));
 
                     serviceRequests.add(serviceRequest);
                 }
             }
-            // 使用 MyBatis-Plus 的 saveBatch 方法批量插入
-            if (!serviceRequestService.saveBatch(serviceRequests)) {
-                return false; // 如果批量插入失败，返回 false
-            }
-            // 更新分组中每个记录的状态
-            for (OutpatientInfusionRecordDto record : groupRecords) {
-                String prefixBusNo = record.getBusNo() + "." + record.getGroupId() + "." + record.getMedicationId();
-                // 获取执行次数
-                Long exeCount =
-                    outpatientManageMapper.countMedicationExecuteNum(record.getServiceId(), prefixBusNo, null, true);
-
-                // 执行完毕后，更新执行服务请求表的状态
-                if (exeCount.equals(record.getExecuteNum())) {
-                    if (!updateRecordStatus(record.getServiceId())) {
-                        return false; // 如果更新状态失败，返回 false
-                    }
-                }
-            }
         }
-        // 所有分组都执行成功
+
+        // 使用 MyBatis-Plus 的 saveBatch 方法批量插入
+        if (!serviceRequestService.saveBatch(serviceRequests)) {
+            return false; // 如果批量插入失败，返回 false
+        }
+        // 批量更新执行状态
+        List<Long> serviceIds = checkServiceRequestIsCompleted();
+        int updateRes = batchUpdateRecordStatus(serviceIds);
+
+        // 如果更新失败，返回 false
+        if (updateRes == 0) {
+            return false;
+        }
+
         return true;
+
     }
 
     /**
-     * 更新执行状态
+     * 检查该条服务申请的所有输液信息都完成
      *
-     * @param serviceId 服务请求ID
+     * @return 更新的ID集合
+     */
+    public List<Long> checkServiceRequestIsCompleted() {
+
+        //获取全部执行输液记录
+        List<OutpatientInfusionRecordDto> patientInfusionList =getPatientInfusionPerformRecord(null,null,false);
+        // 按 serviceId 分组
+        Map<Long, List<OutpatientInfusionRecordDto>> servicePatientInfusionList = patientInfusionList.stream()
+            .collect(Collectors.groupingBy(OutpatientInfusionRecordDto::getServiceId));
+
+        // 存储更新的serviceId
+        List<Long> serviceIds = new ArrayList<>();
+
+        // 遍历每个分组
+        for (Map.Entry<Long, List<OutpatientInfusionRecordDto>> entry : servicePatientInfusionList.entrySet()) {
+            // 获取当前分组的 serviceId
+            Long serviceId = entry.getKey();
+            // 获取当前分组的记录列表
+            List<OutpatientInfusionRecordDto> groupRecords = entry.getValue();
+
+            // 创建一个数组来记录每个记录是否满足条件
+            int[] flags = new int[groupRecords.size()];
+            int index = 0; // 用于记录当前索引
+
+            for (OutpatientInfusionRecordDto record : groupRecords) {
+                String prefixBusNo = record.getBusNo() + CommonConstants.Common.DASH + record.getGroupId()
+                    + CommonConstants.Common.DASH + record.getMedicationId();
+                // 获取执行次数
+                Long exeCount = outpatientManageMapper.countExecuteNumOrGroupNum(serviceId, prefixBusNo, null, true);
+
+                // 判断是否满足条件
+                if (exeCount != null && exeCount.longValue() == record.getExecuteNum().longValue()) {
+                    flags[index] = 1; // 如果满足条件，设置为 1
+                } else {
+                    flags[index] = 0; // 如果不满足条件，设置为 0
+                }
+                index++;
+            }
+
+            // 使用与运算判断最终结果
+            int result = 1;
+            for (int flag : flags) {
+                result &= flag; // 与运算
+            }
+
+            // 如果最终结果为 1，表示所有记录都满足条件,即当前服务请求的数据全部被执行
+            if (result == 1) {
+                serviceIds.add(serviceId);
+                return serviceIds;
+            }
+
+        }
+
+        return null;
+    }
+
+    /**
+     * 批量更新执行状态
+     *
+     * @param serviceIds 服务请求ID列表
      * @return 修改成功/失败
      */
-    public boolean updateRecordStatus(Long serviceId) {
+    public int batchUpdateRecordStatus(List<Long> serviceIds) {
+        if (serviceIds == null || serviceIds.isEmpty()) {
+            // 返回-1,表示不更新
+            return -1;
+        }
+
         LambdaUpdateWrapper<ServiceRequest> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(ServiceRequest::getId, serviceId).set(ServiceRequest::getStatusEnum,
+        // 使用 IN 条件匹配多个 serviceId
+        updateWrapper.in(ServiceRequest::getId, serviceIds).set(ServiceRequest::getStatusEnum,
             EventStatus.COMPLETED.getValue());
 
         int countUpdate = serviceRequestMapper.update(null, updateWrapper);
-        return countUpdate > 0;
+        // 如果更新的记录数大于 0
+        return countUpdate;
     }
 
     /**
@@ -260,71 +327,110 @@ public class OutpatientInfusionRecordServiceImpl implements IOutpatientInfusionR
             DateUtils.parseDate(outpatientInfusionRecordDto.getOccurrenceEndTime()));
         int countUpdate = serviceRequestMapper.update(null, updateWrapper);
 
-        return countUpdate < 0 ? false : true;
+        return countUpdate >= 0;
 
     }
 
     /**
      * 显示门诊输液执行记录查询
      *
-     * @param beginTime 开始时间
-     * @param endTime 结束时间
+     * @param patientId 患者输液信息
      * @param historyFlag 查询的是否为执行履历
-     * @return 门诊输液执行记录查询
+     * @return 返回门诊输液执行记录查询
      */
     @Override
-    public List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(String beginTime, String endTime,
+    public List<OutpatientInfusionRecordDto> getPatientInfusionPerformRecord(Long patientId,HttpServletRequest request,
         boolean historyFlag) {
 
-        LocalDateTime beginDateTime;
-        LocalDateTime endDateTime;
-        // 筛选时间不传,默认当天记录
-        if (beginTime == null || endTime == null) {
-            beginDateTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), true);
-            endDateTime = DateUtils.startDayOrEndDay(DateUtils.getDate(), false);
-        } else {
-            beginDateTime = DateUtils.startDayOrEndDay(beginTime, true);
-            endDateTime = DateUtils.startDayOrEndDay(endTime, false);
-        }
+        // 构建查询条件
+        QueryWrapper<OutpatientInfusionRecordDto> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(null, null, null, request);
 
-        // 创建查询包装器
-        LambdaQueryWrapper<OutpatientInfusionRecordDto> queryWrapper = new LambdaQueryWrapper<>();
         // 执行历史查询的条件
         if (historyFlag) {
             // based_on_id 不为空，此条件筛选出执行履历
-            queryWrapper.isNotNull(OutpatientInfusionRecordDto::getBasedOnId);
+            queryWrapper.isNotNull(CommonConstants.FieldName.BasedOnId);
             // 状态是已完成
-            queryWrapper.eq(OutpatientInfusionRecordDto::getRequestStatus, EventStatus.COMPLETED.getValue());
+            queryWrapper.eq(CommonConstants.FieldName.RequestStatus, EventStatus.COMPLETED.getValue());
+            //筛选当前ID的患者历史执行记录
+            queryWrapper.eq(CommonConstants.FieldName.PatientId,patientId);
+            //执行次数大于0
+            queryWrapper.gt("done_num", 0);
+
+//            List<OutpatientInfusionRecordDto> infusionPerformList = editRecords(queryWrapper);
+//            List<Long> medicationIds = checkServiceRequestIsCompleted(infusionPerformList);
+//            // 未产生执行历史
+//            if (medicationIds == null || medicationIds.isEmpty()) {
+//                return infusionPerformList;
+//            }
+//            // 筛选一下执行的药品
+//            queryWrapper.in(CommonConstants.FieldName.MedicationId, medicationIds);
+            return editRecords(queryWrapper);
 
             // 门诊输液待执行记录查询
         } else {
-            // based_on_id 为空，此条件筛选控制不显示执行履历
-            queryWrapper.isNull(OutpatientInfusionRecordDto::getBasedOnId);
-            // 状态是进行中
-            queryWrapper.eq(OutpatientInfusionRecordDto::getRequestStatus, EventStatus.IN_PROGRESS.getValue());
-        }
-        // 时间筛选
-        queryWrapper.ge(OutpatientInfusionRecordDto::getCreateTime, beginDateTime);
-        queryWrapper.le(OutpatientInfusionRecordDto::getCreateTime, endDateTime);
 
-        // 从数据库获取输液记录列表
-        List<OutpatientInfusionRecordDto> infusionPerformList =
-            outpatientManageMapper.getOutpatientInfusionRecord(queryWrapper);
+            // based_on_id 为空，此条件筛选控制不显示执行履历
+            queryWrapper.isNull(CommonConstants.FieldName.BasedOnId);
+            // 状态是进行中
+            queryWrapper.eq(CommonConstants.FieldName.RequestStatus, EventStatus.IN_PROGRESS.getValue());
+            //筛选当前ID的患者历史执行记录
+            queryWrapper.eq(CommonConstants.FieldName.PatientId,patientId);
+
+            return editRecords(queryWrapper);
+        }
+
+    }
+
+    /**
+     * 执行完成后，显示执行历史
+     *
+     * @param infusionPerformList 执行历史输液列表
+     * @return medicationIds 返回药品id集合
+     */
+    public List<Long> checkServiceRequestIsCompleted(List<OutpatientInfusionRecordDto> infusionPerformList) {
+
+        List<Long> medicationIds = new ArrayList<>();
+        infusionPerformList.forEach(e -> {
+
+            // 使用正则表达式匹配 . 前面的第一个数字
+            String regex = "(\\d+)\\.";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(e.getBusNo());
+
+            if (matcher.find()) {
+                // 获取匹配的第一个数字
+                medicationIds.add(Long.valueOf(matcher.group(1))); // 添加到 List 中
+            }
+        });
+
+        return medicationIds;
+
+    }
+
+    /**
+     * 显示门诊输液执行记录查询
+     *
+     * @param queryWrapper 查询条件
+     * @return 返回门诊输液执行记录查询
+     */
+    public List<OutpatientInfusionRecordDto> editRecords(QueryWrapper<OutpatientInfusionRecordDto> queryWrapper) {
+
+        // 默认显示100条
+        IPage<OutpatientInfusionRecordDto> OutpatientInfusionRecordPage =
+            outpatientManageMapper.getOutpatientInfusionRecord(new Page<>(1, 100), queryWrapper);
+        List<OutpatientInfusionRecordDto> infusionPerformList = OutpatientInfusionRecordPage.getRecords();
 
         // 遍历列表并处理每个记录
         infusionPerformList.forEach(e -> {
             // 性别
             e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
             // 药品状态
-            e.setClinicalStatusEnum_enumText(EnumUtils.getInfoByValue(EventStatus.class, e.getMedicationStatusEnum()));
+            e.setMedicationStatusEnum_enumText(
+                EnumUtils.getInfoByValue(EventStatus.class, e.getMedicationStatusEnum()));
             // 皮试标志
             e.setSkinTestFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getSkinTestFlag()));
-            // 只有皮试药品才显示皮试结果
-            if (e.getSkinTestFlag() == Whether.YES.getValue()) {
-                // 皮试结果
-                e.setMedicationStatusEnum_enumText(
-                    EnumUtils.getInfoByValue(ClinicalStatus.class, e.getClinicalStatusEnum()));
-            }
+
         });
 
         return infusionPerformList;

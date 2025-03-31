@@ -52,4 +52,10 @@ public interface IDoctorStationEmrAppService {
      */
     R<?> deleteEmrTemplate(Long id);
 
+    /**
+     * 获取病历详情
+     * @param encounterId 就诊id
+     * @return 病历详情
+     */
+    R<?> getEmrDetail(Long encounterId);
 }

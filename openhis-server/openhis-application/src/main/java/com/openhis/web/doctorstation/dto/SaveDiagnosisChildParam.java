@@ -40,6 +40,7 @@ public class SaveDiagnosisChildParam {
     /**
      * 诊断ID - 用于存储 adm_encounter_diagnosis表
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long conditionId;
 
 }

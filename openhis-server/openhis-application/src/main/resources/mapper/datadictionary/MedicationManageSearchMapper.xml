@@ -1,12 +1,89 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.openhis.web.datadictionary.mapper.MedicationManageSearchMapper">
+     <!-- 药品信息分页查询-->
     <select id="getPage" parameterType="java.util.Map"
             resultType="com.openhis.web.datadictionary.dto.MedicationManageDto">
+    SELECT
+        T6.id,
+        T6.medication_def_id,
+        T6.status_enum,
+        T6.org_id,
+        T6.location_id,
+        T6.dose_form_code,
+        T6.total_volume,
+        T6.ingredient_item,
+        T6.active_flag,
+        T6.lot_number,
+        T6.effective_date,
+        T6.expiration_date,
+        T6.method_code,
+        T6.rate_code,
+        T6.dose,
+        T6.dose_unit_code,
+        T6.max_unit,
+        T6.definition,
+        T6.usage_limit,
+        T6.ddd_code,
+        T6.ddd_unit_code,
+        T6.min_rate_code,
+        T6.max_rate_code,
+        T6.bus_no,
+        T6.name,
+        T6.domain_enum,
+        T6.version,
+        T6.name_en,
+        T6.py_str,
+        T6.wb_str,
+        T6.category_code,
+        T6.merchandise_name,
+        T6.merchandise_py_str,
+        T6.merchandise_wb_str,
+        T6.unit_code,
+        T6.comprised_text,
+        T6.ingredient,
+        T6.part_percent,
+        T6.dose_from,
+        T6.approval_number,
+        T6.yb_match_flag,
+        T6.yb_no,
+        T6.pharmacology_category_code,
+        T6.skin_test_flag,
+        T6.inject_flag,
+        T6.manufacturer_id,
+        T6.manufacturer_text,
+        T6.supply_id,
+        T6.restricted_flag,
+        T6.restricted_scope,
+        T6.children_flag,
+        T6.characteristic,
+        T6.national_drug_code,
+        T6.part_attribute_enum,
+        T6.tho_part_attribute_enum,
+        T6.antibiotic_code,
+        T6.restricted_enum,
+        T6.self_flag,
+        T6.antibiotic_flag,
+        T6.basic_flag,
+        T6.remark,
+        T6.manufacturer_name,
+        T6.base_unit_code,
+        T6.base_quantity,
+        T6.min_unit_code,
+        T6.min_quantity,
+        T6.yb_type,
+        T6.type_code,
+        T6.retail_price,
+        T6.purchase_price,
+        T6.retail_price,
+        T6.tenant_id
+        FROM
+        (
         SELECT T2.id,
         T2.medication_def_id,
         T2.status_enum,
         T2.org_id,
+        T2.location_id,
         T2.dose_form_code,
         T2.total_volume,
         T2.ingredient_item,
@@ -20,6 +97,11 @@
         T2.dose_unit_code,
         T2.max_unit,
         T2.definition,
+        T2.usage_limit,
+        T2.ddd_code,
+        T2.ddd_unit_code,
+        T2.min_rate_code,
+        T2.max_rate_code,
         T1.bus_no,
         T1.name,
         T1.domain_enum,
@@ -32,7 +114,6 @@
         T1.merchandise_py_str,
         T1.merchandise_wb_str,
         T1.unit_code,
-        T1.min_unit_code,
         T1.comprised_text,
         T1.ingredient,
         T1.part_percent,
@@ -44,46 +125,64 @@
         T1.skin_test_flag,
         T1.inject_flag,
         T1.manufacturer_id,
+        T1.manufacturer_text,
         T1.supply_id,
         T1.restricted_flag,
         T1.restricted_scope,
         T1.children_flag,
-        T1.characteristic
+        T1.characteristic,
+        T1.national_drug_code,
+        T1.part_attribute_enum,
+        T1.tho_part_attribute_enum,
+        T1.antibiotic_code,
+        T1.restricted_enum,
+        T1.self_flag,
+        T1.antibiotic_flag,
+        T1.basic_flag,
+        T1.remark,
+        T3.name AS manufacturer_name,
+        T4.base_unit_code,
+        T4.base_quantity,
+        T4.min_unit_code,
+        T4.min_quantity,
+        T5.yb_type,
+        T5.type_code,
+        T1.tenant_id,
+        T5.price as retail_price,--零售价
+        (SELECT T7.amount
+        FROM adm_charge_item_definition T5
+        LEFT JOIN  adm_charge_item_def_detail T7 ON  T7.definition_id = T5.id
+        WHERE   T7.condition_code = '2'--2:采购价
+        AND T5.instance_id = T2.medication_def_id
+        AND T5.instance_table = 'med_medication_definition'
+        ) as purchase_price,--购入价
+        (
+        SELECT T7.amount
+        FROM adm_charge_item_definition T5
+        LEFT JOIN  adm_charge_item_def_detail T7 ON  T7.definition_id = T5.id
+        WHERE   T7.condition_code = '4'--4:限制
+        AND T5.instance_id = T2.medication_def_id
+        AND T5.instance_table = 'med_medication_definition'
+        ) as maximum_retail_price--最高零售价
         FROM med_medication_definition T1
-        LEFT JOIN med_medication T2 on T1.id = T2.medication_def_id
+        LEFT JOIN med_medication T2 ON T1.id = T2.medication_def_id
+        LEFT JOIN adm_supplier T3 ON T1.manufacturer_id = T3.id
+        LEFT JOIN wor_inventory_item T4 ON  T1.id = T4.item_id
+        LEFT JOIN adm_charge_item_definition T5 ON  T2.medication_def_id = T5.instance_id
         <where>
             T1.delete_flag = '0'
-            <if test="searchKey!=null and searchKey!='' ">
-                AND ( T1.name LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.name_en LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.merchandise_name LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.bus_no LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.py_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.wb_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.merchandise_py_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.merchandise_wb_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%'))
-            </if>
-            <if test="ybMatchFlag!= -1">
-                AND T1.yb_match_flag = #{ybMatchFlag}
-            </if>
-            <if test="statusEnum!= -1">
-                AND T2.status_enum = #{statusEnum}
-            </if>
-            <if test="categoryCode!=null and categoryCode!='' ">
-                AND T1.category_code = #{categoryCode}
-            </if>
-            <if test="tenantId!= null">
-                AND T1.tenant_id = #{tenantId}
-            </if>
+            AND T5.instance_table = 'med_medication_definition'
         </where>
-        ORDER BY T1.bus_no
-        LIMIT #{pageSize} OFFSET #{offset}
+        ) AS T6
+        ${ew.customSqlSegment}
     </select>
+
     <select id="getOne" resultType="com.openhis.web.datadictionary.dto.MedicationManageDto">
         SELECT T2.id,
         T2.medication_def_id,
         T2.status_enum,
         T2.org_id,
+        T2.location_id,
         T2.dose_form_code,
         T2.total_volume,
         T2.ingredient_item,
@@ -97,6 +196,11 @@
         T2.dose_unit_code,
         T2.max_unit,
         T2.definition,
+        T2.usage_limit,
+        T2.ddd_code,
+        T2.ddd_unit_code,
+        T2.min_rate_code,
+        T2.max_rate_code,
         T1.bus_no,
         T1.name,
         T1.domain_enum,
@@ -121,53 +225,52 @@
         T1.skin_test_flag,
         T1.inject_flag,
         T1.manufacturer_id,
+        T1.manufacturer_text,
         T1.supply_id,
         T1.restricted_flag,
         T1.restricted_scope,
         T1.children_flag,
-        T1.characteristic
+        T1.characteristic,
+        T1.national_drug_code,
+        T1.part_attribute_enum,
+        T1.tho_part_attribute_enum,
+        T1.antibiotic_code,
+        T1.restricted_enum,
+        T1.self_flag,
+        T1.antibiotic_flag,
+        T1.basic_flag,
+        T3.type_code,
+        T3.yb_type,
+        T3.price as retail_price,--零售价
+         (SELECT T4.amount
+            FROM adm_charge_item_definition T3
+            LEFT JOIN  adm_charge_item_def_detail T4 ON  T4.definition_id = T3.id
+            WHERE   T4.condition_code = '2'--2:采购价
+            AND T3.instance_id = T2.medication_def_id
+            AND T3.instance_table = 'med_medication_definition'
+        ) as purchase_price,--购入价
+        (
+        SELECT T4.amount
+        FROM adm_charge_item_definition T3
+        LEFT JOIN  adm_charge_item_def_detail T4 ON  T4.definition_id = T3.id
+        WHERE   T4.condition_code = '4'--4:限制
+        AND T3.instance_id = T2.medication_def_id
+        AND T3.instance_table = 'med_medication_definition'
+        ) as maximum_retail_price--最高零售价
         FROM med_medication_definition T1
         LEFT JOIN med_medication T2 on T1.id = T2.medication_def_id
+        LEFT JOIN adm_charge_item_definition T3 ON  T2.medication_def_id = T3.instance_id
         <where>
             T1.delete_flag = '0'
-            <if test="id!= 0">
-                AND T1.id = #{id}
+            <if test="id!= null">
+                AND T2.id = #{id}
             </if>
             <if test="tenantId!= null">
                 AND T1.tenant_id = #{tenantId}
             </if>
         </where>
     </select>
-    <select id="getPageCount" resultType="java.lang.Long">
-        SELECT COUNT(*)
-        FROM med_medication_definition T1
-        LEFT JOIN med_medication T2 on T1.id = T2.medication_def_id
-        <where>
-            T1.delete_flag = '0'
-            <if test="searchKey!=null and searchKey!='' ">
-                AND ( T1.name LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.name_en LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.merchandise_name LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.bus_no LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.py_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.wb_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.merchandise_py_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR
-                T1.merchandise_wb_str LIKE CONCAT(CONCAT('%', #{searchKey}),'%'))
-            </if>
-            <if test="ybMatchFlag!= -1">
-                AND T1.yb_match_flag = #{ybMatchFlag}
-            </if>
-            <if test="statusEnum!= -1">
-                AND T2.status_enum = #{statusEnum}
-            </if>
-            <if test="categoryCode!=null and categoryCode!='' ">
-                AND T1.category_code = #{categoryCode}
-            </if>
-            <if test="tenantId!= null">
-                AND T1.tenant_id = #{tenantId}
-            </if>
-        </where>
-    </select>
+
     <select id="getList" resultType="com.openhis.web.datadictionary.dto.MedicationManageDto">
         SELECT T2.id,
         T2.medication_def_id,
@@ -244,4 +347,5 @@
         </where>
         ORDER BY T1.bus_no
     </select>
+
 </mapper>

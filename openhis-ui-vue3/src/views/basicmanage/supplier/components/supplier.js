@@ -70,3 +70,12 @@ export function getSupplierInit() {
     method: 'get'
   })
 }
+
+// 查询部门树结构
+export function deptTreeSelect(queryParams) {
+  return request({
+    url: '/base-data-manage/organization/organization',
+    method: 'get',
+    param: queryParams
+  })
+}

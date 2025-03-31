@@ -3,7 +3,6 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import lombok.Data;
@@ -17,9 +16,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class ItemChargeDetailDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ItemChargeDetailDto {
 
     /** 费用定价主键ID */
     private Long definitionId;

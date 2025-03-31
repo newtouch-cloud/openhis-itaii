@@ -1,47 +1,48 @@
 package com.openhis.web.basedatamanage.appservice;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.core.common.core.domain.R;
-import com.openhis.web.basedatamanage.dto.PractSearchParam;
-import com.openhis.web.basedatamanage.dto.PractitionerDto;
+import com.openhis.web.basedatamanage.dto.UserAndPractitionerDto;
 
 /**
- * Practitioner 应该服务类
+ * 参与者 应该服务类
  */
 public interface IPractitionerAppService {
-    /**
-     * 查询员工信息
-     *
-     * @param pageNo 当前页码
-     * @param pageSize 查询条数
-     * @param request 请求数据
-     * @return 员工分页列表
-     */
-    R<?> getPractitionerPage(PractSearchParam practSearchParam, String searchKey, Integer pageNo, Integer pageSize,
-        HttpServletRequest request);
 
     /**
-     * 员工信息详情
-     *
-     * @param practitionerId 员工信息id
-     * @return 员工信息详情
+     * 新增用户及参与者
+     * 
+     * @param userAndPractitionerDto 用户及参与者dto
+     * @return 结果
      */
-    R<?> getPractitionerById(Long practitionerId);
+    R<?> saveUserPractitioner(UserAndPractitionerDto userAndPractitionerDto);
 
     /**
-     * 添加/编辑员工信息
-     *
-     * @param practitionerDto 员工信息
-     * @return 操作结果
+     * 查询用户及参与者
+     * 
+     * @param userAndPractitionerDto 查询条件
+     * @param searchKey 模糊查询关键字
+     * @param pageNo 当前页
+     * @param pageSize 每页多少条
+     * @return 用户及参与者
      */
-    R<?> addOrEditPractitioner(PractitionerDto practitionerDto);
+    IPage<UserAndPractitionerDto> getUserPractitionerPage(UserAndPractitionerDto userAndPractitionerDto,
+        String searchKey, Integer pageNo, Integer pageSize);
 
     /**
-     * 员工信息
+     * 修改用户及参与者
      *
-     * @param practitionerId 员工信息id
-     * @return 操作结果
+     * @param userAndPractitionerDto 用户及参与者dto
+     * @return 结果
      */
-    R<?> deletePractitioner(Long practitionerId);
+    R<?> editUserPractitioner(UserAndPractitionerDto userAndPractitionerDto);
+
+    /**
+     * 删除用户及参与者 ; admin不允许删除
+     *
+     * @param userId 系统用户id
+     * @return 结果
+     */
+    R<?> delUserPractitioner(Long userId);
+
 }

@@ -16,8 +16,8 @@ public interface IPaymentReconciliationService extends IService<PaymentReconcili
     /**
      * 根据支付id获取对应收费项目的id列表
      *
-     * @param paymentId 支付id
+     * @param paymentIdList 支付id列表
      * @return 收费项目的id列表
      */
-    List<Long> getChargeItemIdListByPayment(Long paymentId);
+    List<Long> getChargeItemIdListByPayment(List<Long> paymentIdList);
 }

@@ -3,7 +3,6 @@
  */
 package com.openhis.web.chargemanage.dto;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -18,9 +17,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class EncounterPatientPrescriptionDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class EncounterPatientPrescriptionDto {
 
     /** 收费项目类型 */
     private Integer contextEnum;

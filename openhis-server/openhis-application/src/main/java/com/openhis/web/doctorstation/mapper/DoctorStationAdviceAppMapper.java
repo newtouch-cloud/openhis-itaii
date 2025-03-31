@@ -26,12 +26,13 @@ public interface DoctorStationAdviceAppMapper {
      * @param medicationTableName 药品定义表名
      * @param deviceTableName 耗材定义表名
      * @param activityTableName 诊疗定义表名
+     * @param singleUse 单次消耗类 (耗材只查这类)
      * @param queryWrapper 查询条件
      * @return 医嘱信息
      */
     IPage<AdviceBaseDto> getAdviceBaseInfo(@Param("page") Page<AdviceBaseDto> page,
         @Param("medicationTableName") String medicationTableName, @Param("deviceTableName") String deviceTableName,
-        @Param("activityTableName") String activityTableName,
+        @Param("activityTableName") String activityTableName, @Param("singleUse") String singleUse,
         @Param(Constants.WRAPPER) QueryWrapper<AdviceBaseDto> queryWrapper);
 
     /**

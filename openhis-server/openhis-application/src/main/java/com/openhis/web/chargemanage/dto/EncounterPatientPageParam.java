@@ -3,7 +3,6 @@
  */
 package com.openhis.web.chargemanage.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
@@ -17,9 +16,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class EncounterPatientPageParam implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class EncounterPatientPageParam {
 
     /**
      * 患者姓名
@@ -55,6 +52,11 @@ public class EncounterPatientPageParam implements Serializable {
      * 开始时间
      */
     private Date startTime;
+
+    /**
+     * 收费时间
+     */
+    private Date billTime;
 
     /**
      * 收费状态

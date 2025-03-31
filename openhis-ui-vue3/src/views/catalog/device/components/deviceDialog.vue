@@ -5,17 +5,17 @@
       <el-form
         :model="form"
         :rules="rules"
-        ref="medicationRef"
+        ref="deviceDialogRef"
         label-width="110px"
         label-position="left"
       >
         <el-row :gutter="24">
-          <el-col :span="8">
+          <el-col :span="8" v-if="form.id != undefined">
             <el-form-item label="编号" prop="busNo">
               <el-input
                 v-model="form.busNo"
                 placeholder="请输入编码"
-                :disabled="form.id != undefined"
+                disabled
               />
             </el-form-item>
           </el-col>
@@ -25,50 +25,104 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item
-              label="拼音码(器材名称)"
-              prop="pyStr"
-              class="custom-label-spacing"
-            >
-              <el-input v-model="form.pyStr" placeholder="" />
+            <el-form-item label="器材分类" prop="categoryCode">
+              <el-tree-select
+                v-model="form.categoryCode"
+                :data="deviceCategories"
+                :props="{ value: 'value', label: 'info', children: 'children' }"
+                value-key="value"
+                placeholder=""
+                check-strictly
+                disabled
+                clearable
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="器材五笔拼音" prop="wbStr">
-              <el-input v-model="form.wbStr" placeholder="" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="器材分类" prop="categoryEnum">
-              <el-input v-model="form.categoryEnum" placeholder="" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
             <el-form-item label="器材种类" prop="typeCode">
-              <el-input v-model="form.typeCode" placeholder="" />
+              <el-select v-model="form.typeCode" placeholder="请选择" clearable>
+                <el-option
+                  v-for="dict in device_type_code"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="提供部门" prop="orgId">
+              <el-tree-select
+                v-model="form.orgId"
+                :data="deptOptions"
+                :props="{ value: 'id', label: 'name', children: 'children' }"
+                value-key="id"
+                placeholder="请选择提供部门"
+                check-strictly
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="地点" prop="locationId">
+              <el-tree-select
+                v-model="form.locationId"
+                :data="locationOptions"
+                :props="{ value: 'id', label: 'name', children: 'children' }"
+                value-key="id"
+                placeholder="请选择地点"
+                check-strictly
+                clearable
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="包装单位" prop="unitCode">
-              <el-input v-model="form.unitCode" placeholder="" />
+              <el-select v-model="form.unitCode" placeholder="请选择" clearable>
+                <el-option
+                  v-for="dict in unit_code"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="8">
+            <el-form-item label="销售单位" prop="salesUnitCode">
+              <el-select v-model="form.salesUnitCode" placeholder="请选择" clearable>
+                <el-option
+                  v-for="dict in unit_code"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="最小单位" prop="minUnitCode">
+              <el-select v-model="form.minUnitCode" placeholder="请选择" clearable>
+                <el-option
+                  v-for="dict in unit_code"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="包装规格" prop="size">
               <el-input v-model="form.size" placeholder="" />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="最小单位" prop="minUnitCode">
-              <el-input v-model="form.minUnitCode" placeholder="" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="拆零比" prop="partPercent">
               <el-input v-model="form.partPercent" placeholder="" />
@@ -79,39 +133,81 @@
               <el-input v-model="form.modelNumber" placeholder="" />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="高值器材标志" prop="hvcmFlag">
-              <!-- <el-input
-                v-model="form.hvcmFlag"
-                placeholder=""
-                :disabled="form.id != undefined"
-              /> -->
-              <el-checkbox v-model="form.hvcmFlag"></el-checkbox>
-            </el-form-item>
-          </el-col>
         </el-row>
         <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="销售单位" prop="salesUnitCode">
-              <el-input v-model="form.salesUnitCode" placeholder="" />
-            </el-form-item>
-          </el-col>
           <el-col :span="8">
             <el-form-item label="批准文号" prop="approvalNumber">
               <el-input v-model="form.approvalNumber" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="医保标记" prop="ybFlag">
-              <!-- <el-input v-model="form.ybFlag" placeholder="" /> -->
-              <el-checkbox v-model="form.ybFlag"></el-checkbox>
+            <el-form-item label="医保编码" prop="ybNo">
+              <el-input v-model="form.ybNo" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="器材版本" prop="version">
+              <el-input v-model="form.version" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="医保编码" prop="ybNo">
-              <el-input v-model="form.ybNo" placeholder="" />
+            <el-form-item label="主要成分" prop="substanceText">
+              <el-input v-model="form.substanceText" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="适用范围" prop="jurisdiction">
+              <el-input v-model="form.jurisdiction" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="状态" prop="statusEnum">
+              <el-select v-model="form.statusEnum" placeholder="请选择" clearable>
+                <el-option
+                  v-for="dict in statusFlagOptions"
+                  :key="dict.value"
+                  :label="dict.info"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="生产厂家" prop="manufacturerText">
+              <el-input v-model="form.manufacturerText" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="供应商" prop="supplyId">
+              <el-select
+                v-model="form.supplyId"
+                placeholder=""
+                clearable
+                style="width: 150px"
+              >
+                <el-option
+                  v-for="supplier in supplierListOptions"
+                  :key="supplier.value"
+                  :label="supplier.label"
+                  :value="supplier.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="过敏标记" prop="allergenFlag">
+              <el-checkbox v-model="form.allergenFlag"></el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="医保标记" prop="ybFlag">
+              <el-checkbox v-model="form.ybFlag"></el-checkbox>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -120,49 +216,59 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="状态" prop="statusEnum">
-              <el-input v-model="form.statusEnum" placeholder="" />
+            <el-form-item label="高值器材标志" prop="hvcmFlag">
+              <el-checkbox v-model="form.hvcmFlag"></el-checkbox>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="生产厂家" prop="manufacturerId">
-              <el-input v-model="form.manufacturerId" placeholder="" />
+            <el-form-item label="财务类型" prop="itemTypeCode">
+              <el-select
+                v-model="form.itemTypeCode"
+                clearable
+              >
+                <el-option
+                  v-for="category in fin_type_code"
+                  :key="category.value"
+                  :label="category.label"
+                  :value="category.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="供应商" prop="supplyId">
-              <el-input v-model="form.supplyId" placeholder="" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="适用范围" prop="jurisdiction">
-              <el-input v-model="form.jurisdiction" placeholder="" />
+            <el-form-item label="医保类别" prop="ybType">
+              <el-select
+                v-model="form.ybType"
+                placeholder="医保类别"
+                clearable
+                style="width: 240px"
+              >
+                <el-option
+                  v-for="dict in yb_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="执行科室" prop="ruleId">
-              <el-input v-model="form.ruleId" placeholder="" />
+            <el-form-item label="购入价" prop="purchasePrice">
+              <el-input v-model="form.purchasePrice" placeholder="" :disabled="form.id != undefined"/>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="器材版本" prop="version">
-              <el-input v-model="form.version" placeholder="" />
+            <el-form-item label="零售价" prop="retailPrice">
+              <el-input v-model="form.retailPrice" placeholder="" :disabled="form.id != undefined"/>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="主要成分" prop="substanceText">
-              <el-input v-model="form.substanceText" placeholder="" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="过敏标记" prop="allergenFlag">
-              <el-checkbox v-model="form.allergenFlag"></el-checkbox>
+            <el-form-item label="最高零售价" prop="maximumRetailPrice">
+              <el-input v-model="form.maximumRetailPrice" placeholder="" :disabled="form.id != undefined"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -191,23 +297,28 @@
 
 <script setup name="MedicineDialog">
 import {
-  getDeviceList,
   editDevice,
   addDevice,
-  getDiseaseTreatmentInit,
-  getDeviceOne,
+  deptTreeSelect,
+  locationTreeSelect,
 } from "./device";
 
-const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict(
-  "sys_normal_disable",
-  "sys_user_sex"
+const { device_type_code, unit_code,fin_type_code,yb_type } = proxy.useDict(
+  "device_type_code",
+  "unit_code",
+  "fin_type_code",
+  "yb_type"
 );
 
 const title = ref("");
 const visible = ref(false);
 const emits = defineEmits(["submit"]); // 声明自定义事件
+const deptOptions = ref(undefined); // 部门树选项
+const locationOptions = ref(undefined); // 地点树选项
+const deviceCategories = ref([]); // 器材分类
+const statusFlagOptions = ref([]); // 状态标记
+const supplierListOptions = ref([]); // 供应商列表
 
 const data = reactive({
   form: {},
@@ -216,7 +327,7 @@ const data = reactive({
     name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
     pyStr: [{ required: true, message: "拼音不能为空", trigger: "blur" }],
     wbStr: [{ required: true, message: "五笔拼音不能为空", trigger: "blur" }],
-    categoryEnum: [
+    categoryCode: [
       { required: true, message: "器材分类不能为空", trigger: "blur" },
     ],
     typeCode: [
@@ -264,6 +375,13 @@ const data = reactive({
     allergenFlag: [
       { required: true, message: "过敏标记不能为空", trigger: "blur" },
     ],
+    orgId: [{ required: true, message: "提供部门不能为空", trigger: "blur" }],
+    locationId: [{ required: true, message: "地点不能为空", trigger: "blur" }],
+    purchasePrice:[{ required: true, message: "购入价不能为空", trigger: "blur" }],
+    retailPrice:[{ required: true, message: "零售价不能为空", trigger: "blur" }],
+    maximumRetailPrice:[{ required: true, message: "最高零售价不能为空", trigger: "blur" }],
+    ybType:[{ required: true, message: "医保类型不能为空", trigger: "blur" }],
+    itemTypeCode:[{ required: true, message: "财务类型不能为空", trigger: "blur" }],
   },
 });
 
@@ -278,26 +396,64 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  deviceCategories: {
+    type: Object,
+    required: false,
+  },
+  statusFlagOptions: {
+    type: Object,
+    required: false,
+  },
+  currentCategoryEnum: {
+    type: String,
+    required: true,
+  },
+  supplierListOptions: {
+    type: Object,
+    required: false,
+  },
 });
 
 // 显示弹框
 function show() {
   reset();
-  // queryParams.roleId = props.roleId;
-  // getList();
   title.value = "";
   title.value = props.title;
-  console.log(props, "22222", title.value);
+  deviceCategories.value = props.deviceCategories;
+  statusFlagOptions.value = props.statusFlagOptions;
+  form.value.categoryCode = props.currentCategoryEnum;
+  supplierListOptions.value = props.supplierListOptions;
+  console.log(props, "22222", title.value, props.deviceCategories);
+  getDeptTree();
+  getLocationTree();
   visible.value = true;
+}
+/** 查询部门下拉树结构 */
+function getDeptTree() {
+  deptTreeSelect().then((response) => {
+    console.log(response, "response查询部门下拉树结构");
+    deptOptions.value = response.data.records;
+  });
+}
+
+/** 查询地点下拉树结构 */
+function getLocationTree() {
+  locationTreeSelect().then((response) => {
+    console.log(response, "response查询部门下拉树结构");
+    locationOptions.value = response.data.records;
+  });
 }
 // 显示弹框
 function edit() {
-  // queryParams.roleId = props.roleId;
-  // getList();
   reset();
   title.value = "";
   title.value = props.title;
   form.value = props.item;
+  deviceCategories.value = props.deviceCategories;
+  statusFlagOptions.value = props.statusFlagOptions;
+  supplierListOptions.value = props.supplierListOptions;
+  getDeptTree();
+  getLocationTree();
   visible.value = true;
 }
 /** 重置操作表单 */
@@ -308,7 +464,7 @@ function reset() {
     name: undefined, // 名称
     pyStr: undefined, // 拼音码
     wbStr: undefined, // 五笔码
-    categoryEnum: undefined, // 类别
+    categoryCode: undefined, // 类别
     typeCode: undefined, // 类型编码
     unitCode: undefined, // 单位编码
     size: undefined, // 规格
@@ -330,8 +486,15 @@ function reset() {
     version: undefined, // 器材版本
     substanceText: undefined, // 主要成分
     allergenFlag: undefined, // 过敏标记
+    orgId: undefined, // 科室ID
+    locationId: undefined, // 地点ID
+    ybType: undefined, // 医保类型
+    itemTypeCode: undefined, // 最小收费
+    purchasePrice: undefined, // 购入价
+    retailPrice: undefined, // 零售价
+    maximumRetailPrice: undefined, // 最高零售价
   };
-  proxy.resetForm("medicationRef");
+  proxy.resetForm("deviceDialogRef");
 }
 
 /** 提交按钮 */

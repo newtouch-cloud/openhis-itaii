@@ -147,4 +147,27 @@ public class DoctorStationDiagnosisController {
         return iDoctorStationDiagnosisAppService.getConditionDefinitionBusinessClass(patientId);
     }
 
+    /**
+     * 查询就诊诊断信息
+     * 
+     * @param encounterId 就诊id
+     * @return 就诊诊断信息
+     */
+    @GetMapping(value = "/get-encounter-diagnosis")
+    public R<?> getEncounterDiagnosis(@RequestParam Long encounterId) {
+        return iDoctorStationDiagnosisAppService.getEncounterDiagnosis(encounterId);
+    }
+
+    /**
+     * 删除就诊诊断信息
+     *
+     * @param conditionId 诊断ID
+     * @return 结果
+     */
+    @DeleteMapping(value = "/encounter-diagnosis")
+    public R<?> delEncounterDiagnosis(@RequestParam Long conditionId) {
+        return iDoctorStationDiagnosisAppService.delEncounterDiagnosis(conditionId);
+    }
+
+
 }

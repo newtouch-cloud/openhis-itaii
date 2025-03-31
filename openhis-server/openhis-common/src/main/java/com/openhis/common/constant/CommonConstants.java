@@ -40,6 +40,11 @@ public class CommonConstants {
          * 3（用于字符串截位）
          */
         Integer THREE = 3;
+
+        /**
+         * 中杠
+         */
+        String DASH = "-";
     }
 
     /**
@@ -114,10 +119,14 @@ public class CommonConstants {
         String PatientBusNo = "patient_bus_no";
 
         /**
+         * 患者ID
+         */
+        String PatientId = "patient_id";
+
+        /**
          * 就诊号
          */
         String EncounterBusNo = "encounter_bus_no";
-
         /**
          * 身份证号
          */
@@ -141,17 +150,37 @@ public class CommonConstants {
         /**
          * 请求状态
          */
-        String requestStatus = "request_status";
+        String RequestStatus = "request_status";
 
         /**
          * 创建时间
          */
-        String createTime = "create_time";
+        String CreateTime = "create_time";
 
         /**
          * 请求基于什么的ID
          */
-        String basedOnId = "based_on_id";
+        String BasedOnId = "based_on_id";
+
+        /**
+         * 药品id
+         */
+        String MedicationId = "medication_id";
+
+        /**
+         * 就诊Id
+         */
+        String encouterId = "encouter_id";
+
+        /**
+         * 合同编码
+         */
+        String contractNo = "contract_no";
+
+        /**
+         * 支付流水
+         */
+        String paymentNo = "payment_no";
     }
 
     /**
@@ -168,6 +197,25 @@ public class CommonConstants {
          * 中医诊断
          */
         String TCM_DIAGNOSIS = "中医诊断";
+    }
+
+    /**
+     * 字典字段名常量
+     */
+    public interface DictName {
+        /**
+         * 器材
+         */
+        String MED_CATEGORY_CODE = "med_category_code";
+        /**
+         * 药品分类
+         */
+        String DEVICE_CATEGORY_CODE = "device_category_code";
+        /**
+         * 诊疗分类
+         */
+        String DIAGNOSIS_CATEGORY_CODE = "activity_category_code";
+
     }
 
     /**

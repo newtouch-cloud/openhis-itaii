@@ -31,6 +31,16 @@ public class OutpatientChargeController {
     private IOutpatientChargeAppService outpatientChargeAppService;
 
     /**
+     * 门诊收费页面初始化
+     *
+     * @return 初始化信息
+     */
+    @GetMapping(value = "/init")
+    public R<?> outpatientChargeInit() {
+        return outpatientChargeAppService.outpatientChargeInit();
+    }
+
+    /**
      * 查询就诊患者分页列表
      *
      * @param encounterPatientPageParam 查询条件

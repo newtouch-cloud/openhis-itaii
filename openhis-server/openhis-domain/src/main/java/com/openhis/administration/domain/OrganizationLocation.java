@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.annotation.Dict;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -40,8 +41,9 @@ public class OrganizationLocation extends HisBaseEntity {
     /** 默认执行科室 */
     private Long defOrganizationId;
 
-    /** 药品类别 */
-    private String medCategoryCode;
+    /** 发放类别 */
+    @Dict(dictCode = "distribution_category_code")
+    private String distributionCategoryCode;
 
     /** 开始时间 */
     private Date startTime;

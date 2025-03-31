@@ -3,6 +3,8 @@ package com.openhis.web.datadictionary.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,6 +20,11 @@ public class DiagnosisTreatmentInitDto {
     private List<statusEnumOption> statusFlagOptions;
     private List<diseaseTreatmentCategory> diseaseTreatmentCategoryList;
     private List<exeOrganization> exeOrganizations;
+    private List<statusEnumOption> typeEnumOptions;
+    //诊疗目录
+    private List<dictCategoryCode> diagnosisCategoryOptions;
+    //是否list
+    private List<statusEnumOption> statusWeatherOption;
 
     /**
      * 状态
@@ -64,6 +71,21 @@ public class DiagnosisTreatmentInitDto {
     }
 
     /**
+     * 诊疗目录类型
+     */
+    @Data
+    public static class dictCategoryCode {
+        private String value;
+        private String info;
+        private List<dictCategoryCode> children = new ArrayList<>();
+
+        public dictCategoryCode(String value, String info) {
+            this.value = value;
+            this.info = info;
+        }
+    }
+
+    /**
      * 执行机构
      */
     @Data
@@ -76,4 +98,5 @@ public class DiagnosisTreatmentInitDto {
             this.label = label;
         }
     }
+
 }

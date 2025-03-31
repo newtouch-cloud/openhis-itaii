@@ -1,10 +1,12 @@
 package com.openhis.web.outpatientmanage.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -42,12 +44,15 @@ public class OutpatientInfusionPatientDto {
     private String genderEnum_enumText;
 
     /** 病人生日 */
-    private Date birthDate;
+    private String birthDate;
 
     /** 病人身份证号 */
     private String idCard;
 
     /** 病人年龄 */
     private String ageString;
+
+    /** 开单时间 */
+    private String createTime;
 
 }

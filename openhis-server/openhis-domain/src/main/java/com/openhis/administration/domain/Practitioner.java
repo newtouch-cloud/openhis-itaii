@@ -80,6 +80,9 @@ public class Practitioner extends HisBaseEntity {
     /** 医保码 */
     private String ybNo;
 
+    /** 机构id */
+    private Long orgId;
+
     /** 系统用户id */
     private Long userId;
 

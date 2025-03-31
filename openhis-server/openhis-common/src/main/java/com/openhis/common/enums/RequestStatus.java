@@ -23,37 +23,42 @@ public enum RequestStatus implements HisEnumInterface {
     /**
      * 已发送
      */
-    COMPLETED(2, "completed", "已发送"),
+    ACTIVE(2, "active", "已发送"),
+
+    /**
+     * 已完成
+     */
+    COMPLETED(3, "completed", "已完成"),
 
     /**
      * 暂停
      */
-    ON_HOLD(3, "on_hold", "暂停"),
+    ON_HOLD(4, "on_hold", "暂停"),
 
     /**
-     * 撤回
+     * 取消
      */
-    CANCELLED(4, "cancelled", "撤回"),
+    CANCELLED(5, "cancelled", "取消"),
 
     /**
      * 停止
      */
-    STOPPED(5, "stopped", "停止"),
+    STOPPED(6, "stopped", "停止"),
 
     /**
      * 不可用
      */
-    ENDED(6, "ended", "不可用"),
-
-    /**
-     * 未知
-     */
-    UNKNOWN(7, "unknown", "未知"),
+    ENDED(7, "ended", "不可用"),
 
     /**
      * 已汇总
      */
-    SUMMARIZED(8, "summarized", "已汇总");
+    SUMMARIZED(8, "summarized", "已汇总"),
+
+    /**
+     * 未知
+     */
+    UNKNOWN(9, "unknown", "未知");
 
     @EnumValue
     private final Integer value;

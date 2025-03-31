@@ -23,7 +23,7 @@ import com.openhis.administration.service.*;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.*;
-import com.openhis.common.enums.PractitionerRole;
+import com.openhis.common.enums.PractitionerRoles;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
@@ -142,7 +142,7 @@ public class OutpatientRegistrationAppServiceImpl implements IOutpatientRegistra
             new HashSet<>(Arrays.asList("name", "py_str", "wb_str")), null);
         IPage<PractitionerMetadata> practitionerMetadataPage =
             outpatientRegistrationAppMapper.getPractitionerMetadataPage(new Page<>(pageNo, pageSize), locationId,
-                PractitionerRole.DOCTOR.getCode(), queryWrapper);
+                PractitionerRoles.DOCTOR.getCode(), queryWrapper);
         practitionerMetadataPage.getRecords().forEach(e -> {
             // 性别
             e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
@@ -211,11 +211,13 @@ public class OutpatientRegistrationAppServiceImpl implements IOutpatientRegistra
         EncounterLocation encounterLocation = new EncounterLocation();
         BeanUtils.copyProperties(encounterLocationFormData, encounterLocation);
         iEncounterLocationService.saveEncounterLocationByRegister(encounterLocation);
-        // 保存就诊参数者信息
-        encounterParticipantFormData.setEncounterId(encounterId);
-        EncounterParticipant encounterParticipant = new EncounterParticipant();
-        BeanUtils.copyProperties(encounterParticipantFormData, encounterParticipant);
-        iEncounterParticipantService.saveEncounterParticipantByRegister(encounterParticipant);
+        // 保存就诊参数者信息 , 选了参与这才保存
+        if (encounterParticipantFormData.getPractitionerId() != null) {
+            encounterParticipantFormData.setEncounterId(encounterId);
+            EncounterParticipant encounterParticipant = new EncounterParticipant();
+            BeanUtils.copyProperties(encounterParticipantFormData, encounterParticipant);
+            iEncounterParticipantService.saveEncounterParticipantByRegister(encounterParticipant);
+        }
         // 保存就诊账户信息
         accountFormData.setEncounterId(encounterId);
         Account account = new Account();

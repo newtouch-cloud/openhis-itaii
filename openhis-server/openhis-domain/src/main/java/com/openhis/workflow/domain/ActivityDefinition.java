@@ -26,7 +26,7 @@ public class ActivityDefinition extends HisBaseEntity {
     private Long id;
 
     /** 目录类别 */
-    private Integer categoryEnum;
+    private String categoryCode;
 
     /** 编码 */
     private String busNo;

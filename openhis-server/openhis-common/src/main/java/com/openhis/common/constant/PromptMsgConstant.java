@@ -70,4 +70,21 @@ public class PromptMsgConstant {
         String M00001 = "apl.inventory.M00001";
 
     }
+
+    /**
+     * 退费
+     */
+    public interface ChargeRefund {
+
+        /**
+         * 该收费单相关{0}已经发出，请先退药后再进行退费
+         */
+        String M00001 = "apl.chargeRefund.M00001";
+
+        /**
+         * 该收费单相关诊疗项目已经执行，请等待医技科室审批完成后再进行退费
+         */
+        String M00002 = "apl.chargeRefund.M00002";
+
+    }
 }

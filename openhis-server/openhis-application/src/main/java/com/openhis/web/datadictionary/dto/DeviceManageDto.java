@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 import com.openhis.common.enums.DeviceCategory;
 import com.openhis.common.enums.PublicationStatus;
 
@@ -36,13 +37,19 @@ public class DeviceManageDto {
     private String wbStr;
 
     /** 器材分类 */
-    private DeviceCategory categoryEnum;
+    @Dict(dictCode = "device_category_code")
+    private String categoryCode;
+    private String categoryCode_dictText;
 
     /** 器材种类 */
+    @Dict(dictCode = "device_type_code")
     private String typeCode;
+    private String typeCode_dictText;
 
     /** 包装单位 */
+    @Dict(dictCode = "unit_code")
     private String unitCode;
+    private String unitCode_dictText;
 
     /** 包装规格 */
     private String size;
@@ -51,7 +58,21 @@ public class DeviceManageDto {
     private BigDecimal partPercent;
 
     /** 最小使用单位 */
+    @Dict(dictCode = "unit_code")
     private String minUnitCode;
+    private String minUnitCode_dictText;
+
+    /** 所属科室 */
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orgId;
+    private String orgId_dictText;
+
+    /** 所在位置 */
+    @Dict(dictTable = "adm_location", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long locationId;
+    private String locationId_dictText;
 
     /** 产品型号 */
     private String modelNumber;
@@ -61,7 +82,9 @@ public class DeviceManageDto {
     private String hvcmFlag_enumText;
 
     /** 销售单位 */
+    @Dict(dictCode = "unit_code")
     private String salesUnitCode;
+    private String salesUnitCode_dictText;
 
     /** 批准文号 */
     private String approvalNumber;
@@ -78,22 +101,27 @@ public class DeviceManageDto {
     private String ybMatchFlag_enumText;
 
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
+    private String statusEnum_enumText;
 
     /** 生产厂家 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long manufacturerId;
 
+    /** 生产厂商文本 */
+    private String manufacturerText;
+
     /** 供应商 */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Dict(dictTable = "adm_supplier",dictCode = "id",dictText = "name")
     private Long supplyId;
+    private String supplyId_dictText;
 
     /** 说明 */
     private String description;
 
     /** 适用范围 */
     private String jurisdiction;
-
-    /** 执行科室 */
-    private Long ruleId;
 
     /** 器材版本 */
     private String version;
@@ -104,4 +132,24 @@ public class DeviceManageDto {
     /** 过敏标记 */
     private Integer allergenFlag;
     private String allergenFlag_enumText;
+
+    /** 财务类别 */
+    @Dict(dictCode = "fin_type_code")
+    private String itemTypeCode;
+    private String itemTypeCode_dictText;
+
+    /** 医保类别 */
+    @Dict(dictCode = "yb_type")
+    private String ybType;
+    private String ybType_dictText;
+
+    /** 购入价 */
+    private BigDecimal purchasePrice;
+
+    /** 零售价 */
+    private BigDecimal retailPrice;
+
+    /** 最高零售价 */
+    private BigDecimal maximumRetailPrice;
+
 }

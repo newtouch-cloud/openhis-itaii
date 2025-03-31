@@ -3,8 +3,6 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -16,9 +14,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class ReceiptApprovalSearchParam implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ReceiptApprovalSearchParam {
 
     /** 状态 */
     private Integer statusEnum;

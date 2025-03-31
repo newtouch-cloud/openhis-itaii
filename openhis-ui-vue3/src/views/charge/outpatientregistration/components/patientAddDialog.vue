@@ -284,12 +284,7 @@
 import pcas from "china-division/dist/pcas-code.json";
 import {
   addPatient,
-  listmaritalstatus,
-  listoccupationtype,
-  lisadministrativegender,
-  listbloodtypeabo,
-  listbloodtypearh,
-  listfamilyrelationshiptype,
+  patientlLists,
   getOutpatientRegistrationList,
 } from "./outpatientregistration";
 
@@ -355,23 +350,14 @@ const props = defineProps({
 });
 /** 查询菜单列表 */
 function getList() {
-  listmaritalstatus().then((response) => {
-    maritalstatusList.value = response.data;
-  });
-  listoccupationtype().then((response) => {
-    occupationtypeList.value = response.data;
-  });
-  lisadministrativegender().then((response) => {
-    administrativegenderList.value = response.data;
-  });
-  listbloodtypeabo().then((response) => {
-    bloodtypeaboList.value = response.data;
-  });
-  listbloodtypearh().then((response) => {
-    bloodtypearhList.value = response.data;
-  });
-  listfamilyrelationshiptype().then((response) => {
-    familyrelationshiptypeList.value = response.data;
+  patientlLists().then((response) => {
+    console.log(response);
+    occupationtypeList.value = response.data.occupationType;
+    administrativegenderList.value = response.data.administrativeGender;
+    bloodtypeaboList.value = response.data.bloodTypeABO;
+    bloodtypearhList.value = response.data.bloodTypeRH;
+    familyrelationshiptypeList.value = response.data.familyRelationshipType;
+    maritalstatusList.value = response.data.maritalStatus;
   });
 }
 

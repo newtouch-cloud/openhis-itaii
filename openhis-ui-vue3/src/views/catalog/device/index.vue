@@ -27,13 +27,13 @@
           label-width="68px"
         >
           <el-row :gutter="24">
-            <el-col :span="5">
+            <el-col :span="6">
               <el-form-item label="项目名" prop="searchKey" label-width="55">
                 <el-input
                   v-model="queryParams.searchKey"
                   placeholder="品名/商品名/英文品名/编码/拼音"
                   clearable
-                  style="width: 240px"
+                  style="width: 220px"
                   @keyup.enter="handleQuery"
                 />
               </el-form-item>
@@ -50,33 +50,21 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item
                 label="医保是否对码"
                 prop="ybMatchFlag"
                 label-width="100"
               >
-                <el-select v-model="queryParams.ybMatchFlag" placeholder="">
-                  <el-option
-                    v-for="item in exeOrganizations"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item label="执行科室" prop="ruleId" label-width="100">
                 <el-select
-                  v-model="queryParams.ruleId"
+                  v-model="queryParams.ybMatchFlag"
                   placeholder=""
                   clearable
                 >
                   <el-option
-                    v-for="item in exeOrganizations"
+                    v-for="item in statusYBWeatherOptions"
                     :key="item.value"
-                    :label="item.label"
+                    :label="item.info"
                     :value="item.value"
                   />
                 </el-select>
@@ -96,15 +84,6 @@
               >添加新项目</el-button
             >
           </el-col>
-          <!-- <el-col :span="1.5">
-                  <el-button
-                     type="primary"
-                     plain
-                     icon="Plus"
-                     @click="handleAdd"
-                     v-hasPermi="['system:user:add']"
-                  >添加为本机构项目</el-button>
-               </el-col> -->
           <el-col :span="1.5">
             <el-button
               type="danger"
@@ -137,7 +116,7 @@
               >查询</el-button
             >
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button
               type="warning"
               plain
@@ -146,7 +125,7 @@
               v-hasPermi="['system:user:export']"
               >导出Excel</el-button
             >
-          </el-col>
+          </el-col> -->
         </el-row>
 
         <el-table
@@ -180,24 +159,24 @@
           <el-table-column
             label="器材分类"
             align="center"
-            key="categoryEnum"
-            prop="categoryEnum"
+            key="categoryCode_dictText"
+            prop="categoryCode_dictText"
             :show-overflow-tooltip="true"
             width="100"
           />
           <el-table-column
             label="器材种类"
             align="center"
-            key="typeCode"
-            prop="typeCode"
+            key="typeCode_dictText"
+            prop="typeCode_dictText"
             :show-overflow-tooltip="true"
             width="50"
           />
           <el-table-column
             label="包装单位"
             align="center"
-            key="unitCode"
-            prop="unitCode"
+            key="unitCode_dictText"
+            prop="unitCode_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -217,8 +196,22 @@
           <el-table-column
             label="最小使用单位"
             align="center"
-            key="minUnitCode"
-            prop="minUnitCode"
+            key="minUnitCode_dictText"
+            prop="minUnitCode_dictText"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="所属科室"
+            align="center"
+            key="orgId_dictText"
+            prop="orgId_dictText"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="所在位置"
+            align="center"
+            key="locationId_dictText"
+            prop="locationId_dictText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
@@ -231,16 +224,16 @@
           <el-table-column
             label="高值器材标志"
             align="center"
-            key="hvcmFlag"
-            prop="hvcmFlag"
+            key="hvcmFlag_enumText"
+            prop="hvcmFlag_enumText"
             :show-overflow-tooltip="true"
           />
 
           <el-table-column
             label="销售单位"
             align="center"
-            key="salesUnitCode"
-            prop="salesUnitCode"
+            key="salesUnitCode_dictText"
+            prop="salesUnitCode_dictText"
             :show-overflow-tooltip="true"
             width="100"
           />
@@ -254,8 +247,8 @@
           <el-table-column
             label="医保标记"
             align="center"
-            key="ybFlag"
-            prop="ybFlag"
+            key="ybFlag_enumText"
+            prop="ybFlag_enumText"
             :show-overflow-tooltip="true"
             width="110"
           />
@@ -270,31 +263,39 @@
           <el-table-column
             label="医保对码标记"
             align="center"
-            key="ybMatchFlag"
-            prop="ybMatchFlag"
+            key="ybMatchFlag_enumText"
+            prop="ybMatchFlag_enumText"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="状态"
             align="center"
-            key="statusEnum"
-            prop="statusEnum"
+            key="statusEnum_enumText"
+            prop="statusEnum_enumText"
             :show-overflow-tooltip="true"
             width="90"
           />
-          <el-table-column
+          <!-- <el-table-column
             label="生产厂家"
             align="center"
             key="manufacturerId"
             prop="manufacturerId"
             :show-overflow-tooltip="true"
             width="90"
+          /> -->
+          <el-table-column
+            label="生产厂家"
+            align="center"
+            key="manufacturerText"
+            prop="manufacturerText"
+            :show-overflow-tooltip="true"
+            width="90"
           />
           <el-table-column
             label="供应商"
             align="center"
-            key="supplyId"
-            prop="supplyId"
+            key="supplyId_dictText"
+            prop="supplyId_dictText"
             :show-overflow-tooltip="true"
             width="110"
           />
@@ -314,13 +315,6 @@
             width="120"
           />
           <el-table-column
-            label="执行科室"
-            align="center"
-            key="ruleId"
-            prop="ruleId"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
             label="器材版本"
             align="center"
             key="version"
@@ -338,8 +332,32 @@
           <el-table-column
             label="过敏标记"
             align="center"
-            key="allergenFlag"
-            prop="allergenFlag"
+            key="allergenFlag_enumText"
+            prop="allergenFlag_enumText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="售价"
+            align="center"
+            key="retailPrice"
+            prop="retailPrice"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="财务类别"
+            align="center"
+            key="itemTypeCode_dictText"
+            prop="itemTypeCode_dictText"
+            :show-overflow-tooltip="true"
+            width="90"
+          />
+          <el-table-column
+            label="医保类别"
+            align="center"
+            key="ybType_dictText"
+            prop="ybType_dictText"
             :show-overflow-tooltip="true"
             width="90"
           />
@@ -359,14 +377,14 @@
                 v-hasPermi="['system:user:edit']"
                 >编辑</el-button
               >
-              <el-button
+              <!-- <el-button
                 link
                 type="primary"
                 icon="View"
                 @click="openViewDevice(scope.row)"
                 v-hasPermi="['system:user:remove']"
                 >查看</el-button
-              >
+              > -->
             </template>
           </el-table-column>
         </el-table>
@@ -383,6 +401,10 @@
       ref="deviceRef"
       :title="title"
       :item="currentData"
+      :currentCategoryEnum="currentCategoryEnum"
+      :deviceCategories="deviceCategories"
+      :statusFlagOptions="statusFlagOptions"
+      :supplierListOptions="supplierListOptions"
       @submit="getList()"
     />
     <!-- <device-view-dialog
@@ -405,15 +427,9 @@ import deviceDialog from "./components/deviceDialog";
 import deviceViewDialog from "./components/deviceViewDialog";
 import { nextTick } from "vue";
 
-const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict(
-  "sys_normal_disable",
-  "sys_user_sex"
-);
 
 const deviceList = ref([]);
-const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]); // 存储选择的行数据
@@ -423,11 +439,13 @@ const total = ref(0);
 const title = ref("");
 const deviceCategories = ref(undefined);
 const statusFlagOptions = ref(undefined);
-const exeOrganizations = ref(undefined);
+const statusYBWeatherOptions = ref(undefined);
+const supplierListOptions = ref(undefined);
 // 使用 ref 定义当前器材数据
 const currentData = ref({});
 // 使用 ref 定义当前查看器材数据
 const viewData = ref({});
+const currentCategoryEnum = ref("");
 
 const data = reactive({
   form: {},
@@ -439,14 +457,9 @@ const data = reactive({
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
     ybMatchFlag: undefined, // 是否医保匹配（包括 1：是，0：否）
     ruleId: undefined, // 执行科室
-    categoryEnum: undefined, // 目录分类
+    categoryCode: undefined, // 目录分类
   },
-  rules: {
-    // name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    // conditionCode: [
-    //   { required: true, message: "编码不能为空", trigger: "blur" },
-    // ],
-  },
+  rules: {},
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -461,24 +474,28 @@ const filterNode = (value, data) => {
 function getDiseaseTreatmentList() {
   getDiseaseTreatmentInit().then((response) => {
     console.log(response, "response器材目录分类查询下拉树结构");
-    deviceCategories.value = response.data.deviceCategories;
+    deviceCategories.value = response.data.deviceCategories.sort((a, b) => {
+      return parseInt(a.value) - parseInt(b.value);
+    });
     statusFlagOptions.value = response.data.statusFlagOptions;
-    exeOrganizations.value = response.data.exeOrganizations;
+    statusYBWeatherOptions.value = response.data.statusYBWeatherOptions;
+    supplierListOptions.value = response.data.supplierListOptions;
   });
 }
 /** 查询器材目录列表 */
 function getList() {
-  console.log(getList, "getList");
   loading.value = true;
   getDeviceList(queryParams.value).then((res) => {
     loading.value = false;
     deviceList.value = res.data.records;
     total.value = res.data.total;
+    console.log(deviceList.value, "getList", total.value);
   });
 }
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.categoryEnum = data.value;
+  queryParams.value.categoryCode = data.value;
+  currentCategoryEnum.value = data.value;
   handleQuery();
 }
 /** 搜索按钮操作 */
@@ -536,17 +553,11 @@ function handleSelectionChange(selection) {
   multiple.value = !selection.length;
 }
 
-/** 下载模板操作 */
-function importTemplate() {
-  proxy.download(
-    "system/user/importTemplate",
-    {},
-    `user_template_${new Date().getTime()}.xlsx`
-  );
-}
-
 /** 打开新增弹窗 */
 function openAddDevice() {
+  if (!currentCategoryEnum.value) {
+    return proxy.$modal.msgError("请选择器材目录分类");
+  }
   console.log("打开新增弹窗");
   title.value = "新增";
   nextTick(() => {
@@ -557,27 +568,50 @@ function openAddDevice() {
 function openEditDevice(row) {
   currentData.value = {};
   console.log("打开编辑弹窗");
-  currentData.value = JSON.parse(JSON.stringify(row));
-  console.log(currentData.value, "currentData");
-  currentData.value.hvcmFlag == 1
-    ? (currentData.value.hvcmFlag = true)
-    : (currentData.value.hvcmFlag = false);
-  currentData.value.ybFlag == 1
-    ? (currentData.value.ybFlag = true)
-    : (currentData.value.ybFlag = false);
-  currentData.value.ybMatchFlag == 1
-    ? (currentData.value.ybMatchFlag = true)
-    : (currentData.value.ybMatchFlag = false);
-  currentData.value.allergenFlag == 1
-    ? (currentData.value.allergenFlag = true)
-    : (currentData.value.allergenFlag = false);
-  console.log(currentData.value, "currentDataform");
-
-  title.value = "编辑";
-  // 确保子组件已经接收到最新的 props
-  nextTick(() => {
-    proxy.$refs["deviceRef"].edit();
+  getDeviceOne(row.id).then((response) => {
+    console.log(response, "currentDataform");
+    currentData.value = response.data;
+    if (currentData.value) {
+      currentData.value.hvcmFlag == 1
+        ? (currentData.value.hvcmFlag = true)
+        : (currentData.value.hvcmFlag = false);
+      currentData.value.ybFlag == 1
+        ? (currentData.value.ybFlag = true)
+        : (currentData.value.ybFlag = false);
+      currentData.value.ybMatchFlag == 1
+        ? (currentData.value.ybMatchFlag = true)
+        : (currentData.value.ybMatchFlag = false);
+      currentData.value.allergenFlag == 1
+        ? (currentData.value.allergenFlag = true)
+        : (currentData.value.allergenFlag = false);
+    }
+    title.value = "编辑";
+    nextTick(() => {
+      proxy.$refs["deviceRef"].edit();
+    });
+    getList();
   });
+  // currentData.value = JSON.parse(JSON.stringify(row));
+  // console.log(currentData.value, "currentData");
+  // currentData.value.hvcmFlag == 1
+  //   ? (currentData.value.hvcmFlag = true)
+  //   : (currentData.value.hvcmFlag = false);
+  // currentData.value.ybFlag == 1
+  //   ? (currentData.value.ybFlag = true)
+  //   : (currentData.value.ybFlag = false);
+  // currentData.value.ybMatchFlag == 1
+  //   ? (currentData.value.ybMatchFlag = true)
+  //   : (currentData.value.ybMatchFlag = false);
+  // currentData.value.allergenFlag == 1
+  //   ? (currentData.value.allergenFlag = true)
+  //   : (currentData.value.allergenFlag = false);
+  // console.log(currentData.value, "currentDataform");
+
+  // title.value = "编辑";
+  // // 确保子组件已经接收到最新的 props
+  // nextTick(() => {
+  //   proxy.$refs["deviceRef"].edit();
+  // });
   // proxy.$refs["deviceRef"].edit();
 }
 /** 打开查看弹窗 */

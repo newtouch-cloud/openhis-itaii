@@ -52,6 +52,17 @@ public class DoctorStationEmrController {
     }
 
     /**
+     * 获取患者病历详情
+     *
+     * @param encounterId 就诊id
+     * @return 病历详情
+     */
+    @GetMapping("/emr-detail")
+    public R<?> getEmrDetail(@RequestParam(value = "encounterId") Long encounterId) {
+        return iDoctorStationEmrAppService.getEmrDetail(encounterId);
+    }
+
+    /**
      * 保存病历模板
      *
      * @param emrTemplateDto 病历模板信息
@@ -84,7 +95,7 @@ public class DoctorStationEmrController {
      * @return 操作结果
      */
     @DeleteMapping("emr-template")
-    public R<?> deleteEmrTemplate(@RequestParam Long id) {
+    public R<?> deleteEmrTemplate(@RequestParam(value = "id") Long id) {
         return iDoctorStationEmrAppService.deleteEmrTemplate(id);
     }
 

@@ -24,6 +24,14 @@ export function updateInfusionRecord(data) {
       data: data
     })
   }
+  // 时间更改
+export function editPatientInfusionTime(data) {
+  return request({
+    url: '/outpatient-manage/infusion/infusion-perform-time',
+    method: 'put',
+    data: data
+  })
+}
 
   // 点击患者，查询该患者的输液记录
   export function listPatientInfusionRecord(query) {

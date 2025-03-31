@@ -4,7 +4,7 @@ import { parseStrEmpty } from "@/utils/openhis";
 // 查询用户列表
 export function listUser(query) {
   return request({
-    url: '/system/user/list',
+    url: '/base-data-manage/practitioner/user-practitioner-page',
     method: 'get',
     params: query
   })
@@ -12,6 +12,14 @@ export function listUser(query) {
 
 // 查询用户详细
 export function getUser(userId) {
+  return request({
+    url: '/base-data-manage/practitioner/user-practitioner-detail?userId=' + parseStrEmpty(userId),
+    method: 'get'
+  })
+}
+
+// 查询角色
+export function getRole(userId) {
   return request({
     url: '/system/user/' + parseStrEmpty(userId),
     method: 'get'
@@ -21,7 +29,7 @@ export function getUser(userId) {
 // 新增用户
 export function addUser(data) {
   return request({
-    url: '/system/user',
+    url: '/base-data-manage/practitioner/user-practitioner',
     method: 'post',
     data: data
   })
@@ -30,7 +38,7 @@ export function addUser(data) {
 // 修改用户
 export function updateUser(data) {
   return request({
-    url: '/system/user',
+    url: '/base-data-manage/practitioner/user-practitioner',
     method: 'put',
     data: data
   })
@@ -39,7 +47,7 @@ export function updateUser(data) {
 // 删除用户
 export function delUser(userId) {
   return request({
-    url: '/system/user/' + userId,
+    url: '/base-data-manage/practitioner/user-practitioner?userId=' + userId,
     method: 'delete'
   })
 }
@@ -129,7 +137,15 @@ export function updateAuthRole(data) {
 // 查询部门下拉树结构
 export function deptTreeSelect() {
   return request({
-    url: '/system/user/deptTree',
+    url: '/base-data-manage/organization/organization',
+    method: 'get'
+  })
+}
+
+// 查询位下拉树结构
+export function locationTreeSelect() {
+  return request({
+    url: '/base-data-manage/cabinet-location/cabinet-location',
     method: 'get'
   })
 }

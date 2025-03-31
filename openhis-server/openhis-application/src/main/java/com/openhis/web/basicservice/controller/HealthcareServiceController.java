@@ -132,8 +132,8 @@ public class HealthcareServiceController {
      * @param id 主键
      * @return 详情
      */
-    @GetMapping(value = "/healthcare-service-detail/{id}")
-    public R<?> getHealthcareServiceDetail(@PathVariable("id") Long id) {
+    @GetMapping(value = "/healthcare-service-detail")
+    public R<?> getHealthcareServiceDetail(@RequestParam Long id) {
         HealthcareServiceDto healthcareServiceDto = new HealthcareServiceDto();
         healthcareServiceDto.setId(id);
         // 构建查询条件

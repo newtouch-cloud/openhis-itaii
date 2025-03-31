@@ -3,8 +3,10 @@
  */
 package com.openhis.web.chargemanage.appservice.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,6 +30,7 @@ import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.chargemanage.appservice.IOutpatientChargeAppService;
 import com.openhis.web.chargemanage.dto.EncounterPatientPageDto;
 import com.openhis.web.chargemanage.dto.EncounterPatientPageParam;
+import com.openhis.web.chargemanage.dto.OutpatientInitDto;
 import com.openhis.web.chargemanage.mapper.OutpatientChargeAppMapper;
 
 /**
@@ -45,6 +48,25 @@ public class OutpatientChargeAppServiceImpl implements IOutpatientChargeAppServi
     private IChargeItemService chargeItemService;
     @Autowired
     private IAccountService accountService;
+
+    /**
+     * 门诊收费页面初始化
+     *
+     * @return 初始化信息
+     */
+    @Override
+    public R<?> outpatientChargeInit() {
+        OutpatientInitDto initDto = new OutpatientInitDto();
+        List<OutpatientInitDto.chargeItemStatusOption> chargeItemStatusOptions = new ArrayList<>();
+        chargeItemStatusOptions.add(new OutpatientInitDto.chargeItemStatusOption(ChargeItemStatus.PLANNED.getValue(),
+            ChargeItemStatus.PLANNED.getInfo()));
+        chargeItemStatusOptions.add(new OutpatientInitDto.chargeItemStatusOption(ChargeItemStatus.BILLABLE.getValue(),
+            ChargeItemStatus.BILLABLE.getInfo()));
+        chargeItemStatusOptions.add(new OutpatientInitDto.chargeItemStatusOption(ChargeItemStatus.BILLED.getValue(),
+            ChargeItemStatus.BILLED.getInfo()));
+        initDto.setChargeItemStatusOptions(chargeItemStatusOptions);
+        return R.ok(initDto);
+    }
 
     /**
      * 查询就诊患者分页列表

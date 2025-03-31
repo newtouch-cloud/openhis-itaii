@@ -3,7 +3,6 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.validation.constraints.Min;
@@ -25,9 +24,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class ProductStocktakingDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ProductStocktakingDto {
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)

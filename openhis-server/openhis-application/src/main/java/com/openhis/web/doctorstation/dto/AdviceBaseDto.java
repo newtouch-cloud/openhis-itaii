@@ -1,5 +1,6 @@
 package com.openhis.web.doctorstation.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -17,7 +18,18 @@ import lombok.experimental.Accessors;
 public class AdviceBaseDto {
 
     /** 医嘱类型 */
-    private String adviceType; // 1:药品 , 2: 耗材 , 3:项目
+    private Integer adviceType; // 1:药品 , 2: 耗材 , 3:项目
+
+    /**
+     * 医嘱详细分类
+     */
+    private String categoryCode;
+
+    /** 拆零比 */
+    private BigDecimal partPercent;
+
+    /** 拆分属性 */
+    private Integer partAttributeEnum;
 
     /** 医嘱定义ID */
     @JsonSerialize(using = ToStringSerializer.class)

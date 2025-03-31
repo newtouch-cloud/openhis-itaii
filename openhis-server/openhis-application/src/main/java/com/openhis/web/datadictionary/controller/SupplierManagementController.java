@@ -46,6 +46,7 @@ public class SupplierManagementController {
      *
      * @param supplierSearchParam 查询条件
      * @param searchKey 查询条件-模糊查询
+     * @param typeEnum 查询条件
      * @param pageNo 查询条件
      * @param pageSize 查询条件
      * @return 厂商/产地查询结果
@@ -53,11 +54,12 @@ public class SupplierManagementController {
     @GetMapping(value = "/get-supplier-list")
     public R<?> getSupplierList(SupplierSearchParam supplierSearchParam,
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
+        @RequestParam(value = "typeEnum", defaultValue = "") Integer typeEnum,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
         // 返回分页
-        return  supplierManagementAppService.getSupplierList(supplierSearchParam, searchKey, pageNo, pageSize, request);
+        return  supplierManagementAppService.getSupplierList(supplierSearchParam, searchKey,typeEnum, pageNo, pageSize, request);
     }
 
     /**

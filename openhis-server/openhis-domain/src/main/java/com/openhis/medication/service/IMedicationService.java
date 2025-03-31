@@ -32,6 +32,4 @@ public interface IMedicationService extends IService<Medication> {
     // 新增药品目录
     boolean addMedication(MedicationDetail medicationDetail);
 
-    // 新增医保药品目录
-    boolean addYbMedicatione(MedicationDetail medicationDetail);
 }

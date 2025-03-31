@@ -2,6 +2,7 @@ package com.core.system.mapper;
 
 import java.util.List;
 
+import com.core.common.core.domain.model.LoginUserExtend;
 import org.apache.ibatis.annotations.Param;
 
 import com.core.common.core.domain.entity.SysUser;
@@ -125,4 +126,12 @@ public interface SysUserMapper {
      * @return 结果
      */
     public SysUser checkEmailUnique(String email);
+
+    /**
+     * 扩展属性
+     *
+     * @param userId 系统用户id
+     * @return 扩展属性
+     */
+    LoginUserExtend getLoginUserExtend(@Param("userId") Long userId);
 }

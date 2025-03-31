@@ -35,11 +35,12 @@ public interface ISupplierManagementAppService {
      *
      * @param supplierSearchParam 查询条件
      * @param searchKey 查询条件-模糊查询
+     * @param typeEnum 查询条件
      * @param pageNo 查询条件
      * @param pageSize 查询条件
      * @return 厂商/产地查询结果
      */
-    R<?> getSupplierList(SupplierSearchParam supplierSearchParam, String searchKey, Integer pageNo, Integer pageSize,
+    R<?> getSupplierList(SupplierSearchParam supplierSearchParam, String searchKey,Integer typeEnum, Integer pageNo, Integer pageSize,
         HttpServletRequest request);
 
     /**

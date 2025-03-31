@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/openhis";
 
 // 查询药品目录列表
 export function getMedicationList(query) {
@@ -13,8 +12,9 @@ export function getMedicationList(query) {
 // 查询药品目录详细
 export function getMedicationOne(id) {
   return request({
-    url: '/data-dictionary/medication/information-one/' + parseStrEmpty(id),
-    method: 'get'
+    url: '/data-dictionary/medication/information-one',
+    method: 'get',
+    params: { id } // 确保参数正确传递
   })
 }
 
@@ -53,7 +53,7 @@ export function getMedicationCategory() {
 }
 
 
-// 停用病种目录
+// 停用药品目录
 export function stopMedication(ids) {
   console.log(ids)
   return request({
@@ -63,12 +63,30 @@ export function stopMedication(ids) {
   })
 }
 
-// 启用病种目录
+// 启用药品目录
 export function startMedication(ids) {
   console.log(ids)
   return request({
     url: '/data-dictionary/medication/information-start',
     method: 'put',
     data: ids
+  })
+}
+
+// 查询部门树形数据
+export function deptTreeSelect(queryParams) {
+  return request({
+    url: '/base-data-manage/organization/organization',
+    method: 'get',
+    param: queryParams
+  })
+}
+
+// 查询地点树形数据
+export function locationTreeSelect(queryParams) {
+  return request({
+    url: '/base-data-manage/cabinet-location/cabinet-location',
+    method: 'get',
+    param: queryParams
   })
 }

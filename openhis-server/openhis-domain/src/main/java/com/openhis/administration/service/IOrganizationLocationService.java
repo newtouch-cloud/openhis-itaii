@@ -9,4 +9,15 @@ import com.openhis.administration.domain.OrganizationLocation;
  * @author system
  * @date 2025-02-25
  */
-public interface IOrganizationLocationService extends IService<OrganizationLocation> {}
+public interface IOrganizationLocationService extends IService<OrganizationLocation> {
+
+    /**
+     * 查询机构位置关系
+     * 
+     * @param orgId 机构id
+     * @param categoryCode 发放类型
+     * @return机构位置关系
+     */
+    OrganizationLocation getOrgLocByOrgIdAndCategoryCode(Long orgId, String categoryCode);
+
+}

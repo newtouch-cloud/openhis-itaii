@@ -3,6 +3,8 @@ package com.openhis.web.chargemanage.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 import com.core.common.utils.SecurityUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -27,6 +29,7 @@ public class ChargeItemFormData {
     private Long encounterId;
 
     /** 患者id */
+    @NotNull(message = "患者id不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long patientId;
 
@@ -47,6 +50,7 @@ public class ChargeItemFormData {
     private Long performerId;
 
     /** 费用定价ID */
+    @NotNull(message = "费用定价ID不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long definitionId;
 
@@ -61,10 +65,12 @@ public class ChargeItemFormData {
     private String serviceTable;
 
     /** 医疗服务ID */
+    @NotNull(message = "医疗服务ID不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long serviceId;
 
     /** 总价 */
+    @NotNull(message = "总价不能为空")
     private BigDecimal totalPrice;
 
     /** 关联账户ID */
@@ -78,8 +84,8 @@ public class ChargeItemFormData {
         this.statusEnum = ChargeItemStatus.BILLED.getValue();
         this.contextEnum = EncounterClass.AMB.getValue();
         this.occurrenceTime = new Date();
-        this.performerId = SecurityUtils.getLoginUser().getUserId();
-        this.entererId = SecurityUtils.getLoginUser().getUserId();
+        this.performerId = SecurityUtils.getLoginUser().getPractitionerId();
+        this.entererId = SecurityUtils.getLoginUser().getPractitionerId();
         this.enteredDate = new Date();
         this.serviceTable = CommonConstants.TableName.ADM_HEALTHCARE_SERVICE;
     }

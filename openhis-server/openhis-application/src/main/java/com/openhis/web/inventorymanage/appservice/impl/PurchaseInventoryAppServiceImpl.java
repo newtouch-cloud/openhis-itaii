@@ -26,7 +26,10 @@ import com.openhis.administration.service.IPractitionerService;
 import com.openhis.administration.service.ISupplierService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.*;
+import com.openhis.common.enums.AssignSeqEnum;
+import com.openhis.common.enums.SupplyCategory;
+import com.openhis.common.enums.SupplyStatus;
+import com.openhis.common.enums.SupplyType;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.inventorymanage.appservice.IPurchaseInventoryAppService;
@@ -83,18 +86,14 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
         List<PurchaseInventoryInitDto.supplierListOption> supplierListOptions = supplierList.stream()
             .map(supplier -> new PurchaseInventoryInitDto.supplierListOption(supplier.getId(), supplier.getName()))
             .collect(Collectors.toList());
-        // 入库项目类型
-        List<PurchaseInventoryInitDto.itemTypeOption> itemTypeOptions = Stream.of(ItemType.values())
-            .map(itemType -> new PurchaseInventoryInitDto.itemTypeOption(itemType.getValue(), itemType.getInfo()))
-            .collect(Collectors.toList());
         // 审批状态
         List<PurchaseInventoryInitDto.supplyStatusOption> supplyStatusOptions = Stream.of(SupplyStatus.values())
             .map(supplyStatus -> new PurchaseInventoryInitDto.supplyStatusOption(supplyStatus.getValue(),
                 supplyStatus.getInfo()))
             .collect(Collectors.toList());
 
-        initDto.setSupplierListOptions(supplierListOptions).setItemTypeOptions(itemTypeOptions)
-            .setPractitionerListOptions(practitionerListOptions).setSupplyStatusOptions(supplyStatusOptions);
+        initDto.setSupplierListOptions(supplierListOptions).setPractitionerListOptions(practitionerListOptions)
+            .setSupplyStatusOptions(supplyStatusOptions);
 
         return R.ok(initDto);
     }

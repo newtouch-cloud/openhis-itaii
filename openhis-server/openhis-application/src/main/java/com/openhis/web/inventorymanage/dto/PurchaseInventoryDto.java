@@ -3,7 +3,6 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -26,14 +25,15 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class PurchaseInventoryDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class PurchaseInventoryDto {
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
+
+    /** 单据号 */
+    private String busNo;
 
     /** 项目 */
     private String itemTable;
@@ -71,7 +71,7 @@ public class PurchaseInventoryDto implements Serializable {
     private Long purposeLocationStoreId;
 
     /** 申请人 */
-    @NotNull
+    // @NotNull
     private Long applicantId;
 
     /** 经手人 */

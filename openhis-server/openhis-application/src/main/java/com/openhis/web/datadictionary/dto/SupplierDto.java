@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -35,6 +36,7 @@ public class SupplierDto {
 
     /** 类型 */
     private Integer typeEnum;
+    private String typeEnum_enumText;
 
     /** 地址 */
     private String address;
@@ -57,5 +59,7 @@ public class SupplierDto {
 
     /** 机构编号 */
     @JsonSerialize(using = ToStringSerializer.class)
+    @Dict(dictTable = "adm_organization",dictCode = "id",dictText = "name")
     private Long orgId;
+    private String orgId_dictText;
 }

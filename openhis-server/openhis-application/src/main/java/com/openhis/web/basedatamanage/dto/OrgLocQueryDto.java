@@ -35,8 +35,8 @@ public class OrgLocQueryDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long defLocationId;
 
-    /** 药品类别 */
-    private String medCategoryCode;
+    /** 发放类别 */
+    private String distributionCategoryCode;
 
     /** 开始时间 */
     private Date startTime;
