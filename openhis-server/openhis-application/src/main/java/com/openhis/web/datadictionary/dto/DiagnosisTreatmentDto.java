@@ -96,11 +96,11 @@ public class DiagnosisTreatmentDto {
 
     /** 财务类别 */
     @Dict(dictCode = "fin_type_code")
-    private String typeCode;
-    private String typeCode_dictText;
+    private String itemTypeCode;
+    private String itemTypeCode_dictText;
 
     /** 医保类别 */
-    @Dict(dictCode = "med_chrgitm_type")
+    @Dict(dictCode = "yb_type")
     private String ybType;
     private String ybType_dictText;
 

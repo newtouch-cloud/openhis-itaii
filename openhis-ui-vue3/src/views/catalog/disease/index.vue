@@ -226,12 +226,12 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="12"  v-if="form.id != undefined">
             <el-form-item label="编码" prop="conditionCode">
               <el-input
                 v-model="form.conditionCode"
                 placeholder="请输入编码"
-                :disabled="form.id != undefined"
+                disabled
               />
             </el-form-item>
           </el-col>
@@ -250,14 +250,14 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="类型" prop="ybNo">
+            <el-form-item label="疾病类型" prop="typeCode">
               <el-select
-                v-model="form.statusEnum"
+                v-model="form.typeCode"
                 placeholder="请选择"
                 clearable
               >
                 <el-option
-                  v-for="dict in statusFlagOptions"
+                  v-for="dict in conditionDefinitionOptions"
                   :key="dict.value"
                   :label="dict.info"
                   :value="dict.value"
@@ -266,7 +266,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="医保标记" prop="ybFlag">
+            <el-form-item label="状态" prop="statusEnum">
               <el-select
                 v-model="form.statusEnum"
                 placeholder="请选择"
@@ -359,9 +359,9 @@ const data = reactive({
   },
   rules: {
     name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-    conditionCode: [
-      { required: true, message: "编码不能为空", trigger: "blur" },
-    ],
+    // conditionCode: [
+    //   { required: true, message: "编码不能为空", trigger: "blur" },
+    // ],
   },
 });
 
@@ -473,9 +473,10 @@ function cancel() {
 }
 /** 新增按钮操作 */
 function handleAdd() {
-  if (conditionDefinition.value === undefined) {
-    return proxy.$modal.msgError("请选择病种目录分类");
-  }
+  // if (conditionDefinition.value === undefined) {
+  //   return proxy.$modal.msgError("请选择病种目录分类");
+  // }
+  form.value.typeCode = conditionDefinition.value
   reset();
   open.value = true;
   title.value = "新增";

@@ -10,12 +10,12 @@
         label-position="left"
       >
         <el-row :gutter="24">
-          <el-col :span="8">
+          <el-col :span="8" v-if="form.id != undefined">
             <el-form-item label="编号" prop="busNo">
               <el-input
                 v-model="form.busNo"
                 placeholder="请输入编码"
-                :disabled="form.id != undefined"
+                disabled
               />
             </el-form-item>
           </el-col>
@@ -61,25 +61,24 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="目录分类" prop="categoryEnum">
-              <el-tree-select
-                v-model="form.categoryEnum"
-                :data="diseaseTreatmentCategoryList"
-                :props="{
-                  value: 'id',
-                  label: 'info',
-                  children: 'children',
-                }"
-                value-key="id"
-                placeholder="请选择地点"
-                check-strictly
+            <el-form-item label="目录分类" prop="categoryCode">
+              <el-select
+                v-model="form.categoryCode"
                 clearable
-              />
+                :disabled="form.categoryCode != ''"
+              >
+                <el-option
+                  v-for="category in activity_category_code"
+                  :key="category.value"
+                  :label="category.label"
+                  :value="category.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="类型" prop="typeCode">
-              <el-select v-model="form.typeCode" placeholder="" clearable>
+            <el-form-item label="类型" prop="typeEnum">
+              <el-select v-model="form.typeEnum" placeholder="" clearable>
                 <el-option
                   v-for="item in typeEnumOptions"
                   :key="item.value"
@@ -140,11 +139,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="身体部位" prop="bodySiteCode">
-              <el-select
-                v-model="form.bodySiteCode"
-                clearable
-                :disabled="form.id != undefined"
-              >
+              <el-select v-model="form.bodySiteCode" clearable>
                 <el-option
                   v-for="category in body_site_code"
                   :key="category.value"
@@ -156,11 +151,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="所需标本" prop="specimenCode">
-              <el-select
-                v-model="form.specimenCode"
-                clearable
-                :disabled="form.id != undefined"
-              >
+              <el-select v-model="form.specimenCode" clearable>
                 <el-option
                   v-for="category in specimen_code"
                   :key="category.value"
@@ -186,11 +177,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="使用单位" prop="permittedUnitCode">
-              <el-select
-                v-model="form.permittedUnitCode"
-                clearable
-                :disabled="form.id != undefined"
-              >
+              <el-select v-model="form.permittedUnitCode" clearable>
                 <el-option
                   v-for="category in unit_code"
                   :key="category.value"
@@ -201,12 +188,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="财务类型" prop="minimalFee">
-              <el-select
-                v-model="form.minimalFee"
-                clearable
-                :disabled="form.id != undefined"
-              >
+            <el-form-item label="财务类型" prop="itemTypeCode">
+              <el-select v-model="form.itemTypeCode" clearable>
                 <el-option
                   v-for="category in fin_type_code"
                   :key="category.value"
@@ -220,25 +203,37 @@
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="购入价" prop="purchasePrice">
-              <el-input v-model="form.purchasePrice" placeholder="" />
+              <el-input
+                v-model="form.purchasePrice"
+                placeholder=""
+                :disabled="form.id != undefined"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="零售价" prop="retailPrice">
-              <el-input v-model="form.retailPrice" placeholder="" />
+              <el-input
+                v-model="form.retailPrice"
+                placeholder=""
+                :disabled="form.id != undefined"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="最高零售价" prop="maximumRetailPrice">
-              <el-input v-model="form.maximumRetailPrice" placeholder="" />
+              <el-input
+                v-model="form.maximumRetailPrice"
+                placeholder=""
+                :disabled="form.id != undefined"
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="16">
-            <el-form-item label="说明" prop="description">
+            <el-form-item label="说明" prop="descriptionText">
               <el-input
-                v-model="form.description"
+                v-model="form.descriptionText"
                 :autosize="{ minRows: 4, maxRows: 10 }"
                 type="textarea"
                 placeholder=""
@@ -267,19 +262,21 @@ import {
 } from "./diagnosistreatment";
 
 const { proxy } = getCurrentInstance();
-const { unit_code, yb_type, fin_type_code } = proxy.useDict(
-  "unit_code",
-  "yb_type",
-  "fin_type_code"
-);
+const { unit_code, yb_type, fin_type_code, activity_category_code } =
+  proxy.useDict(
+    "unit_code",
+    "yb_type",
+    "fin_type_code",
+    "activity_category_code"
+  );
 
 const title = ref("");
 const visible = ref(false);
 const emits = defineEmits(["submit"]); // 声明自定义事件
-const categoryEnum = ref("");
+const categoryCode = ref("");
 const deptOptions = ref(undefined); // 部门树选项
 const locationOptions = ref(undefined); // 地点树选项
-const diseaseTreatmentCategoryList = ref(undefined);
+const diagnosisCategoryOptions = ref(undefined);
 const statusFlagOptions = ref(undefined);
 const exeOrganizations = ref(undefined);
 const typeEnumOptions = ref(undefined);
@@ -287,13 +284,13 @@ const typeEnumOptions = ref(undefined);
 const data = reactive({
   form: {},
   rules: {
-    busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
+    // busNo: [{ required: true, message: "编码不能为空", trigger: "blur" }],
     name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
     statusEnum: [{ required: true, message: "状态不能为空", trigger: "blur" }],
-    categoryEnum: [
+    categoryCode: [
       { required: true, message: "诊疗目录不能为空", trigger: "blur" },
     ],
-    typeCode: [
+    typeEnum: [
       { required: true, message: "器材种类不能为空", trigger: "blur" },
     ],
     permittedUnitCode: [
@@ -302,6 +299,19 @@ const data = reactive({
     ybFlag: [{ required: true, message: "医保标记不能为空", trigger: "blur" }],
     ybMatchFlag: [
       { required: true, message: "医保对码标记不能为空", trigger: "blur" },
+    ],
+    purchasePrice: [
+      { required: true, message: "购入价不能为空", trigger: "blur" },
+    ],
+    retailPrice: [
+      { required: true, message: "零售价不能为空", trigger: "blur" },
+    ],
+    maximumRetailPrice: [
+      { required: true, message: "最高零售价不能为空", trigger: "blur" },
+    ],
+    ybType: [{ required: true, message: "医保类型不能为空", trigger: "blur" }],
+    itemTypeCode: [
+      { required: true, message: "财务类型不能为空", trigger: "blur" },
     ],
   },
 });
@@ -321,7 +331,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  diseaseTreatmentCategoryList: {
+  diagnosisCategoryOptions: {
     type: Object,
     required: false,
   },
@@ -346,11 +356,11 @@ function show() {
   getDeptTree();
   title.value = "";
   title.value = props.title;
-  diseaseTreatmentCategoryList.value = props.diseaseTreatmentCategoryList;
+  diagnosisCategoryOptions.value = props.diagnosisCategoryOptions;
   statusFlagOptions.value = props.statusFlagOptions;
   exeOrganizations.value = props.exeOrganizations;
   typeEnumOptions.value = props.typeEnumOptions;
-  form.value.categoryEnum = props.currentCategoryEnum;
+  form.value.categoryCode = props.currentCategoryEnum;
   console.log(props.currentCategoryEnum, "11111");
   console.log(props, "22222", title.value);
   visible.value = true;
@@ -363,7 +373,7 @@ function edit() {
   title.value = "";
   title.value = props.title;
   form.value = props.item;
-  diseaseTreatmentCategoryList.value = props.diseaseTreatmentCategoryList;
+  diagnosisCategoryOptions.value = props.diagnosisCategoryOptions;
   statusFlagOptions.value = props.statusFlagOptions;
   exeOrganizations.value = props.exeOrganizations;
   typeEnumOptions.value = props.typeEnumOptions;
@@ -379,8 +389,8 @@ function reset() {
     orgId: undefined, // 执行科室
     pyStr: undefined, // 拼音码
     wbStr: undefined, // 五笔码
-    categoryEnum: undefined, // 类别
-    typeCode: undefined, // 类型编码
+    categoryCode: undefined, // 类别
+    typeEnum: undefined, // 类型编码
     statusEnum: undefined, // 状态（包括 1：预置，2：启用，3：停用）
     ybFlag: undefined, // 医保标记
     ybMatchFlag: undefined, // 医保对码标记
@@ -390,11 +400,11 @@ function reset() {
     specimenCode: undefined, // 所需标本
     ruleId: undefined, // 执行科室
     permittedUnitCode: undefined, // 使用单位
-    minimalFee: undefined, // 最小收费
+    itemTypeCode: undefined, // 最小收费
     purchasePrice: undefined, // 购入价
     retailPrice: undefined, // 零售价
     maximumRetailPrice: undefined, // 最高零售价
-    description: undefined, // 说明
+    descriptionText: undefined, // 说明
   };
   proxy.resetForm("diagnosisTreatmentRef");
 }

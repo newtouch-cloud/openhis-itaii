@@ -125,7 +125,7 @@
             AND  T2.instance_table = 'wor_activity_definition'
 
             <if test="id!= null">
-                AND T2.id = #{id}
+                AND T1.id = #{id}
             </if>
             <if test="tenantId!= null">
                 AND T1.tenant_id = #{tenantId}
