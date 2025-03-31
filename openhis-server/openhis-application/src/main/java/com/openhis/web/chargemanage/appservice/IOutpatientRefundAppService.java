@@ -46,4 +46,11 @@ public interface IOutpatientRefundAppService {
      */
     R<?> getBilledEncounterPatientPage(EncounterPatientPageParam encounterPatientPageParam, String searchKey,
         Integer pageNo, Integer pageSize, HttpServletRequest request);
+
+    /**
+     * 门诊退费页面初始化
+     *
+     * @return 初始化信息
+     */
+    R<?> outpatientRefundInit();
 }

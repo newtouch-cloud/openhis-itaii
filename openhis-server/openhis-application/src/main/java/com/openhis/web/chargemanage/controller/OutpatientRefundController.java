@@ -33,6 +33,16 @@ public class OutpatientRefundController {
     private IOutpatientRefundAppService outpatientRefundAppService;
 
     /**
+     * 门诊退费页面初始化
+     *
+     * @return 初始化信息
+     */
+    @GetMapping(value = "/init")
+    public R<?> outpatientRefundInit() {
+        return outpatientRefundAppService.outpatientRefundInit();
+    }
+
+    /**
      * 查询结算过的就诊患者分页列表
      *
      * @param encounterPatientPageParam 查询条件

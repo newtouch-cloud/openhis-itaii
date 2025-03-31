@@ -27,10 +27,7 @@ import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.financial.service.IPaymentReconciliationService;
 import com.openhis.medication.service.IMedicationDispenseService;
 import com.openhis.web.chargemanage.appservice.IOutpatientRefundAppService;
-import com.openhis.web.chargemanage.dto.EncounterPatientPageDto;
-import com.openhis.web.chargemanage.dto.EncounterPatientPageParam;
-import com.openhis.web.chargemanage.dto.EncounterPatientPaymentDto;
-import com.openhis.web.chargemanage.dto.RefundItemDto;
+import com.openhis.web.chargemanage.dto.*;
 import com.openhis.web.chargemanage.mapper.OutpatientRefundAppMapper;
 import com.openhis.workflow.service.IDeviceDispenseService;
 import com.openhis.workflow.service.IServiceRequestService;
@@ -56,6 +53,27 @@ public class OutpatientRefundAppServiceImpl implements IOutpatientRefundAppServi
     private IDeviceDispenseService deviceDispenseService;
     @Autowired
     private IServiceRequestService serviceRequestService;
+
+    /**
+     * 门诊退费页面初始化
+     *
+     * @return 初始化信息
+     */
+    @Override
+    public R<?> outpatientRefundInit() {
+        OutpatientInitDto initDto = new OutpatientInitDto();
+        List<OutpatientInitDto.chargeItemStatusOption> chargeItemStatusOptions = new ArrayList<>();
+        chargeItemStatusOptions.add(new OutpatientInitDto.chargeItemStatusOption(ChargeItemStatus.BILLED.getValue(),
+            ChargeItemStatus.BILLED.getInfo()));
+        chargeItemStatusOptions.add(new OutpatientInitDto.chargeItemStatusOption(ChargeItemStatus.REFUNDING.getValue(),
+            ChargeItemStatus.REFUNDING.getInfo()));
+        chargeItemStatusOptions.add(new OutpatientInitDto.chargeItemStatusOption(ChargeItemStatus.REFUNDED.getValue(),
+            ChargeItemStatus.REFUNDED.getInfo()));
+        chargeItemStatusOptions.add(new OutpatientInitDto.chargeItemStatusOption(
+            ChargeItemStatus.PART_REFUND.getValue(), ChargeItemStatus.PART_REFUND.getInfo()));
+        initDto.setChargeItemStatusOptions(chargeItemStatusOptions);
+        return R.ok(initDto);
+    }
 
     /**
      * 根据就诊id查询患者的账单
@@ -156,9 +174,10 @@ public class OutpatientRefundAppServiceImpl implements IOutpatientRefundAppServi
                 CommonConstants.FieldName.EncounterBusNo, CommonConstants.FieldName.idCard)),
             request);
         // 就诊患者分页列表
-        Page<EncounterPatientPageDto> encounterPatientPage =
-            outpatientRefundAppMapper.selectBilledEncounterPatientPage(new Page<>(pageNo, pageSize), queryWrapper,
-                ChargeItemStatus.BILLED.getValue(), AccountType.MEDICAL_INSURANCE.getValue());
+        Page<EncounterPatientPageDto> encounterPatientPage = outpatientRefundAppMapper.selectBilledEncounterPatientPage(
+            new Page<>(pageNo, pageSize), queryWrapper, ChargeItemStatus.BILLED.getValue(),
+            ChargeItemStatus.REFUNDING.getValue(), ChargeItemStatus.REFUNDED.getValue(),
+            ChargeItemStatus.PART_REFUND.getValue(), AccountType.MEDICAL_INSURANCE.getValue());
 
         encounterPatientPage.getRecords().forEach(e -> {
             // 性别枚举

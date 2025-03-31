@@ -59,10 +59,14 @@ public interface OutpatientRefundAppMapper {
      * @param page 分页
      * @param queryWrapper 查询条件
      * @param billed 收费状态：已结算
+     * @param refunding 收费状态：退费中
+     * @param refunded 收费状态：已退费
+     * @param partRefund 收费状态：部分退费
      * @param insurance 账户类型：医保
      * @return 已结算就诊患者分页列表
      */
     Page<EncounterPatientPageDto> selectBilledEncounterPatientPage(@Param("page") Page<EncounterPatientPageDto> page,
         @Param(Constants.WRAPPER) QueryWrapper<EncounterPatientPageParam> queryWrapper, @Param("billed") Integer billed,
-        @Param("insurance") Integer insurance);
+        @Param("refunding") Integer refunding, @Param("refunded") Integer refunded,
+        @Param("partRefund") Integer partRefund, @Param("insurance") Integer insurance);
 }

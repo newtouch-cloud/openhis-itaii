@@ -18,7 +18,8 @@
                T2.account_id
         FROM fin_payment_reconciliation AS T1
             LEFT JOIN adm_charge_item AS T2
-                ON T2.id IN (T1.charge_item_ids)
+                -- 因为T2.id是long型，T1.charge_item_ids是例如 "1","2" 的string类型，所以需要先转类型再匹配
+                ON T2.id::TEXT = ANY(string_to_array(T1.charge_item_ids, ','))
         WHERE T1.encouter_id =#{encounterId}
             AND T1.status_enum IN (#{success},#{refundAll},#{refundPart})
             AND T1.delete_flag = '0'
@@ -98,6 +99,7 @@
             resultType="com.openhis.web.chargemanage.dto.EncounterPatientPageDto">
         SELECT T8.encounter_id,
                T8.encounter_bus_no,
+               T8.status_enum,
                T8.start_time,
                T8.patient_name,
                T8.patient_bus_no,
@@ -116,6 +118,7 @@
                         T1.start_time,
                         T1.delete_flag,
                         T1.tenant_id,
+                        T1.status_enum,
                         T2."name" AS patient_name,
                         T2.bus_no AS patient_bus_no,
                         T2.gender_enum,
@@ -142,13 +145,14 @@
                         ON T6.encouter_id = T1.id
                       LEFT JOIN fin_payment_rec_detail AS T7
                         ON T7.reconciliation_id = T6.id
-                 WHERE T3.status_enum = #{billed}
+                 WHERE T3.status_enum IN (#{billed},#{refunding},#{refunded},#{partRefund})
                     AND T1.delete_flag = '0'
                  GROUP BY T1.id,
                           T1.bus_no,
                           T1.start_time,
                           T1.delete_flag,
                           T1.tenant_id,
+                          T1.status_enum,
                           T2."name",
                           T2.bus_no,
                           T2.gender_enum,
