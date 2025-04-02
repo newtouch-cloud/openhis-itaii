@@ -1,1 +1,24 @@
-# openhis
+# OpenHis-ITAII
+
+    OpenHis 信创版
+
+
+## 运行环境
+
+    jdk17 (必须)
+    node.js-v16.15 (推荐)
+    PostgreSQL-v16.2 (必须)
+    redis (常用稳定版本即可)
+
+## 开发提示
+
+    需要修改数据库和redis的连接信息,详见:
+        application.yml
+        application-druid.yml
+
+## 目录解释
+	
+    前端: openhis-ui-vue3
+    后端: openhis-server
+        启动类: OpenHisApplication
+		

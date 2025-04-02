@@ -233,6 +233,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             // TODO: 药品分方;待做
             prescriptionNo = assignSeqUtil.getSeq(AssignSeqEnum.PRESCRIPTION_NO.getPrefix(), 8);
         }
+        Date curDate = new Date();
         // 声明费用项
         ChargeItem chargeItem;
         // 保存药品请求
@@ -284,7 +285,7 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             chargeItem.setDefinitionId(adviceSaveDto.getDefinitionId()); // 费用定价ID
             chargeItem.setDefDetailId(adviceSaveDto.getDefinitionDetailId()); // 定价子表主键
             chargeItem.setEntererId(adviceSaveDto.getPractitionerId());// 开立人ID
-            chargeItem.setEnteredDate(new Date()); // 开立时间
+            chargeItem.setEnteredDate(curDate); // 开立时间
             chargeItem.setServiceTable("med_medication_request");// 医疗服务类型
             chargeItem.setServiceId(medicationRequest.getId()); // 医疗服务ID
             chargeItem.setProductTable(adviceSaveDto.getAdviceTableName());// 产品所在表
@@ -332,14 +333,13 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             chargeItem = new ChargeItem();
             chargeItem.setStatusEnum(ChargeItemStatus.PLANNED.getValue()); // 默认-待收费
             chargeItem.setBusNo(AssignSeqEnum.CHARGE_ITEM_NO.getPrefix().concat(deviceRequest.getBusNo()));
-            chargeItem.setPrescriptionNo(prescriptionNo); // 处方号
             chargeItem.setPatientId(adviceSaveDto.getPatientId()); // 患者
             chargeItem.setContextEnum(adviceSaveDto.getAdviceType()); // 类型
             chargeItem.setEncounterId(adviceSaveDto.getEncounterId()); // 就诊id
             chargeItem.setDefinitionId(adviceSaveDto.getDefinitionId()); // 费用定价ID
             chargeItem.setDefDetailId(adviceSaveDto.getDefinitionDetailId()); // 定价子表主键
             chargeItem.setEntererId(adviceSaveDto.getPractitionerId());// 开立人ID
-            chargeItem.setEnteredDate(new Date()); // 开立时间
+            chargeItem.setEnteredDate(curDate); // 开立时间
             chargeItem.setServiceTable("wor_device_request");// 医疗服务类型
             chargeItem.setServiceId(deviceRequest.getId()); // 医疗服务ID
             chargeItem.setProductTable(adviceSaveDto.getAdviceTableName());// 产品所在表
@@ -377,14 +377,13 @@ public class DoctorStationAdviceAppServiceImpl implements IDoctorStationAdviceAp
             chargeItem = new ChargeItem();
             chargeItem.setStatusEnum(ChargeItemStatus.PLANNED.getValue()); // 默认-待收费
             chargeItem.setBusNo(AssignSeqEnum.CHARGE_ITEM_NO.getPrefix().concat(serviceRequest.getBusNo()));
-            chargeItem.setPrescriptionNo(prescriptionNo); // 处方号
             chargeItem.setPatientId(adviceSaveDto.getPatientId()); // 患者
             chargeItem.setContextEnum(adviceSaveDto.getAdviceType()); // 类型
             chargeItem.setEncounterId(adviceSaveDto.getEncounterId()); // 就诊id
             chargeItem.setDefinitionId(adviceSaveDto.getDefinitionId()); // 费用定价ID
             chargeItem.setDefDetailId(adviceSaveDto.getDefinitionDetailId()); // 定价子表主键
             chargeItem.setEntererId(adviceSaveDto.getPractitionerId());// 开立人ID
-            chargeItem.setEnteredDate(new Date()); // 开立时间
+            chargeItem.setEnteredDate(curDate); // 开立时间
             chargeItem.setServiceTable("wor_service_request");// 医疗服务类型
             chargeItem.setServiceId(serviceRequest.getId()); // 医疗服务ID
             chargeItem.setProductTable(adviceSaveDto.getAdviceTableName());// 产品所在表

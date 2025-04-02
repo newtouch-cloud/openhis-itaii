@@ -1,1 +1,58 @@
+# 忽略所有编译器、IDE相关的文件
+**/.idea/
+**/.vscode/
+**/*.swp
+**/*.swo
+**/*.bak
+**/*.tmp
+**/.vs/
+
+# 忽略 Java 项目编译文件
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+**/target/
+**/bin/
+
+# 忽略 Maven、Gradle、Ant 相关文件
+**/.mvn/
+**/.gradle/
+**/build/
+**/out/
+
+# 忽略 Eclipse、IntelliJ IDEA 和 NetBeans 临时文件
+**/*.log
+**/*.project
+**/*.classpath
+
+# 忽略 Java 配置文件
+**/*.iml
+
+# 忽略 Node.js 和 Vue 项目相关文件
+**/node_modules/
+**/npm-debug.log
+**/yarn-error.log
+**/yarn-debug.log
+**/dist/
+**/*.lock
+**/*.tgz
+
+# 忽略 Vue 项目相关构建文件
+**/.vuepress/dist/
+
+# 忽略 IDE 配置文件
+**/*.launch
+**/*.settings/
+
+# 忽略操作系统生成的文件
+**/.DS_Store
+**/Thumbs.db
+**/Desktop.ini
+
+
+
 /openhis-miniapp/unpackage
+
+# 忽略设计书
+PostgreSQL/openHis_DB设计书.xlsx

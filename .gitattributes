@@ -1,0 +1,16 @@
+# Windows 用户配置：
+# 由于 Windows 默认使用 CRLF，而 macOS 默认使用 LF，因此建议 Windows 用户使用 core.autocrlf true，这样 Git 会在提交时将 CRLF 转换为 LF，在检出代码时将 LF 转换为 CRLF。
+# git config --global core.autocrlf true
+
+# macOS 用户配置：
+# macOS（和 Linux）默认使用 LF，因此建议 macOS 用户使用 core.autocrlf input，这样 Git 只会在提交时将 CRLF 转换为 LF，不会改变 LF 文件的行结束符。
+# git config --global core.autocrlf input
+
+# 该文件可以避免不同操作系统之间引发行结束符的冲突
+
+# 强制所有文本文件使用 LF 作为行结束符。确保项目一致性
+* text=auto eol=lf
+
+# 对于 Windows 特有的二进制文件（如 .exe, .dll 等），保持原始行结束符
+*.exe binary
+*.dll binary
