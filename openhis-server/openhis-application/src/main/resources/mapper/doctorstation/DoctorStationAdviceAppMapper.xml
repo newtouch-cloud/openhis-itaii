@@ -6,147 +6,207 @@
 
     <select id="getAdviceBaseInfo" resultType="com.openhis.web.doctorstation.dto.AdviceBaseDto">
         SELECT abi.tenant_id,
-               abi.advice_type,
-               abi.category_code,
-               abi.part_percent,
-               abi.part_attribute_enum,
-               abi.advice_definition_id,
-               abi.advice_name,
-               abi.advice_bus_no,
-               abi.py_str,
-               abi.wb_str,
-               abi.yb_no,
-               abi.product_name,
-               abi.activity_type,
-               abi.unit_code,
-               abi.min_unit_code,
-               abi.volume,
-               abi.method_code,
-               abi.rate_code,
-               abi.org_id,
-               abi.location_id,
-               abi.dose,
-               abi.dose_unit_code,
-               abi.supplier,
-               abi.manufacturer,
-               abi.charge_item_definition_id,
-               abi.advice_table_name
+        abi.advice_type,
+        abi.category_code,
+        abi.pharmacology_category_code,
+        abi.part_percent,
+        abi.unit_conversion_ratio,
+        abi.part_attribute_enum,
+        abi.tho_part_attribute_enum,
+        abi.skin_test_flag,
+        abi.inject_flag,
+        abi.advice_definition_id,
+        abi.advice_name,
+        abi.advice_bus_no,
+        abi.py_str,
+        abi.wb_str,
+        abi.yb_no,
+        abi.product_name,
+        abi.activity_type,
+        abi.unit_code,
+        abi.min_unit_code,
+        abi.volume,
+        abi.method_code,
+        abi.rate_code,
+        abi.org_id,
+        abi.location_id,
+        abi.dose,
+        abi.dose_unit_code,
+        abi.supplier,
+        abi.manufacturer,
+        abi.charge_item_definition_id,
+        abi.advice_table_name,
+        abi.position_id
         from (
-                 SELECT T1.tenant_id,
-                        1                      AS advice_type,
-                        T1.category_code       AS category_code,
-                        T1.part_percent        AS part_percent,
-                        T1.part_attribute_enum AS part_attribute_enum,
-                        T1.ID                  AS advice_definition_id,
-                        T1.NAME                AS advice_name,
-                        T1.bus_no              AS advice_bus_no,
-                        T1.py_str              AS py_str,
-                        T1.wb_str              AS wb_str,
-                        T1.yb_no               AS yb_no,
-                        T1.merchandise_name    AS product_name,
-                        0                      AS activity_type,
-                        T1.unit_code           AS unit_code,
-                        T1.min_unit_code       AS min_unit_code,
-                        T2.total_volume        AS volume,
-                        T2.method_code         AS method_code,
-                        T2.rate_code           AS rate_code,
-                        T2.org_id              AS org_id,
-                        T2.location_id         AS location_id,
-                        CAST(T2.dose AS TEXT)  AS dose,
-                        T2.dose_unit_code      AS dose_unit_code,
-                        T3.NAME                AS supplier,
-                        T4.NAME                AS manufacturer,
-                        T5.id                  AS charge_item_definition_id,
-                        T5.instance_table      AS advice_table_name
-                 FROM med_medication_definition AS t1
-                          LEFT JOIN med_medication AS T2 ON T2.medication_def_id = T1.ID
-                     AND T2.delete_flag = '0'
-                          LEFT JOIN adm_supplier AS T3 ON T3.ID = T1.supply_id
-                     AND T3.delete_flag = '0'
-                          LEFT JOIN adm_supplier AS T4 ON T4.ID = T1.manufacturer_id
-                     AND T4.delete_flag = '0'
-                          LEFT JOIN adm_charge_item_definition AS T5 ON T5.instance_id = T1.ID
-                     AND T5.delete_flag = '0'
-                     AND T5.instance_table = #{medicationTableName}
-                 WHERE T1.delete_flag = '0'
-                 UNION ALL
-                 SELECT T1.tenant_id,
-                        2                 AS advice_type,
-                        T1.category_code  AS category_code,
-                        T1.part_percent   AS part_percent,
-                        null              AS part_attribute_enum,
-                        T1.ID             AS advice_definition_id,
-                        T1.NAME           AS advice_name,
-                        T1.bus_no         AS advice_bus_no,
-                        T1.py_str         AS py_str,
-                        T1.wb_str         AS wb_str,
-                        T1.yb_no          AS yb_no,
-                        ''                AS product_name,
-                        0                 AS activity_type,
-                        T1.unit_code      AS unit_code,
-                        T1.min_unit_code  AS min_unit_code,
-                        T1.SIZE           AS volume,
-                        ''                AS method_code,
-                        ''                AS rate_code,
-                        T1.org_id         AS org_id,
-                        T1.location_id    AS location_id,
-                        ''                AS dose,
-                        ''                AS dose_unit_code,
-                        T2.NAME           AS supplier,
-                        T3.NAME           AS manufacturer,
-                        T4.id             AS charge_item_definition_id,
-                        T4.instance_table AS advice_table_name
-                 FROM adm_device_definition AS T1
-                          LEFT JOIN adm_supplier AS T2 ON T2.ID = T1.supply_id
-                     AND T2.delete_flag = '0'
-                          LEFT JOIN adm_supplier AS T3 ON T3.ID = T1.manufacturer_id
-                     AND T3.delete_flag = '0'
-                          LEFT JOIN adm_charge_item_definition AS T4 ON T4.instance_id = T1.ID
-                     AND T4.delete_flag = '0'
-                     AND T4.instance_table = #{deviceTableName}
-                 WHERE T1.delete_flag = '0'
-                   AND T1.category_code = #{singleUse}
-                 UNION ALL
-                 SELECT T1.tenant_id,
-                        3                 AS advice_type,
-                        ''                AS category_code,
-                        1                 AS part_percent,
-                        null              AS part_attribute_enum,
-                        T1.ID             AS advice_definition_id,
-                        T1.NAME           AS advice_name,
-                        T1.bus_no         AS advice_bus_no,
-                        T1.py_str         AS py_str,
-                        T1.wb_str         AS wb_str,
-                        T1.yb_no          AS yb_no,
-                        ''                AS product_name,
-                        T1.type_enum      AS activity_type,
-                        ''                AS unit_code,
-                        ''                AS min_unit_code,
-                        ''                AS volume,
-                        ''                AS method_code,
-                        ''                AS rate_code,
-                        T1.org_id         AS org_id,
-                        T1.location_id    AS location_id,
-                        ''                AS dose,
-                        ''                AS dose_unit_code,
-                        ''                AS supplier,
-                        ''                AS manufacturer,
-                        T2.ID             AS charge_item_definition_id,
-                        T2.instance_table AS advice_table_name
-                 FROM wor_activity_definition AS T1
-                          LEFT JOIN adm_charge_item_definition AS T2 ON T2.instance_id = T1.ID
-                     AND T2.delete_flag = '0'
-                     AND T2.instance_table = #{activityTableName}
-                 WHERE T1.delete_flag = '0') AS abi
-            ${ew.customSqlSegment}
+        SELECT T1.tenant_id,
+        1 AS advice_type,
+        T1.category_code AS category_code,
+        T1.pharmacology_category_code AS pharmacology_category_code,
+        T1.part_percent AS part_percent,
+        T1.unit_conversion_ratio AS unit_conversion_ratio,
+        T1.part_attribute_enum AS part_attribute_enum,
+        T1.tho_part_attribute_enum AS tho_part_attribute_enum,
+        T1.skin_test_flag AS skin_test_flag,
+        T1.inject_flag AS inject_flag,
+        T1.ID AS advice_definition_id,
+        T1.NAME AS advice_name,
+        T1.bus_no AS advice_bus_no,
+        T1.py_str AS py_str,
+        T1.wb_str AS wb_str,
+        T1.yb_no AS yb_no,
+        T1.merchandise_name AS product_name,
+        0 AS activity_type,
+        T1.unit_code AS unit_code,
+        T1.min_unit_code AS min_unit_code,
+        T2.total_volume AS volume,
+        T2.method_code AS method_code,
+        T2.rate_code AS rate_code,
+        T2.org_id AS org_id,
+        T2.location_id AS location_id,
+        CAST(T2.dose AS TEXT) AS dose,
+        T2.dose_unit_code AS dose_unit_code,
+        T3.NAME AS supplier,
+        T1.manufacturer_text AS manufacturer,
+        T5.id AS charge_item_definition_id,
+        T5.instance_table AS advice_table_name,
+        T6.def_location_id AS position_id
+        FROM med_medication_definition AS t1
+        INNER JOIN med_medication AS T2 ON T2.medication_def_id = T1.ID
+        AND T2.delete_flag = '0' AND T2.status_enum = #{statusEnum}
+        LEFT JOIN adm_supplier AS T3
+        ON T3.ID = T1.supply_id
+        AND T3.delete_flag = '0'
+        LEFT JOIN adm_charge_item_definition AS T5 ON T5.instance_id = T1.ID
+        AND T5.delete_flag = '0'
+        LEFT JOIN adm_organization_location AS T6
+        ON T6.distribution_category_code = T1.category_code
+        AND T6.delete_flag = '0' AND T6.organization_id = #{organizationId} AND
+        (CURRENT_TIME :: time (6) BETWEEN T6.start_time AND T6.end_time)
+        WHERE T1.delete_flag = '0'
+        AND T2.status_enum = #{statusEnum}
+        <if test="pricingFlag ==1">
+            AND 1 = 2
+        </if>
+        <if test="adviceDefinitionIdParamList != null and !adviceDefinitionIdParamList.isEmpty()">
+            AND T1.id IN
+            <foreach collection="adviceDefinitionIdParamList" item="itemId" open="(" separator="," close=")">
+                #{itemId}
+            </foreach>
+        </if>
+        AND T5.instance_table = #{medicationTableName}
+        UNION ALL
+        SELECT T1.tenant_id,
+        2 AS advice_type,
+        T1.category_code AS category_code,
+        '' AS pharmacology_category_code,
+        T1.part_percent AS part_percent,
+        0 AS unit_conversion_ratio,
+        null AS part_attribute_enum,
+        null AS tho_part_attribute_enum,
+        null AS skin_test_flag,
+        null AS inject_flag,
+        T1.ID AS advice_definition_id,
+        T1.NAME AS advice_name,
+        T1.bus_no AS advice_bus_no,
+        T1.py_str AS py_str,
+        T1.wb_str AS wb_str,
+        T1.yb_no AS yb_no,
+        '' AS product_name,
+        0 AS activity_type,
+        T1.unit_code AS unit_code,
+        T1.min_unit_code AS min_unit_code,
+        T1.SIZE AS volume,
+        '' AS method_code,
+        '' AS rate_code,
+        T1.org_id AS org_id,
+        T1.location_id AS location_id,
+        '' AS dose,
+        '' AS dose_unit_code,
+        T2.NAME AS supplier,
+        T1.manufacturer_text AS manufacturer,
+        T4.id AS charge_item_definition_id,
+        T4.instance_table AS advice_table_name,
+        T5.def_location_id AS position_id
+        FROM adm_device_definition AS T1
+        LEFT JOIN adm_supplier AS T2
+        ON T2.ID = T1.supply_id
+        AND T2.delete_flag = '0'
+        LEFT JOIN adm_charge_item_definition AS T4 ON T4.instance_id = T1.ID
+        AND T4.delete_flag = '0'
+        LEFT JOIN adm_organization_location AS T5 ON T5.distribution_category_code = T1.category_code
+        AND T5.delete_flag = '0' AND T5.organization_id = #{organizationId} AND
+        (CURRENT_TIME :: time (6) BETWEEN T5.start_time AND T5.end_time)
+        WHERE T1.delete_flag = '0'
+        <if test="adviceDefinitionIdParamList != null and !adviceDefinitionIdParamList.isEmpty()">
+            AND T1.id IN
+            <foreach collection="adviceDefinitionIdParamList" item="itemId" open="(" separator="," close=")">
+                #{itemId}
+            </foreach>
+        </if>
+        AND T4.instance_table = #{deviceTableName}
+        AND T1.category_code = #{singleUse}
+        AND T1.status_enum = #{statusEnum}
+        UNION ALL
+        SELECT T1.tenant_id,
+        3 AS advice_type,
+        T1.category_code AS category_code,
+        '' AS pharmacology_category_code,
+        1 AS part_percent,
+        0 AS unit_conversion_ratio,
+        null AS part_attribute_enum,
+        null AS tho_part_attribute_enum,
+        null AS skin_test_flag,
+        null AS inject_flag,
+        T1.ID AS advice_definition_id,
+        T1.NAME AS advice_name,
+        T1.bus_no AS advice_bus_no,
+        T1.py_str AS py_str,
+        T1.wb_str AS wb_str,
+        T1.yb_no AS yb_no,
+        '' AS product_name,
+        T1.type_enum AS activity_type,
+        '' AS unit_code,
+        '' AS min_unit_code,
+        '' AS volume,
+        '' AS method_code,
+        '' AS rate_code,
+        T1.org_id AS org_id,
+        T1.location_id AS location_id,
+        '' AS dose,
+        '' AS dose_unit_code,
+        '' AS supplier,
+        '' AS manufacturer,
+        T2.ID AS charge_item_definition_id,
+        T2.instance_table AS advice_table_name,
+        T3.organization_id AS position_id
+        FROM wor_activity_definition AS T1
+        LEFT JOIN adm_charge_item_definition AS T2
+        ON T2.instance_id = T1.ID
+        AND T2.delete_flag = '0'
+        LEFT JOIN adm_organization_location AS T3 ON T3.activity_definition_id = T1.ID
+        AND T3.delete_flag = '0' AND (CURRENT_TIME :: time (6) BETWEEN T3.start_time AND T3.end_time)
+        WHERE T1.delete_flag = '0'
+        <if test="pricingFlag ==1">
+            AND T1.pricing_flag = #{pricingFlag}
+        </if>
+        <if test="adviceDefinitionIdParamList != null and !adviceDefinitionIdParamList.isEmpty()">
+            AND T1.id IN
+            <foreach collection="adviceDefinitionIdParamList" item="itemId" open="(" separator="," close=")">
+                #{itemId}
+            </foreach>
+        </if>
+        AND T1.status_enum = #{statusEnum}
+        AND T2.instance_table = #{activityTableName}) AS abi
+        ${ew.customSqlSegment}
     </select>
 
     <select id="getAdviceInventory" resultType="com.openhis.web.doctorstation.dto.AdviceInventoryDto">
         SELECT
+        T1.id AS inventory_id,
         T1.item_id,
         T1.item_table,
-        T1.min_quantity,
-        T1.min_unit_code,
+        T1.quantity,
+        T1.unit_code,
         T1.lot_number,
         T1.price,
         T1.location_id,
@@ -167,7 +227,51 @@
                 #{itemId}
             </foreach>
         </if>
+        AND T1.inventory_status_enum = #{status}
         AND T1.item_table IN ( ${SqlCondition} )
+        order by T1.create_time
+    </select>
+
+    <select id="getAdviceDraftInventory" resultType="com.openhis.web.doctorstation.dto.AdviceInventoryDto">
+        SELECT #{medicationTableName} AS item_table,
+               T1.medication_id       AS item_id,
+               T1.lot_number,
+               T1.location_id,
+               CASE
+                   WHEN T1.unit_code = T2.min_unit_code THEN
+                       T1.quantity
+                   ELSE T1.quantity * T2.part_percent
+                   END                AS quantity,
+               CASE
+                   WHEN T1.unit_code = T2.min_unit_code THEN
+                       T1.unit_code
+                   ELSE T2.min_unit_code
+                   END                AS unit_code
+        FROM med_medication_dispense AS T1
+                 LEFT JOIN med_medication_definition AS T2 ON T2.ID = T1.medication_id
+            AND T2.delete_flag = '0'
+        WHERE T1.delete_flag = '0'
+          AND T1.status_enum = #{status}
+        UNION ALL
+        SELECT #{deviceTableName} AS item_table,
+               T1.device_def_id   AS item_id,
+               T1.lot_number,
+               T1.location_id,
+               CASE
+                   WHEN T1.unit_code = T2.min_unit_code THEN
+                       T1.quantity
+                   ELSE T1.quantity * T2.part_percent
+                   END            AS quantity,
+               CASE
+                   WHEN T1.unit_code = T2.min_unit_code THEN
+                       T1.unit_code
+                   ELSE T2.min_unit_code
+                   END            AS unit_code
+        FROM wor_device_dispense AS T1
+                 LEFT JOIN adm_device_definition AS T2 ON T2.ID = T1.device_def_id
+            AND T2.delete_flag = '0'
+        WHERE T1.delete_flag = '0'
+          AND T1.status_enum = #{status}
     </select>
 
     <select id="getChildCharge" resultType="com.openhis.web.doctorstation.dto.AdvicePriceDto">
@@ -209,6 +313,157 @@
                 #{itemId}
             </foreach>
         </if>
+    </select>
+
+    <select id="getRequestBaseInfo" resultType="com.openhis.web.doctorstation.dto.RequestBaseDto">
+        (SELECT 1 AS advice_type,
+        T1.id AS request_id,
+        T1.id || '-1' AS unique_key,
+        T1.practitioner_id AS requester_id,
+        T1.create_time AS request_time,
+        CASE WHEN T1.practitioner_id = #{practitionerId} THEN '1' ELSE '0' END AS biz_request_flag,
+        T1.content_json AS content_json,
+        T1.skin_test_flag AS skin_test_flag,
+        T1.infusion_flag AS inject_flag,
+        T1.group_id AS group_id,
+        T2.NAME AS advice_name,
+        T3.total_volume AS volume,
+        T1.lot_number AS lot_number,
+        T1.quantity AS quantity,
+        T1.unit_code AS unit_code,
+        T1.status_enum AS status_enum,
+        T1.method_code AS method_code,
+        T1.rate_code AS rate_code,
+        T1.dose AS dose,
+        T1.dose_unit_code AS dose_unit_code,
+        T4.id AS charge_item_id,
+        T4.total_price AS total_price,
+        T4.status_enum AS charge_status,
+        al.id AS position_id,
+        al.name AS position_name,
+        T1.dispense_per_duration AS dispense_per_duration,
+        T2.part_percent AS part_percent,
+        ccd.name AS condition_definition_name
+        FROM med_medication_request AS T1
+        LEFT JOIN med_medication_definition AS T2 ON T2.ID = T1.medication_id
+        AND T2.delete_flag = '0'
+        LEFT JOIN med_medication AS T3 ON T3.medication_def_id = T2.ID
+        AND T3.delete_flag = '0'
+        LEFT JOIN adm_charge_item AS T4 ON T4.service_id = T1.ID AND T4.delete_flag = '0' AND
+        T4.service_table = #{MED_MEDICATION_REQUEST}
+        LEFT JOIN adm_location AS al ON al.ID = T1.perform_location AND al.delete_flag = '0'
+        LEFT JOIN cli_condition AS cc ON cc.id = T1.condition_id AND cc.delete_flag = '0'
+        LEFT JOIN cli_condition_definition AS ccd ON ccd.id = cc.definition_id
+        WHERE T1.delete_flag = '0' AND T1.tcm_flag = 0
+        <if test="historyFlag == '0'.toString()">
+            AND T1.encounter_id = #{encounterId}
+        </if>
+        <if test="historyFlag == '1'.toString()">
+            AND T1.patient_id = #{patientId} AND T1.encounter_id != #{encounterId}
+        </if>
+        AND T1.refund_medicine_id IS NULL
+        ORDER BY T1.status_enum, T1.group_id)
+        UNION ALL
+        (SELECT 2 AS advice_type,
+        T1.id AS request_id,
+        T1.id || '-2' AS unique_key,
+        T1.requester_id AS requester_id,
+        T1.create_time AS request_time,
+        CASE WHEN T1.requester_id = #{practitionerId} THEN '1' ELSE '0' END AS biz_request_flag,
+        T1.content_json AS content_json,
+        null AS skin_test_flag,
+        null AS inject_flag,
+        null AS group_id,
+        T2.NAME AS advice_name,
+        T2.SIZE AS volume,
+        T1.lot_number AS lot_number,
+        T1.quantity AS quantity,
+        T1.unit_code AS unit_code,
+        T1.status_enum AS status_enum,
+        '' AS method_code,
+        T1.rate_code AS rate_code,
+        NULL AS dose,
+        '' AS dose_unit_code,
+        T3.id AS charge_item_id,
+        T3.total_price AS total_price,
+        T3.status_enum AS charge_status,
+        al.id AS position_id,
+        al.name AS position_name,
+        null AS dispense_per_duration,
+        T2.part_percent AS part_percent,
+        '' AS condition_definition_name
+        FROM wor_device_request AS T1
+        LEFT JOIN adm_device_definition AS T2 ON T2.ID = T1.device_def_id
+        AND T2.delete_flag = '0'
+        LEFT JOIN adm_charge_item AS T3
+        ON T3.service_id = T1.ID AND T3.delete_flag = '0' AND
+        T3.service_table = #{WOR_DEVICE_REQUEST}
+        LEFT JOIN adm_location AS al ON al.ID = T1.perform_location AND al.delete_flag = '0'
+        WHERE T1.delete_flag = '0'
+        <if test="historyFlag == '0'.toString()">
+            AND T1.encounter_id = #{encounterId}
+        </if>
+        <if test="historyFlag == '1'.toString()">
+            AND T1.patient_id = #{patientId} AND T1.encounter_id != #{encounterId}
+        </if>
+        AND T1.refund_device_id IS NULL
+        ORDER BY T1.status_enum)
+        UNION ALL
+        (SELECT 3 AS advice_type,
+        T1.id AS request_id,
+        T1.id || '-3' AS unique_key,
+        T1.requester_id AS requester_id,
+        T1.create_time AS request_time,
+        CASE WHEN T1.requester_id = #{practitionerId} THEN '1' ELSE '0' END AS biz_request_flag,
+        T1.content_json AS content_json,
+        null AS skin_test_flag,
+        null AS inject_flag,
+        null AS group_id,
+        T2.NAME AS advice_name,
+        '' AS volume,
+        '' AS lot_number,
+        T1.quantity AS quantity,
+        T1.unit_code AS unit_code,
+        T1.status_enum AS status_enum,
+        '' AS method_code,
+        '' AS rate_code,
+        NULL AS dose,
+        '' AS dose_unit_code,
+        T3.id AS charge_item_id,
+        T3.total_price AS total_price,
+        T3.status_enum AS charge_status,
+        ao.id AS position_id,
+        ao.name AS position_name,
+        null AS dispense_per_duration,
+        1 AS part_percent,
+        '' AS condition_definition_name
+        FROM wor_service_request AS T1
+        LEFT JOIN wor_activity_definition AS T2
+        ON T2.ID = T1.activity_id
+        AND T2.delete_flag = '0'
+        LEFT JOIN adm_charge_item AS T3 ON T3.service_id = T1.ID AND T3.delete_flag = '0' AND
+        T3.service_table = #{WOR_SERVICE_REQUEST}
+        LEFT JOIN adm_organization AS ao ON ao.ID = T1.org_id AND ao.delete_flag = '0'
+        WHERE T1.delete_flag = '0'
+        AND T1.based_on_table is null
+        <if test="historyFlag == '0'.toString()">
+            AND T1.encounter_id = #{encounterId}
+        </if>
+        <if test="historyFlag == '1'.toString()">
+            AND T1.patient_id = #{patientId} AND T1.encounter_id != #{encounterId}
+        </if>
+        ORDER BY T1.status_enum)
+    </select>
+
+    <select id="getEncounterContract" resultType="com.openhis.web.doctorstation.dto.EncounterContractDto">
+        SELECT aa.id AS account_id,
+               fc.contract_name,
+               fc.bus_no
+        FROM adm_account aa
+                 LEFT JOIN fin_contract AS fc ON fc.bus_no = aa.contract_no
+            AND fc.delete_flag = '0'
+        WHERE aa.delete_flag = '0'
+          AND aa.encounter_id = #{encounterId}
     </select>
 
 </mapper>

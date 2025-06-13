@@ -6,34 +6,43 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import com.openhis.common.enums.AccountStatus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
+import com.core.common.utils.AssignSeqUtil;
 import com.core.common.utils.MessageUtils;
+import com.core.common.utils.StringUtils;
 import com.openhis.administration.domain.Organization;
 import com.openhis.administration.service.IOrganizationService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.AccountStatus;
+import com.openhis.common.enums.AssignSeqEnum;
+import com.openhis.common.enums.OrganizationClass;
+import com.openhis.common.enums.OrganizationType;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.web.basedatamanage.appservice.IOrganizationAppService;
-import com.openhis.web.basedatamanage.dto.OrganizationQueryDto;
+import com.openhis.web.basedatamanage.dto.OrganizationDto;
 
 @Service
 public class OrganizationAppServiceImpl implements IOrganizationAppService {
 
     @Resource
-    IOrganizationService organizationService;
+    private IOrganizationService organizationService;
+
+    @Resource
+    private AssignSeqUtil assignSeqUtil;
 
     @Override
-    public Page<OrganizationQueryDto> getOrganizationTree(Integer pageNo, Integer pageSize,
-        HttpServletRequest request) {
+    public Page<OrganizationDto> getOrganizationTree(Integer pageNo, Integer pageSize, HttpServletRequest request) {
         // 查询机构列表
         Page<Organization> page = organizationService.page(new Page<>(pageNo, pageSize));
         List<Organization> organizationList = page.getRecords();
         // 将机构列表转为树结构
-        List<OrganizationQueryDto> orgTree = buildTree(organizationList);
-        Page<OrganizationQueryDto> orgQueryDtoPage = new Page<>(pageNo, pageSize, page.getTotal());
+        List<OrganizationDto> orgTree = buildTree(organizationList);
+        Page<OrganizationDto> orgQueryDtoPage = new Page<>(pageNo, pageSize, page.getTotal());
         orgQueryDtoPage.setRecords(orgTree);
         return orgQueryDtoPage;
     }
@@ -44,19 +53,22 @@ public class OrganizationAppServiceImpl implements IOrganizationAppService {
      * @param records 机构列表
      * @return tree
      */
-    private List<OrganizationQueryDto> buildTree(List<Organization> records) {
+    private List<OrganizationDto> buildTree(List<Organization> records) {
         // 按b_no的层级排序，确保父节点先处理
         List<Organization> sortedRecords = records.stream()
             .sorted(Comparator.comparingInt(r -> r.getBusNo().split("\\.").length)).collect(Collectors.toList());
 
-        Map<String, OrganizationQueryDto> nodeMap = new HashMap<>();
-        List<OrganizationQueryDto> tree = new ArrayList<>();
+        Map<String, OrganizationDto> nodeMap = new HashMap<>();
+        List<OrganizationDto> tree = new ArrayList<>();
 
         for (Organization record : sortedRecords) {
             String bNo = record.getBusNo();
             String[] parts = bNo.split("\\.");
-            OrganizationQueryDto node = new OrganizationQueryDto();
+            OrganizationDto node = new OrganizationDto();
             BeanUtils.copyProperties(record, node);
+            node.setTypeEnum_dictText(EnumUtils.getInfoByValue(OrganizationType.class, node.getTypeEnum()));
+            node.setClassEnum_dictText(EnumUtils.getInfoByValue(OrganizationClass.class, node.getClassEnum()));
+            node.setActiveFlag_dictText(EnumUtils.getInfoByValue(AccountStatus.class, node.getActiveFlag()));
             // 将当前节点加入映射
             nodeMap.put(bNo, node);
 
@@ -66,7 +78,7 @@ public class OrganizationAppServiceImpl implements IOrganizationAppService {
             } else {
                 // 获取父节点的b_no（去掉最后一部分）
                 String parentBNo = String.join(".", Arrays.copyOf(parts, parts.length - 1));
-                OrganizationQueryDto parent = nodeMap.get(parentBNo);
+                OrganizationDto parent = nodeMap.get(parentBNo);
 
                 if (parent != null) {
                     parent.getChildren().add(node);
@@ -94,27 +106,37 @@ public class OrganizationAppServiceImpl implements IOrganizationAppService {
     /**
      * 添加/编辑机构
      *
-     * @param organizationQueryDto 机构信息
+     * @param organizationDto 机构信息
      * @return 操作结果
      */
     @Override
-    public R<?> addOrEditOrganization(OrganizationQueryDto organizationQueryDto) {
+    public R<?> addOrEditOrganization(OrganizationDto organizationDto) {
 
         // 新增organization信息
         Organization organization = new Organization();
-        BeanUtils.copyProperties(organizationQueryDto, organization);
+        BeanUtils.copyProperties(organizationDto, organization);
 
-        if (organizationQueryDto.getId() != null) {
+        if (organizationDto.getId() != null) {
             // 更新机构信息
             organizationService.updateById(organization);
         } else {
             // 活动标识：有效
             organization.setActiveFlag(AccountStatus.ACTIVE.getValue());
+            // 采番bus_no三位
+            String code = assignSeqUtil.getSeq(AssignSeqEnum.ORGANIZATION_BUS_NO.getPrefix(), 3);
+            // 如果传了上级科室 把当前的code拼到后边
+            if (StringUtils.isNotEmpty(organization.getBusNo())) {
+                organization.setBusNo(String.format(CommonConstants.Common.MONTAGE_FORMAT, organization.getBusNo(),
+                    CommonConstants.Common.POINT, code));
+            } else {
+                organization.setBusNo(code);
+            }
             // 生成待发送的机构信息
             organizationService.save(organization);
         }
         // 返回机构id
-        return R.ok(organization.getId(), MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"机构信息更新添加"}));
+        return R.ok(organization.getId(),
+            MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"机构信息更新添加"}));
     }
 
     /**
@@ -133,7 +155,8 @@ public class OrganizationAppServiceImpl implements IOrganizationAppService {
 
         // 删除机构信息
         boolean deleteOrgSuccess = organizationService.removeByIds(orgIdList);
-        return deleteOrgSuccess ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"机构信息"}))
+        return deleteOrgSuccess
+            ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"机构信息"}))
             : R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, new Object[] {"机构信息"}));
     }
 

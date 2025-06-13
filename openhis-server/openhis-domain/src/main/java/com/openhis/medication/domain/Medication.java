@@ -33,7 +33,7 @@ public class Medication extends HisBaseEntity {
     private Long medicationDefId;
 
     /** 药品状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
 
     /** 所属科室 */
     private Long orgId;

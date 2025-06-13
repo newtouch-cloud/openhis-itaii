@@ -80,7 +80,7 @@ public class PaymentReconciliation extends HisBaseEntity {
     private Integer printCount;
 
     /** 合同编码 */
-    private String contractNo;
+    private String contractNo;//2025/05/08李：自付和医保同时付费时只生成一条payment，故此该字段在insert时先为null
 
     /** 处方号集合 */
     private String chargeItemIds;
@@ -90,4 +90,16 @@ public class PaymentReconciliation extends HisBaseEntity {
 
     /** 结算时间 */
     private Date billDate;
+
+    /** 发票编号 */
+    private Long invoiceId;
+
+    /** 关联账户Id */
+    private Long accountId;//2025/05/08李：自付和医保同时付费时只生成一条payment，故此该字段在insert时先为null
+
+    /** 医保结算id */
+    private String ybSettleIds;//记录医保结算id
+
+    /** 医保清算标志 */
+    private Integer ybClearFlag;//默认值0 未清算
 }

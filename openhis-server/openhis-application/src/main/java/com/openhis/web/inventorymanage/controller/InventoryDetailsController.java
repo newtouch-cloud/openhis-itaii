@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.core.common.core.domain.R;
 import com.openhis.web.inventorymanage.appservice.IInventoryDetailsAppService;
-import com.openhis.web.inventorymanage.dto.PurchaseInSearchParam;
-import com.openhis.web.inventorymanage.dto.RequisitionOutSearchParam;
+import com.openhis.web.inventorymanage.dto.InventoryDetailsSearchParam;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,7 +34,7 @@ public class InventoryDetailsController {
     /**
      * 采购入库明细查询
      *
-     * @param purchaseInSearchParam 查询条件
+     * @param inventoryDetailsSearchParam 查询条件
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @param searchKey 模糊查询关键字
@@ -43,37 +42,18 @@ public class InventoryDetailsController {
      * @return 采购入库分页列表
      */
     @GetMapping(value = "/purchase-in")
-    public R<?> purchaseInQueryGetPage(PurchaseInSearchParam purchaseInSearchParam,
-        @RequestParam(name = "searchKey", defaultValue = "") String searchKey,
+    public R<?> purchaseInGetPage(InventoryDetailsSearchParam inventoryDetailsSearchParam,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-        return R.ok(
-            inventoryDetailsAppService.purchaseInGetPage(purchaseInSearchParam, searchKey, pageNo, pageSize, request));
-    }
-
-    /**
-     * 领用出库明细查询
-     *
-     * @param requisitionOutSearchParam 查询条件
-     * @param pageNo 当前页码
-     * @param pageSize 查询条数
-     * @param searchKey 模糊查询关键字
-     * @param request 请求数据
-     * @return 采购入库分页列表
-     */
-    @GetMapping(value = "/requisition-out")
-    public R<?> RequisitionOutQueryGetPage(RequisitionOutSearchParam requisitionOutSearchParam,
-        @RequestParam(name = "searchKey", defaultValue = "") String searchKey,
-        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-        return R.ok(inventoryDetailsAppService.requisitionOutGetPage(requisitionOutSearchParam, searchKey, pageNo,
-            pageSize, request));
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+        @RequestParam(name = "searchKey", required = false) String searchKey, HttpServletRequest request) {
+        return inventoryDetailsAppService.purchaseInGetPage(inventoryDetailsSearchParam, pageNo, pageSize, searchKey,
+            request);
     }
 
     /**
      * 商品调拨明细查询
      *
-     * @param requisitionOutSearchParam 查询条件
+     * @param inventoryDetailsSearchParam 查询条件
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @param searchKey 模糊查询关键字
@@ -81,18 +61,37 @@ public class InventoryDetailsController {
      * @return 商品调拨分页列表
      */
     @GetMapping(value = "/inventory-transfer")
-    public R<?> InventoryTransferQueryGetPage(RequisitionOutSearchParam requisitionOutSearchParam,
-        @RequestParam(name = "searchKey", defaultValue = "") String searchKey,
+    public R<?> transferGetPage(InventoryDetailsSearchParam inventoryDetailsSearchParam,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-        return R.ok(inventoryDetailsAppService.inventoryTransferGetPage(requisitionOutSearchParam, searchKey, pageNo,
-            pageSize, request));
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+        @RequestParam(name = "searchKey", required = false) String searchKey, HttpServletRequest request) {
+        return inventoryDetailsAppService.transferGetPage(inventoryDetailsSearchParam, pageNo, pageSize, searchKey,
+            request);
+    }
+
+    /**
+     * 领用出库明细查询
+     *
+     * @param inventoryDetailsSearchParam 查询条件
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @param searchKey 模糊查询关键字
+     * @param request 请求数据
+     * @return 领用出库明细分页列表
+     */
+    @GetMapping(value = "/requisition-out")
+    public R<?> requisitionOutGetPage(InventoryDetailsSearchParam inventoryDetailsSearchParam,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+        @RequestParam(name = "searchKey", required = false) String searchKey, HttpServletRequest request) {
+        return inventoryDetailsAppService.requisitionOutGetPage(inventoryDetailsSearchParam, pageNo, pageSize,
+            searchKey, request);
     }
 
     /**
      * 商品盘点明细查询
      *
-     * @param requisitionOutSearchParam 查询条件
+     * @param inventoryDetailsSearchParam 查询条件
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @param searchKey 模糊查询关键字
@@ -100,12 +99,11 @@ public class InventoryDetailsController {
      * @return 商品盘点分页列表
      */
     @GetMapping(value = "/inventory-stock-take")
-    public R<?> InventoryStockTakeQueryGetPage(RequisitionOutSearchParam requisitionOutSearchParam,
-        @RequestParam(name = "searchKey", defaultValue = "") String searchKey,
+    public R<?> inventoryStockGetPage(InventoryDetailsSearchParam inventoryDetailsSearchParam,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-        return R.ok(inventoryDetailsAppService.inventoryStockTakeGetPage(requisitionOutSearchParam, searchKey, pageNo,
-            pageSize, request));
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+        @RequestParam(name = "searchKey", required = false) String searchKey, HttpServletRequest request) {
+        return inventoryDetailsAppService.inventoryStockGetPage(inventoryDetailsSearchParam, pageNo, pageSize,
+            searchKey, request);
     }
-
 }

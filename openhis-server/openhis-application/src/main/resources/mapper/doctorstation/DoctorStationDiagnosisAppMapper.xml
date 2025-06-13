@@ -52,6 +52,7 @@
                 SELECT 1
                 FROM cli_condition AS T2
                 WHERE T2.delete_flag = '0'
+                  AND t2.tcm_flag = 0
                   AND T2.definition_id IS NOT NULL
                   AND T2.patient_id = #{patientId}
                   AND T2.definition_id = T1.ID
@@ -70,8 +71,9 @@
                  JOIN (SELECT definition_id
                        FROM cli_condition
                        WHERE delete_flag = '0'
+                         AND tcm_flag = 0
                          AND definition_id IS NOT NULL
-                         AND recorder_id = #{userId}
+                         AND recorder_id = #{practitionerId}
                        GROUP BY definition_id LIMIT 10) AS T2 ON T1.ID = T2.definition_id
         WHERE T1.delete_flag = '0'
           AND T1.status_enum = #{statusEnum}
@@ -117,18 +119,23 @@
     </select>
 
     <select id="getEncounterDiagnosis" resultType="com.openhis.web.doctorstation.dto.DiagnosisQueryDto">
-        SELECT T1.condition_id,
+        SELECT T1.id AS encounter_diagnosis_id,
+               T1.condition_id,
                T2.definition_id,
                T3.source_enum,
                T3.NAME,
                T1.maindise_flag,
-               T2.verification_status_enum
+               T1.diag_srt_no,
+               T1.med_type_code,
+               T2.verification_status_enum,
+               T2.yb_no
         FROM adm_encounter_diagnosis AS T1
                  LEFT JOIN cli_condition AS T2 ON T2.ID = T1.condition_id
-            AND T2.delete_flag = '0'
+            AND T2.delete_flag = '0' AND T2.tcm_flag = 0
                  LEFT JOIN cli_condition_definition AS T3 ON t3.ID = T2.definition_id
             AND T3.delete_flag = '0'
         WHERE T1.delete_flag = '0'
+          AND T1.tcm_flag = 0
           AND T1.encounter_id = #{encounterId}
     </select>
 

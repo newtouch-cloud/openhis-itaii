@@ -18,10 +18,22 @@ public enum PractitionerRoles implements HisEnumInterface {
 
     PHARMACIST(3, "pharmacist", "药师"),
 
-    LOCATION_ADMIN(4, "locationAdmin", "库房管理员");
+    LOCATION_ADMIN(4, "locationAdmin", "药库管理员");
 
     @EnumValue
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static PractitionerRoles getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (PractitionerRoles val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

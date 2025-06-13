@@ -1,8 +1,10 @@
 package com.openhis.web.basedatamanage.appservice;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import javax.servlet.http.HttpServletRequest;
+
 import com.core.common.core.domain.R;
-import com.openhis.web.basedatamanage.dto.LocationQueryDto;
+import com.openhis.web.basedatamanage.dto.LocationAddOrEditDto;
+import com.openhis.web.basedatamanage.dto.LocationPageParam;
 
 /**
  * Location 应该服务类
@@ -27,19 +29,46 @@ public interface ILocationAppService {
     R<?> getLocationById(Long locationId);
 
     /**
-     * 添加/编辑位置信息
-     *
-     * @param locationQueryDto 位置信息
-     * @return 操作结果
-     */
-    R<?> addOrEditInventoryReceipt(LocationQueryDto locationQueryDto);
-
-    /**
      * 删除位置信息
      *
-     * @param locationId 位置信息id
+     * @param busNo 位置信息编码
      * @return 操作结果
      */
-    R<?> deleteLocation(Long locationId);
+    R<?> deleteLocation(String busNo);
 
+    /**
+     * 位置分页列表
+     *
+     * @param locationPageParam 查询条件
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @param searchKey 模糊查询条件
+     * @param request 请求
+     * @return 位置分页列表
+     */
+    R<?> getLocationPage(LocationPageParam locationPageParam, String searchKey, Integer pageNo, Integer pageSize,
+        HttpServletRequest request);
+
+    /**
+     * 新增位置信息
+     *
+     * @param locationAddOrEditDto 库房位置信息
+     * @return 操作结果
+     */
+    R<?> addLocation(LocationAddOrEditDto locationAddOrEditDto);
+
+    /**
+     * 编辑位置信息
+     *
+     * @param locationAddOrEditDto 库房位置信息
+     * @return 操作结果
+     */
+    R<?> editLocation(LocationAddOrEditDto locationAddOrEditDto);
+
+    /**
+     * 位置初始化
+     *
+     * @return 初始化信息
+     */
+    R<?> locationInit();
 }

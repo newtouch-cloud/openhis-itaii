@@ -3,12 +3,15 @@
  */
 package com.openhis.web.doctorstation.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.core.common.core.domain.R;
+import com.openhis.common.enums.Whether;
 import com.openhis.web.doctorstation.appservice.IDoctorStationMainAppService;
 import com.openhis.web.doctorstation.dto.DoctorStationInitDto;
 import com.openhis.web.doctorstation.dto.PatientInfoDto;
@@ -50,8 +53,9 @@ public class DoctorStationMainController {
     public R<?> getPatientInfo(PatientInfoDto patientInfoDto,
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-        return R.ok(iDoctorStationMainAppService.getPatientInfo(patientInfoDto, searchKey, pageNo, pageSize));
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
+        return R.ok(iDoctorStationMainAppService.getPatientInfo(patientInfoDto, searchKey, pageNo, pageSize, request,
+            Whether.NO.getValue()));
     }
 
     /**

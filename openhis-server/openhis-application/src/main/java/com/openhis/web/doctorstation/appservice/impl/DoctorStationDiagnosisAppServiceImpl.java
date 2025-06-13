@@ -66,6 +66,8 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
         // 如果绑定类型是个人,objectId 存储当前登录账号id
         if (BindingType.PERSONAL.getValue().equals(diagnosisBelongBindingDto.getBindingEnum())) {
             diagnosisBelongBindingDto.setObjectId(SecurityUtils.getLoginUser().getUserId());
+        } else if (BindingType.DEFINITION.getValue().equals(diagnosisBelongBindingDto.getBindingEnum())) {
+            diagnosisBelongBindingDto.setObjectId(SecurityUtils.getLoginUser().getOrgId());
         }
         DiagnosisBelongBinding diagnosisBelongBinding = new DiagnosisBelongBinding();
         BeanUtils.copyProperties(diagnosisBelongBindingDto, diagnosisBelongBinding);
@@ -186,6 +188,8 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
         Long encounterId = saveDiagnosisParam.getEncounterId();
         // 诊断定义集合
         List<SaveDiagnosisChildParam> diagnosisChildList = saveDiagnosisParam.getDiagnosisChildList();
+        // 先删除再保存
+        iEncounterDiagnosisService.deleteEncounterDiagnosisInfos(encounterId);
         // 保存诊断管理
         Condition condition;
         for (SaveDiagnosisChildParam saveDiagnosisChildParam : diagnosisChildList) {
@@ -205,6 +209,8 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
             encounterDiagnosis.setEncounterId(encounterId);
             encounterDiagnosis.setConditionId(saveDiagnosisChildParam.getConditionId());
             encounterDiagnosis.setMaindiseFlag(saveDiagnosisChildParam.getMaindiseFlag());
+            encounterDiagnosis.setDiagSrtNo(saveDiagnosisChildParam.getDiagSrtNo()); // 排序号
+            encounterDiagnosis.setMedTypeCode(saveDiagnosisChildParam.getMedTypeCode());// 医疗类型
             iEncounterDiagnosisService.save(encounterDiagnosis);
         }
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"诊断"}));
@@ -226,20 +232,21 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
         this.handleConditionDefinitionMetadata(patientHistoryList);
         conditionDefinitionBusinessClass.setPatientHistoryList(patientHistoryList);
         // 医生常用诊断
-        Long userId = SecurityUtils.getLoginUser().getUserId(); // 当前登录账号ID
+        Long practitionerId = SecurityUtils.getLoginUser().getPractitionerId(); // 当前参与者ID
         List<ConditionDefinitionMetadata> doctorCommonUseList =
-            doctorStationDiagnosisAppMapper.getDoctorCommonUseList(PublicationStatus.ACTIVE.getValue(), userId);
+            doctorStationDiagnosisAppMapper.getDoctorCommonUseList(PublicationStatus.ACTIVE.getValue(), practitionerId);
         this.handleConditionDefinitionMetadata(doctorCommonUseList);
         conditionDefinitionBusinessClass.setDoctorCommonUseList(doctorCommonUseList);
         // 用户个人诊断
+        Long userId = SecurityUtils.getLoginUser().getUserId();
         List<ConditionDefinitionMetadata> userPersonalList = doctorStationDiagnosisAppMapper
             .getUserPersonalList(PublicationStatus.ACTIVE.getValue(), BindingType.PERSONAL.getValue(), userId);
         this.handleConditionDefinitionMetadata(userPersonalList);
         conditionDefinitionBusinessClass.setUserPersonalList(userPersonalList);
         // 科室诊断
-        // TODO: currentUserOrganizationId(当前登录账号所属的科室ID) 待补充
-        List<ConditionDefinitionMetadata> organizationList = doctorStationDiagnosisAppMapper
-            .getOrganizationList(PublicationStatus.ACTIVE.getValue(), BindingType.DEFINITION.getValue(), null);
+        Long currentUserOrganizationId = SecurityUtils.getLoginUser().getOrgId();
+        List<ConditionDefinitionMetadata> organizationList = doctorStationDiagnosisAppMapper.getOrganizationList(
+            PublicationStatus.ACTIVE.getValue(), BindingType.DEFINITION.getValue(), currentUserOrganizationId);
         this.handleConditionDefinitionMetadata(organizationList);
         conditionDefinitionBusinessClass.setOrganizationList(organizationList);
         return R.ok(conditionDefinitionBusinessClass);
@@ -256,14 +263,14 @@ public class DoctorStationDiagnosisAppServiceImpl implements IDoctorStationDiagn
         List<DiagnosisQueryDto> encounterDiagnosis = doctorStationDiagnosisAppMapper.getEncounterDiagnosis(encounterId);
         for (DiagnosisQueryDto diagnosis : encounterDiagnosis) {
             // 中医诊断/西医诊断
-            if (ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_DIAGNOSIS.getValue()
-                .equals(diagnosis.getSourceEnum())
-                || ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_SYNDROME_CATALOG.getValue()
-                    .equals(diagnosis.getSourceEnum())) {
-                diagnosis.setTypeName(CommonConstants.BusinessName.TCM_DIAGNOSIS);
-            } else {
-                diagnosis.setTypeName(CommonConstants.BusinessName.WESTERN_MEDICINE_DIAGNOSIS);
-            }
+//            if (ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_DIAGNOSIS.getValue()
+//                .equals(diagnosis.getSourceEnum())
+//                || ConditionDefinitionSource.TRADITIONAL_CHINESE_MEDICINE_SYNDROME_CATALOG.getValue()
+//                    .equals(diagnosis.getSourceEnum())) {
+//                diagnosis.setTypeName(CommonConstants.BusinessName.TCM_DIAGNOSIS);
+//            } else {
+//                diagnosis.setTypeName(CommonConstants.BusinessName.WESTERN_MEDICINE_DIAGNOSIS);
+//            }
             // 验证状态
             diagnosis.setVerificationStatusEnum_enumText(
                 EnumUtils.getInfoByValue(ConditionVerificationStatus.class, diagnosis.getVerificationStatusEnum()));

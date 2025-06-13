@@ -1,6 +1,7 @@
 package com.openhis.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -22,10 +23,22 @@ public enum EncounterClass implements HisEnumInterface {
 
     HH(6, "HH", "家庭"),
 
-    OTHER(7, "OTHER", "家庭");
+    OTHER(7, "OTHER", "其他");
 
     @EnumValue
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static EncounterClass getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (EncounterClass val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

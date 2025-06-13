@@ -1,16 +1,14 @@
 package com.openhis.workflow.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.core.common.core.domain.HisBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.util.Date;
 
 /**
  * 器材发放管理Entity实体
@@ -32,10 +30,16 @@ public class DeviceDispense extends HisBaseEntity {
     private String busNo;
 
     /** 器材请求id */
-    private String deviceReqId;
+    private Long deviceReqId;
 
     /** 器材发放状态 */
     private Integer statusEnum;
+
+    /** 请求基于什么 */
+    private String basedOnTable;
+
+    /** 请求基于什么的ID */
+    private Long basedOnId;
 
     /** 未发药原因 */
     private Integer notPerformedReasonEnum;
@@ -97,5 +101,7 @@ public class DeviceDispense extends HisBaseEntity {
     /** 使用说明 */
     private String usageInstruction;
 
+    /** 追溯码 */
+    private String traceNo;
 
 }

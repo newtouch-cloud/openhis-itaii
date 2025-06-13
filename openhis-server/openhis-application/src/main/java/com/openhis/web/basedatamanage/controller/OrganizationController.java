@@ -3,9 +3,6 @@
  */
 package com.openhis.web.basedatamanage.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.validation.annotation.Validated;
@@ -15,10 +12,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.OrganizationType;
 import com.openhis.web.basedatamanage.appservice.IOrganizationAppService;
+import com.openhis.web.basedatamanage.dto.OrganizationDto;
 import com.openhis.web.basedatamanage.dto.OrganizationInitDto;
-import com.openhis.web.basedatamanage.dto.OrganizationQueryDto;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,13 +35,7 @@ public class OrganizationController {
 
     @GetMapping(value = "/init")
     public R<?> init() {
-
-        List<OrganizationInitDto> initDto = new ArrayList<>();
-
-        for (OrganizationType type : OrganizationType.values()) {
-            initDto.add(new OrganizationInitDto(type.getValue(), type.getCode()));
-        }
-        return R.ok(initDto);
+        return R.ok(new OrganizationInitDto());
     }
 
     /**
@@ -57,9 +47,8 @@ public class OrganizationController {
      */
     @GetMapping(value = "/organization")
     public R<?> getOrganizationPage(@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-        Page<OrganizationQueryDto> organizationTree =
-            iOrganizationAppService.getOrganizationTree(pageNo, pageSize, request);
+        @RequestParam(value = "pageSize", defaultValue = "100") Integer pageSize, HttpServletRequest request) {
+        Page<OrganizationDto> organizationTree = iOrganizationAppService.getOrganizationTree(pageNo, pageSize, request);
         return R.ok(organizationTree,
             MessageUtils.createMessage(PromptMsgConstant.Common.M00009, new Object[] {"机构信息"}));
     }
@@ -78,12 +67,12 @@ public class OrganizationController {
     /**
      * 添加/编辑机构信息
      *
-     * @param organizationQueryDto 机构信息
+     * @param organizationDto 机构信息
      * @return 操作结果
      */
-    @PutMapping("/organization")
-    public R<?> addOrEditInventoryReceipt(@Validated @RequestBody OrganizationQueryDto organizationQueryDto) {
-        return iOrganizationAppService.addOrEditOrganization(organizationQueryDto);
+    @PostMapping("/organization")
+    public R<?> addOrEditInventoryReceipt(@Validated @RequestBody OrganizationDto organizationDto) {
+        return iOrganizationAppService.addOrEditOrganization(organizationDto);
     }
 
     /**

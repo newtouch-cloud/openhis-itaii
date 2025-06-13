@@ -32,4 +32,16 @@ public enum NotPerformedReason {
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static NotPerformedReason getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (NotPerformedReason val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

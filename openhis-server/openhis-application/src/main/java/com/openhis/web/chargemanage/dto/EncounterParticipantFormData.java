@@ -1,7 +1,5 @@
 package com.openhis.web.chargemanage.dto;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.enums.ParticipantType;
@@ -33,7 +31,7 @@ public class EncounterParticipantFormData {
      * 设置默认值
      */
     public EncounterParticipantFormData() {
-        this.typeCode = ParticipantType.ADMITTER.getCode();
+        this.typeCode = ParticipantType.REGISTRATION_DOCTOR.getCode();// 挂号医生
     }
 
 }

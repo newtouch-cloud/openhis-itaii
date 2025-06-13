@@ -4,32 +4,206 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
+import com.core.common.utils.AssignSeqUtil;
+import com.core.common.utils.ChineseConvertUtils;
 import com.core.common.utils.MessageUtils;
+import com.core.common.utils.StringUtils;
 import com.openhis.administration.domain.Location;
+import com.openhis.administration.mapper.LocationMapper;
 import com.openhis.administration.service.ILocationService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.LocationBedStatus;
-import com.openhis.common.enums.LocationForm;
-import com.openhis.common.enums.LocationMode;
-import com.openhis.common.enums.LocationStatus;
+import com.openhis.common.enums.*;
 import com.openhis.common.utils.EnumUtils;
+import com.openhis.common.utils.HisPageUtils;
+import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.basedatamanage.appservice.ILocationAppService;
-import com.openhis.web.basedatamanage.dto.LocationQueryDto;
+import com.openhis.web.basedatamanage.dto.*;
 
 @Service
 public class LocationAppServiceImpl implements ILocationAppService {
 
     @Resource
-    ILocationService locationService;
+    private ILocationService locationService;
 
+    @Resource
+    private AssignSeqUtil assignSeqUtil;
+
+    @Resource
+    private LocationMapper locationMapper;
+
+    /**
+     * 位置初始化
+     *
+     * @return 初始化信息
+     */
+    @Override
+    public R<?> locationInit() {
+        LocationInitDto initDto = new LocationInitDto();
+        // 位置状态
+        List<LocationInitDto.locationStatusOption> locationStatusOptions = new ArrayList<>();
+        locationStatusOptions.add(new LocationInitDto.locationStatusOption(LocationStatus.ACTIVE.getValue(),
+            LocationStatus.ACTIVE.getInfo()));
+        locationStatusOptions.add(new LocationInitDto.locationStatusOption(LocationStatus.INACTIVE.getValue(),
+            LocationStatus.INACTIVE.getInfo()));
+        initDto.setLocationStatusOptions(locationStatusOptions);
+        return R.ok(initDto);
+    }
+
+    /**
+     * 位置信息详情
+     *
+     * @param locationId 位置信息id
+     * @return 位置信息详情
+     */
+    @Override
+    public R<?> getLocationById(Long locationId) {
+        LocationInfoDto locationInfoDto = new LocationInfoDto();
+        BeanUtils.copyProperties(locationService.getById(locationId), locationInfoDto);
+        // 位置类型
+        locationInfoDto
+            .setFormEnum_enumText(EnumUtils.getInfoByValue(LocationForm.class, locationInfoDto.getFormEnum()));
+        // 使用状态
+        locationInfoDto.setOperationalEnum_enumText(
+            EnumUtils.getInfoByValue(LocationOperational.class, locationInfoDto.getOperationalEnum()));
+        // 启用停用
+        locationInfoDto
+            .setStatusEnum_enumText(EnumUtils.getInfoByValue(LocationStatus.class, locationInfoDto.getStatusEnum()));
+        return R.ok(locationInfoDto,
+            MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"位置信息查询"}));
+    }
+
+    /**
+     * 删除位置信息
+     *
+     * @param busNo 位置信息编码
+     * @return 操作结果
+     */
+    @Override
+    public R<?> deleteLocation(String busNo) {
+        // 删除位置信息(连同子集)
+        boolean result =
+            locationService.remove(new LambdaQueryWrapper<Location>().likeRight(Location::getBusNo, busNo));
+        return result ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"位置信息删除"}))
+            : R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00006, new Object[] {"位置信息删除"}));
+    }
+
+    /**
+     * 位置分页列表
+     *
+     * @param locationPageParam 查询条件
+     * @param searchKey 模糊查询条件
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @param request 请求
+     * @return 位置分页列表
+     */
+    @Override
+    public R<?> getLocationPage(LocationPageParam locationPageParam, String searchKey, Integer pageNo, Integer pageSize,
+        HttpServletRequest request) {
+        //数据初始化，不使用eq条件拼接
+        List<Integer> formList = locationPageParam.getLocationFormList();
+        locationPageParam.setLocationFormList(null);
+        String busNo = locationPageParam.getBusNo();
+        locationPageParam.setBusNo(null);
+        // 构建查询条件
+        QueryWrapper<Location> queryWrapper = HisQueryUtils.buildQueryWrapper(locationPageParam, searchKey,
+            new HashSet<>(Arrays.asList(CommonConstants.FieldName.Name, CommonConstants.FieldName.PyStr,
+                CommonConstants.FieldName.WbStr)),
+            request);
+        // 根据不同的位置类型查询不同的位置分页信息(前端必传默认值)
+        if (formList != null && !formList.isEmpty()) {
+            queryWrapper.lambda().in(Location::getFormEnum, formList);
+        }
+        // 根据父节点编码查询子项
+        queryWrapper.lambda().likeRight(StringUtils.isNotNull(busNo), Location::getBusNo, busNo);
+        if (locationPageParam.getFormEnum() != null) {
+            queryWrapper.lambda().eq(Location::getFormEnum, locationPageParam.getFormEnum());
+        }
+
+        // 查询位置分页列表
+        Page<LocationInfoDto> locationPage =
+            HisPageUtils.selectPage(locationMapper, queryWrapper, pageNo, pageSize, LocationInfoDto.class);
+        locationPage.getRecords().forEach(e -> {
+            // 位置类型
+            e.setFormEnum_enumText(EnumUtils.getInfoByValue(LocationForm.class, e.getFormEnum()));
+            // 使用状态
+            e.setOperationalEnum_enumText(EnumUtils.getInfoByValue(LocationOperational.class, e.getOperationalEnum()));
+            // 启用停用
+            e.setStatusEnum_enumText(EnumUtils.getInfoByValue(LocationStatus.class, e.getStatusEnum()));
+        });
+        return R.ok(locationPage);
+    }
+
+    /**
+     * 新增位置信息
+     *
+     * @param locationAddOrEditDto 库房位置信息
+     * @return 操作结果
+     */
+    @Override
+    public R<?> addLocation(LocationAddOrEditDto locationAddOrEditDto) {
+
+        Location location = new Location();
+        BeanUtils.copyProperties(locationAddOrEditDto, location);
+        location.setFormEnum(Integer.valueOf(locationAddOrEditDto.getFormEnum()));
+        // 拼音码
+        location.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(locationAddOrEditDto.getName()));
+        // 五笔码
+        location.setWbStr(ChineseConvertUtils.toWBFirstLetter(locationAddOrEditDto.getName()));
+        // 采番bus_no三位
+        String code = assignSeqUtil.getSeq(AssignSeqEnum.LOCATION_BUS_NO.getPrefix(), 3);
+        // 如果传了上级 把当前的code拼到后边
+        if (StringUtils.isNotEmpty(location.getBusNo())) {
+            location.setBusNo(String.format(CommonConstants.Common.MONTAGE_FORMAT, location.getBusNo(),
+                CommonConstants.Common.POINT, code));
+        } else {
+            location.setBusNo(code);
+        }
+        boolean result = locationService.addLocation(location);
+        if (result) {
+            return R.ok(MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"库房"}));
+        }
+        return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00010, null));
+    }
+
+    /**
+     * 编辑位置信息
+     *
+     * @param locationAddOrEditDto 库房位置信息
+     * @return 操作结果
+     */
+    @Override
+    public R<?> editLocation(LocationAddOrEditDto locationAddOrEditDto) {
+        Location location = new Location();
+        BeanUtils.copyProperties(locationAddOrEditDto, location);
+        // 拼音码
+        location.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(locationAddOrEditDto.getName()));
+        // 五笔码
+        location.setWbStr(ChineseConvertUtils.toWBFirstLetter(locationAddOrEditDto.getName()));
+        boolean result = locationService.updateLocation(location);
+        if (result) {
+            return R.ok(MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"库房"}));
+        }
+        return R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+    }
+
+    /**
+     * 位置分页列表-树型
+     *
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @return 位置分页列表
+     */
     @Override
     public R<?> getLocationTree(Integer formKey, Integer pageNo, Integer pageSize) {
 
@@ -42,8 +216,8 @@ public class LocationAppServiceImpl implements ILocationAppService {
         Page<Location> page = locationService.page(new Page<>(pageNo, pageSize), queryWrapper);
         List<Location> locationList = page.getRecords();
         // 将位置列表转为树结构
-        List<LocationQueryDto> locationTree = buildTree(locationList);
-        Page<LocationQueryDto> locationQueryDtoPage = new Page<>(pageNo, pageSize, page.getTotal());
+        List<LocationDto> locationTree = buildTree(locationList);
+        Page<LocationDto> locationQueryDtoPage = new Page<>(pageNo, pageSize, page.getTotal());
         locationQueryDtoPage.setRecords(locationTree);
 
         locationQueryDtoPage.getRecords().forEach(e -> {
@@ -67,18 +241,18 @@ public class LocationAppServiceImpl implements ILocationAppService {
      * @param records 位置列表
      * @return tree
      */
-    private List<LocationQueryDto> buildTree(List<Location> records) {
+    private List<LocationDto> buildTree(List<Location> records) {
         // 按b_no的层级排序，确保父节点先处理
         List<Location> sortedRecords = records.stream()
             .sorted(Comparator.comparingInt(r -> r.getBusNo().split("\\.").length)).collect(Collectors.toList());
 
-        Map<String, LocationQueryDto> nodeMap = new HashMap<>();
-        List<LocationQueryDto> tree = new ArrayList<>();
+        Map<String, LocationDto> nodeMap = new HashMap<>();
+        List<LocationDto> tree = new ArrayList<>();
 
         for (Location record : sortedRecords) {
             String bNo = record.getBusNo();
             String[] parts = bNo.split("\\.");
-            LocationQueryDto node = new LocationQueryDto();
+            LocationDto node = new LocationDto();
             BeanUtils.copyProperties(record, node);
             // 将当前节点加入映射
             nodeMap.put(bNo, node);
@@ -89,7 +263,7 @@ public class LocationAppServiceImpl implements ILocationAppService {
             } else {
                 // 获取父节点的b_no（去掉最后一部分）
                 String parentBNo = String.join(".", Arrays.copyOf(parts, parts.length - 1));
-                LocationQueryDto parent = nodeMap.get(parentBNo);
+                LocationDto parent = nodeMap.get(parentBNo);
 
                 if (parent != null) {
                     parent.getChildren().add(node);
@@ -102,65 +276,4 @@ public class LocationAppServiceImpl implements ILocationAppService {
         }
         return tree;
     }
-
-    /**
-     * 位置信息详情
-     *
-     * @param locationId 位置信息id
-     * @return 位置信息详情
-     */
-    @Override
-    public R<?> getLocationById(Long locationId) {
-        Location location = locationService.getById(locationId);
-        return R.ok(location, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"位置信息查询"}));
-    }
-
-    /**
-     * 添加/编辑位置信息
-     *
-     * @param locationQueryDto 位置信息
-     * @return 操作结果
-     */
-    @Override
-    public R<?> addOrEditInventoryReceipt(LocationQueryDto locationQueryDto) {
-
-        // 初始化位置信息
-        Location location = new Location();
-        BeanUtils.copyProperties(locationQueryDto, location);
-
-        if (locationQueryDto.getId() != null) {
-            // 更新位置信息
-            locationService.updateById(location);
-        } else {
-            // 插入位置信息
-            location
-                // 状态编码：有效
-                .setStatusEnum(LocationStatus.ACTIVE.getValue())
-                // 操作状态：空闲
-                .setOperationalEnum(LocationBedStatus.U.getValue())
-                // 模式编码：具体
-                .setModeEnum(LocationMode.INSTANCE.getValue())
-                // 模式编码：库房
-                .setFormEnum(LocationForm.CABINET.getValue());
-            locationService.save(location);
-        }
-        // 返回位置信息id
-        return R.ok(location.getId(),
-            MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"位置信息添加编辑"}));
-    }
-
-    /**
-     * 删除位置信息
-     *
-     * @param locationId 位置信息id
-     * @return 操作结果
-     */
-    @Override
-    public R<?> deleteLocation(Long locationId) {
-        // 删除位置信息
-        boolean result = locationService.removeById(locationId);
-        return result ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"位置信息删除"}))
-            : R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00006, new Object[] {"位置信息删除"}));
-    }
-
 }

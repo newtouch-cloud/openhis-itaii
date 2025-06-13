@@ -267,10 +267,40 @@
 
     <select id="getLoginUserExtend" resultType="com.core.common.core.domain.model.LoginUserExtend">
         SELECT T1.ID     AS practitioner_id,
-               T1.org_id AS org_id
+               T1.org_id AS org_id,
+               T2.NAME   AS org_name
         FROM adm_practitioner AS T1
+                 LEFT JOIN adm_organization AS T2 ON T2.ID = T1.org_id
         WHERE T1.delete_flag = '0'
           AND T1.user_id = #{userId} LIMIT 1
+    </select>
+
+    <select id="getHospitalIdByOrgId" resultType="long">
+        SELECT CASE
+                   WHEN
+                       ao.type_enum = 1 THEN
+                       ao.ID
+                   ELSE (SELECT parent.ID
+                         FROM adm_organization AS parent
+                         WHERE parent.bus_no = SUBSTRING(ao.bus_no FROM '^[^.]+') LIMIT 1 )
+        END
+        AS result_id
+          FROM
+            adm_organization AS ao
+        WHERE
+          ao.ID =
+        #{orgId}
+    </select>
+
+    <select id="getOptionList" resultType="map">
+        SELECT
+            option_key AS optionkey,
+            option_value AS optionvalue
+        FROM
+            sys_option
+        WHERE
+            delete_flag = '0'
+          AND tenant_id = #{tenantId}
     </select>
 
 </mapper> 

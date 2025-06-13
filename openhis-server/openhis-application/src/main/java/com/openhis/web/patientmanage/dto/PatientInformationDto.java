@@ -7,10 +7,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import com.openhis.common.annotation.Dict;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 病人信息Dto
@@ -19,6 +22,7 @@ import lombok.Data;
  * @date 2025/2/22
  */
 @Data
+@Accessors(chain = true)
 public class PatientInformationDto {
 
     /** ID */
@@ -42,14 +46,17 @@ public class PatientInformationDto {
     private String busNo;
 
     /** 性别编码 */
+    @NotNull
     private Integer genderEnum;
     private String genderEnum_enumText;
 
     /** 生日 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birthDate;
 
     /** 死亡时间 */
-    private String deceasedDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date deceasedDate;
 
     /** 婚姻状态 */
     private Integer maritalStatusEnum;
@@ -60,8 +67,7 @@ public class PatientInformationDto {
     private String prfsEnum_enumText;
 
     /** 电话 */
-    @NotNull(message = "电话不能为空")
-    @NotBlank(message = "电话不能为空")
+//    @NotBlank(message = "电话不能为空")
     @Size(min = 11, max = 11, message = "电话长度必须为11位")
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "电话格式不正确")
     private String phone;
@@ -87,11 +93,16 @@ public class PatientInformationDto {
     /** 民族 */
     private String nationalityCode;
 
-    /** 身份证号 */
-    @NotNull(message = "身份证号不能为空")
-    @Size(min = 18, max = 18, message = "身份证号必须是18位")
-    @Pattern(regexp = "^[0-9Xx]{18}$", message = "身份证号格式不正确")
+    /** 证件号码 */
+    @NotBlank(message = "证件号码不能为空")
+//    @Size(min = 18, max = 18, message = "身份证号必须是18位")
+//    @Pattern(regexp = "^[0-9Xx]{18}$", message = "身份证号格式不正确")
     private String idCard;
+
+    /** 证件类型 */
+    @Dict(dictCode = "sys_idtype")
+    private String typeCode;
+    private String typeCode_dictText;
 
     /** 拼音码 */
     private String pyStr;
@@ -138,6 +149,7 @@ public class PatientInformationDto {
     private String organizationName;
 
     /** 创建时间 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
 }

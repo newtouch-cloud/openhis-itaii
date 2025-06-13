@@ -33,4 +33,20 @@ public interface IAccountService extends IService<Account> {
      * @return 账户id
      */
     Long getMedicalInsuranceAccount(Long encounterId);
+
+    /**
+     * 插入或更新 Account 实体
+     * 
+     * @param account 实体对象
+     * @return 是否成功
+     */
+    boolean saveOrUpdateAccount(Account account);
+
+    /**
+     * 插入或更新 Account 实体
+     *
+     * @param account 实体对象
+     * @return 是否成功
+     */
+    boolean isSelfPay(Account account);
 }

@@ -134,8 +134,13 @@ public class DoctorStationEmrAppServiceImpl implements IDoctorStationEmrAppServi
         EmrTemplate emrTemplate = new EmrTemplate();
         String contextStr = emrTemplateDto.getContextJson().toString();
         BeanUtils.copyProperties(emrTemplateDto, emrTemplate);
-        // todo 获取当前登录用户的科室id
-        emrTemplate.setUserId(SecurityUtils.getLoginUser().getUserId());
+        if (BindingType.PERSONAL.getValue().toString().equals(emrTemplateDto.getUseScopeCode())) {
+            emrTemplate.setUserId(SecurityUtils.getLoginUser().getUserId());
+        } else if (BindingType.DEFINITION.getValue().toString().equals(emrTemplateDto.getUseScopeCode())) {
+            emrTemplate.setUserId(SecurityUtils.getLoginUser().getOrgId());
+        } else if (BindingType.HOSPITAL.getValue().toString().equals(emrTemplateDto.getUseScopeCode())) {
+            emrTemplate.setUserId(null);
+        }
         emrTemplate.setContextJson(contextStr);
         return emrTemplateService.save(emrTemplate) ? R.ok() : R.fail();
     }
@@ -151,14 +156,12 @@ public class DoctorStationEmrAppServiceImpl implements IDoctorStationEmrAppServi
     @Override
     public R<?> getEmrTemplate(EmrTemplateDto emrTemplateDto, Integer pageNo, Integer pageSize) {
         LambdaQueryWrapper<EmrTemplate> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper
-            .eq(EmrTemplate::getUseScopeCode, emrTemplateDto.getUseScopeCode());
-        if (emrTemplateDto.getTemplateName() != null){
+        queryWrapper.eq(EmrTemplate::getUseScopeCode, emrTemplateDto.getUseScopeCode());
+        if (emrTemplateDto.getTemplateName() != null) {
             queryWrapper.like(EmrTemplate::getTemplateName, emrTemplateDto.getTemplateName());
         }
-        if (BindingType.PERSONAL.getValue().toString().equals(emrTemplateDto.getUseScopeCode())) {
-            queryWrapper.eq(EmrTemplate::getUserId, SecurityUtils.getLoginUser().getUserId());
-        }
+        queryWrapper.eq(EmrTemplate::getUserId, SecurityUtils.getLoginUser().getUserId()).or()
+            .eq(EmrTemplate::getUserId, SecurityUtils.getLoginUser().getOrgId()).or().eq(EmrTemplate::getUserId, null);
         Page<EmrTemplate> emrTemplatePage = emrTemplateService.page(new Page<>(pageNo, pageSize), queryWrapper);
         return R.ok(emrTemplatePage);
     }

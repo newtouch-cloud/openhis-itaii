@@ -37,6 +37,8 @@
         T3.tenant_id,
         T3.item_type_code,
         T3.yb_type,
+        T3.rx_flag,--处方标志
+        T3.chrgitm_lv,--医保等级
         T3.retail_price,
         T3.purchase_price,
         T3.maximum_retail_price
@@ -73,6 +75,8 @@
             T1.substance_text,
             T1.allergen_flag,
             T1.tenant_id,
+            T1.rx_flag,--处方标志
+            T1.chrgitm_lv,--医保等级
             T2.type_code as item_type_code,
             T2.yb_type,
             T2.price as retail_price,--零售价,
@@ -134,6 +138,8 @@
         T1.substance_text,
         T1.allergen_flag,
         T1.tenant_id,
+        T1.rx_flag,--处方标志
+        T1.chrgitm_lv,--医保等级
         T2.type_code as item_type_code,
         T2.yb_type,
         T2.price as retail_price,--零售价,

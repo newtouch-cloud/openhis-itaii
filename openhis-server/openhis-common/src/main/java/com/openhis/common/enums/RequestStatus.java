@@ -58,10 +58,32 @@ public enum RequestStatus implements HisEnumInterface {
     /**
      * 未知
      */
-    UNKNOWN(9, "unknown", "未知");
+    UNKNOWN(9, "unknown", "未知"),
+
+    /**
+     * 待执行
+     */
+    IN_PROGRESS(10, "in_progress", "待执行"),
+
+    /**
+     * 待退药
+     */
+    IN_REFUND(11, "in_refund", "待退药");
 
     @EnumValue
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static RequestStatus getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (RequestStatus val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

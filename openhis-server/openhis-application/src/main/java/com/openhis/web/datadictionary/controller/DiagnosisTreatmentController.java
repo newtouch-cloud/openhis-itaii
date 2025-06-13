@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
-import com.openhis.web.datadictionary.appservice.IDiagnosisTreatmentManageAppService;
+import com.openhis.web.datadictionary.appservice.IDiagTreatMAppService;
 import com.openhis.web.datadictionary.dto.DiagnosisTreatmentDto;
 import com.openhis.web.datadictionary.dto.DiagnosisTreatmentSelParam;
 import com.openhis.web.datadictionary.dto.DiagnosisTreatmentUpDto;
@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DiagnosisTreatmentController {
 
     @Autowired
-    private IDiagnosisTreatmentManageAppService diagnosisTreatmentManageAppService;
+    private IDiagTreatMAppService diagTreatMAppService;
 
     /**
      * 诊疗目录初期查询
@@ -39,8 +39,7 @@ public class DiagnosisTreatmentController {
      */
     @GetMapping("/init")
     public R<?> getDiseaseTreatmentInit() {
-
-        return diagnosisTreatmentManageAppService.getDiseaseTreatmentInit();
+        return diagTreatMAppService.getDiseaseTreatmentInit();
     }
 
     /**
@@ -57,9 +56,7 @@ public class DiagnosisTreatmentController {
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-
-        // 返回【诊疗目录列表DTO】分页
-        return diagnosisTreatmentManageAppService.getDiseaseTreatmentPage(DiagnosisTreatmentSelParam, searchKey, pageNo,
+        return diagTreatMAppService.getDiseaseTreatmentPage(DiagnosisTreatmentSelParam, searchKey, pageNo,
             pageSize, request);
     }
 
@@ -71,8 +68,7 @@ public class DiagnosisTreatmentController {
      */
     @GetMapping("/information-one")
     public R<?> getDiseaseTreatmentOne(@RequestParam Long id) {
-
-        return diagnosisTreatmentManageAppService.getDiseaseTreatmentOne(id);
+        return diagTreatMAppService.getDiseaseTreatmentOne(id);
     }
 
     /**
@@ -83,8 +79,7 @@ public class DiagnosisTreatmentController {
      */
     @PutMapping("/information")
     public R<?> editDiseaseTreatment(@RequestBody DiagnosisTreatmentUpDto diagnosisTreatmentUpDto) {
-
-        return diagnosisTreatmentManageAppService.editDiseaseTreatment(diagnosisTreatmentUpDto);
+        return diagTreatMAppService.editDiseaseTreatment(diagnosisTreatmentUpDto);
     }
 
     /**
@@ -95,8 +90,7 @@ public class DiagnosisTreatmentController {
      */
     @PutMapping("/information-stop")
     public R<?> editDiseaseTreatmentStop(@RequestBody List<Long> ids) {
-
-        return diagnosisTreatmentManageAppService.editDiseaseTreatmentStop(ids);
+        return diagTreatMAppService.editDiseaseTreatmentStop(ids);
     }
 
     /**
@@ -107,7 +101,7 @@ public class DiagnosisTreatmentController {
      */
     @PutMapping("/information-start")
     public R<?> editDiseaseTreatmentStart(@RequestBody List<Long> ids) {
-        return diagnosisTreatmentManageAppService.editDiseaseTreatmentStart(ids);
+        return diagTreatMAppService.editDiseaseTreatmentStart(ids);
     }
 
     /**
@@ -118,7 +112,7 @@ public class DiagnosisTreatmentController {
      */
     @PostMapping("/information")
     public R<?> addDiseaseTreatment(@Validated @RequestBody DiagnosisTreatmentUpDto diagnosisTreatmentUpDto) {
-        return diagnosisTreatmentManageAppService.addDiseaseTreatment(diagnosisTreatmentUpDto);
+        return diagTreatMAppService.addDiseaseTreatment(diagnosisTreatmentUpDto);
     }
 
     /**

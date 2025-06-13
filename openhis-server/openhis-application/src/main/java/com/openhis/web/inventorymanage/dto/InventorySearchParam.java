@@ -21,6 +21,9 @@ public class InventorySearchParam {
     /** 状态 */
     private Integer statusEnum;
 
+    /** 单据类型 */
+    private Integer typeEnum;
+
     /** 供应商 */
     private Long supplierId;
 
@@ -30,5 +33,14 @@ public class InventorySearchParam {
     /**
      * 单据时间
      */
-    private Date occurrenceTime;
+    private Date createTime;
+
+    /** 目的仓库类型 */
+    private Integer purposeTypeEnum;
+
+    /** 仓库 */
+    private String locationId;
+
+    /** 货位 */
+    private String locationStoreId;
 }

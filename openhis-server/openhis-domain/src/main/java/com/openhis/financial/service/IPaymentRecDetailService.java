@@ -1,6 +1,7 @@
 package com.openhis.financial.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.openhis.common.enums.PaymentResult;
 import com.openhis.financial.domain.PaymentRecDetail;
 
 /**
@@ -11,4 +12,10 @@ import com.openhis.financial.domain.PaymentRecDetail;
  */
 public interface IPaymentRecDetailService extends IService<PaymentRecDetail> {
 
+    /**
+     * 根据paymentId更改结算结果
+     * @param id
+     * @param paid
+     */
+    void updateResultByPaymentId(Long id, PaymentResult paid);
 }

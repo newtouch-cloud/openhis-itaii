@@ -3,6 +3,8 @@
  */
 package com.openhis.web.inventorymanage.appservice;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.core.common.core.domain.R;
@@ -16,6 +18,20 @@ import com.openhis.web.inventorymanage.dto.PurchaseInventoryDto;
  * @date 2025-03-08
  */
 public interface IPurchaseInventoryAppService {
+
+    /**
+     * 入库单据页面初始化
+     *
+     * @return 初始化信息
+     */
+    R<?> purchaseInventoryInit();
+
+    /**
+     * 单据号初始化
+     *
+     * @return 初始化信息
+     */
+    R<?> purchaseNoInit();
 
     /**
      * 入库单据列表
@@ -39,20 +55,20 @@ public interface IPurchaseInventoryAppService {
     R<?> getDetail(String busNo);
 
     /**
-     * 添加/编辑入库单据
+     * 添加/编辑入库单据(批量)
      *
-     * @param purchaseInventoryDto 入库单据
+     * @param purchaseInventoryDtoList 入库单据
      * @return 操作结果
      */
-    R<?> addOrEditInventoryReceipt(PurchaseInventoryDto purchaseInventoryDto);
+    R<?> addOrEditInventoryReceipt(List<PurchaseInventoryDto> purchaseInventoryDtoList);
 
     /**
      * 删除单据
      *
-     * @param supplyRequestId 供应请求id
+     * @param supplyRequestIds 供应请求id
      * @return 操作结果
      */
-    R<?> deleteReceipt(Long supplyRequestId);
+    R<?> deleteReceipt(List<Long> supplyRequestIds);
 
     /**
      * 提交审批
@@ -69,11 +85,4 @@ public interface IPurchaseInventoryAppService {
      * @return 操作结果
      */
     R<?> withdrawApproval(String busNo);
-
-    /**
-     * 入库单据页面初始化
-     *
-     * @return 初始化信息
-     */
-    R<?> purchaseInventoryInit();
 }

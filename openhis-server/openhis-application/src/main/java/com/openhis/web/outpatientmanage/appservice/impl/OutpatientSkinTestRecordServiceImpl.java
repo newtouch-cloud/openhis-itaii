@@ -1,24 +1,27 @@
 package com.openhis.web.outpatientmanage.appservice.impl;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
-import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestInitDto;
+import com.openhis.common.enums.DispenseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.utils.DateUtils;
 import com.core.common.utils.SecurityUtils;
 import com.core.common.utils.StringUtils;
 import com.openhis.administration.domain.Practitioner;
-import com.openhis.administration.domain.PractitionerRole;
 import com.openhis.administration.mapper.PractitionerMapper;
 import com.openhis.administration.mapper.PractitionerRoleMapper;
 import com.openhis.administration.service.IPractitionerRoleService;
@@ -26,14 +29,17 @@ import com.openhis.administration.service.IPractitionerService;
 import com.openhis.clinical.domain.AllergyIntolerance;
 import com.openhis.clinical.mapper.AllergyIntoleranceMapper;
 import com.openhis.clinical.service.IAllergyIntoleranceService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.enums.ClinicalStatus;
-import com.openhis.common.enums.EventStatus;
+import com.openhis.common.enums.RequestStatus;
 import com.openhis.common.enums.VerificationStatus;
 import com.openhis.common.utils.EnumUtils;
+import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.outpatientmanage.appservice.IOutpatientSkinTestRecordService;
+import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestInitDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordDto;
 import com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordSearchParam;
-import com.openhis.web.outpatientmanage.mapper.OutpatientManageMapper;
+import com.openhis.web.outpatientmanage.mapper.OutpatientInfusionAppMapper;
 import com.openhis.workflow.domain.ServiceRequest;
 import com.openhis.workflow.mapper.ServiceRequestMapper;
 import com.openhis.workflow.service.IServiceRequestService;
@@ -48,7 +54,7 @@ import com.openhis.workflow.service.IServiceRequestService;
 public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestRecordService {
 
     @Resource
-    OutpatientManageMapper outpatientManageMapper;
+    OutpatientInfusionAppMapper outpatientInfusionAppMapper;
 
     @Autowired
     ServiceRequestMapper serviceRequestMapper;
@@ -74,15 +80,15 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
     @Autowired
     IServiceRequestService serviceRequestService;
 
-
     /**
      * 获取门诊皮试记录初期数据列表
      *
      * @return 获取门诊皮试记录初期数据列表
      */
-    @Override public OutpatientSkinTestInitDto getOutpatientSkinTestInit() {
+    @Override
+    public OutpatientSkinTestInitDto getOutpatientSkinTestInit() {
         OutpatientSkinTestInitDto initDto = new OutpatientSkinTestInitDto();
-        //获取皮试状态
+        // 获取皮试状态
         List<OutpatientSkinTestInitDto.statusEnumOption> statusEnumOptions1 = Stream.of(VerificationStatus.values())
             .map(status -> new OutpatientSkinTestInitDto.statusEnumOption(status.getValue(), status.getInfo()))
             .collect(Collectors.toList());
@@ -101,23 +107,24 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
      * 分页查询门诊皮试记录,可选条件
      *
      * @param outpatientSkinTestRecordSearchParam 查询条件
+     * @param searchKey 查询条件-模糊查询
      * @param pageNo 页码（默认为1）
      * @param pageSize 每页大小（默认为10）
      */
     @Override
-    public Page<OutpatientSkinTestRecordDto> getSkinTestRecords(
-        OutpatientSkinTestRecordSearchParam outpatientSkinTestRecordSearchParam, Integer pageNo, Integer pageSize) {
-        // 跳过的记录数
-        Integer offset = (pageNo - 1) * pageSize;
-        // 连表查询患者信息
-        List<OutpatientSkinTestRecordDto> listOutpatientSkinTestRecords =
-            outpatientManageMapper.getSkinTestRecords(outpatientSkinTestRecordSearchParam, pageSize, offset);
+    public IPage<OutpatientSkinTestRecordDto> getSkinTestRecords(
+        OutpatientSkinTestRecordSearchParam outpatientSkinTestRecordSearchParam, String searchKey, Integer pageNo,
+        Integer pageSize, HttpServletRequest request) {
 
-        // 查询总记录数
-        long total = outpatientManageMapper.countOutpatientSkinTestRecords(outpatientSkinTestRecordSearchParam);
-        // 创建Page对象并设置属性
-        Page<OutpatientSkinTestRecordDto> outpatientSkinTestRecordPage = new Page<>(pageNo, pageSize, total);
-        outpatientSkinTestRecordPage.setRecords(listOutpatientSkinTestRecords);
+        // 构建查询条件
+        QueryWrapper<OutpatientSkinTestRecordDto> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(outpatientSkinTestRecordSearchParam, searchKey,  new HashSet<>(
+                Arrays.asList(CommonConstants.FieldName.PrescriptionNo,
+                    CommonConstants.FieldName.PatientBusNo, CommonConstants.FieldName.EncounterBusNo)), request);
+
+        IPage<OutpatientSkinTestRecordDto> outpatientSkinTestRecordPage =
+            outpatientInfusionAppMapper.getSkinTestRecords(new Page<>(pageNo, pageSize), queryWrapper);
+
         outpatientSkinTestRecordPage.getRecords().forEach(e -> {
             // 皮试结果状态枚举类回显赋值
             e.setClinicalStatusEnum_enumText(EnumUtils.getInfoByValue(ClinicalStatus.class, e.getClinicalStatusEnum()));
@@ -126,8 +133,9 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
                 EnumUtils.getInfoByValue(VerificationStatus.class, e.getVerificationStatusEnum()));
             // 药品状态状态枚举类回显赋值
             e.setMedicationStatusEnum_enumText(
-                EnumUtils.getInfoByValue(EventStatus.class, e.getMedicationStatusEnum()));
+                EnumUtils.getInfoByValue(DispenseStatus.class, e.getMedicationStatusEnum()));
         });
+
         return outpatientSkinTestRecordPage;
     }
 
@@ -140,7 +148,7 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
     public boolean editSkinTestRecord(OutpatientSkinTestRecordDto outpatientSkinTestRecordDto) {
         // 判断核对人是否不为空,药品状态不是已发药
         if (outpatientSkinTestRecordDto.getPerformerCheckId() != null
-            || outpatientSkinTestRecordDto.getMedicationStatusEnum() != EventStatus.COMPLETED.getValue()) {
+            || outpatientSkinTestRecordDto.getMedicationStatusEnum() != DispenseStatus.COMPLETED.getValue()) {
             // 签名后不能修改，未发药不能修改
             return false;
         }
@@ -163,27 +171,31 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
         } else {
             endTime = DateUtils.parseDate(outpatientSkinTestRecordDto.getOccurrenceEndTime());
         }
+
         // 设置开始时间
         serviceRequest
             .setOccurrenceStartTime(DateUtils.parseDate(outpatientSkinTestRecordDto.getOccurrenceStartTime()));
         // 设置结束时间
         serviceRequest.setOccurrenceEndTime(endTime);
 
-        // 获取系统登录的userId，找到practitionerId
-        Practitioner practitioner =
-            practitionerService.getPractitionerByUserId(SecurityUtils.getLoginUser().getUserId());
-        if (practitioner == null) {
-            return false;
-        }
+        // // 获取系统登录的userId，找到practitionerId
+        // Practitioner practitioner =
+        // practitionerService.getPractitionerByUserId(SecurityUtils.getLoginUser().getUserId());
+        // if (practitioner == null) {
+        // return false;
+        // }
+
+        // 获取当前登录账号的参与者id
+        Long practitionerId = SecurityUtils.getLoginUser().getPractitionerId();
         // 设置执行人ID
-        serviceRequest.setPerformerId(practitioner.getId());
+        serviceRequest.setPerformerId(practitionerId);
 
         // 以执行人ID，获取执行人的身份类别
-        PractitionerRole practitionerRole = practitionerRoleService.getPractitionerRoleById(practitioner.getId());
-        if (practitionerRole != null) {
-            // 设置执行人身份类别
-            serviceRequest.setPerformerTypeCode(practitionerRole.getRoleCode());
-        }
+//        PractitionerRole practitionerRole = practitionerRoleService.getPractitionerRoleById(practitionerId);
+//        if (practitionerRole != null) {
+//            // 设置执行人身份类别
+//            serviceRequest.setPerformerTypeCode(practitionerRole.getRoleCode());
+//        }
 
         // 以id为主条件更新服务申请管理表
         UpdateWrapper<ServiceRequest> updateWrapper = new UpdateWrapper<>();
@@ -208,7 +220,7 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
             // 设置患者id
             .setPatientId(outpatientSkinTestRecordDto.getPatientId())
             // 设置记录者id
-            .setPractitionerId(practitioner.getId())
+            .setPractitionerId(practitionerId)
             // 设置记录日期(当下日期)
             .setRecordedDate(DateUtils.getNowDate())
             // 设置备注
@@ -253,7 +265,7 @@ public class OutpatientSkinTestRecordServiceImpl implements IOutpatientSkinTestR
         // 设置核对人ID
         serviceRequest.setPerformerCheckId(practitioner.getId());
         // 把服务请求的状态设置为已完成
-        serviceRequest.setStatusEnum(EventStatus.COMPLETED.getValue());
+        serviceRequest.setStatusEnum(RequestStatus.COMPLETED.getValue());
         // 以id为主条件更新服务申请管理表
         UpdateWrapper<ServiceRequest> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", outpatientSkinTestRecordDto.getId())

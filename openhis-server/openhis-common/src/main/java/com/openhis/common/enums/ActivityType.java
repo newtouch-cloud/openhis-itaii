@@ -27,4 +27,15 @@ public enum ActivityType implements HisEnumInterface {
     private final String code;
     private final String info;
 
+    public static ActivityType getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (ActivityType val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

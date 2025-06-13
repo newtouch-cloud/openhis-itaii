@@ -32,4 +32,14 @@ public interface ISupplierService extends IService<Supplier> {
      * @return 供应商下拉列表
      */
     List<Supplier> getList();
+
+    /**
+     * 查询供应商信息
+     *
+     * @param name 名字
+     * @param address 地址
+     * @param typeEnum 类型
+     * @return 供应商信息
+     */
+    List<Supplier> getsupplierList(String name,String address,Integer typeEnum);
 }

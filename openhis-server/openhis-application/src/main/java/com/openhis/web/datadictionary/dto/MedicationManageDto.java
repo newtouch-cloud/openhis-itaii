@@ -160,7 +160,7 @@ public class MedicationManageDto {
     private BigDecimal partPercent;
 
     /** 剂量形式 */
-    @Dict(dictCode = "dose_from_code")
+    @Dict(dictCode = "dose_form_code")
     private Integer doseFrom;
     private String doseFrom_dictText;
 
@@ -241,11 +241,11 @@ public class MedicationManageDto {
     /** 生产厂商文本 */
     private String manufacturerText;
 
-    /** 当前库存数量(常规单位) */
-    private String baseQuantity;
+    /** 最小库存警戒数量(常规单位) */
+    private BigDecimal itemMinQuantity;
 
-    /** 当前库存数量(最小单位数量) */
-    private String minQuantity;
+    /** 最大库存警戒数量(常规单位) */
+    private BigDecimal itemMaxQuantity;
 
     /** 售价 */
     private BigDecimal price;
@@ -279,5 +279,14 @@ public class MedicationManageDto {
     /** 住院临时医嘱拆分属性 */
     private Integer thoPartAttributeEnum;
     private String thoPartAttributeEnum_enumText;
+
+    /** 剂量单位换算比 */
+    private BigDecimal unitConversionRatio;
+
+    /** 医保等级 */
+    private Integer chrgitmLv;
+
+    /** 处方标志 */
+    private Integer rxFlag;
 
 }

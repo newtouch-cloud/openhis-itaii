@@ -10,7 +10,6 @@ import com.core.common.core.domain.HisBaseEntity;
 import com.openhis.common.enums.ActPriority;
 import com.openhis.common.enums.SupplyCategory;
 import com.openhis.common.enums.SupplyStatus;
-import com.openhis.common.enums.SupplyType;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,6 +33,9 @@ public class SupplyRequest extends HisBaseEntity {
 
     /** 单据号 */
     private String busNo;
+
+    /** 原始单据号 */
+    private String originalBusNo;
 
     /** 类型 */
     private Integer typeEnum;
@@ -140,15 +142,10 @@ public class SupplyRequest extends HisBaseEntity {
     /** 总价 */
     private BigDecimal totalPrice;
 
-    /** 售价 */
-    private BigDecimal sellPrice;
-
-    /** 拆零售价 */
-    private BigDecimal minSellPrice;
+    /** 备注 */
+    private String remake;
 
     public SupplyRequest() {
-        // 默认单据类型：商品调拨
-        this.typeEnum = SupplyType.PRODUCT_ALLOCATION.getValue();
         // 默认单据状态：待审核
         this.statusEnum = SupplyStatus.PENDING_APPROVAL.getValue();
         // 默认单据分类：库存供应

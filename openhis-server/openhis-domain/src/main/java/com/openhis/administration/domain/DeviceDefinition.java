@@ -86,6 +86,9 @@ public class DeviceDefinition extends HisBaseEntity {
     /** 医保对码标记 */
     private Integer ybMatchFlag;
 
+    /** 医保等级 */
+    private Integer chrgitmLv;
+
     /** 状态 */
     private Integer statusEnum;
 
@@ -112,5 +115,8 @@ public class DeviceDefinition extends HisBaseEntity {
 
     /** 过敏标记 */
     private Integer allergenFlag;
+
+    /** 处方标志 */
+    private Integer rxFlag;
 
 }

@@ -33,6 +33,8 @@ public class MedicationManageInitDto {
     private List<statusEnumOption> partAttributeEnumOptions;
     //住院临时医嘱拆分属性
     private List<statusEnumOption> tempOrderSplitPropertyEnumOptions;
+    //医保等级list
+    private List<statusEnumOption> chrgitmLvOptions;
 
     /**
      * 状态

@@ -36,4 +36,16 @@ public enum DelFlag {
     public Integer getValue() {
         return value;
     }
+
+    public static DelFlag getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (DelFlag val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

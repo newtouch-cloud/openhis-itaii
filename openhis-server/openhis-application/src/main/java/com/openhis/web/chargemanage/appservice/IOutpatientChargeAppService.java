@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.core.common.core.domain.R;
 import com.openhis.web.chargemanage.dto.EncounterPatientPageParam;
+import com.openhis.web.chargemanage.dto.EncounterPatientPrescriptionDto;
+
+import java.util.List;
 
 /**
  * 门诊收费 service
@@ -35,7 +38,7 @@ public interface IOutpatientChargeAppService {
      * @param encounterId 就诊id
      * @return 患者处方列表
      */
-    R<?> getEncounterPatientPrescription(Long encounterId);
+    List<EncounterPatientPrescriptionDto> getEncounterPatientPrescription(Long encounterId);
 
     /**
      * 医保转自费

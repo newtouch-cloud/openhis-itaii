@@ -28,7 +28,7 @@ public class ConditionServiceImpl extends ServiceImpl<ConditionMapper, Condition
     @Override
     public Long saveConditionByDoctor(Condition condition) {
         condition.setRecordedDatetime(new Date());
-        condition.setRecorderId(SecurityUtils.getLoginUser().getUserId());
+        condition.setRecorderId(SecurityUtils.getLoginUser().getPractitionerId());// 记录人
         baseMapper.insert(condition);
         return condition.getId();
     }

@@ -30,13 +30,17 @@ public class Account extends HisBaseEntity {
     private Long id;
 
     /** 状态枚举 */
-    private AccountStatus statusEnum;
+    private Integer statusEnum;
 
     /** 结账状态枚举 */
-    private AccountBillingStatus billingStatusEnum;
+    private Integer billingStatusEnum;
 
+    // 2025.04.10 经确认此处原有的【1 CASH 个人现金账户 | 2 医保账户】改为【01医保电子凭证 | 02 居民身份证 | 03 社会保障卡 | 04 个人现金账户】
     /** 账户类型编码 */
     private String typeCode;
+
+    /** 编码 */
+    private String no;
 
     /** 名称 */
     private String name;
@@ -59,5 +63,7 @@ public class Account extends HisBaseEntity {
     /** 欠费限制额度 */
     private BigDecimal limitAccount;
 
+    /** 是否为就诊登记使用 */
+    private Integer encounterFlag;
 
 }

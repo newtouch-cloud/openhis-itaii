@@ -101,6 +101,11 @@ public class MedicationRequest extends HisBaseEntity {
      */
     private Long conditionId;
 
+    /**
+     * 就诊诊断id
+     */
+    private Long encounterDiagnosisId;
+
     /** 支持用药信息 */
     private String supportInfo;
 
@@ -178,5 +183,39 @@ public class MedicationRequest extends HisBaseEntity {
 
     /** 输液速度 */
     private Integer speed;
+
+    /** 退药id */
+    private Long refundMedicineId;
+
+    /** 处方类别 */
+    private String rxTypeCode;
+
+    /**
+     * 请求内容json
+     */
+    private String contentJson;
+
+    /**
+     * 类别医保编码
+     */
+    private Integer ybClassEnum;
+
+    /** 追溯码 */
+    private String traceNo;
+
+    /**
+     * 中药付数
+     */
+    private Integer chineseHerbsDoseQuantity;
+
+    /**
+     * 代煎标识 | 0:否 , 1:是
+     */
+    private Integer sufferingFlag;
+
+    /**
+     * 中医标识
+     */
+    private Integer tcmFlag;
 
 }

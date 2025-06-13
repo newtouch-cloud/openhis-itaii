@@ -4,4 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.openhis.workflow.mapper.ActivityDefinitionMapper">
 
+    <select id="getAppointActivityDefinitionId" resultType="long">
+        SELECT ID
+        FROM wor_activity_definition
+        WHERE delete_flag = '0'
+          AND status_enum = #{status}
+          AND NAME = #{skinTestInspection} LIMIT 1
+    </select>
+
 </mapper>

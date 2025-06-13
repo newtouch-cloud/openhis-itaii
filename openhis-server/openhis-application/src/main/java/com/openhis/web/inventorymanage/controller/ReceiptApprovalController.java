@@ -60,23 +60,87 @@ public class ReceiptApprovalController {
      * 入库单据审批通过
      *
      * @param busNo 单据号
-     * @param request 请求数据
      * @return 操作结果
      */
-    @PostMapping("/purchase-inventory-approved")
-    public R<?> purchaseInventoryApproved(@RequestParam String busNo, HttpServletRequest request) {
-        return receiptApprovalAppService.purchaseInventoryApproved(busNo, request);
+    @PutMapping("/purchase-inventory-approved")
+    public R<?> purchaseInventoryApproved(@RequestParam String busNo) {
+        return receiptApprovalAppService.purchaseInventoryApproved(busNo);
+    }
+
+    /**
+     * 商品盘点审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    @PutMapping("/product-stocktaking-approved")
+    public R<?> productStocktakingApproved(@RequestParam String busNo) {
+        return receiptApprovalAppService.productStocktakingApproved(busNo);
+    }
+
+    /**
+     * 商品调拨审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    @PutMapping("/product-transfer-approved")
+    public R<?> productTransferApproved(@RequestParam String busNo) {
+        return receiptApprovalAppService.productTransferApproved(busNo);
+    }
+
+    /**
+     * 采购退货审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    @PutMapping("/purchase-return-approved")
+    public R<?> purchaseReturnApproved(@RequestParam String busNo) {
+        return receiptApprovalAppService.purchaseReturnApproved(busNo);
+    }
+
+    /**
+     * 报损单审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    @PutMapping("/loss-report-approved")
+    public R<?> lossReportApproved(@RequestParam String busNo) {
+        return receiptApprovalAppService.lossReportApproved(busNo);
+    }
+
+    /**
+     * 领用出库审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    @PutMapping("/requisition-issue-approved")
+    public R<?> requisitionIssueApproved(@RequestParam String busNo) {
+        return receiptApprovalAppService.requisitionIssueApproved(busNo);
+    }
+
+    /**
+     * 领用退库审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    @PutMapping("/return-issue-approved")
+    public R<?> returnIssueApproved(@RequestParam String busNo) {
+        return receiptApprovalAppService.returnIssueApproved(busNo);
     }
 
     /**
      * 审批驳回
      *
      * @param busNo 单据号
-     * @param request 请求数据
      * @return 操作结果
      */
-    @PostMapping("/reject")
-    public R<?> reject(@RequestParam String busNo, HttpServletRequest request) {
-        return receiptApprovalAppService.reject(busNo, request);
+    @PutMapping("/reject")
+    public R<?> reject(@RequestParam String busNo) {
+        return receiptApprovalAppService.reject(busNo);
     }
 }

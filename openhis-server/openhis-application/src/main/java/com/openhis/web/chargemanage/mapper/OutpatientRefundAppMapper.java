@@ -11,10 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.openhis.web.chargemanage.dto.EncounterPatientPageDto;
-import com.openhis.web.chargemanage.dto.EncounterPatientPageParam;
-import com.openhis.web.chargemanage.dto.EncounterPatientPaymentDto;
-import com.openhis.web.chargemanage.dto.RefundItemDto;
+import com.openhis.web.chargemanage.dto.*;
 
 /**
  * 门诊退费 appMapper
@@ -30,17 +27,17 @@ public interface OutpatientRefundAppMapper {
      *
      * @param encounterId 就诊id
      * @param success 支付状态：成功
-     * @param refundAll 支付状态：全部退款
      * @param refundPart 支付状态：部分退款
+     * @param refundAll 支付状态：全部退款
      * @return 就诊患者账单列表
      */
     List<EncounterPatientPaymentDto> selectEncounterPatientPayment(@Param("encounterId") Long encounterId,
-        @Param("success") Integer success, @Param("refundAll") Integer refundAll,
-        @Param("refundPart") Integer refundPart);
+        @Param("success") Integer success, @Param("refundPart") Integer refundPart,
+        @Param("refundAll") Integer refundAll);
 
     /**
      * 查询退费项目
-     * 
+     *
      * @param chargeItemIdList 收费项列表
      * @param medMedicationRequest 药品请求表
      * @param worServiceRequest 服务请求表
@@ -68,5 +65,22 @@ public interface OutpatientRefundAppMapper {
     Page<EncounterPatientPageDto> selectBilledEncounterPatientPage(@Param("page") Page<EncounterPatientPageDto> page,
         @Param(Constants.WRAPPER) QueryWrapper<EncounterPatientPageParam> queryWrapper, @Param("billed") Integer billed,
         @Param("refunding") Integer refunding, @Param("refunded") Integer refunded,
-        @Param("partRefund") Integer partRefund, @Param("insurance") Integer insurance);
+        @Param("partRefund") Integer partRefund, @Param("insurance") String insurance);
+
+    /**
+     * 查询患者退费项目
+     *
+     * @param encounterId 就诊id
+     * @param refunding 收费状态：退费中
+     * @param refunded 收费状态：已退款
+     * @param partRefund 收费状态：部分退款
+     * @param worServiceRequest 服务请求表
+     * @param worDeviceRequest 设备请求表
+     * @param medMedicationRequest 药品请求表
+     * @return 查询患者退费项目
+     */
+    List<EncounterPatientRefundDto> selectEncounterPatientRefund(@Param("encounterId") Long encounterId,
+        @Param("refunding") Integer refunding, @Param("refunded") Integer refunded,
+        @Param("partRefund") Integer partRefund, @Param("worServiceRequest") String worServiceRequest,
+        @Param("worDeviceRequest") String worDeviceRequest, @Param("medMedicationRequest") String medMedicationRequest);
 }

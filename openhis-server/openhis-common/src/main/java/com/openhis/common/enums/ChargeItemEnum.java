@@ -83,4 +83,16 @@ public enum ChargeItemEnum {
     public String getInfo() {
         return info;
     }
+
+    public static ChargeItemEnum getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (ChargeItemEnum val : values()) {
+            if (val.getCode().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

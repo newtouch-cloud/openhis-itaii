@@ -11,6 +11,8 @@ import com.openhis.common.enums.PublicationStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 器材目录分页检索
  *
@@ -151,5 +153,8 @@ public class DeviceManageDto {
 
     /** 最高零售价 */
     private BigDecimal maximumRetailPrice;
+
+    /** 医保等级 */
+    private Integer chrgitmLv;
 
 }

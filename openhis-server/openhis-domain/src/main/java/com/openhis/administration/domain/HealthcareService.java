@@ -60,5 +60,7 @@ public class HealthcareService extends HisBaseEntity {
     /** 预约要求 */
     private Integer appointmentRequiredFlag;
 
+    /** 医保编码 */
+    private String ybNo;
 
 }

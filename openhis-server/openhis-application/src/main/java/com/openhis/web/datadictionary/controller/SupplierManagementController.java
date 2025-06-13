@@ -81,7 +81,7 @@ public class SupplierManagementController {
     public R<?> editSupplyRequest(@Validated @RequestBody SupplierUpDto supplierUpDto) {
 
         // 更新供应商信息信息
-        return supplierManagementAppService.addSupplyRequest(supplierUpDto);
+        return supplierManagementAppService.editSupplyRequest(supplierUpDto);
     }
 
     /**

@@ -1,7 +1,10 @@
 package com.core.framework.web.service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,16 +12,18 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.core.common.constant.CacheConstants;
 import com.core.common.constant.Constants;
 import com.core.common.constant.UserConstants;
+import com.core.common.core.domain.R;
 import com.core.common.core.domain.entity.SysUser;
 import com.core.common.core.domain.model.LoginUser;
 import com.core.common.core.domain.model.LoginUserExtend;
 import com.core.common.core.redis.RedisCache;
+import com.core.common.enums.DeleteFlag;
+import com.core.common.enums.TenantStatus;
 import com.core.common.exception.ServiceException;
 import com.core.common.exception.user.*;
 import com.core.common.utils.DateUtils;
@@ -28,7 +33,9 @@ import com.core.common.utils.ip.IpUtils;
 import com.core.framework.manager.AsyncManager;
 import com.core.framework.manager.factory.AsyncFactory;
 import com.core.framework.security.context.AuthenticationContextHolder;
+import com.core.system.domain.SysTenant;
 import com.core.system.service.ISysConfigService;
+import com.core.system.service.ISysTenantService;
 import com.core.system.service.ISysUserService;
 
 /**
@@ -53,6 +60,9 @@ public class SysLoginService {
     @Autowired
     private ISysConfigService configService;
 
+    @Autowired
+    private ISysTenantService sysTenantService;
+
     /**
      * 登录验证
      * 
@@ -60,11 +70,18 @@ public class SysLoginService {
      * @param password 密码
      * @param code 验证码
      * @param uuid 唯一标识
+     * @param tenantId 租户ID
      * @return 结果
      */
-    public String login(String username, String password, String code, String uuid) {
+    public String login(String username, String password, String code, String uuid, Integer tenantId) {
         // 验证码校验
-        validateCaptcha(username, code, uuid);
+        // validateCaptcha(username, code, uuid);
+
+        // 租户校验
+        validateTenant(username, tenantId);
+        // 保存本次勾选租户
+        redisCache.setCacheObject(CacheConstants.LOGIN_SELECTED_TENANT + username, tenantId);
+
         // 登录前置校验
         loginPreCheck(username, password);
         // 用户验证
@@ -91,27 +108,61 @@ public class SysLoginService {
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS,
             MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser)authentication.getPrincipal();
-
-        // -----start-----登录时set租户id
-        Integer tenantId = 0;
-        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
-        if (attributes != null) {
-            HttpServletRequest request = attributes.getRequest();
-            // 从请求头获取租户ID，假设header名称为"X-Tenant-ID" ; 登录接口前端把租户id放到请求头里
-            String tenantIdHeader = request.getHeader("X-Tenant-ID");
-            if (tenantIdHeader != null && !tenantIdHeader.isEmpty()) {
-                tenantId = Integer.parseInt(tenantIdHeader);
-            }
-        }
-        loginUser.setTenantId(tenantId);
-        // -----end-----登录时set租户id
-        recordLoginInfo(loginUser.getUserId());
-        // 设置 机构id和参与者id
-        LoginUserExtend loginUserExtend = userService.getLoginUserExtend(loginUser.getUserId());
-        loginUser.setOrgId(loginUserExtend.getOrgId());
-        loginUser.setPractitionerId(loginUserExtend.getPractitionerId());
+        // 设置登录用户信息
+        this.setLoginUserInfo(loginUser, tenantId);
         // 生成token
         return tokenService.createToken(loginUser);
+    }
+
+    /**
+     * 设置登录用户信息
+     * 
+     * @param loginUser 登录用户
+     * @param tenantId 租户ID
+     */
+    public void setLoginUserInfo(LoginUser loginUser, Integer tenantId) {
+        // // 登录时set租户id
+        // Integer tenantId = 0;
+        // ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        // if (attributes != null) {
+        // HttpServletRequest request = attributes.getRequest();
+        // // 从请求头获取租户ID，假设header名称为"X-Tenant-ID" ; 登录接口前端把租户id放到请求头里
+        // String tenantIdHeader = request.getHeader("X-Tenant-ID");
+        // if (tenantIdHeader != null && !tenantIdHeader.isEmpty()) {
+        // tenantId = Integer.parseInt(tenantIdHeader);
+        // }
+        // }
+        // // 设置租户id
+        // loginUser.setTenantId(tenantId);
+        // 记录登录信息
+        recordLoginInfo(loginUser.getUserId());
+        // 设置登录用户的信息
+        LoginUserExtend loginUserExtend = userService.getLoginUserExtend(loginUser.getUserId());
+        if (loginUserExtend != null) {
+            loginUser.setOrgId(loginUserExtend.getOrgId()); // 科室id
+            loginUser.setPractitionerId(loginUserExtend.getPractitionerId()); // 参与者id
+            loginUser.setHospitalId(userService.getHospitalIdByOrgId(loginUserExtend.getOrgId())); // 所属医院id
+            // user
+            loginUser.getUser().setOrgId(loginUserExtend.getOrgId()); // 科室id
+            loginUser.getUser().setOrgName(loginUserExtend.getOrgName()); // 科室名称
+        }
+
+        // 设置租户ID
+        loginUser.getUser().setTenantId(tenantId);
+        loginUser.setTenantId(tenantId);
+
+        // option集合
+        List<Map<String, String>> optionList = userService.getOptionList(tenantId);
+        if (optionList.isEmpty()) {
+            throw new IllegalArgumentException("未匹配到option信息");
+        }
+        JSONObject optionJson = new JSONObject();
+        for (Map<String, String> map : optionList) {
+            String key = map.get("optionkey");
+            String value = map.get("optionvalue");
+            optionJson.put(key, value);
+        }
+        loginUser.setOptionJson(optionJson);
     }
 
     /**
@@ -188,5 +239,36 @@ public class SysLoginService {
         sysUser.setLoginIp(IpUtils.getIpAddr());
         sysUser.setLoginDate(DateUtils.getNowDate());
         userService.updateUserProfile(sysUser);
+    }
+
+    /**
+     * 校验租户
+     *
+     * @param username 用户名
+     * @param tenantId 租户ID
+     */
+    private void validateTenant(String username, Integer tenantId) {
+        // 租户非空校验
+        if (tenantId == null) {
+            throw new ServiceException("请指定所属医院");
+        }
+        // 查询用户绑定的租户列表
+        R<List<SysTenant>> bindTenantList = sysTenantService.getUserBindTenantList(username);
+        // 租户合法性校验
+        Optional<SysTenant> currentTenantOptional =
+            bindTenantList.getData().stream().filter(e -> tenantId.equals(e.getId())).findFirst();
+        if (currentTenantOptional.isEmpty()) {
+            throw new ServiceException("所属医院非法");
+        }
+        // 租户状态校验
+        SysTenant currentTenant = currentTenantOptional.get();
+        if (TenantStatus.DISABLE.getCode().equals(currentTenant.getStatus())) {
+            throw new ServiceException("所属医院停用");
+        }
+        // 租户删除状态校验
+        if (DeleteFlag.DELETED.getCode().equals(currentTenant.getDeleteFlag())) {
+            throw new ServiceException("所属医院不存在");
+        }
+
     }
 }

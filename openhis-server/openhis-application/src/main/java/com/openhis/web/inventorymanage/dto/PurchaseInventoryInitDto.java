@@ -5,6 +5,9 @@ package com.openhis.web.inventorymanage.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -39,10 +42,16 @@ public class PurchaseInventoryInitDto {
     private List<PurchaseInventoryInitDto.supplyStatusOption> supplyStatusOptions;
 
     /**
+     * 单据类型
+     */
+    private List<PurchaseInventoryInitDto.supplyTypeOption> supplyTypeOptions;
+
+    /**
      * 供应商
      */
     @Data
     public static class supplierListOption {
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long value;
         private String label;
 
@@ -57,6 +66,7 @@ public class PurchaseInventoryInitDto {
      */
     @Data
     public static class practitionerListOption {
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long value;
         private String label;
 
@@ -81,7 +91,7 @@ public class PurchaseInventoryInitDto {
     }
 
     /**
-     * 入库项目类型
+     * 单据状态
      */
     @Data
     public static class supplyStatusOption {
@@ -89,6 +99,20 @@ public class PurchaseInventoryInitDto {
         private String label;
 
         public supplyStatusOption(Integer value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
+
+    /**
+     * 单据类型
+     */
+    @Data
+    public static class supplyTypeOption {
+        private Integer value;
+        private String label;
+
+        public supplyTypeOption(Integer value, String label) {
             this.value = value;
             this.label = label;
         }

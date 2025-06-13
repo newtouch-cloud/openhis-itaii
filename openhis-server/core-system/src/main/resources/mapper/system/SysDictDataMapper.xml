@@ -64,6 +64,12 @@
           and dict_value = #{dictValue}
     </select>
 
+    <select id="selectDictInfo" parameterType="String" resultMap="SysDictDataResult">
+        <include refid="selectDictDataVo"/>
+        where dict_type = #{dictType}
+          and dict_value = #{dictValue}
+    </select>
+
     <select id="selectDictDataById" parameterType="Long" resultMap="SysDictDataResult">
         <include refid="selectDictDataVo"/>
         where dict_code = #{dictCode}

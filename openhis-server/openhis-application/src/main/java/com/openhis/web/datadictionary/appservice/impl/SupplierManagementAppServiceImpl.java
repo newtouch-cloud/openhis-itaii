@@ -12,35 +12,35 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.alibaba.druid.sql.visitor.functions.Isnull;
-import com.core.common.utils.ChineseConvertUtils;
-import com.core.common.utils.StringUtils;
-import com.openhis.administration.domain.Supplier;
-import com.openhis.administration.mapper.SupplierMapper;
-import com.openhis.administration.service.ISupplierService;
-import com.openhis.common.enums.AccountStatus;
-import com.openhis.common.enums.SupplierType;
-import com.openhis.common.enums.SupplyStatus;
-import com.openhis.common.enums.SupplyType;
-import com.openhis.common.utils.EnumUtils;
-import com.openhis.web.datadictionary.appservice.ISupplierManagementAppService;
-import com.openhis.web.datadictionary.dto.SupplierDto;
-import com.openhis.web.datadictionary.dto.SupplierInitDto;
-import com.openhis.web.datadictionary.dto.SupplierSearchParam;
-import com.openhis.web.datadictionary.dto.SupplierUpDto;
+import com.core.common.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
+import com.core.common.utils.AssignSeqUtil;
+import com.core.common.utils.ChineseConvertUtils;
 import com.core.common.utils.MessageUtils;
+import com.core.common.utils.StringUtils;
 import com.core.common.utils.bean.BeanUtils;
+import com.openhis.administration.domain.Supplier;
+import com.openhis.administration.mapper.SupplierMapper;
+import com.openhis.administration.service.ISupplierService;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.AssignSeqEnum;
+import com.openhis.common.enums.DelFlag;
+import com.openhis.common.enums.SupplierType;
+import com.openhis.common.enums.Whether;
+import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisPageUtils;
 import com.openhis.common.utils.HisQueryUtils;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import com.openhis.web.datadictionary.appservice.ISupplierManagementAppService;
+import com.openhis.web.datadictionary.dto.SupplierDto;
+import com.openhis.web.datadictionary.dto.SupplierInitDto;
+import com.openhis.web.datadictionary.dto.SupplierSearchParam;
+import com.openhis.web.datadictionary.dto.SupplierUpDto;
 
 /**
  * 厂商/产地 impl
@@ -55,6 +55,9 @@ public class SupplierManagementAppServiceImpl implements ISupplierManagementAppS
     private ISupplierService supplierService;
     @Autowired
     private SupplierMapper supplierMapper;
+
+    @Autowired(required = false)
+    AssignSeqUtil assignSeqUtil;
 
     /**
      * 厂商/产地初始化
@@ -83,24 +86,26 @@ public class SupplierManagementAppServiceImpl implements ISupplierManagementAppS
      * @return 厂商/产地查询结果
      */
     @Override
-    public R<?> getSupplierList(SupplierSearchParam supplierSearchParam, String searchKey,
-                                Integer typeEnum, Integer pageNo, Integer pageSize, HttpServletRequest request) {
+    public R<?> getSupplierList(SupplierSearchParam supplierSearchParam, String searchKey, Integer typeEnum,
+        Integer pageNo, Integer pageSize, HttpServletRequest request) {
 
         // 构建查询条件
-        QueryWrapper<Supplier> queryWrapper = HisQueryUtils.buildQueryWrapper(supplierSearchParam, searchKey,
-            new HashSet<>(Arrays.asList("bus_no", "name", "py_str", "wb_str")), request);
-        if(StringUtils.isNotNull(typeEnum)){
-            queryWrapper.eq("type_enum",typeEnum);
+        QueryWrapper<Supplier> queryWrapper = HisQueryUtils.buildQueryWrapper(
+            supplierSearchParam, searchKey, new HashSet<>(Arrays.asList(CommonConstants.FieldName.BusNo,
+                CommonConstants.FieldName.Name, CommonConstants.FieldName.PyStr, CommonConstants.FieldName.WbStr)),
+            request);
+        if (StringUtils.isNotNull(typeEnum)) {
+            queryWrapper.eq(CommonConstants.FieldName.TypeEnum, typeEnum);
         }
-
         // 设置排序
-        queryWrapper.orderByAsc("bus_no");
+        queryWrapper.eq(CommonConstants.FieldName.DeleteFlag, DelFlag.NO.getCode())
+            .orderByDesc(CommonConstants.FieldName.BusNo);
         // 分页查询
         Page<SupplierDto> supplierPage =
             HisPageUtils.selectPage(supplierMapper, queryWrapper, pageNo, pageSize, SupplierDto.class);
         // 枚举类回显赋值
         supplierPage.getRecords().forEach(e -> {
-            e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
+            e.setActiveFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getActiveFlag()));
             // 厂商类型
             e.setTypeEnum_enumText(EnumUtils.getInfoByValue(SupplierType.class, e.getTypeEnum()));
         });
@@ -116,12 +121,25 @@ public class SupplierManagementAppServiceImpl implements ISupplierManagementAppS
     @Override
     public R<?> addSupplyRequest(SupplierUpDto supplierUpDto) {
 
+        // 重复添加校验
+        // 根据名字，地址，类型查询供应商信息
+        List<Supplier> supplierList = supplierService.getsupplierList(supplierUpDto.getName(),
+            supplierUpDto.getAddress(), supplierUpDto.getTypeEnum());
+        if(!supplierList.isEmpty()){
+            throw new ServiceException("数据已添加,请勿重复添加");
+        }
+
         Supplier supplierInfo = new Supplier();
         BeanUtils.copyProperties(supplierUpDto, supplierInfo);
         // 设置拼音首拼
         supplierInfo.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(supplierInfo.getName()));
         // 设置五笔首拼
         supplierInfo.setWbStr(ChineseConvertUtils.toWBFirstLetter(supplierInfo.getName()));
+
+        // 使用基础采番，设置供应商编码，10位数
+        String code = assignSeqUtil.getSeq(AssignSeqEnum.SUPPLIER_BUS_NO.getPrefix(), 10);
+        supplierInfo.setBusNo(code);
+
         return supplierService.addSupplier(supplierInfo)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"厂商/供应商信息"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00008, null));

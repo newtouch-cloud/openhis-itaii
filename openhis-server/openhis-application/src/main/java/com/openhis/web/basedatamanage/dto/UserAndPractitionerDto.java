@@ -95,6 +95,11 @@ public class UserAndPractitionerDto {
     private String ybNo;
 
     /**
+     * 职业证件编号
+     */
+    private String pharPracCertNo;
+
+    /**
      * 机构id
      */
     @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
@@ -122,4 +127,18 @@ public class UserAndPractitionerDto {
      */
     private List<PractitionerOrgAndLocationDto> manageLocationDtoList;
 
+    /**
+     * 管理药房集合
+     */
+    private List<PractitionerOrgAndLocationDto> manageMedicationLocationDtoList;
+
+    /**
+     * 护士-管理科室集合
+     */
+    private List<PractitionerOrgAndLocationDto> manageOrgDtoList;
+
+    /**
+     * 护士-管理病区集合
+     */
+    private List<PractitionerOrgAndLocationDto> manageWardLocationDtoList;
 }

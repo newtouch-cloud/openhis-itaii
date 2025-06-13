@@ -21,12 +21,6 @@ public class EncounterInfoSearchParam implements Serializable {
     /** 科室 */
     private Long departmentId;
 
-    /** 患者姓名或者证件号 */
-    private String condition;
-
-    /** 患者姓名 */
-    private String patientName;
-
-    /** 证件号 */
-    private String idCard;
+    /** 发药状态 */
+    private Integer statusEnum;
 }

@@ -13,8 +13,6 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.core.common.utils.*;
-import com.openhis.web.datadictionary.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -26,6 +24,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.core.domain.entity.SysDictData;
+import com.core.common.utils.*;
 import com.core.common.utils.bean.BeanUtils;
 import com.core.common.utils.poi.ExcelUtil;
 import com.core.system.service.ISysDictTypeService;
@@ -41,10 +40,15 @@ import com.openhis.medication.domain.Medication;
 import com.openhis.medication.domain.MedicationDefinition;
 import com.openhis.medication.domain.MedicationDetail;
 import com.openhis.medication.service.IMedicationDefinitionService;
+import com.openhis.medication.service.IMedicationDispenseService;
 import com.openhis.medication.service.IMedicationService;
+import com.openhis.sys.service.IOperationRecordService;
 import com.openhis.web.datadictionary.appservice.IItemDefinitionService;
 import com.openhis.web.datadictionary.appservice.IMedicationManageAppService;
+import com.openhis.web.datadictionary.dto.*;
 import com.openhis.web.datadictionary.mapper.MedicationManageSearchMapper;
+import com.openhis.workflow.service.ISupplyRequestService;
+import com.openhis.yb.service.YbManager;
 
 /**
  * 药品目录 impl
@@ -73,7 +77,19 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
     private IItemDefinitionService itemDefinitionServic;
 
     @Autowired(required = false)
-    AssignSeqUtil assignSeqUtil;
+    private AssignSeqUtil assignSeqUtil;
+
+    @Autowired
+    private YbManager ybService;
+
+    @Autowired
+    private IOperationRecordService iOperationRecordService;
+
+    @Autowired
+    private ISupplyRequestService supplyRequestService;
+
+    @Autowired
+    private IMedicationDispenseService medicationDispenseService;
 
     /**
      * 药品目录初始化
@@ -129,6 +145,11 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
                 .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
                 .collect(Collectors.toList());
 
+        // 医保等级List
+        List<MedicationManageInitDto.statusEnumOption> chrgitmLvOptions = Stream.of(InsuranceLevel.values())
+            .map(status -> new MedicationManageInitDto.statusEnumOption(status.getValue(), status.getInfo()))
+            .collect(Collectors.toList());
+
         medicationManageInitDto.setStatusFlagOptions(statusEnumOptions);
         medicationManageInitDto.setDomainFlagOptions(domainEnumOptions);
         medicationManageInitDto.setSupplierListOptions(supplierListOptions);
@@ -137,6 +158,7 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         medicationManageInitDto.setStatusRestrictedOptions(statusRestrictedOptions);
         medicationManageInitDto.setPartAttributeEnumOptions(partAttributeEnumOptions);
         medicationManageInitDto.setTempOrderSplitPropertyEnumOptions(tempOrderSplitPropertyOptions);
+        medicationManageInitDto.setChrgitmLvOptions(chrgitmLvOptions);
 
         return R.ok(medicationManageInitDto);
     }
@@ -214,7 +236,15 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
      */
     @Override
     public R<?> editMedication(@Validated @RequestBody MedicationManageUpDto medicationManageUpDto) {
-
+        // 校验是否可以编辑
+        boolean result = supplyRequestService.verifyAbleEdit(medicationManageUpDto.getMedicationDefId());
+        if (result) {
+            return R.fail("该药品已经发生过业务，不可编辑");
+        }
+        // boolean result = medicationDispenseService.verifyAbleEdit(medicationManageUpDto.getMedicationDefId());
+        // if (result) {
+        // return R.fail("该药品已经发生过业务，不可编辑");
+        // }
         MedicationDefinition medicationDefinition = new MedicationDefinition();
         Medication medication = new Medication();
         BeanUtils.copyProperties(medicationManageUpDto, medication); // 子表信息
@@ -233,19 +263,46 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         chargeItemDefinition.setYbType(medicationManageUpDto.getYbType())
             .setTypeCode(medicationManageUpDto.getTypeCode())
             .setInstanceTable(CommonConstants.TableName.MED_MEDICATION_DEFINITION)
-            .setInstanceId(medicationManageUpDto.getMedicationDefId());
+            .setInstanceId(medicationManageUpDto.getMedicationDefId()).setPrice(medicationManageUpDto.getRetailPrice())
+            .setChargeName(medicationManageUpDto.getName());
 
         // 更新子表药品信息
         if (medicationService.updateById(medication)) {
-
             // 更新主表药品信息
             boolean updateMedicationDefinition = medicationDefinitionService.updateById(medicationDefinition);
+            if (updateMedicationDefinition) {
+                // 调用医保目录对照接口
+                String ybSwitch =
+                    SecurityUtils.getLoginUser().getOptionJson().getString(CommonConstants.Option.YB_SWITCH); // 医保开关
+                if (Whether.YES.getCode().equals(ybSwitch) && StringUtils.isNotEmpty(medicationDefinition.getYbNo())) {
+                    R<?> r = ybService.directoryCheck(CommonConstants.TableName.MED_MEDICATION_DEFINITION,
+                        medicationDefinition.getId());
+                    if (200 != r.getCode()) {
+                        throw new RuntimeException("医保目录对照接口异常");
+                    }
+                }
+            }
+
+            // 插入操作记录
+            iOperationRecordService.addEntityOperationRecord(DbOpType.UPDATE.getCode(),
+                CommonConstants.TableName.MED_MEDICATION_DEFINITION, medication);
+
             // 更新价格表
             boolean updateChargeItemDefinition = itemDefinitionServic.updateItem(chargeItemDefinition);
+            // 更新子表,修改购入价,条件:采购
+            boolean upItemDetail1 = itemDefinitionServic.updateItemDetail(chargeItemDefinition,
+                medicationManageUpDto.getPurchasePrice(), ConditionCode.PURCHASE.getCode());
+            // 更新子表,修改零售价,条件:单位
+            boolean upItemDetail2 = itemDefinitionServic.updateItemDetail(chargeItemDefinition,
+                medicationManageUpDto.getRetailPrice(), ConditionCode.UNIT.getCode());
+            // 更新子表,修改最高零售价,条件:限制
+            boolean upItemDetail3 = itemDefinitionServic.updateItemDetail(chargeItemDefinition,
+                medicationManageUpDto.getMaximumRetailPrice(), ConditionCode.LIMIT.getCode());
 
-            return (updateMedicationDefinition && updateChargeItemDefinition)
-                ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
-                : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
+            return (updateMedicationDefinition && updateChargeItemDefinition && upItemDetail1 && upItemDetail2
+                && upItemDetail3)
+                    ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
+                    : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
         } else {
             return R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
         }
@@ -282,9 +339,12 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         for (Long detail : ids) {
             Medication medication = new Medication();
             medication.setId(detail);
-            medication.setStatusEnum(PublicationStatus.RETIRED);
+            medication.setStatusEnum(PublicationStatus.RETIRED.getValue());
             medicationList.add(medication);
         }
+        // 插入操作记录
+        iOperationRecordService.addIdsOperationRecord(DbOpType.STOP.getCode(),
+            CommonConstants.TableName.MED_MEDICATION_DEFINITION, ids);
         // 更新药品信息
         return medicationService.updateBatchById(medicationList)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
@@ -305,9 +365,12 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
         for (Long detail : ids) {
             Medication medication = new Medication();
             medication.setId(detail);
-            medication.setStatusEnum(PublicationStatus.ACTIVE);
+            medication.setStatusEnum(PublicationStatus.ACTIVE.getValue());
             medicationList.add(medication);
         }
+        // 插入操作记录
+        iOperationRecordService.addIdsOperationRecord(DbOpType.START.getCode(),
+            CommonConstants.TableName.MED_MEDICATION_DEFINITION, ids);
         // 更新药品信息
         return medicationService.updateBatchById(medicationList)
             ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"药品目录"}))
@@ -324,8 +387,9 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
 
         MedicationDetail medicationDetail = new MedicationDetail();
         BeanUtils.copyProperties(medicationManageUpDto, medicationDetail);
+        medicationDetail.setStatusEnum(PublicationStatus.ACTIVE.getValue());
         // 使用10位数基础采番
-        String code = assignSeqUtil.getSeq(AssignSeqEnum.MEDICATION_NUM.getPrefix(),10);
+        String code = assignSeqUtil.getSeq(AssignSeqEnum.MEDICATION_NUM.getPrefix(), 10);
         medicationDetail.setBusNo(code);
         // 拼音码
         medicationDetail.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(medicationDetail.getName()));
@@ -338,7 +402,18 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
 
         // 新增主表外来药品目录
         if (medicationDefinitionService.addMedication(medicationDetail)) {
-
+            // 调用医保目录对照接口
+            String ybSwitch = SecurityUtils.getLoginUser().getOptionJson().getString(CommonConstants.Option.YB_SWITCH); // 医保开关
+            if (Whether.YES.getCode().equals(ybSwitch) && StringUtils.isNotEmpty(medicationDetail.getYbNo())) {
+                R<?> r = ybService.directoryCheck(CommonConstants.TableName.MED_MEDICATION_DEFINITION,
+                    medicationDetail.getId());
+                if (200 != r.getCode()) {
+                    throw new RuntimeException("医保目录对照接口异常");
+                }
+            }
+            // 插入操作记录
+            iOperationRecordService.addEntityOperationRecord(DbOpType.INSERT.getCode(),
+                CommonConstants.TableName.MED_MEDICATION_DEFINITION, medicationDetail);
             // 新增子表外来药品目录
             boolean insertMedicationSuccess = medicationService.addMedication(medicationDetail);
             ItemUpFromDirectoryDto itemUpFromDirectoryDto = new ItemUpFromDirectoryDto();
@@ -346,10 +421,8 @@ public class MedicationManageAppServiceImpl implements IMedicationManageAppServi
             itemUpFromDirectoryDto.setInstanceId(medicationDetail.getMedicationDefId())
                 .setStatusEnum(PublicationStatus.ACTIVE.getValue())
                 .setInstanceTable(CommonConstants.TableName.MED_MEDICATION_DEFINITION)
-                .setEffectiveStart(DateUtils.getNowDate())
-                .setOrgId(SecurityUtils.getLoginUser().getOrgId())
-                .setConditionFlag(Whether.YES.getValue())
-                .setChargeName(medicationDetail.getName())
+                .setEffectiveStart(DateUtils.getNowDate()).setOrgId(SecurityUtils.getLoginUser().getOrgId())
+                .setConditionFlag(Whether.YES.getValue()).setChargeName(medicationDetail.getName())
                 .setPrice(medicationManageUpDto.getRetailPrice());
 
             // 添加药品成功后，添加相应的条件价格表信息

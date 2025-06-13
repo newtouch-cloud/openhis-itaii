@@ -3,6 +3,8 @@
  */
 package com.openhis.common.enums;
 
+import com.core.common.utils.StringUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,14 +19,24 @@ import lombok.Getter;
 public enum AccountType implements HisEnumInterface {
 
     /**
-     * 自费
+     * 医保电子凭证
      */
-    SELF_PAY(1, "1", "自费"),
+    MEDICAL_ELECTRONIC_CERTIFICATE(1, "01", "医保电子凭证"),
 
     /**
-     * 医保
+     * 居民身份证
      */
-    MEDICAL_INSURANCE(2, "2", "医保");
+    ID_CARD(2, "02", "居民身份证"),
+
+    /**
+     * 社会保障卡
+     */
+    SOCIAL_SECURITY_CARD(3, "03", "社会保障卡"),
+
+    /**
+     * 个人现金账户
+     */
+    PERSONAL_CASH_ACCOUNT(4, "04", "个人现金账户");
 
     private Integer value;
     private String code;
@@ -36,6 +48,18 @@ public enum AccountType implements HisEnumInterface {
         }
         for (AccountType val : values()) {
             if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
+
+    public static AccountType getByCode(String code) {
+        if (StringUtils.isEmpty(code)) {
+            return null;
+        }
+        for (AccountType val : values()) {
+            if (val.getCode().equals(code)) {
                 return val;
             }
         }

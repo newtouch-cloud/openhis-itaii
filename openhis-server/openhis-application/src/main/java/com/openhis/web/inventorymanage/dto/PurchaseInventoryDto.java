@@ -9,8 +9,11 @@ import java.util.Date;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Length;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -41,7 +44,7 @@ public class PurchaseInventoryDto {
     /** 数量 */
     @NotNull
     @Min(1)
-    private Integer itemQuantity;
+    private BigDecimal itemQuantity;
 
     /** 物品编码 */
     @NotNull
@@ -67,7 +70,6 @@ public class PurchaseInventoryDto {
     private Long purposeLocationId;
 
     /** 目的仓位 */
-    @NotNull
     private Long purposeLocationStoreId;
 
     /** 申请人 */
@@ -79,14 +81,18 @@ public class PurchaseInventoryDto {
     private Long practitionerId;
 
     /** 申请时间 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date applyTime;
+
+    /** 制单日期 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date occurrenceTime;
 
     /** 产品批号 */
     @NotNull
     private String lotNumber;
 
     /** 追溯码 */
-    @NotNull
     private String traceNo;
 
     /** 发票号 */
@@ -94,10 +100,12 @@ public class PurchaseInventoryDto {
 
     /** 开始时间 */
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date startTime;
 
     /** 结束时间 */
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date endTime;
 
     /** 单价 */
@@ -108,12 +116,7 @@ public class PurchaseInventoryDto {
     @NotNull
     private BigDecimal totalPrice;
 
-    /** 售价 */
-    @NotNull
-    private BigDecimal sellPrice;
-
-    /** 拆零售价 */
-    @NotNull
-    private BigDecimal minSellPrice;
-
+    /** 备注 */
+    @Length(max = 2000)
+    private String remake;
 }

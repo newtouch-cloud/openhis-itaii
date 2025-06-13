@@ -1,5 +1,6 @@
 package com.openhis.web.patientmanage.controller;
 
+import com.openhis.web.datadictionary.dto.DeviceManageSelParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,8 @@ import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 门诊记录
@@ -29,7 +32,7 @@ public class OutpatientRecordController {
     IOutpatientRecordService outpatientRecordService;
 
     /**
-     * 门诊输液记录初期数据
+     * 门诊记录初期数据
      *
      * @return
      */
@@ -43,15 +46,17 @@ public class OutpatientRecordController {
      * 分页查询门诊记录,可选条件
      *
      * @param outpatientRecordSearchParam 查询条件
+     * @param searchKey 查询条件-模糊查询
      * @param pageNo 页码（默认为1）
      * @param pageSize 每页大小（默认为10）
      */
     @GetMapping("/outpatient-record-page")
     public R<?> getPatient(OutpatientRecordSearchParam outpatientRecordSearchParam,
+        @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
-        return R.ok(outpatientRecordService.getPatient(outpatientRecordSearchParam, pageNo, pageSize));
+        return R.ok(outpatientRecordService.getPatient(outpatientRecordSearchParam,searchKey, pageNo, pageSize,request));
     }
 
 }

@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.enums.AccountBillingStatus;
 import com.openhis.common.enums.AccountStatus;
 
@@ -37,8 +38,7 @@ public class AccountFormData {
     private Integer billingStatusEnum;
 
     /** 账户类型编码 */
-    @NotNull(message = "账户类型不能为空")
-    private String typeCode; // 1:个人现金账户, 2:医保账户
+    private String typeCode; // 【01医保电子凭证 | 02 居民身份证 | 03 社会保障卡 | 04 个人现金账户】
 
     /** 名称 */
     private String name; // 刷医保卡时应该会带出该信息
@@ -59,6 +59,7 @@ public class AccountFormData {
      * 设置默认值
      */
     public AccountFormData() {
+        this.contractNo = CommonConstants.BusinessName.DEFAULT_CONTRACT_NO;
         this.statusEnum = AccountStatus.ACTIVE.getValue();
         this.billingStatusEnum = AccountBillingStatus.OPEN.getValue();
     }

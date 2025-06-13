@@ -28,24 +28,13 @@ import com.openhis.workflow.domain.SupplyRequest;
 public interface ReceiptApprovalMapper extends BaseMapper<SupplyRequest> {
 
     /**
-     * 获取药品供应单据详细信息
+     * 获取供应项目详细信息
      *
      * @param busNo 单据号
      * @param completed 发放状态：已完成
-     * @return 药品供应单据详细信息
+     * @return 供应项目详细信息
      */
-    List<SupplyItemDetailDto> selectSupplyMedDetail(@Param("busNo") String busNo,
-        @Param("completed") Integer completed);
-
-    /**
-     * 获取耗材供应单据详细信息
-     *
-     * @param busNo 单据号
-     * @param completed 发放状态：已完成
-     * @return 耗材供应单据详细信息
-     */
-    List<SupplyItemDetailDto> selectSupplyDevDetail(@Param("busNo") String busNo,
-        @Param("completed") Integer completed);
+    List<SupplyItemDetailDto> selectSupplyDetail(@Param("busNo") String busNo, @Param("completed") Integer completed);
 
     /**
      * 根据物品id获取物品的价格信息

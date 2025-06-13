@@ -71,6 +71,41 @@
         </encoder>
     </appender>
 
+    <!-- 新增专用日志Appender -->
+    <appender name="YB_LOGS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/yb-service.log</file> <!-- 日志文件名 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 每天一个文件，保留60天 -->
+            <fileNamePattern>${log.path}/yb-service.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern> <!-- 使用统一日志格式 -->
+        </encoder>
+    </appender>
+
+    <!-- 在原有logger配置下方添加 -->
+    <logger name="com.openhis.yb.service.YbManager" level="info" additivity="false">
+        <appender-ref ref="YB_LOGS" />
+    </logger>
+
+    <!-- 新增专用日志Appender -->
+    <appender name="PAYMENT_LOGS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/payment.log</file> <!-- 日志文件名 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 每天一个文件，保留60天 -->
+            <fileNamePattern>${log.path}/payment.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern> <!-- 使用统一日志格式 -->
+        </encoder>
+    </appender>
+    <!-- 在原有logger配置下方添加 -->
+    <logger name="com.openhis.web.paymentmanage.appservice.impl.PaymentRecServiceImpl" level="info" additivity="false">
+        <appender-ref ref="PAYMENT_LOGS" />
+    </logger>
+
     <!-- 系统模块日志级别控制  -->
     <logger name="com.core" level="info"/>
     <!-- Spring日志级别控制  -->
@@ -82,6 +117,8 @@
 
     <!--系统操作日志-->
     <root level="info">
+        <appender-ref ref="YB_LOGS"/>
+        <appender-ref ref="PAYMENT_LOGS"/>
         <appender-ref ref="file_info"/>
         <appender-ref ref="file_error"/>
     </root>
@@ -89,5 +126,13 @@
     <!--系统用户操作日志-->
     <logger name="sys-user" level="info">
         <appender-ref ref="sys-user"/>
+    </logger>
+
+    <logger name="YB_LOGS" level="info">
+        <appender-ref ref="YB_LOGS"/>
+    </logger>
+
+    <logger name="PAYMENT_LOGS" level="info">
+        <appender-ref ref="PAYMENT_LOGS"/>
     </logger>
 </configuration> 

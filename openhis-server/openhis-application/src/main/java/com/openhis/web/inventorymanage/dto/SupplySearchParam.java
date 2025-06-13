@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 供应申请共通查询条件
@@ -16,22 +17,26 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-public class SupplySearchParam implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class SupplySearchParam {
 
     /** 状态 */
     private Integer statusEnum;
 
     /** 源仓库 */
-    private Integer sourceLocationId;
+    private Long sourceLocationId;
 
     /** 目的仓库 */
-    private Integer purposeLocationId;
+    private Long purposeLocationId;
 
     /** 申请人 */
     private Long applicantId;
 
     /** 经手人 */
     private Long practitionerId;
+
+    /** 单据时间 */
+    private Date createTime;
+
+    /** 单据类型 */
+    private Integer typeEnum;
 }

@@ -3,11 +3,10 @@
  */
 package com.openhis.web.basedatamanage.dto;
 
-import java.io.Serializable;
 import java.util.List;
 
-import com.openhis.administration.domain.Location;
-import com.openhis.administration.domain.Organization;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -20,11 +19,58 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class OrgLocInitDto implements Serializable {
+public class OrgLocInitDto {
 
-    /** 机构科室信息 */
-    private List<Organization> organization;
+    /**
+     * 收费状态
+     */
+    private List<OrgLocInitDto.locationFormOption> locationFormOptions;
 
-    /** 位置药房信息 */
-    private List<Location> location;
+    /** 科室列表 */
+    private List<OrgLocInitDto.departmentOption> departmentOptions;
+
+    /** 科室列表 */
+    private List<OrgLocInitDto.locationOption> locationOptions;
+
+    /** 位置列表 */
+    @Data
+    public static class locationOption {
+
+        @JsonSerialize(using = ToStringSerializer.class)
+        private Long value;
+        private String label;
+
+        public locationOption(Long value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
+
+    /** 科室列表 */
+    @Data
+    public static class departmentOption {
+
+        @JsonSerialize(using = ToStringSerializer.class)
+        private Long value;
+        private String label;
+
+        public departmentOption(Long value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
+
+    /**
+     * 收费状态
+     */
+    @Data
+    public static class locationFormOption {
+        private Integer value;
+        private String label;
+
+        public locationFormOption(Integer value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
 }

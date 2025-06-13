@@ -1,7 +1,9 @@
 package com.core.system.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Validator;
@@ -495,6 +497,28 @@ public class SysUserServiceImpl implements ISysUserService {
     @Override
     public LoginUserExtend getLoginUserExtend(Long userId) {
         return userMapper.getLoginUserExtend(userId);
+    }
+
+    /**
+     * 通过科室id获取医院id
+     *
+     * @param orgId 科室id
+     * @return 医院id
+     */
+    @Override
+    public Long getHospitalIdByOrgId(Long orgId){
+        return userMapper.getHospitalIdByOrgId(orgId);
+    }
+
+    /**
+     * 查询 option集合
+     *
+     * @param tenantId 租户id
+     * @return option集合
+     */
+    @Override
+    public List<Map<String,String>> getOptionList(Integer tenantId){
+        return userMapper.getOptionList(tenantId);
     }
 
 }

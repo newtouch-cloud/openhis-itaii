@@ -27,6 +27,7 @@ public class Organization extends HisBaseEntity {
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 编码 */
@@ -39,10 +40,10 @@ public class Organization extends HisBaseEntity {
     private Integer activeFlag;
 
     /** 机构类型枚举 */
-    private OrganizationType typeEnum;
+    private Integer typeEnum;
 
     /** 机构分类枚举 */
-    private OrganizationClass classEnum;
+    private Integer classEnum;
 
     /** 拼音码 */
     private String pyStr;
@@ -56,7 +57,24 @@ public class Organization extends HisBaseEntity {
     /** 医保名称 */
     private String ybName;
 
+    /** 科别 */
+    private String caty;
+
     /** 显示顺序 */
     private Integer displayOrder;
 
+    /** 医疗服务机构标识 */
+    private String medinsId;
+
+    /** 医疗机构行政区划编码 */
+    private String medinsAdmdvs;
+
+    /** 医疗服务机构类型 */
+    private String medinsType;
+
+    /** 医疗机构等级 */
+    private String medinsLv;
+
+    /** 默认挂号医生 */
+    private Long defDoctorId;
 }

@@ -31,7 +31,7 @@ public interface MedicationManageSearchMapper extends BaseMapper<ChargeItemDefin
      * @return
      */
     IPage<MedicationManageDto> getPage(
-        @Param("page") Page<OutpatientInfusionRecordDto> page,
+        @Param("page") Page<MedicationManageDto> page,
         @Param(Constants.WRAPPER) QueryWrapper<MedicationManageDto> queryWrapper);
 
 

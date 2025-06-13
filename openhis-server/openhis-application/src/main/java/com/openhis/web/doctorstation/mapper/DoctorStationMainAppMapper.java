@@ -23,12 +23,15 @@ public interface DoctorStationMainAppMapper {
      * @param ClinicalStatus 过敏史状态
      * @param userId 当前登录账号ID
      * @param currentUserOrganizationId 当前登录账号所属的科室ID
+     * @param pricingFlag 划价标记
+     * @param encounterStatus 就诊状态
      * @param queryWrapper 查询条件
      * @return 就诊患者信息
      */
     IPage<PatientInfoDto> getPatientInfo(@Param("page") Page<PatientInfoDto> page,
         @Param("participantType") String participantType, @Param("ClinicalStatus") Integer ClinicalStatus,
         @Param("userId") Long userId, @Param("currentUserOrganizationId") Long currentUserOrganizationId,
+        @Param("pricingFlag") Integer pricingFlag, @Param("encounterStatus") Integer encounterStatus,
         @Param(Constants.WRAPPER) QueryWrapper<PatientInfoDto> queryWrapper);
 
 }

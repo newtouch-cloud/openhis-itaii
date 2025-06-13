@@ -16,4 +16,16 @@ public enum ActivityDefCategory implements HisEnumInterface {
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static ActivityDefCategory getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (ActivityDefCategory val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

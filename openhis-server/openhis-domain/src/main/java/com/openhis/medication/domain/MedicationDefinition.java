@@ -159,4 +159,13 @@ public class MedicationDefinition extends HisBaseEntity {
     /** 住院临时医嘱拆分属性 */
     private Integer thoPartAttributeEnum;
 
+    /** 剂量单位换算比 */
+    private BigDecimal unitConversionRatio;
+
+    /** 医保等级 */
+    private Integer chrgitmLv;
+
+    /** 处方标志 */
+    private Integer rxFlag;
+
 }

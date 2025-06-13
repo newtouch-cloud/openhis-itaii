@@ -1,5 +1,6 @@
 package com.openhis.web.chargemanage.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -88,5 +89,46 @@ public class CurrentDayEncounterDto {
      * 挂号日期/时间
      */
     private Date registerTime;
+
+    /**
+     * 价格
+     */
+    private BigDecimal totalPrice;
+
+    /**
+     * 账户名称
+     */
+    private String accountName;
+
+    /**
+     * 挂号人
+     */
+    private String entererName;
+
+    /**
+     * 收费项目ids
+     */
+    private String chargeItemIds;
+
+    /**
+     * 付款id
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long paymentId;
+
+    /**
+     * 发票url地址
+     */
+    private String pictureUrl;
+
+    /**
+     * 年龄
+     */
+    private String age;
+
+    /**
+     * 生日
+     */
+    private Date birthDate;
 
 }

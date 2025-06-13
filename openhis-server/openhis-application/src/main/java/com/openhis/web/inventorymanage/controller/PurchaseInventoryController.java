@@ -3,9 +3,11 @@
  */
 package com.openhis.web.inventorymanage.controller;
 
+import java.util.List;
+
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PurchaseInventoryController {
 
-    @Autowired
+    @Resource
     private IPurchaseInventoryAppService purchaseInventoryAppService;
 
     /**
@@ -38,6 +40,16 @@ public class PurchaseInventoryController {
     @GetMapping(value = "/init")
     public R<?> purchaseInventoryInit() {
         return purchaseInventoryAppService.purchaseInventoryInit();
+    }
+
+    /**
+     * 单据号初始化
+     *
+     * @return 初始化信息
+     */
+    @GetMapping(value = "/bus-no-init")
+    public R<?> purchaseNoInit() {
+        return purchaseInventoryAppService.purchaseNoInit();
     }
 
     /**
@@ -60,7 +72,7 @@ public class PurchaseInventoryController {
 
     /**
      * 入库单据详情
-     * 
+     *
      * @param busNo 单据号
      * @return 入库单据详情
      */
@@ -70,25 +82,25 @@ public class PurchaseInventoryController {
     }
 
     /**
-     * 添加/编辑入库单据
+     * 添加/编辑入库单据(批量)
      *
-     * @param purchaseInventoryDto 入库单据
+     * @param purchaseInventoryDtoList 入库单据
      * @return 操作结果
      */
     @PutMapping("/inventory-receipt")
-    public R<?> addOrEditInventoryReceipt(@Validated @RequestBody PurchaseInventoryDto purchaseInventoryDto) {
-        return purchaseInventoryAppService.addOrEditInventoryReceipt(purchaseInventoryDto);
+    public R<?> addOrEditInventoryReceipt(@Validated @RequestBody List<PurchaseInventoryDto> purchaseInventoryDtoList) {
+        return purchaseInventoryAppService.addOrEditInventoryReceipt(purchaseInventoryDtoList);
     }
 
     /**
      * 删除单据
      *
-     * @param supplyRequestId 供应请求id
+     * @param supplyRequestIds 供应请求id
      * @return 操作结果
      */
     @DeleteMapping("/inventory-receipt")
-    public R<?> deleteInventoryReceipt(@RequestParam Long supplyRequestId) {
-        return purchaseInventoryAppService.deleteReceipt(supplyRequestId);
+    public R<?> deleteInventoryReceipt(@RequestParam List<Long> supplyRequestIds) {
+        return purchaseInventoryAppService.deleteReceipt(supplyRequestIds);
     }
 
     /**

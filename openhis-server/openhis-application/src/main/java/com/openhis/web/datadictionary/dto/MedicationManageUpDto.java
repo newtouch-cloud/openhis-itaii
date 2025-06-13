@@ -136,7 +136,7 @@ public class MedicationManageUpDto {
     private BigDecimal partPercent;
 
     /** 剂量形式 */
-    @Dict(dictCode = "dose_from_code")
+    @Dict(dictCode = "dose_form_code")
     private Integer doseFrom;
     private String doseFrom_dictText;
 
@@ -182,15 +182,12 @@ public class MedicationManageUpDto {
     private Integer characteristic;
 
     /** 购入价 */
-    @NotNull(message = "购入价不能为空")
     private BigDecimal purchasePrice;
 
     /** 零售价 */
-    @NotNull(message = "零售价不能为空")
     private BigDecimal retailPrice;
 
     /** 最高零售价 */
-    @NotNull(message = "最高零售价不能为空")
     private BigDecimal maximumRetailPrice;
 
     /** 医保类别 */
@@ -245,4 +242,20 @@ public class MedicationManageUpDto {
 
     /** 住院临时医嘱拆分属性 */
     private Integer thoPartAttributeEnum;
+
+    /** 最小库存警戒数量(常规单位) */
+    private BigDecimal itemMinQuantity;
+
+    /** 最大库存警戒数量(常规单位) */
+    private BigDecimal itemMaxQuantity;
+
+    /** 剂量单位换算比 */
+    private BigDecimal unitConversionRatio;
+
+    /** 医保等级 */
+    private Integer chrgitmLv;
+
+    /** 处方标志 */
+    private Integer rxFlag;
+
 }

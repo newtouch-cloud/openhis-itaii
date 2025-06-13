@@ -55,6 +55,9 @@ public class DeviceRequest extends HisBaseEntity {
     /** 是否停止执行 */
     private Integer performFlag;
 
+    /** 分组编号 */
+    private String groupNo;
+
     /** 器材类型 */
     private String deviceTypeCode;
 
@@ -135,5 +138,31 @@ public class DeviceRequest extends HisBaseEntity {
 
     /** 支持用药信息 */
     private String supportInfo;
+
+    /** 退药id */
+    private Long refundDeviceId;
+
+    /**
+     * 请求内容json
+     */
+    private String contentJson;
+
+    /**
+     * 类别医保编码
+     */
+    private Integer ybClassEnum;
+
+    /** 追溯码 */
+    private String traceNo;
+
+    /**
+     * 诊断id
+     */
+    private Long conditionId;
+
+    /**
+     * 就诊诊断id
+     */
+    private Long encounterDiagnosisId;
 
 }

@@ -35,7 +35,7 @@ public class ChargeItemDefinitionFormData {
     /**
      * 状态
      */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
 
     /**
      * 机构ID

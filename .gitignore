@@ -56,3 +56,5 @@
 
 # 忽略设计书
 PostgreSQL/openHis_DB设计书.xlsx
+
+public.sql

@@ -1,9 +1,9 @@
 package com.openhis.administration.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.openhis.administration.domain.Organization;
-
-import java.util.List;
 
 /**
  * 机构管理Service接口
@@ -32,8 +32,9 @@ public interface IOrganizationService extends IService<Organization> {
     /**
      * 获取机构下拉列表
      *
-     * @param classEnum 机构分类
+     * @param organizationType 机构类型
+     * @param organizationClass 机构分类
      * @return 机构下拉列表
      */
-    List<Organization> getList(Integer classEnum);
+    List<Organization> getList(Integer organizationType, Integer organizationClass);
 }

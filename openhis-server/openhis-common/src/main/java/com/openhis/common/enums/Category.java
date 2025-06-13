@@ -22,17 +22,17 @@ public enum Category {
      */
     SELF(0, "自费"),
     /**
-     * MEMBER_SECOND
+     * 省医保
      */
-    PROVINCIAL_INSURANCE(1, "MEMBER_SECOND"),
+    PROVINCIAL_INSURANCE(1, "省医保"),
     /**
-     * MEMBER_SECOND
+     * 市医保
      */
-    MUNICIPAL_INSURANCE(1, "MEMBER_SECOND"),
+    MUNICIPAL_INSURANCE(2, "市医保"),
     /**
-     * MEMBER_SECOND
+     * 公费
      */
-    PUBLIC(1, "MEMBER_SECOND");
+    PUBLIC(3, "公费");
     @EnumValue
     private Integer value;
     private String description;

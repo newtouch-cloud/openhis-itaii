@@ -3,16 +3,21 @@
  */
 package com.openhis.web.inventorymanage.controller;
 
-import com.core.common.core.domain.R;
-import com.openhis.web.inventorymanage.appservice.IProductTransferAppService;
-import com.openhis.web.inventorymanage.dto.SupplySearchParam;
-import com.openhis.web.inventorymanage.dto.ProductTransferDto;
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletRequest;
+
+import com.openhis.web.inventorymanage.dto.BatchTransferSearchParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import com.core.common.core.domain.R;
+import com.openhis.web.inventorymanage.appservice.IProductTransferAppService;
+import com.openhis.web.inventorymanage.dto.ProductTransferDto;
+import com.openhis.web.inventorymanage.dto.SupplySearchParam;
+
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 /**
  * 商品调拨 controller
@@ -39,6 +44,16 @@ public class ProductTransferController {
     }
 
     /**
+     * 商品调拨单据编号初始化
+     *
+     * @return 初始化信息
+     */
+    @GetMapping(value = "/bus-no-init")
+    public R<?> productTransferNoInit() {
+        return productTransferAppService.productTransferNoInit();
+    }
+
+    /**
      * 商品调拨单据列表
      *
      * @param supplySearchParam 供应申请查询条件
@@ -57,36 +72,82 @@ public class ProductTransferController {
     }
 
     /**
-     * 商品调拨单据详情
-     * 
-     * @param busNo 单据号
-     * @return 供应申请单据详情
+     * 生成商品批量调拨单据
+     *
+     * @param batchTransferSearchParam 生成批量调拨单查询条件
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @param request 请求数据
+     * @return 批量调拨单据
      */
-    @GetMapping(value = "/product-transfer-detail")
-    public R<?> getDetail(@RequestParam String busNo) {
-        return productTransferAppService.getDetail(busNo);
+    @GetMapping(value = "/product-transfer-batch")
+    public R<?> createBatchTransfer(BatchTransferSearchParam batchTransferSearchParam,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
+        return productTransferAppService.createBatchTransfer(batchTransferSearchParam, pageNo, pageSize, request);
     }
 
     /**
-     * 添加/编辑商品调拨单据
+     * 保存商品批量调拨单据
      *
-     * @param productTransferDto 商品调拨单据
+     * @param productTransferDtoList 商品批量调拨单据
      * @return 操作结果
      */
-    @PutMapping("/product-transfer-edit")
-    public R<?> addOrEditTransferReceipt(@Validated @RequestBody ProductTransferDto productTransferDto) {
-        return productTransferAppService.addOrEditTransferReceipt(productTransferDto);
+    @PutMapping("/product-transfer-batch")
+    public R<?> addOrEditBatchTransferReceipt(@RequestBody List<ProductTransferDto> productTransferDtoList) {
+        // 批量保存按钮
+        Boolean flag = true;
+        return productTransferAppService.addOrEditBatchTransferReceipt(productTransferDtoList, flag);
+    }
+
+    /**
+     * 保存商品批量调拨单据(单条保存)
+     *
+     * @param productTransferDtoList 商品批量调拨单据
+     * @return 操作结果
+     */
+    @PutMapping("/transfer-batch")
+    public R<?> addOrEditBatchTransfer(@RequestBody List<ProductTransferDto> productTransferDtoList) {
+        // 单独保存
+        Boolean flag = false;
+        return productTransferAppService.addOrEditBatchTransferReceipt(productTransferDtoList, flag);
+    }
+
+    /**
+     * 商品调拨单据详情
+     *
+     * @param busNo 单据号
+     * @param pageNo 当前页码
+     * @param pageSize 查询条数
+     * @return 供应申请单据详情
+     */
+    @GetMapping(value = "/product-transfer-detail")
+    public R<?> getDetail(@RequestParam String busNo,
+        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return productTransferAppService.getDetail(busNo, pageNo, pageSize);
+    }
+
+    /**
+     * 添加/编辑商品调拨单据(批量)
+     *
+     * @param productTransferDtoList 商品调拨单据
+     * @return 操作结果
+     */
+    @PutMapping("/product-transfer")
+    public R<?> addOrEditTransferReceipt(@Validated @RequestBody List<ProductTransferDto> productTransferDtoList) {
+        return productTransferAppService.addOrEditTransferReceipt(productTransferDtoList);
     }
 
     /**
      * 删除单据
      *
-     * @param supplyRequestId 供应请求id
+     * @param supplyRequestIds 供应请求id
      * @return 操作结果
      */
     @DeleteMapping("/product-transfer-del")
-    public R<?> deleteTransferReceipt(@RequestParam Long supplyRequestId) {
-        return productTransferAppService.deleteReceipt(supplyRequestId);
+    public R<?> deleteTransferReceipt(@RequestParam List<Long> supplyRequestIds) {
+        return productTransferAppService.deleteReceipt(supplyRequestIds);
     }
 
     /**
@@ -96,7 +157,7 @@ public class ProductTransferController {
      * @return 操作结果
      */
     @PutMapping("/submit-approval")
-    public R<?> submitApproval(@RequestParam String busNo) {
+    public R<?> submitApproval(@RequestBody String busNo) {
         return productTransferAppService.submitApproval(busNo);
     }
 
@@ -107,7 +168,7 @@ public class ProductTransferController {
      * @return 操作结果
      */
     @PutMapping("/withdraw-approval")
-    public R<?> withdrawApproval(@RequestParam String busNo) {
+    public R<?> withdrawApproval(@RequestBody String busNo) {
         return productTransferAppService.withdrawApproval(busNo);
     }
 }

@@ -28,6 +28,9 @@ public class PatientIdentifier extends HisBaseEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
+    /** 患者ID */
+    private Long patientId;
+
     /** 标识类型编码 */
     private String typeCode;
 
@@ -35,7 +38,7 @@ public class PatientIdentifier extends HisBaseEntity {
     private String identifierNo;
 
     /** 标识状态枚举 */
-    private IdentifierUse stateEnum;
+    private Integer stateEnum;
 
     /** 有效时间Start */
     private Date startTime;

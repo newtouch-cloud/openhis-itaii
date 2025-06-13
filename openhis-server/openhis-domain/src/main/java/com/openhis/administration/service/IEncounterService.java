@@ -18,4 +18,28 @@ public interface IEncounterService extends IService<Encounter> {
      */
     Long saveEncounterByRegister(Encounter encounter);
 
+    /**
+     * 退号
+     * 
+     * @param encounterId 就诊id
+     */
+    void returnRegister(Long encounterId);
+
+    /**
+     * 更新就诊管理
+     *
+     * @param encounter 就诊管理实体
+     */
+    boolean saveOrUpdateEncounter(Encounter encounter);
+
+
+    /**
+     * 通过 id 更新 priorityEnum 字段
+     *
+     * @param id             Encounter 的 id
+     * @param priorityEnum   要更新的 priorityEnum 值
+     * @return 更新是否成功
+     */
+    boolean updatePriorityEnumById(Long id, Integer priorityEnum);
+
 }

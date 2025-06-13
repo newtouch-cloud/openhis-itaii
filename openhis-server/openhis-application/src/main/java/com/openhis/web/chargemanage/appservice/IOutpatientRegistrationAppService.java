@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.openhis.web.basicservice.dto.HealthcareServiceDto;
 import com.openhis.web.chargemanage.dto.*;
+import com.openhis.web.paymentmanage.dto.CancelRegPaymentDto;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 门诊挂号 应用Service
@@ -25,26 +28,33 @@ public interface IOutpatientRegistrationAppService {
 
     /**
      * 查询费用性质
-     * 
+     *
      * @return 费用性质
      */
     List<ContractMetadata> getContractMetadata();
 
     /**
-     * 根据位置id筛选医生
-     * 
-     * @param locationId 位置ID
+     * 查询门诊科室数据
+     *
+     * @return 门诊科室
+     */
+    List<OrgMetadata> getOrgMetadata();
+
+    /**
+     * 根据科室id筛选医生
+     *
+     * @param orgId 科室ID
      * @param searchKey 模糊查询关键字
      * @param pageNo 当前页
      * @param pageSize 每页多少条
      * @return 筛选医生
      */
-    IPage<PractitionerMetadata> getPractitionerMetadataByLocationId(Long locationId, String searchKey, Integer pageNo,
+    IPage<PractitionerMetadata> getPractitionerMetadataByLocationId(Long orgId, String searchKey, Integer pageNo,
         Integer pageSize);
 
     /**
      * 根据机构id筛选服务项目
-     * 
+     *
      * @param organizationId 机构id
      * @param searchKey 模糊查询关键字
      * @param pageNo 当前页
@@ -55,12 +65,12 @@ public interface IOutpatientRegistrationAppService {
         Integer pageNo, Integer pageSize);
 
     /**
-     * 保存挂号
-     * 
-     * @param outpatientRegistrationAddParam 就诊表单信息
+     * 退号
+     *
+     * @param cancelRegPaymentDto 就诊id
      * @return 结果
      */
-    R<?> saveRegister(OutpatientRegistrationAddParam outpatientRegistrationAddParam);
+    R<?> returnRegister(CancelRegPaymentDto cancelRegPaymentDto);
 
     /**
      * 查询当日就诊数据
@@ -70,6 +80,14 @@ public interface IOutpatientRegistrationAppService {
      * @param pageSize 每页多少条
      * @return 当日就诊数据
      */
-    IPage<CurrentDayEncounterDto> getCurrentDayEncounter(String searchKey, Integer pageNo, Integer pageSize);
+    IPage<CurrentDayEncounterDto> getCurrentDayEncounter(String searchKey, Integer pageNo, Integer pageSize, HttpServletRequest request);
+
+    /**
+     * 取消挂号
+     *
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    R<?> cancelRegister(Long encounterId);
 
 }

@@ -24,4 +24,11 @@ public interface ISupplyDeliveryService extends IService<SupplyDelivery> {
      * @param now 当前时间
      */
     List<SupplyDelivery> createCompletedSupplyDelivery(List<SupplyRequest> supplyRequestList, Date now);
+
+    /**
+     * 校验(已经审批通过的单号(发放状态是已完成),不能再重复审批通过)
+     *
+     * @param supplyReqIdList 供应申请id列表
+     */
+    boolean supplyDeliveryValidation(List<Long> supplyReqIdList);
 }

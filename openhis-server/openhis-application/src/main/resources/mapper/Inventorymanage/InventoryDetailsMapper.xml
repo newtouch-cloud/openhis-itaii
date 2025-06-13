@@ -3,210 +3,486 @@
 <mapper namespace="com.openhis.web.inventorymanage.mapper.InventoryDetailsMapper">
 
     <select id="selectPurchaseInDetailsPage"
-            resultType="com.openhis.web.inventorymanage.dto.PurchaseInDetailDto">
-        SELECT T10.id,
-               T10.bus_no,
-               T10.status_enum,
-               T10.item_table,
-               T10.item_no,
-               T10.item_name,
-               T10.item_volume,
-               T10.lot_number,
-               T10.sup_name,
-               T10.item_quantity,
-               T10.price,
-               T10.total_price,
-               T10.unit_code,
-               T10.loc_name,
-               T10.locstore_name,
-               T10.approval_time,
-               T10.occurrence_time,
-               T10.applicant_name,
-               T10.approver_name,
-               T10.tenant_id
-        FROM (SELECT T1.id,
-                     T1.bus_no,
-                     CASE T1.status_enum WHEN 2 THEN '已入库' ELSE '未入库' END                    AS status_enum,
-                     CASE T1.item_table
-                         WHEN 'med_medication_definition' THEN '药品'
-                         WHEN 'adm_device' THEN '设备' END                                     AS item_table,
-                     CASE
-                         WHEN T1.item_table = 'med_medication_definition' THEN T2.bus_no
-                         WHEN T1.item_table = 'adm_device' THEN T4.bus_no END                AS item_no,
-                     CASE
-                         WHEN T1.item_table = 'med_medication_definition' THEN T2.name
-                         WHEN T1.item_table = 'adm_device' THEN T4.name END                  AS item_name,
-                     CASE
-                         WHEN T1.item_table = 'med_medication_definition' THEN T3.total_volume
-                         WHEN T1.item_table = 'adm_device' THEN T4.device_specifications END AS item_volume,
-                     T1.lot_number,
-                     T4.name                                                                 AS sup_name,
-                     T1.item_quantity,
-                     T1.price,
-                     T1.total_price,
-                     T1.unit_code,
-                     T6.name                                                                 AS loc_name,
-                     T7.name                                                                 AS locstore_name,
-                     T1.approval_time,
-                     T1.occurrence_time,
-                     T8.name                                                                 AS applicant_name,
-                     T9.name                                                                 AS approver_name,
-                     T1.tenant_id
+            resultType="com.openhis.web.inventorymanage.dto.InventoryDetailsPageDto">
+        SELECT T7.id,                        --id
+               T7.bus_no,                    --单据号
+               T7.status_enum,               --单据类型
+               T7.item_table,                --项目类型
+               T7.item_no,                   --项目编码
+               T7.item_name,                 --项目名称
+               T7.item_volume,               --规格
+               T7.manufacturer_text,         --厂家
+               T7.lot_number,                --产品批号
+               T7.sup_name,                  --供应商
+               T7.item_quantity,             --采购数量
+               T7.price,                     --采购单价
+               T7.total_price,               --合计金额
+               T7.unit_code,                 --计量单位
+               T7.org_name,                  --采购部门
+               T7.purpose_location_id,       --仓库
+               T7.purpose_location_store_id, --货位
+               T7.approval_time,             --审批日期
+               T7.expiration_time,           --有效期
+               T7.applicant_id,              --制单人
+               T7.approver_id                --审批人
+        FROM (SELECT T1.id,                                                 --id
+                     T1.bus_no,                                             --单据号
+                     CASE T2.status_enum
+                         WHEN #{supplyStatus} THEN '已入库'
+                         ELSE '未入库' END                 AS status_enum,     --单据类型
+                     T3.category_code                   AS item_table,      --项目类型
+                     T1.item_id                         AS item_no,         --项目编码
+                     T3.name                            AS item_name,       --项目名称
+                     T4.total_volume                    AS item_volume,     --规格
+                     T3.manufacturer_text,                                  --厂家
+                     T1.lot_number,                                         --产品批号
+                     T6.name                            AS sup_name,        --供应商
+                     T1.item_quantity * T3.part_percent AS item_quantity,   --采购数量
+                     T1.price,                                              --采购单价
+                     T1.total_price,                                        --合计金额
+                     T1.unit_code,                                          --计量单位
+                     T5.name                            AS org_name,        --采购部门
+                     T1.purpose_location_id,                                --仓库
+                     T1.purpose_location_store_id,                          --货位
+                     T1.approval_time,                                      --审批日期
+                     T4.expiration_date                 AS expiration_time, --有效期
+                     T1.applicant_id,                                       --制单人
+                     T1.approver_id                                         --审批人
               FROM wor_supply_request AS T1
-                       LEFT JOIN med_medication_definition AS T2 ON T1.item_id = T2.id
-                       LEFT JOIN med_medication AS T3 ON T1.item_id = T3.medication_def_id
-                       LEFT JOIN adm_device AS T4 ON T1.item_id = T4.id
-                       LEFT JOIN adm_supplier AS T5 ON T1.supplier_id = T5.id
-                       LEFT JOIN adm_location AS T6 ON T1.purpose_location_id = T6.id
-                       LEFT JOIN adm_location AS T7 ON T1.purpose_location_store_id = T7.id
-                       LEFT JOIN adm_practitioner AS T8 ON T1.applicant_id = T8.id
-                       LEFT JOIN adm_practitioner AS T9 ON T1.approver_id = T9.id
+                       INNER JOIN wor_supply_delivery AS T2
+                                  ON T2.request_id = T1.id
+                       INNER JOIN med_medication_definition AS T3
+                                  ON T3.id = T1.item_id
+                       INNER JOIN med_medication AS T4
+                                  ON T4.medication_def_id = T3.id
+                       LEFT JOIN adm_organization AS T5
+                                 ON T5.id = T4.org_id
+                       LEFT JOIN adm_supplier AS T6
+                                 ON T6.id = T1.supplier_id
               WHERE T1.delete_flag = '0'
+                AND T1.type_enum = #{purchaseInventory}
+              ORDER BY T1.bus_no desc) AS T7
+        UNION
+        SELECT T10.id,                        --id
+               T10.bus_no,                    --单据号
+               T10.status_enum,               --单据类型
+               T10.item_table,                --项目类型
+               T10.item_no,                   --项目编码
+               T10.item_name,                 --项目名称
+               T10.item_volume,               --规格
+               T10.manufacturer_text,         --厂家
+               T10.lot_number,                --产品批号
+               T10.sup_name,                  --供应商
+               T10.item_quantity,             --采购数量
+               T10.price,                     --采购单价
+               T10.total_price,               --合计金额
+               T10.unit_code,                 --计量单位
+               T10.org_name,                  --采购部门
+               T10.purpose_location_id,       --仓库
+               T10.purpose_location_store_id, --货位
+               T10.approval_time,             --审批日期
+               T10.expiration_time,           --有效期
+               T10.applicant_id,              --制单人
+               T10.approver_id                --审批人
+        FROM (SELECT T1.id,                                                 --id
+                     T1.bus_no,                                             --单据号
+                     CASE T2.status_enum
+                         WHEN #{supplyStatus} THEN '已入库'
+                         ELSE '未入库' END                 AS status_enum,     --单据类型
+                     T8.category_code                   AS item_table,      --项目类型
+                     T1.item_id                         AS item_no,         --项目编码
+                     T8.name                            AS item_name,       --项目名称
+                     T9.device_specifications           AS item_volume,     --规格
+                     T8.manufacturer_text,                                  --厂家
+                     T1.lot_number,                                         --产品批号
+                     T6.name                            AS sup_name,        --供应商
+                     T1.item_quantity * T8.part_percent AS item_quantity,   --采购数量
+                     T1.price,                                              --采购单价
+                     T1.total_price,                                        --合计金额
+                     T1.unit_code,                                          --计量单位
+                     T5.name                            AS org_name,        --采购部门
+                     T1.purpose_location_id,                                --仓库
+                     T1.purpose_location_store_id,                          --货位
+                     T1.approval_time,                                      --审批日期
+                     T9.expiration_date                 AS expiration_time, --有效期
+                     T1.applicant_id,                                       --制单人
+                     T1.approver_id                                         --审批人
+              FROM wor_supply_request AS T1
+                       INNER JOIN wor_supply_delivery AS T2
+                                  ON T2.request_id = T1.id
+                       INNER JOIN adm_device_definition AS T8
+                                  ON T8.id = T1.item_id
+                       INNER JOIN adm_device AS T9
+                                  ON T9.device_def_id = T8.id
+                       LEFT JOIN adm_organization AS T5
+                                 ON T5.id = T9.org_id
+                       LEFT JOIN adm_supplier AS T6
+                                 ON T6.id = T1.supplier_id
+              WHERE T1.delete_flag = '0'
+                AND T1.type_enum = #{purchaseInventory}
               ORDER BY T1.bus_no desc) AS T10
             ${ew.customSqlSegment}
     </select>
 
+    <select id="selectTransferDetailsPage"
+            resultType="com.openhis.web.inventorymanage.dto.InventoryDetailsPageDto">
+        SELECT T7.id,                        --id
+               T7.bus_no,                    --单据号
+               T7.status_enum,               --单据类型
+               T7.item_table,                --项目类型
+               T7.item_no,                   --项目编码
+               T7.item_name,                 --项目名称
+               T7.item_volume,               --规格
+               T7.lot_number,                --产品批号
+               T7.manufacturer_text,         --厂家
+               T7.item_quantity,             --调拨数量
+               T7.unit_code,                 --计量单位
+               T7.price,                     --采购单价
+               T7.total_price,               --合计金额
+               T7.source_type,               --源仓库类型
+               T7.source_location,           --源仓库
+               T7.source_location_store,     --源货位
+               T7.purpose_type,              --目的仓库类型
+               T7.purpose_location_id,       --目的仓库
+               T7.purpose_location_store_id, --目的货位
+               T7.approval_time,             --审批日期
+               T7.expiration_time,           --有效期
+               T7.applicant_id,              --制单人
+               T7.approver_id                --审批人
+        FROM (SELECT T1.id,                                               --id
+                     T1.bus_no,                                           --单据号
+                     CASE T2.status_enum
+                         WHEN #{supplyStatus} THEN '已调拨'
+                         ELSE '未调拨' END         AS status_enum,           --单据类型
+                     T3.category_code           AS item_table,            --项目类型
+                     T1.item_id                 AS item_no,               --项目编码
+                     T3.name                    AS item_name,             --项目名称
+                     T4.total_volume            AS item_volume,           --规格
+                     T1.lot_number,                                       --产品批号
+                     T3.manufacturer_text,                                --厂家
+                     T1.item_quantity,                                    --采购数量(小)
+                     T3.min_unit_code           AS unit_code,             --计量单位(小)
+                     T1.price * T3.part_percent AS price,                 --采购单价(小)
+                     T1.total_price,                                      --合计金额
+                     T1.source_type_enum        AS source_type,           --源仓库类型
+                     T5.name                    AS source_location,       --源仓库
+                     T6.name                    AS source_location_store, --源货位
+                     T1.purpose_type_enum       AS purpose_type,          --目的仓库类型
+                     T1.purpose_location_id,                              --目的仓库
+                     T1.purpose_location_store_id,                        --目的货位
+                     T1.approval_time,                                    --审批日期
+                     T4.expiration_date         AS expiration_time,       --有效期
+                     T1.applicant_id,                                     --制单人
+                     T1.approver_id                                       --审批人
+              FROM wor_supply_request AS T1
+                       INNER JOIN wor_supply_delivery AS T2
+                                  ON T2.request_id = T1.id
+                       INNER JOIN med_medication_definition AS T3
+                                  ON T3.id = T1.item_id
+                       INNER JOIN med_medication AS T4
+                                  ON T4.medication_def_id = T3.id
+                       LEFT JOIN adm_location AS T5
+                                 ON T5.id = T1.source_location_id
+                       LEFT JOIN adm_location AS T6
+                                 ON T6.id = T1.source_location_store_id
+              WHERE T1.delete_flag = '0'
+                AND T1.type_enum = #{productTransfer}
+              ORDER BY T1.bus_no desc) AS T7
+        UNION
+        SELECT T10.id,                        --id
+               T10.bus_no,                    --单据号
+               T10.status_enum,               --单据类型
+               T10.item_table,                --项目类型
+               T10.item_no,                   --项目编码
+               T10.item_name,                 --项目名称
+               T10.item_volume,               --规格
+               T10.lot_number,                --产品批号
+               T10.manufacturer_text,         --厂家
+               T10.item_quantity,             --调拨数量
+               T10.unit_code,                 --计量单位
+               T10.price,                     --采购单价
+               T10.total_price,               --合计金额
+               T10.source_type,               --源仓库类型
+               T10.source_location,           --源仓库
+               T10.source_location_store,     --源货位
+               T10.purpose_type,              --目的仓库类型
+               T10.purpose_location_id,       --目的仓库
+               T10.purpose_location_store_id, --目的货位
+               T10.approval_time,             --审批日期
+               T10.expiration_time,           --有效期
+               T10.applicant_id,              --制单人
+               T10.approver_id                --审批人
+        FROM (SELECT T1.id,                                               --id
+                     T1.bus_no,                                           --单据号
+                     CASE T2.status_enum
+                         WHEN #{supplyStatus} THEN '已调拨'
+                         ELSE '未调拨' END         AS status_enum,           --单据类型
+                     T8.category_code           AS item_table,            --项目类型
+                     T1.item_id                 AS item_no,               --项目编码
+                     T8.name                    AS item_name,             --项目名称
+                     T9.device_specifications   AS item_volume,           --规格
+                     T1.lot_number,                                       --产品批号
+                     T8.manufacturer_text,                                --厂家
+                     T1.item_quantity,                                    --采购数量(小)
+                     T8.min_unit_code           AS unit_code,             --计量单位(小)
+                     T1.price * T8.part_percent AS price,                 --采购单价(小)
+                     T1.total_price,                                      --合计金额
+                     T1.source_type_enum        AS source_type,           --源仓库类型
+                     T5.name                    AS source_location,       --源仓库
+                     T6.name                    AS source_location_store, --源货位
+                     T1.purpose_type_enum       AS purpose_type,          --目的仓库类型
+                     T1.purpose_location_id,                              --目的仓库
+                     T1.purpose_location_store_id,                        --目的货位
+                     T1.approval_time,                                    --审批日期
+                     T9.expiration_date         AS expiration_time,       --有效期
+                     T1.applicant_id,                                     --制单人
+                     T1.approver_id                                       --审批人
+              FROM wor_supply_request AS T1
+                       INNER JOIN wor_supply_delivery AS T2
+                                  ON T2.request_id = T1.id
+                       INNER JOIN adm_device_definition AS T8
+                                  ON T8.id = T1.item_id
+                       INNER JOIN adm_device AS T9
+                                  ON T9.device_def_id = T8.id
+                       LEFT JOIN adm_location AS T5
+                                 ON T5.id = T1.source_location_id
+                       LEFT JOIN adm_location AS T6
+                                 ON T6.id = T1.source_location_store_id
+              WHERE T1.delete_flag = '0'
+                AND T1.type_enum = #{productTransfer}
+              ORDER BY T1.bus_no desc) AS T10
+            ${ew.customSqlSegment}
+    </select>
     <select id="selectRequisitionOutDetailsPage"
-            resultType="com.openhis.web.inventorymanage.dto.RequisitionOutDetailDto">
-        SELECT T10.id,
-               T10.bus_no,
-               T10.status_enum,
-               T10.item_table,
-               T10.item_no,
-               T10.item_name,
-               T10.item_volume,
-               T10.item_id,
-               T10.item_quantity,
-               T10.unit_code,
-               T10.lot_number,
-               T10.loc_name,
-               T10.locstore_name,
-               T10.apply_time,
-               T10.approval_time,
-               T10.applicant_name,
-               T10.approver_name,
-               T10.tenant_id
-        FROM (SELECT T1.id,
-                     T1.bus_no,
-                     CASE T1.status_enum WHEN 2 THEN '已出库' ELSE '未出库' END                    AS status_enum,
-                     CASE T1.item_table
-                         WHEN 'med_medication_definition' THEN '药品'
-                         WHEN 'adm_device' THEN '设备' END                                     AS item_table,
-                     CASE
-                         WHEN T1.item_table = 'med_medication_definition' THEN T2.bus_no
-                         WHEN T1.item_table = 'adm_device' THEN T4.bus_no END                AS item_no,
-                     CASE
-                         WHEN T1.item_table = 'med_medication_definition' THEN T2.name
-                         WHEN T1.item_table = 'adm_device' THEN T4.name END                  AS item_name,
-                     CASE
-                         WHEN T1.item_table = 'med_medication_definition' THEN T3.total_volume
-                         WHEN T1.item_table = 'adm_device' THEN T4.device_specifications END AS item_volume,
-                     T1.item_id,
-                     T1.item_quantity,
-                     T1.unit_code,
-                     T1.lot_number,
-                     T6.name                                                                 AS loc_name,
-                     T7.name                                                                 AS locstore_name,
-                     T1.apply_time,
-                     T1.approval_time,
-                     T8.name                                                                 AS applicant_name,
-                     T9.name                                                                 AS approver_name,
-                     T1.tenant_id
+            resultType="com.openhis.web.inventorymanage.dto.InventoryDetailsPageDto">
+        SELECT T7.id,                        --id
+               T7.bus_no,                    --单据号
+               T7.status_enum,               --单据类型
+               T7.item_table,                --项目类型
+               T7.item_no,                   --项目编码
+               T7.item_name,                 --项目名称
+               T7.item_volume,               --规格
+               T7.item_quantity,             --领用数量
+               T7.unit_code,                 --计量单位
+               T7.lot_number,                --产品批号
+               T7.supply_bus_no,             --采购批次流水号
+               T7.purpose_location_id,       --仓库
+               T7.purpose_location_store_id, --货位
+               T7.occurrence_time,           --期望时间（制单时间）
+               T7.approval_time,             --审批日期
+               T7.org_name,                  --领用部门
+               T7.applicant_id,              --制单人
+               T7.approver_id                --审批人
+        FROM (SELECT T1.id,                               --id
+                     T1.bus_no,                           --单据号
+                     CASE T2.status_enum
+                         WHEN #{agree} THEN '已出库'
+                         ELSE '未出库' END AS status_enum,   --单据类型
+                     T3.category_code   AS item_table,    --项目类型
+                     T1.item_id         AS item_no,       --项目编码
+                     T3.name            AS item_name,     --项目名称
+                     T4.total_volume    AS item_volume,   --规格
+                     T1.item_quantity   AS item_quantity, --领用数量
+                     T1.unit_code,                        --计量单位
+                     T1.lot_number,                       --产品批号
+                     T5.bus_no          AS supply_bus_no, --采购批次流水号
+                     T1.purpose_location_id,              --仓库
+                     T1.purpose_location_store_id,        --货位
+                     T1.occurrence_time,                  --期望时间（制单时间）
+                     T1.approval_time,                    --审批日期
+                     T6.name            AS org_name,      --领用部门
+                     T1.applicant_id,                     --制单人
+                     T1.approver_id                       --审批人
               FROM wor_supply_request AS T1
-                       LEFT JOIN med_medication_definition AS T2 ON T1.item_id = T2.id
-                       LEFT JOIN med_medication AS T3 ON T1.item_id = T3.medication_def_id
-                       LEFT JOIN adm_device AS T4 ON T1.item_id = T4.id
-                       LEFT JOIN adm_supplier AS T5 ON T1.supplier_id = T5.id
-                       LEFT JOIN adm_location AS T6 ON T1.purpose_location_id = T6.id
-                       LEFT JOIN adm_location AS T7 ON T1.purpose_location_store_id = T7.id
-                       LEFT JOIN adm_practitioner AS T8 ON T1.applicant_id = T8.id
-                       LEFT JOIN adm_practitioner AS T9 ON T1.approver_id = T9.id
+                       INNER JOIN wor_supply_delivery AS T2
+                                  ON T2.request_id = T1.id
+                       INNER JOIN med_medication_definition AS T3
+                                  ON T3.id = T1.item_id
+                       INNER JOIN med_medication AS T4
+                                  ON T4.medication_def_id = T3.id
+                       LEFT JOIN wor_supply_request AS T5
+                                 ON T5.item_id = T1.item_id
+                                     AND T5.lot_number = T1.lot_number
+                                     AND T5.purpose_location_id = T1.purpose_location_id
+                                     AND T5.purpose_location_store_id = T1.purpose_location_store_id
+                       LEFT JOIN adm_organization AS T6
+                                 ON T6.id = T4.org_id
               WHERE T1.delete_flag = '0'
-              ORDER BY T1.bus_no desc) AS T10
+                AND T1.type_enum = #{issueInventory}
+              UNION
+              SELECT T1.id,                               --id
+                     T1.bus_no,                           --单据号
+                     CASE T2.status_enum
+                         WHEN #{agree} THEN '已出库'
+                         ELSE '未出库' END AS status_enum,   --单据类型
+                     T3.category_code   AS item_table,    --项目类型
+                     T1.item_id         AS item_no,       --项目编码
+                     T3.name            AS item_name,     --项目名称
+                     T4.total_volume    AS item_volume,   --规格
+                     T1.item_quantity   AS item_quantity, --领用数量
+                     T1.unit_code,                        --计量单位
+                     T1.lot_number,                       --产品批号
+                     T5.bus_no          AS supply_bus_no, --采购批次流水号
+                     T1.purpose_location_id,              --仓库
+                     T1.purpose_location_store_id,        --货位
+                     T1.occurrence_time,                  --期望时间（制单时间）
+                     T1.approval_time,                    --审批日期
+                     T6.name            AS org_name,      --领用部门
+                     T1.applicant_id,                     --制单人
+                     T1.approver_id                       --审批人
+              FROM wor_supply_request AS T1
+                       INNER JOIN wor_supply_delivery AS T2
+                                  ON T2.request_id = T1.id
+                       INNER JOIN adm_device_definition AS T3
+                                  ON T3.id = T1.item_id
+                       INNER JOIN adm_device AS T4
+                                  ON T4.device_def_id = T3.id
+                       LEFT JOIN wor_supply_request AS T5
+                                 ON T5.item_id = T1.item_id
+                                     AND T5.lot_number = T1.lot_number
+                                     AND T5.purpose_location_id = T1.purpose_location_id
+                                     AND T5.purpose_location_store_id = T1.purpose_location_store_id
+                       LEFT JOIN adm_organization AS T6
+                                 ON T6.id = T4.org_id
+              WHERE T1.delete_flag = '0'
+                AND T1.type_enum = #{issueInventory}
+              ORDER BY T1.bus_no desc) AS T7
+        ORDER BY T7.bus_no DESC
             ${ew.customSqlSegment}
     </select>
-
-    <select id="selectInventoryTransferDetailsPage"
-            resultType="com.openhis.web.inventorymanage.dto.InventoryTransferDetailDto">
-        SELECT T10.id,
-               T10.bus_no,
-               T10.status_enum,
-               T10.item_table,
-               T10.item_no,
-               T10.item_name,
-               T10.item_volume,
-               T10.item_id,
-               T10.lot_number,
-               T10.manufacturer_id,
-               T10.item_quantity,
-               T10.unit_code,
-               T10.price,
-               T10.total_price,
-               T10.source_type_enum,
-               T10.source_name,
-               T10.source_store_name,
-               T10.purpose_type_enum,
-               T10.purpose_name,
-               T10.purpose_store_name,
-               T10.approval_time,
-               T10.occurrence_time,
-               T10.applicant_name,
-               T10.approve_name,
-               T10.tenant_id
-        FROM (SELECT T1.id,
-                     T1.bus_no,
-                     CASE T1.status_enum WHEN 2 THEN '已调拨' ELSE '未调拨' END                    AS status_enum,
-                     CASE T1.item_table
-                         WHEN 'med_medication_definition' THEN '药品'
-                         WHEN 'adm_device' THEN '设备' END                                     AS item_table,
+    <select id="selectInventoryStockDetailsPage"
+            resultType="com.openhis.web.inventorymanage.dto.InventoryDetailsPageDto">
+        SELECT T6.id,                        --id
+               T6.bus_no,                    --单据号
+               T6.status_enum,               --单据类型
+               T6.item_table,                --项目类型
+               T6.item_no,                   --项目编码
+               T6.item_name,                 --项目名称
+               T6.item_volume,                --规格
+               T6.manufacturer_text,         --厂家
+               T6.lot_number,                --产品批号
+               T6.unit_code,                 --计量单位
+               T6.before_stock_quantity,     --盘前数量
+               T6.after_stock_quantity,      --盘后数量
+               T6.loss_quantity,             --盈亏数量
+               T6.reason,                    --盈亏原因
+               T6.purpose_type,              --目的仓库类型
+               T6.purpose_location_id,       --目的仓库
+               T6.purpose_location_store_id, --目的货位
+               T6.approval_time,             --审批日期
+               T6.applicant_id,              --制单人
+               T6.approver_id                --审批人
+        FROM (SELECT T1.id,                                         --id
+                     T1.bus_no,                                     --单据号
                      CASE
-                         WHEN T1.item_table = 'med_medication_definition' THEN T2.bus_no
-                         WHEN T1.item_table = 'adm_device' THEN T4.bus_no END                AS ite m_no,
-                     CASE
-                         WHEN T1.item_table = 'med_medication_definition' THEN T2.name
-                         WHEN T1.item_table = 'adm_device' THEN T4.name END                  AS item_name,
-                     CASE
-                         WHEN T1.item_table = 'med_medication_definition' THEN T3.total_volume
-                         WHEN T1.item_table = 'adm_device' THEN T4.device_specifications END AS item_volume,
-                     T1.item_id,
-                     T1.lot_number,
-                     CASE
-                         WHEN T1.item_table = 'med_medication_definition' THEN T3.manufacturer_id
-                         WHEN T1.item_table = 'adm_device' THEN T13.manufacturer_id END      AS manufacturer_id,
-                     T1.item_quantity,
-                     T1.unit_code,
-                     T1.price,
-                     T1.total_price,
-                     T1.source_type_enum,
-                     T11.name                                                                AS source_name,
-                     T12.name                                                                AS source_store_name,
-                     T1.purpose_type_enum,
-                     T6.name                                                                 AS purpose_name,
-                     T7.name                                                                 AS purpose_store_name,
-                     T1.approval_time,
-                     T1.occurrence_time,
-                     T8.name                                                                 AS applicant_name,
-                     T9.name                                                                 AS approve_name,
-                     T1.tenant_id
+                         WHEN T2.status_enum = #{agree} THEN '已盘点'
+                         WHEN T1.status_enum = #{approval} THEN '审核中'
+                         ELSE '待申请' END   AS status_enum,           --单据类型
+                     T3.category_code     AS item_table,            --项目类型
+                     T1.item_id           AS item_no,               --项目编码
+                     T3.name              AS item_name,             --项目名称
+                     T4.total_volume      AS item_volume,           --规格
+                     T3.manufacturer_text,                          --厂家
+                     T1.lot_number,                                 --产品批号
+                     T3.min_unit_code     AS unit_code,             --计量单位(小)
+                     CASE T2.status_enum
+                         WHEN #{agree} THEN
+                             T5.quantity - T1.item_quantity
+                         ELSE
+                             T5.quantity
+                         END              AS before_stock_quantity, --盘前数量(小)
+                     CASE T2.status_enum
+                         WHEN #{agree} THEN
+                             T5.quantity
+                         ELSE
+                             T5.quantity + T1.item_quantity
+                         END              AS after_stock_quantity,  --盘后数量(小)
+                     T1.item_quantity     AS loss_quantity,         --盈亏数量(小)
+                     T1.reason,                                     --盈亏原因
+                     T1.purpose_type_enum AS purpose_type,          --目的仓库类型
+                     T1.purpose_location_id,                        --目的仓库
+                     T1.purpose_location_store_id,                  --目的货位
+                     T1.approval_time,                              --审批日期
+                     T1.applicant_id,                               --制单人
+                     T1.approver_id                                 --审批人
               FROM wor_supply_request AS T1
-                       LEFT JOIN med_medication_definition AS T2 ON T1.item_id = T2.id
-                       LEFT JOIN med_medication AS T3 ON T1.item_id = T3.medication_def_id
-                       LEFT JOIN adm_device AS T4 ON T1.item_id = T4.id
-                       LEFT JOIN adm_device_definition AS T13 ON T4.device_def_id = T13.id
-                       LEFT JOIN adm_supplier AS T5 ON T1.supplier_id = T5.id
-                       LEFT JOIN adm_location AS T6 ON T1.purpose_location_id = T6.id
-                       LEFT JOIN adm_location AS T7 ON T1.purpose_location_store_id = T7.id
-                       LEFT JOIN adm_practitioner AS T8 ON T1.applicant_id = T8.id
-                       LEFT JOIN adm_practitioner AS T9 ON T1.approver_id = T9.id
-                       LEFT JOIN adm_location AS T11 ON T1.source_location_id = T11.id
-                       LEFT JOIN adm_location AS T12 ON T1.source_location_store_id = T12.id
+                       INNER JOIN wor_supply_delivery AS T2
+                                  ON T2.request_id = T1.id
+                       INNER JOIN med_medication_definition AS T3
+                                  ON T3.id = T1.item_id
+                       INNER JOIN med_medication AS T4
+                                  ON T4.medication_def_id = T3.id
+                       LEFT JOIN wor_inventory_item AS T5
+                                 ON T5.item_id = T1.item_id
               WHERE T1.delete_flag = '0'
-              ORDER BY T1.bus_no desc) AS T10
+                AND T1.type_enum = #{productStocktaking}
+              ORDER BY T1.bus_no desc) AS T6
+        UNION
+        SELECT T9.id,                        --id
+               T9.bus_no,                    --单据号
+               T9.status_enum,               --单据类型
+               T9.item_table,                --项目类型
+               T9.item_no,                   --项目编码
+               T9.item_name,                 --项目名称
+               T9.item_volume,                --规格
+               T9.manufacturer_text,         --厂家
+               T9.lot_number,                --产品批号
+               T9.unit_code,                 --计量单位
+               T9.before_stock_quantity,     --盘前数量
+               T9.after_stock_quantity,      --盘后数量
+               T9.loss_quantity,             --盈亏数量
+               T9.reason,                    --盈亏原因
+               T9.purpose_type,              --目的仓库类型
+               T9.purpose_location_id,       --目的仓库
+               T9.purpose_location_store_id, --目的货位
+               T9.approval_time,             --审批日期
+               T9.applicant_id,              --制单人
+               T9.approver_id                --审批人
+        FROM (SELECT T1.id,                                             --id
+                     T1.bus_no,                                         --单据号
+                     CASE
+                         WHEN T2.status_enum = #{agree} THEN '已盘点'
+                         WHEN T1.status_enum = #{approval} THEN '审核中'
+                         ELSE '待申请' END       AS status_enum,           --单据类型
+                     T7.category_code         AS item_table,            --项目类型
+                     T1.item_id               AS item_no,               --项目编码
+                     T7.name                  AS item_name,             --项目名称
+                     T8.device_specifications AS item_volume,           --规格
+                     T7.manufacturer_text,                              --厂家
+                     T1.lot_number,                                     --产品批号
+                     T7.min_unit_code         AS unit_code,             --计量单位(小)
+                     CASE T2.status_enum
+                         WHEN #{agree} THEN
+                             T5.quantity - T1.item_quantity
+                         ELSE
+                             T5.quantity
+                         END                  AS before_stock_quantity, --盘前数量(小)
+                     CASE T2.status_enum
+                         WHEN #{agree} THEN
+                             T5.quantity
+                         ELSE
+                             T5.quantity + T1.item_quantity
+                         END                  AS after_stock_quantity,  --盘后数量(小)
+                     T1.item_quantity         AS loss_quantity,         --盈亏数量(小)
+                     T1.reason,                                         --盈亏原因
+                     T1.purpose_type_enum     AS purpose_type,          --目的仓库类型
+                     T1.purpose_location_id,                            --目的仓库
+                     T1.purpose_location_store_id,                      --目的货位
+                     T1.approval_time,                                  --审批日期
+                     T1.applicant_id,                                   --制单人
+                     T1.approver_id                                     --审批人
+              FROM wor_supply_request AS T1
+                       INNER JOIN wor_supply_delivery AS T2
+                                  ON T2.request_id = T1.id
+                       INNER JOIN adm_device_definition AS T7
+                                  ON T7.id = T1.item_id
+                       INNER JOIN adm_device AS T8
+                                  ON T8.device_def_id = T7.id
+                       LEFT JOIN wor_inventory_item AS T5
+                                 ON T5.item_id = T1.item_id
+              WHERE T1.delete_flag = '0'
+                AND T1.type_enum = #{productStocktaking}
+              ORDER BY T1.bus_no desc) AS T9
             ${ew.customSqlSegment}
-    </select>
-
-    <select id="selectInventoryStockTakeDetailsPage"
-            resultType="com.openhis.web.inventorymanage.dto.InventoryStockTakeDetailDto">
-
     </select>
 </mapper>

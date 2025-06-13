@@ -3,15 +3,17 @@
  */
 package com.openhis.web.datadictionary.dto;
 
-import com.openhis.common.enums.PublicationStatus;
+import java.math.BigDecimal;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 /**
- * 收费项目保存dto
+ * 收费项目 dto
  *
  * @author zxy
  * @date 2025-02-21
@@ -21,68 +23,41 @@ import java.util.Date;
 public class ItemDefinitionDto {
 
     /** ID */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
-
-    /** 子表ID */
-    private Long itemId;
 
     /** 名称 */
     private String chargeName;
 
-    /** 标题 */
-    private String title;
-
     /** 状态 */
-    private PublicationStatus statusEnum;
+    private Integer statusEnum;
+    private String statusEnum_enumText;
 
-    /** 机构编码 */
-    private String orgCode;
+    /** 所属科室 */
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orgId;
+    private String orgId_dictText;
 
-    /** 描述 */
-    private String description;
+    /** 财务类别 */
+    @Dict(dictCode = "fin_type_code")
+    private String typeCode;
+    private String typeCode_dictText;
+
+    /** 医保类别 */
+    @Dict(dictCode = "yb_type")
+    private String ybType;
+    private String ybType_dictText;
 
     /** 代码 */
     private String instanceTable;
 
-    /** 关联项目 */
-    private Long instanceId;
-
-    /** 有效时间开始 */
-    private Date effectiveStart;
-
-    /** 有效时间结束 */
-    private Date effectiveEnd;
-
-    /** 财务类别 */
-    private String typeCode;
-
-    /** 医保类别 */
-    private Integer ybType;
-
-    /** 是否使用详细价格规则 */
-    private Integer conditionFlag;
-
     /** 基础价格 */
     private BigDecimal price;
 
-    /** 条件规则 */
-    private Long conditionRuleId;
+    /**
+     * 费用明细个数
+     */
+    private Integer detailCount;
 
-    /** 条件 */
-    private String conditionCode;
-
-    /** 命中值 */
-    private String conditionValue;
-
-    /** 优先级 */
-    private Integer priority;
-
-    /** 价格 */
-    private BigDecimal amount;
-
-    /** 名称拼音码 */
-    private String pyCode;
-
-    /** 类型 */
-    private String typeEnum;
 }

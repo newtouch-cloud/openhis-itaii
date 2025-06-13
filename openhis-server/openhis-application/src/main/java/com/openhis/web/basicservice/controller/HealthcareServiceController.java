@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.openhis.yb.service.YbManager;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
 import com.core.common.utils.MessageUtils;
+import com.core.common.utils.SecurityUtils;
+import com.core.common.utils.StringUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.ChargeItemDefinition;
 import com.openhis.administration.domain.HealthcareService;
@@ -29,6 +32,7 @@ import com.openhis.administration.service.IHealthcareServiceService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
 import com.openhis.common.enums.AccountStatus;
+import com.openhis.common.enums.PublicationStatus;
 import com.openhis.common.enums.Whether;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
@@ -51,6 +55,8 @@ public class HealthcareServiceController {
     private final IChargeItemDefinitionService iChargeItemDefinitionService;
 
     private final HealthcareServiceBizMapper healthcareServiceBizMapper;
+
+    private final YbManager ybService;
 
     /**
      * 服务管理基础数据初始化
@@ -89,9 +95,21 @@ public class HealthcareServiceController {
         HealthcareService healthcareServiceAfterAdd = iHealthcareServiceService.addHealthcareService(healthcareService);
         // 同时保存费用定价
         ChargeItemDefinition chargeItemDefinition = new ChargeItemDefinition();
+        chargeItemDefinitionFormData.setStatusEnum(PublicationStatus.ACTIVE.getValue());
         BeanUtils.copyProperties(chargeItemDefinitionFormData, chargeItemDefinition);
         boolean res = iChargeItemDefinitionService.addChargeItemDefinitionByHealthcareService(healthcareServiceAfterAdd,
             chargeItemDefinition);
+        // 调用医保目录对照接口
+        String ybSwitch = SecurityUtils.getLoginUser().getOptionJson().getString(CommonConstants.Option.YB_SWITCH); // 医保开关
+        // 医保开关打开并且,页面传了医保编码
+        String ybNo = healthcareServiceFormData.getYbNo();
+        if (Whether.YES.getCode().equals(ybSwitch) && StringUtils.isNotEmpty(ybNo)) {
+            R<?> r = ybService.directoryCheck(CommonConstants.TableName.ADM_HEALTHCARE_SERVICE,
+                healthcareServiceAfterAdd.getId());
+            if (200 != r.getCode()) {
+                throw new RuntimeException("医保目录对照接口异常");
+            }
+        }
         return res ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00001, new Object[] {"服务管理"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00010, null));
     }
@@ -115,7 +133,8 @@ public class HealthcareServiceController {
         QueryWrapper<HealthcareServiceDto> queryWrapper = HisQueryUtils.buildQueryWrapper(healthcareServiceDto,
             searchKey, new HashSet<>(Arrays.asList("name", "charge_name")), request);
         IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper.getHealthcareServicePage(
-            new Page<>(pageNo, pageSize), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, queryWrapper);
+            new Page<>(pageNo, pageSize), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE,
+            CommonConstants.TableName.WOR_ACTIVITY_DEFINITION, queryWrapper);
         healthcareServicePage.getRecords().forEach(e -> {
             // 活动标记-枚举类回显赋值
             e.setActiveFlag_enumText(EnumUtils.getInfoByValue(AccountStatus.class, e.getActiveFlag()));
@@ -139,8 +158,9 @@ public class HealthcareServiceController {
         // 构建查询条件
         QueryWrapper<HealthcareServiceDto> queryWrapper =
             HisQueryUtils.buildQueryWrapper(healthcareServiceDto, null, null, null);
-        IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper
-            .getHealthcareServicePage(new Page<>(1, 1), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, queryWrapper);
+        IPage<HealthcareServiceDto> healthcareServicePage = healthcareServiceBizMapper.getHealthcareServicePage(
+            new Page<>(1, 1), CommonConstants.TableName.ADM_HEALTHCARE_SERVICE,
+            CommonConstants.TableName.WOR_ACTIVITY_DEFINITION, queryWrapper);
         HealthcareServiceDto healthcareServiceDtoDetail = healthcareServicePage.getRecords().get(0);
         // 枚举赋值
         healthcareServiceDtoDetail
@@ -164,6 +184,17 @@ public class HealthcareServiceController {
             healthcareServiceAddOrUpdateParam.getHealthcareServiceFormData();
         HealthcareService healthcareService = new HealthcareService();
         BeanUtils.copyProperties(healthcareServiceFormData, healthcareService);
+        // 调用医保目录对照接口
+        String ybSwitch = SecurityUtils.getLoginUser().getOptionJson().getString(CommonConstants.Option.YB_SWITCH); // 医保开关
+        // 医保开关打开并且,页面传了医保编码
+        String ybNo = healthcareServiceFormData.getYbNo();
+        if (Whether.YES.getCode().equals(ybSwitch) && StringUtils.isNotEmpty(ybNo)) {
+            R<?> r =
+                ybService.directoryCheck(CommonConstants.TableName.ADM_HEALTHCARE_SERVICE, healthcareService.getId());
+            if (200 != r.getCode()) {
+                throw new RuntimeException("医保目录对照接口异常");
+            }
+        }
         boolean res = iHealthcareServiceService.updateHealthcareService(healthcareService);
         return res ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00002, new Object[] {"服务管理"}))
             : R.fail(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));

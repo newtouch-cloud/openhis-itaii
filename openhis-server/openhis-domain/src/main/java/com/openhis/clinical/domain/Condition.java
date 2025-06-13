@@ -90,4 +90,9 @@ public class Condition extends HisBaseEntity {
     /** 诊断定义Id */
     private Long definitionId;
 
+    /**
+     * 中医标识
+     */
+    private Integer tcmFlag;
+
 }

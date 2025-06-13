@@ -6,6 +6,9 @@ package com.openhis.web.chargemanage.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -28,9 +31,19 @@ public class EncounterPatientPrescriptionDto {
     private String statusEnum_enumText;
 
     /** 就诊ID */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long encounterId;
 
+    /** 患者id */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long patientId;
+
+    /** ID */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+
     /** 开立科室 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long requestingOrgId;
 
     /** 数量 */
@@ -51,18 +64,40 @@ public class EncounterPatientPrescriptionDto {
     /** 业务编码 */
     private String busNo;
 
-    /** 开立人ID */
+    /** 收款人ID */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Dict(dictCode = "id", dictTable = "adm_practitioner", dictText = "name")
     private Long entererId;
+    private String entererId_dictText;
 
     /** 开立时间 */
     private Date enteredDate;
 
+    /** 收费时间 */
+    private Date billDate;
+
     /** 关联账户ID */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long accountId;
 
     /** 物品编码 */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long itemId;
 
     /** 物品名称 */
     private String itemName;
+
+    /** 特病标识 */
+    @Dict(dictCode = "med_type")
+    private String medTypeCode;
+    private String medTypeCode_dictText;
+
+    /** 合同编码 */
+    private String contractNo;
+
+    /** 医保编码 */
+    private String ybNo;
+
+    /** 合同名称 */
+    private String contractName;
 }

@@ -3,6 +3,7 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.validation.constraints.Min;
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -31,21 +33,40 @@ public class ProductStocktakingDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
+    /** 单据号 */
+    private String busNo;
+
     /** 项目 */
     private String itemTable;
 
-    /** 数量 */
-    @NotNull
-    @Min(1)
-    private Integer itemQuantity;
-
-    /** 物品编码 */
+    /** 项目id */
     @NotNull
     private Long itemId;
 
     /** 物品计量单位 */
-    @NotNull
     private String unitCode;
+
+    /** 数量 */
+    @NotNull
+    private BigDecimal itemQuantity;
+
+    /** 单价 */
+    @NotNull
+    private BigDecimal price;
+
+    /** 总金额 */
+    @NotNull
+    private BigDecimal totalPrice;
+
+    /** 制单日期（盘点日期） */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date occurrenceTime;
+
+    /** 理由 */
+    private String reason;
+
+    /** 理由类型 */
+    private String reasonCode;
 
     /** 目的仓库类型 */
     @NotNull
@@ -56,24 +77,28 @@ public class ProductStocktakingDto {
     private Long purposeLocationId;
 
     /** 目的仓位 */
-    @NotNull
     private Long purposeLocationStoreId;
 
     /** 申请人 */
-    @NotNull
     private Long applicantId;
 
-    /** 申请时间 */
-    private Date applyTime;
+    /** 供应商 */
+    private Long supplierId;
+
+    /** 开始时间 */
+    @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date startTime;
+
+    /** 结束时间 */
+    @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date endTime;
 
     /** 产品批号 */
     @NotNull
     private String lotNumber;
 
-    /** 理由 */
-    private String reason;
-
-    /** 理由类型 */
-    @NotNull
-    private String reasonCode;
+    /** 追溯码 */
+    private String traceNo;
 }

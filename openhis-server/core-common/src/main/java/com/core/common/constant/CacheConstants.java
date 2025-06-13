@@ -42,6 +42,11 @@ public class CacheConstants {
     public static final String PWD_ERR_CNT_KEY = "pwd_err_cnt:";
 
     /**
+     * 登录上次勾选的租户
+     */
+    public static final String LOGIN_SELECTED_TENANT = "login_selected_tenant:";
+
+    /**
      * 超出上限，排番失败（时间：{}，KEY：{}
      */
     public static final String ASSIGN_SEQ_FAILED = "排番失败（时间：{}，KEY：{}，异常信息：{超出上限}）";

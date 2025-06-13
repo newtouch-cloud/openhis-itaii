@@ -1,6 +1,7 @@
 package com.openhis.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AccountBillingStatus implements HisEnumInterface {
 
-    OPEN (1, "open", "可用"),
+    OPEN(1, "open", "可用"),
 
     CARECOMPLETE_NOTBILLED(2, "carecomplete-notbilled", "已出院未结账"),
 
@@ -24,4 +25,16 @@ public enum AccountBillingStatus implements HisEnumInterface {
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static AccountBillingStatus getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (AccountBillingStatus val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

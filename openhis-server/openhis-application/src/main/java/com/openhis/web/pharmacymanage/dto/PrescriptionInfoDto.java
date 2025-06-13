@@ -3,9 +3,9 @@
  */
 package com.openhis.web.pharmacymanage.dto;
 
-import java.io.Serializable;
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -17,13 +17,11 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class PrescriptionInfoDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class PrescriptionInfoDto {
 
     /** 患者基本信息 */
     private PrescriptionPatientInfoDto prescriptionPatientInfoDto;
 
     /** 处方药品信息 */
-    List<PrescriptionMedicineInfoDto> prescriptionMedicineInfoDtoList;
+    private List<PrescriptionMedicineInfoDto> prescriptionMedicineInfoDtoList;
 }

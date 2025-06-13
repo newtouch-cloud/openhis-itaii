@@ -40,11 +40,9 @@ public class DeviceManageUpDto {
     private String wbStr;
 
     /** 器材分类 */
-    @NotNull(message = "器材分类不能为空")
     private String categoryCode;
 
     /** 器材种类 */
-    @NotBlank(message = "器材种类不能为空")
     private String typeCode;
 
     /** 包装单位 */
@@ -52,11 +50,9 @@ public class DeviceManageUpDto {
     private String unitCode;
 
     /** 包装规格 */
-    @NotBlank(message = "包装规格不能为空")
     private String size;
 
     /** 拆零比 */
-    @NotNull(message = "拆零比不能为空")
     private BigDecimal partPercent;
 
     /** 最小使用单位 */
@@ -64,32 +60,27 @@ public class DeviceManageUpDto {
     private String minUnitCode;
 
     /** 所属科室 */
-    @NotNull(message = "所属科室不能为空")
     @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long orgId;
     private String orgId_dictText;
 
     /** 所在位置 */
-    @NotNull(message = "所在位置不能为空")
     @Dict(dictTable = "adm_location", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
     private String locationId_dictText;
 
     /** 产品型号 */
-    @NotBlank(message = "产品型号不能为空")
     private String modelNumber;
 
     /** 高值器材标志 */
     private Integer hvcmFlag;
 
     /** 销售单位 */
-    @NotBlank(message = "销售单位不能为空")
     private String salesUnitCode;
 
     /** 批准文号 */
-    @NotBlank(message = "批准文号不能为空")
     private String approvalNumber;
 
     /** 医保标记 */
@@ -110,7 +101,6 @@ public class DeviceManageUpDto {
     private String manufacturerText;
 
     /** 供应商 */
-    @NotNull(message = "供应商不能为空")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long supplyId;
 
@@ -118,7 +108,6 @@ public class DeviceManageUpDto {
     private String description;
 
     /** 适用范围 */
-    @NotBlank(message = "适用范围不能为空")
     private String jurisdiction;
 
     /** 器材版本 */
@@ -131,23 +120,20 @@ public class DeviceManageUpDto {
     private Integer allergenFlag;
 
     /** 购入价 */
-    @NotNull(message = "购入价不能为空")
     private BigDecimal purchasePrice;
 
     /** 零售价 */
-    @NotNull(message = "零售价不能为空")
     private BigDecimal retailPrice;
 
     /** 最高零售价 */
-    @NotNull(message = "最高零售价不能为空")
     private BigDecimal maximumRetailPrice;
 
     /** 财务类别 */
-    @NotNull(message = "财务类别不能为空")
     private String itemTypeCode;
 
     /** 医保类别 */
-    @NotNull(message = "医保类别不能为空")
     private String ybType;
-
+    
+    /** 医保等级 */
+    private Integer chrgitmLv;
 }

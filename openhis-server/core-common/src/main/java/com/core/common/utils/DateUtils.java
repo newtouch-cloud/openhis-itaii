@@ -257,6 +257,19 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     /**
+     * 判断日期是否为未来时间
+     *
+     * @param date Date 类型的日期
+     * @return 是/否
+     */
+    public static boolean isFuture(Date date) {
+        // 获取当前时间
+        Date currentDate = Calendar.getInstance().getTime();
+        // 检查传入的日期是否在当前时间之后
+        return date.after(currentDate);
+    }
+
+    /**
      * 从身份证号码中提取生日
      *
      * @param idCard 身份证号

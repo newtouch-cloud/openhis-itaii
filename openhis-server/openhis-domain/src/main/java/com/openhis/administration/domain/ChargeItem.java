@@ -31,6 +31,11 @@ public class ChargeItem extends HisBaseEntity {
     /** 状态 */
     private Integer statusEnum;
 
+    /**
+     * 账单生成来源
+     */
+    private Integer generateSourceEnum;
+
     /** 层级 */
     private String busNo;
 
@@ -122,9 +127,24 @@ public class ChargeItem extends HisBaseEntity {
     private Long accountId;
 
     /** 机构 */
-    private Integer orgId;
+    private Long orgId;
 
     /** 退费ID */
     private Long refundId;
+
+    /**
+     * 子项json
+     */
+    private String childrenJson;
+
+    /**
+     * 诊断id
+     */
+    private Long conditionId;
+
+    /**
+     * 就诊诊断id
+     */
+    private Long encounterDiagnosisId;
 
 }

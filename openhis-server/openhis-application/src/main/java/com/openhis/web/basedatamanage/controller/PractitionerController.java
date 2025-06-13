@@ -90,4 +90,24 @@ public class PractitionerController {
         return practitionerAppService.delUserPractitioner(userId);
     }
 
+    /**
+     * 查询可选择切换科室集合
+     *
+     * @return 可选择切换科室集合
+     */
+    @GetMapping(value = "/get-selectable-org-list")
+    public R<?> getSelectableOrgList() {
+        return R.ok(practitionerAppService.getSelectableOrgList());
+    }
+
+    /**
+     * 切换科室
+     * 
+     * @param orgId 科室id
+     * @return 结果
+     */
+    @PutMapping(value = "/switch-org")
+    public R<?> switchOrg(@RequestParam Long orgId) {
+        return practitionerAppService.switchOrg(orgId);
+    }
 }

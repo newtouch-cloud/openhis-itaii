@@ -21,11 +21,12 @@
             T3.appointment_required_flag,
             T3.definition_id,
             T3.charge_name,
-            T3.price
+            T3.price,
+            T3.activity_price
         FROM
             (
                 SELECT
-                    T1.id,
+                    T1.ID,
                     T1.tenant_id,
                     T1.active_flag,
                     T1.offered_org_id,
@@ -38,14 +39,30 @@
                     T1.extra_details,
                     T1.contact,
                     T1.appointment_required_flag,
-                    T2.id AS definition_id,
+                    T2.ID AS definition_id,
                     T2.charge_name,
-                    T2.price
+                    T2.price,
+                    COALESCE ( activity_sum.price_sum, 0 ) AS activity_price
                 FROM
                     adm_healthcare_service AS T1
                         LEFT JOIN adm_charge_item_definition AS T2 ON T2.instance_id = T1.ID
                         AND T2.instance_table = #{tableName}
-                WHERE T1.delete_flag = '0'
+                        LEFT JOIN (
+                        SELECT
+                            tad.item_no,
+                            SUM ( acid.price ) AS price_sum
+                        FROM
+                            tmp_activity_device AS tad
+                                JOIN adm_charge_item_definition AS acid ON acid.instance_id = tad.dev_act_id
+                                AND acid.delete_flag = '0'
+                        WHERE
+                            tad.delete_flag = '0'
+                          AND tad.dev_act_table = #{activityTableName}
+                        GROUP BY
+                            tad.item_no
+                    ) AS activity_sum ON activity_sum.item_no = CAST ( T1.ID AS TEXT )
+                WHERE
+                    T1.delete_flag = '0'
                 ORDER BY
                     T1.create_time DESC
             ) AS T3

@@ -23,6 +23,10 @@ public class AdviceInventoryDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long itemId;
 
+    /** 库存id */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long inventoryId;
+
 //    /** 当前库存数量(包装单位) */
 //    private BigDecimal baseQuantity;
 //
@@ -31,13 +35,13 @@ public class AdviceInventoryDto {
 //    private String baseUnitCode;
 //    private String baseUnitCode_dictText;
 //
-//    /** 当前库存数量(最小单位) */
-//    private BigDecimal minQuantity;
+    /** 当前库存数量 ,对应小单位*/
+    private BigDecimal quantity;
 
-    /** 最小单位 */
+    /** 单位 , 对应小单位*/
     @Dict(dictCode = "unit_code")
-    private String minUnitCode;
-    private String minUnitCode_dictText;
+    private String unitCode;
+    private String unitCode_dictText;
 
     /** 产品批号 */
     private String lotNumber;

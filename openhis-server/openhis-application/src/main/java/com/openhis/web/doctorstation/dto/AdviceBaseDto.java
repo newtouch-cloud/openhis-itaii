@@ -25,15 +25,35 @@ public class AdviceBaseDto {
      */
     private String categoryCode;
 
+    /** 药品性质 */
+    private String pharmacologyCategoryCode;
+
     /** 拆零比 */
     private BigDecimal partPercent;
 
-    /** 拆分属性 */
+    /** 剂量换算 */
+    private BigDecimal unitConversionRatio;
+
+    /** 拆分属性-门诊 */
     private Integer partAttributeEnum;
+
+    /** 住院临时医嘱拆分属性 */
+    private Integer thoPartAttributeEnum;
 
     /** 医嘱定义ID */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long adviceDefinitionId;
+
+    /**
+     * 医嘱定义对应表名
+     */
+    private String adviceTableName;
+
+    /**
+     * 物理位置id | 可能是 发药药房id,耗材房id,执行科室id
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long positionId;
 
     /** 医嘱名称 */
     private String adviceName;
@@ -60,6 +80,14 @@ public class AdviceBaseDto {
      */
     private Integer activityType;
     private String activityType_enumText;
+
+    /** 是否皮试 */
+    private Integer skinTestFlag;
+    private String skinTestFlag_enumText;
+
+    /** 是否为注射药物 */
+    private Integer injectFlag;
+    private String injectFlag_enumText;
 
     /** 包装单位 */
     @Dict(dictCode = "unit_code")
@@ -114,11 +142,6 @@ public class AdviceBaseDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long chargeItemDefinitionId;
 
-    /**
-     * 医嘱对应表名
-     */
-    private String adviceTableName;
-
     /** 所属科室 */
     private Long orgId;
 
@@ -129,6 +152,9 @@ public class AdviceBaseDto {
      * 医嘱库存集合
      */
     private List<AdviceInventoryDto> inventoryList;
+
+    /** 默认产品批号 */
+    private String defaultLotNumber;
 
     /**
      * 医嘱价格集合

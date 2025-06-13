@@ -3,8 +3,8 @@
  */
 package com.openhis.common.enums;
 
-
 import com.baomidou.mybatisplus.annotation.EnumValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -26,12 +26,13 @@ public enum PaymentType {
      * 退费
      */
     UN_PAY(1, "退费");
+
     @EnumValue
     private Integer value;
     private String description;
 
-    public static PaymentType getByValue(String value) {
-        if(value==null){
+    public static PaymentType getByValue(Integer value) {
+        if (value == null) {
             return null;
         }
         for (PaymentType val : values()) {

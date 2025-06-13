@@ -1,6 +1,5 @@
 package com.openhis.workflow.domain;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -52,6 +51,9 @@ public class ServiceRequest extends HisBaseEntity {
     /** 请求类型 */
     private Integer categoryEnum;
 
+    /** 分组编号 */
+    private Long groupId;
+
     /** 优先权 */
     private Integer priorityEnum;
 
@@ -91,6 +93,11 @@ public class ServiceRequest extends HisBaseEntity {
     /** 执行位置 */
     private Long locationId;
 
+    /**
+     * 执行科室
+     */
+    private Long orgId;
+
     /** 理由 */
     private String reasonText;
 
@@ -105,5 +112,33 @@ public class ServiceRequest extends HisBaseEntity {
 
     /** 历史请求 */
     private Long relevantHistoryId;
+
+    /** 取消服务id */
+    private Long refundServiceId;
+
+    /**
+     * 请求内容json
+     */
+    private String contentJson;
+
+    /**
+     * 类别医保编码
+     */
+    private Integer ybClassEnum;
+
+    /**
+     * 打印次数
+     */
+    private Integer printCount;
+
+    /**
+     * 诊断id
+     */
+    private Long conditionId;
+
+    /**
+     * 就诊诊断id
+     */
+    private Long encounterDiagnosisId;
 
 }

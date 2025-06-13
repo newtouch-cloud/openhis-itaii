@@ -4,202 +4,87 @@
     <!-- 病人信息相关查询-->
     <select id="getPatientPage" resultType="com.openhis.web.patientmanage.dto.PatientInformationDto">
         SELECT
-        pt.id,
-        pt.active_flag,
-        pt.temp_flag,
-        pt.name,
-        pt.name_json,
-        pt.bus_no,
-        pt.gender_enum,
-        pt.birth_date,
-        pt.deceased_date,
-        pt.marital_status_enum,
-        pt.prfs_enum,
-        pt.phone,
-        pt.address,
-        pt.address_province,
-        pt.address_city,
-        pt.address_district,
-        pt.address_street,
-        pt.address_json,
-        pt.nationality_code,
-        pt.id_card,
-        pt.py_str,
-        pt.wb_str,
-        pt.blood_abo,
-        pt.blood_rh,
-        pt.work_company,
-        pt.native_place,
-        pt.country_code,
-        pt.link_name,
-        pt.link_relation_code,
-        pt.link_telcom,
-        pt.link_jsons,
-        pt.organization_id,
-        pt.create_time
-        FROM adm_patient pt
-        LEFT JOIN adm_organization ogt ON pt.organization_id = ogt.id
-        <where>
-            <!-- 如果传入busNo参数，且不为空 -->
-            <if test="busNo != null and busNo != ''">
-                AND pt.bus_no LIKE CONCAT('%',#{busNo}, '%')
-            </if>
-
-            <!-- 如果传入name参数，且不为空 -->
-            <if test="name != null and name != ''">
-                <choose>
-                    <!-- 如果name参数中包含汉字 -->
-                    <when test="name.matches('.*[\u4e00-\u9fa5].*')">
-                        AND pt.name LIKE CONCAT('%', #{name}, '%')
-                    </when>
-                    <!-- 如果name参数中只包含字母 -->
-                    <when test="name.matches('^[a-zA-Z]+$')">
-                        AND pt.py_str LIKE CONCAT('%', #{name}, '%')
-                    </when>
-                    <!-- 如果name参数中既包含汉字又包含字母 -->
-                    <otherwise>
-                        AND (pt.name LIKE CONCAT('%', #{name}, '%') OR pt.py_str LIKE CONCAT('%', #{name}, '%'))
-                    </otherwise>
-                </choose>
-            </if>
-        </where>
-        ORDER BY pt.bus_no
-        LIMIT #{pageSize} OFFSET #{offset}
-    </select>
-
-    <select id="countPatients" resultType="long">
-        SELECT COUNT(*)
-        FROM adm_patient pt
-        <!-- 类型不一致，把organization_id转换成字符串类型-->
-        LEFT JOIN adm_organization ogt ON pt.organization_id = ogt.id
-        <where>
-            <!-- 如果传入busNo参数，且不为空 -->
-            <if test="busNo != null and busNo != ''">
-                AND pt.bus_no LIKE CONCAT('%',#{busNo}, '%')
-            </if>
-
-            <!-- 如果传入name参数，且不为空 -->
-            <if test="name != null and name != ''">
-                <choose>
-                    <!-- 如果name参数中包含汉字 -->
-                    <when test="name.matches('.*[\u4e00-\u9fa5].*')">
-                        AND pt.name LIKE CONCAT('%', #{name}, '%')
-                    </when>
-                    <!-- 如果name参数中只包含字母 -->
-                    <when test="name.matches('^[a-zA-Z]+$')">
-                        AND pt.py_str LIKE CONCAT('%', #{name}, '%')
-                    </when>
-                    <!-- 如果name参数中既包含汉字又包含字母 -->
-                    <otherwise>
-                        AND (pt.name LIKE CONCAT('%', #{name}, '%') OR pt.py_str LIKE CONCAT('%', #{name}, '%'))
-                    </otherwise>
-                </choose>
-            </if>
-        </where>
-    </select>
-
-
-    <!-- 门诊记录相关查询-->
-    <select id="getOutpatientRecord" parameterType="com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam"
-            resultType="com.openhis.web.patientmanage.dto.OutpatientRecordDto">
-        SELECT
-        pt.name,
-        pt.id_card,
-        c.description,
-        pt.bus_no as patientBusNo,
-        e.bus_no as encounterBusNo,
-        pt.gender_enum,
-        e.start_time as encounterTime,
-        e.subject_status_enum,
-        ogt.name as organizationName,
-        p.name as doctorName,
-        pt.phone
+            T1.tenant_id,
+            T1.id,
+            T1.active_flag,
+            T1.temp_flag,
+            T1.name,
+            T1.name_json,
+            T1.bus_no,
+            T1.gender_enum,
+            T1.birth_date,
+            T1.deceased_date,
+            T1.marital_status_enum,
+            T1.prfs_enum,
+            T1.phone,
+            T1.address,
+            T1.address_province,
+            T1.address_city,
+            T1.address_district,
+            T1.address_street,
+            T1.address_json,
+            T1.nationality_code,
+            T1.id_card,
+            T1.py_str,
+            T1.wb_str,
+            T1.blood_abo,
+            T1.blood_rh,
+            T1.work_company,
+            T1.native_place,
+            T1.country_code,
+            T1.link_name,
+            T1.link_relation_code,
+            T1.link_telcom,
+            T1.link_jsons,
+            T1.organization_id,
+            T1.create_time,
+            T1.type_code,
+            T1.organization_name
         FROM
-        adm_encounter e
-        LEFT JOIN
-        adm_organization ogt ON e.organization_id = ogt.id
-        LEFT JOIN
-        adm_patient pt ON e.patient_id = pt.id
-        LEFT JOIN
-        cli_condition c ON e.patient_id = c.patient_id
-        LEFT JOIN
-        adm_encounter_participant ep ON ep.encounter_id = e.id
-        LEFT JOIN
-        adm_practitioner p ON p.id = ep.practitioner_id
-        <where>
-            <!-- 参与者类型是首诊医生 -->
-            ep.type_code = '1'
-            <!-- 如果传入searchKey参数，且不为空 -->
-            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.searchKey != null and OutpatientRecordSearchParam.searchKey != ''">
-                AND pt.id_card LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
-                OR pt.bus_no LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
-                OR e.bus_no LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
-                OR pt.name LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
-            </if>
-
-            <!-- 如果传入phone参数，且不为空 -->
-            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.phone != null and OutpatientRecordSearchParam.phone != ''">
-                AND pt.phone LIKE CONCAT('%',#{OutpatientRecordSearchParam.phone}, '%')
-            </if>
-
-            <!-- 时间筛选 -->
-            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.beginTime != null and OutpatientRecordSearchParam.endTime != null">
-                AND e.start_time BETWEEN
-                TO_TIMESTAMP(#{OutpatientRecordSearchParam.beginTime} || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AND
-                TO_TIMESTAMP(#{OutpatientRecordSearchParam.endTime} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
-            </if>
-
-            <!-- 如果传入doctorName参数，且不为空 -->
-            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.doctorName != null and OutpatientRecordSearchParam.doctorName != null">
-                AND p.name = #{OutpatientRecordSearchParam.doctorName}
-            </if>
-        </where>
-        ORDER BY pt.bus_no,e.bus_no,ep.practitioner_id
-        LIMIT #{pageSize} OFFSET #{offset}
-    </select>
-
-    <select id="countOutpatientRecords" resultType="long">
-        SELECT COUNT(*)
-        FROM
-        adm_encounter e
-        LEFT JOIN
-        adm_organization ogt ON e.organization_id = ogt.id
-        LEFT JOIN
-        adm_patient pt ON e.patient_id = pt.id
-        LEFT JOIN
-        cli_condition c ON e.patient_id = c.patient_id
-        LEFT JOIN
-        adm_encounter_participant ep ON ep.encounter_id = e.id
-        LEFT JOIN
-        adm_practitioner p ON p.id = ep.practitioner_id
-        <where>
-            <!-- 参与者类型是首诊医生 -->
-            ep.type_code = '1'
-            <!-- 如果传入searchKey参数，且不为空 -->
-            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.searchKey != null and OutpatientRecordSearchParam.searchKey != ''">
-                AND pt.id_card LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
-                OR pt.bus_no LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
-                OR e.bus_no LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
-                OR pt.name LIKE CONCAT('%',#{OutpatientRecordSearchParam.searchKey}, '%')
-            </if>
-
-            <!-- 如果传入phone参数，且不为空 -->
-            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.phone != null and OutpatientRecordSearchParam.phone != ''">
-                AND pt.phone LIKE CONCAT('%',#{OutpatientRecordSearchParam.phone}, '%')
-            </if>
-
-            <!-- 时间筛选 -->
-            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.beginTime != null and OutpatientRecordSearchParam.endTime != null">
-                AND e.start_time BETWEEN
-                TO_TIMESTAMP(#{OutpatientRecordSearchParam.beginTime} || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AND
-                TO_TIMESTAMP(#{OutpatientRecordSearchParam.endTime} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
-            </if>
-
-            <!-- 如果传入doctorName参数，且不为空 -->
-            <if test="OutpatientRecordSearchParam != null and OutpatientRecordSearchParam.doctorName != null and OutpatientRecordSearchParam.doctorName != null">
-                AND p.name = #{OutpatientRecordSearchParam.doctorName}
-            </if>
-        </where>
+            (
+                SELECT
+                    pt.tenant_id,
+                    pt.id,
+                    pt.active_flag,
+                    pt.temp_flag,
+                    pt.name,
+                    pt.name_json,
+                    pt.bus_no,
+                    pt.gender_enum,
+                    pt.birth_date,
+                    pt.deceased_date,
+                    pt.marital_status_enum,
+                    pt.prfs_enum,
+                    pt.phone,
+                    pt.address,
+                    pt.address_province,
+                    pt.address_city,
+                    pt.address_district,
+                    pt.address_street,
+                    pt.address_json,
+                    pt.nationality_code,
+                    pt.id_card,
+                    pt.py_str,
+                    pt.wb_str,
+                    pt.blood_abo,
+                    pt.blood_rh,
+                    pt.work_company,
+                    pt.native_place,
+                    pt.country_code,
+                    pt.link_name,
+                    pt.link_relation_code,
+                    pt.link_telcom,
+                    pt.link_jsons,
+                    pt.organization_id,
+                    pt.create_time,
+                    api.type_code,
+                    ogt.name as organization_name
+                FROM adm_patient pt
+                         LEFT JOIN adm_organization ogt ON pt.organization_id = ogt.id
+                         LEFT JOIN adm_patient_identifier api ON pt.id = api.patient_id
+                ORDER BY pt.bus_no
+            ) AS T1
+            ${ew.customSqlSegment}
     </select>
 
     <!-- 查询医生名字列表-->
@@ -208,7 +93,61 @@
         FROM adm_encounter_participant ep
                  LEFT JOIN adm_practitioner p ON ep.practitioner_id = p.id
         WHERE ep.type_code = '1'
-        GROUP BY ep.practitioner_id;
+        GROUP BY ep.practitioner_id
+        HAVING MIN(p.name) IS NOT NULL;
+    </select>
+
+    <!-- 门诊记录相关查询-->
+    <select id="getOutpatientRecord" parameterType="com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam"
+            resultType="com.openhis.web.patientmanage.dto.OutpatientRecordDto">
+
+        SELECT
+        T1.tenant_id,
+        T1.name,
+        T1.id_card,
+        T1.description,
+        T1.patient_bus_no,
+        T1.encounter_bus_no,
+        T1.gender_enum,
+        T1.encounter_time,
+        T1.subject_status_enum,
+        T1.organization_name,
+        T1.doctor_name,
+        T1.phone,
+        T1.start_time
+        FROM
+        (
+        SELECT
+        e.tenant_id,
+        pt.name,
+        pt.id_card,
+        c.description,
+        pt.bus_no as patient_bus_no,
+        e.bus_no as encounter_bus_no,
+        pt.gender_enum,
+        e.start_time as encounter_time,
+        e.subject_status_enum,
+        ogt.name as organization_name,
+        pt.phone,
+        e.start_time,
+        (SELECT pra.name
+            FROM adm_encounter_participant ep
+            LEFT JOIN adm_practitioner pra ON ep.practitioner_id = pra.id
+            WHERE ep.encounter_id = e.id
+            AND ep.type_code = #{typeCode} --就诊参与者身份类型是1:接诊医生
+            ORDER BY ep.create_time DESC
+            LIMIT 1
+        ) AS doctor_name--门诊医生
+        FROM
+        adm_encounter e
+        LEFT JOIN
+        adm_organization ogt ON e.organization_id = ogt.id
+        LEFT JOIN
+        adm_patient pt ON e.patient_id = pt.id
+        LEFT JOIN adm_encounter_diagnosis ed ON e.id = ed.encounter_id
+        LEFT JOIN cli_condition c ON ed.condition_id = c.id
+        ) AS T1
+        ${ew.customSqlSegment}
     </select>
 
 </mapper>

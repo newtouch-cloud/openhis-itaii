@@ -24,7 +24,7 @@ public interface HealthcareServiceBizMapper {
      * @return 列表信息
      */
     IPage<HealthcareServiceDto> getHealthcareServicePage(@Param("page") Page<HealthcareServiceDto> page,
-        @Param("tableName") String tableName,
+        @Param("tableName") String tableName, @Param("activityTableName") String activityTableName,
         @Param(Constants.WRAPPER) QueryWrapper<HealthcareServiceDto> queryWrapper);
 
 }

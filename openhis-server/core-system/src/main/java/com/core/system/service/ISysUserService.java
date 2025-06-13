@@ -1,6 +1,8 @@
 package com.core.system.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.core.common.core.domain.entity.SysUser;
 import com.core.common.core.domain.model.LoginUserExtend;
@@ -212,4 +214,20 @@ public interface ISysUserService {
      * @return 扩展属性
      */
     LoginUserExtend getLoginUserExtend(Long userId);
+
+    /**
+     * 通过科室id获取医院id
+     * 
+     * @param orgId 科室id
+     * @return 医院id
+     */
+    Long getHospitalIdByOrgId(Long orgId);
+
+    /**
+     * 查询 option集合
+     * 
+     * @param tenantId 租户id
+     * @return option集合
+     */
+    List<Map<String,String>> getOptionList(Integer tenantId);
 }

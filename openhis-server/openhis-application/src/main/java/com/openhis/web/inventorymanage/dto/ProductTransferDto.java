@@ -5,6 +5,7 @@ package com.openhis.web.inventorymanage.dto;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
@@ -24,14 +25,15 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class ProductTransferDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ProductTransferDto {
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
+
+    /** 单据号 */
+    private String busNo;
 
     /** 项目 */
     private String itemTable;
@@ -39,7 +41,7 @@ public class ProductTransferDto implements Serializable {
     /** 数量 */
     @NotNull
     @Min(1)
-    private Integer itemQuantity;
+    private BigDecimal itemQuantity;
 
     /** 物品编码 */
     @NotNull
@@ -53,7 +55,6 @@ public class ProductTransferDto implements Serializable {
     private String detailJson;
 
     /** 供应商 */
-    @NotNull
     private Long supplierId;
 
     /** 源仓库类型 */
@@ -65,7 +66,6 @@ public class ProductTransferDto implements Serializable {
     private Long sourceLocationId;
 
     /** 源仓位 */
-    @NotNull
     private Long sourceLocationStoreId;
 
     /** 目的仓库类型 */
@@ -77,46 +77,43 @@ public class ProductTransferDto implements Serializable {
     private Long purposeLocationId;
 
     /** 目的仓位 */
-    @NotNull
     private Long purposeLocationStoreId;
 
     /** 申请人 */
-    @NotNull
     private Long applicantId;
 
     /** 申请时间 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date applyTime;
+
+    /** 制单日期 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date occurrenceTime;
 
     /** 产品批号 */
     @NotNull
     private String lotNumber;
 
     /** 追溯码 */
-    @NotNull
     private String traceNo;
 
     /** 开始时间 */
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date startTime;
 
     /** 结束时间 */
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date endTime;
 
     /** 单价 */
-    @NotNull
     private BigDecimal price;
 
     /** 总价 */
-    @NotNull
     private BigDecimal totalPrice;
 
-    /** 售价 */
-    @NotNull
-    private BigDecimal sellPrice;
-
-    /** 拆零售价 */
-    @NotNull
-    private BigDecimal minSellPrice;
+    /** 备注 */
+    private String remake;
 
 }

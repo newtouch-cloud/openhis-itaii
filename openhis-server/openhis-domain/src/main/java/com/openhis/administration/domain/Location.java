@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
 
+import com.openhis.common.enums.LocationMode;
+import com.openhis.common.enums.LocationOperational;
+import com.openhis.common.enums.LocationStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -32,19 +35,14 @@ public class Location extends HisBaseEntity {
     private String name;
 
     /** 状态编码 */
-    // private LocationStatus statusEnum;
     private Integer statusEnum;
 
     /** 操作状态 */
-    // private LocationBedStatus operationalEnum;
     private Integer operationalEnum;
 
     /** 模式编码 */
     // private LocationMode modeEnum;
     private Integer modeEnum;
-
-    /** 模式编码 */
-    private String typeCode;
 
     /** 功能编码 */
     private String typeJson;
@@ -56,7 +54,6 @@ public class Location extends HisBaseEntity {
     private String wbStr;
 
     /** 物理形式枚举 */
-    // private LocationForm formEnum;
     private Integer formEnum;
 
     /** 机构编码 */
@@ -65,22 +62,9 @@ public class Location extends HisBaseEntity {
     /** 显示顺序 */
     private Integer displayOrder;
 
-    // public Location(Long id, String busNo, String name, Integer statusEnum, Integer operationalEnum,
-    // Integer modeEnum, String typeCode, String typeJson, String pyStr, String wbStr, Integer formEnum,
-    // Long organizationId, Integer displayOrder) {
-    // this.id = id;
-    // this.busNo = busNo;
-    // this.name = name;
-    // this.statusEnum = statusEnum;
-    // this.operationalEnum = operationalEnum;
-    // this.modeEnum = modeEnum;
-    // this.typeCode = typeCode;
-    // this.typeJson = typeJson;
-    // this.pyStr = pyStr;
-    // this.wbStr = wbStr;
-    // this.formEnum = formEnum;
-    // this.organizationId = organizationId;
-    // this.displayOrder = displayOrder;
-    // }
+    public Location() {
+        this.statusEnum = LocationStatus.ACTIVE.getValue();
+        this.modeEnum = LocationMode.INSTANCE.getValue();
+    }
 
 }

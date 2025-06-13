@@ -1,6 +1,7 @@
 package com.openhis.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,14 +13,24 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum VerificationStatus implements HisEnumInterface  {
-    UNCONFIRMED(1, "unconfirmed", "未确认"),
-    CONFIRMED(2, "confirmed", "已确认"),
-    REFUTED(3, "refuted", "已反驳"),
+public enum VerificationStatus implements HisEnumInterface {
+    UNCONFIRMED(1, "unconfirmed", "未确认"), CONFIRMED(2, "confirmed", "已确认"), REFUTED(3, "refuted", "已反驳"),
     ENTERED_IN_ERROR(4, "entered-in-error", "输入错误");
 
     @EnumValue
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static VerificationStatus getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (VerificationStatus val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

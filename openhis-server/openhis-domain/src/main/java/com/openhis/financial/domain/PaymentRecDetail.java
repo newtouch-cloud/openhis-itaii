@@ -35,13 +35,13 @@ public class PaymentRecDetail extends HisBaseEntity {
     private Long reconciliationId;
 
     /** 付款类型 */
-    private Integer targetEnum;
+    private Integer targetEnum;//暂时没用
 
     /** 账户 */
     private Long accountId;
 
     /** 账户类型 */
-    private Integer accountEnum;
+    private String accountCode;
 
     /** 支付类型 */
     private Integer payEnum;
@@ -58,10 +58,10 @@ public class PaymentRecDetail extends HisBaseEntity {
     /** 交款 */
     private BigDecimal chargeAmount;
 
-    /** 支付平台返回交易号 */
+    /** 支付平台返回交易号 医保批次号*/
     private String payTransNo;
 
-    /** 支付平台返回交易信息 */
+    /** 支付平台返回交易信息 医保结算ID*/
     private String payTransText;
 
     /** 支付平台返回交易时间 */

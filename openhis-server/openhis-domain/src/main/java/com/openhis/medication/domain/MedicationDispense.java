@@ -73,6 +73,9 @@ public class MedicationDispense extends HisBaseEntity {
     /** 发药频次 */
     private String dispenseFrequencyCode;
 
+    /** 配药人 */
+    private Long preparerId;
+
     /** 配药时间 */
     private Date prepareTime;
 
@@ -114,4 +117,7 @@ public class MedicationDispense extends HisBaseEntity {
 
     /** 产品批号 */
     private String lotNumber;
+
+    /** 追溯码 */
+    private String traceNo;
 }

@@ -4,13 +4,14 @@
 package com.openhis.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * 仓库类型
  *
- * @author zwh
+ * @author mayang
  * @date 2025-03-10
  */
 @Getter
@@ -32,4 +33,15 @@ public enum InventoryType implements HisEnumInterface {
     private String code;
     private String info;
 
+    public static InventoryType getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (InventoryType val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

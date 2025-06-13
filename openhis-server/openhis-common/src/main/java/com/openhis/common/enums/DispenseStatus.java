@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 药品请求状态
+ * 发放状态
  *
  * @author wangyang
  * @date 2025-03-14
@@ -64,11 +64,6 @@ public enum DispenseStatus implements HisEnumInterface {
     PART_REFUND(10, "PR", "部分退药"),
 
     /**
-     * 退药中
-     */
-    IN_REFUND(11, "IR", "退药中"),
-
-    /**
      * 已退药
      */
     REFUNDED(12, "RE", "已退药"),
@@ -76,7 +71,16 @@ public enum DispenseStatus implements HisEnumInterface {
     /**
      * 未知
      */
-    UNKNOWN(13, "UN", "未知");
+    UNKNOWN(13, "UN", "未知"),
+
+    /**
+     * 已配药
+     */
+    PREPARED(14, "PR", "已配药"),
+    /**
+     * 撤回
+     */
+    CANCELLED(15, "CA", "撤回");
 
     private Integer value;
     private String code;

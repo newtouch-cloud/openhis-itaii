@@ -32,11 +32,23 @@ public enum ChargeItemContext implements HisEnumInterface {
     ACTIVITY(3, "3", "项目"),
 
     /**
-     * 采购
+     * 挂号
      */
-    PURCHASE(4, "4", "采购");
+    REGISTER(4, "4", "挂号");
 
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static ChargeItemContext getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (ChargeItemContext val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

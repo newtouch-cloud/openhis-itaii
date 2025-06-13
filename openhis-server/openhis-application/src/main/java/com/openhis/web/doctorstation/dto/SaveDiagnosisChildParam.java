@@ -43,4 +43,15 @@ public class SaveDiagnosisChildParam {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long conditionId;
 
+    /** 诊断排序（医保文档要求数值型字符长度为2） */
+    private Integer diagSrtNo;
+
+    /** 医疗类型 */
+    private String medTypeCode;
+
+    /**
+     * 中医证候组号
+     */
+    private String syndromeGroupNo;
+
 }

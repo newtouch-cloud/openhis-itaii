@@ -1,6 +1,8 @@
 package com.openhis.web.patientmanage.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
@@ -11,6 +13,7 @@ import java.util.Date;
  * @date 2025/2/28
  */
 @Data
+@Accessors(chain = true)
 public class OutpatientRecordDto {
 
     /** 患者姓名 */
@@ -33,6 +36,7 @@ public class OutpatientRecordDto {
     private String genderEnum_enumText;
 
     /** 就诊时间 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date encounterTime;
 
     /** 就诊对象状态 */
@@ -47,5 +51,9 @@ public class OutpatientRecordDto {
 
     /** 手机号码 */
     private String phone;
+
+    /** 就诊开始时间 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date StartTime;
 
 }

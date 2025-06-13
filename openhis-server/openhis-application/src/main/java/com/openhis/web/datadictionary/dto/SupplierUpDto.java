@@ -3,18 +3,14 @@
  */
 package com.openhis.web.datadictionary.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * 供应商保存dto
@@ -31,7 +27,6 @@ public class SupplierUpDto {
     private Long id;
 
     /** 编号 */
-    @NotBlank(message = "编号不能为空")
     private String busNo;
 
     /** 名称 */
@@ -43,23 +38,18 @@ public class SupplierUpDto {
     private Integer typeEnum;
 
     /** 地址 */
-    @NotBlank(message = "地址不能为空")
     private String address;
 
     /** 拼音码 */
-    // @NotBlank(message = "拼音码不能为空")
     private String pyStr;
 
     /** 五笔码 */
-    // @NotBlank(message = "五笔码不能为空")
     private String wbStr;
 
     /** 联系人电话 */
-    @NotBlank(message = "联系人电话不能为空")
     private String phone;
 
     /** 联系人邮箱 */
-    @NotBlank(message = "联系人邮箱不能为空")
     private String email;
 
     /** 活动标识 */

@@ -61,6 +61,11 @@ public class Encounter extends HisBaseEntity {
     private Integer ybClassEnum;
 
     /**
+     * 类别医保文本
+     */
+    private String ybClassText;
+
+    /**
      * 类别编码补充
      */
     private String classJson;
@@ -96,6 +101,11 @@ public class Encounter extends HisBaseEntity {
     private Date endTime;
 
     /**
+     * 接诊时间
+     */
+    private Date receptionTime;
+
+    /**
      * 机构id
      */
     private Long organizationId;
@@ -109,5 +119,15 @@ public class Encounter extends HisBaseEntity {
      * 初复诊
      */
     private Integer firstEnum;
+
+    /**
+     * 入院类型
+     */
+    private String admitSourceCode;
+
+    /**
+     * 入院方式
+     */
+    private String inWayCode;
 
 }

@@ -32,9 +32,9 @@ public class OutpatientInfusionPatientDto {
     /** 病人ID（前台显示用） */
     private String patientBusNo;
 
-    /** 病人ID */
+    /** 就诊id */
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long patientId;
+    private Long encounterId;
 
     /** 病人姓名 */
     private String patientName;
@@ -43,8 +43,12 @@ public class OutpatientInfusionPatientDto {
     private Integer genderEnum;
     private String genderEnum_enumText;
 
+    /** 执行状态 */
+    private Integer serviceStatus;
+    private String serviceStatus_enumText;
+
     /** 病人生日 */
-    private String birthDate;
+    private Date birthDate;
 
     /** 病人身份证号 */
     private String idCard;

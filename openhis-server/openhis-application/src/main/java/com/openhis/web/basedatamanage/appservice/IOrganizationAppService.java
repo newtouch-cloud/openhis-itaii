@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
-import com.openhis.web.basedatamanage.dto.OrganizationQueryDto;
+import com.openhis.web.basedatamanage.dto.OrganizationDto;
 
 /**
  * Organization 应该服务类
@@ -18,7 +18,7 @@ public interface IOrganizationAppService {
      * @param request 请求数据
      * @return 机构树分页列表
      */
-    Page<OrganizationQueryDto> getOrganizationTree(Integer pageNo, Integer pageSize, HttpServletRequest request);
+    Page<OrganizationDto> getOrganizationTree(Integer pageNo, Integer pageSize, HttpServletRequest request);
 
     /**
      * 机构信息详情
@@ -31,10 +31,10 @@ public interface IOrganizationAppService {
     /**
      * 添加/编辑机构信息
      *
-     * @param organizationQueryDto 机构信息
+     * @param organizationDto 机构信息
      * @return 操作结果
      */
-    R<?> addOrEditOrganization(OrganizationQueryDto organizationQueryDto);
+    R<?> addOrEditOrganization(OrganizationDto organizationDto);
 
     /**
      * 机构信息

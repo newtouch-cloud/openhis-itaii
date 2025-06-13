@@ -4,6 +4,7 @@
 package com.openhis.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -34,8 +35,8 @@ public enum PaymentKind {
     private Integer value;
     private String description;
 
-    public static PaymentKind getByValue(String value) {
-        if(value==null){
+    public static PaymentKind getByValue(Integer value) {
+        if (value == null) {
             return null;
         }
         for (PaymentKind val : values()) {

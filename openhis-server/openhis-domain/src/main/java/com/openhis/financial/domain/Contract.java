@@ -43,5 +43,9 @@ public class Contract extends HisBaseEntity {
     /** 机构 */
     private Long orgId;
 
+    /** 是否医保 */
+    private Integer ybFlag;
 
+    /** 医保区划 */
+    private String admVs;
 }

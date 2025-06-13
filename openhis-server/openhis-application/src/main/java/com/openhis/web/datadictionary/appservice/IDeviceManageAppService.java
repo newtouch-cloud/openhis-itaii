@@ -29,7 +29,6 @@ public interface IDeviceManageAppService {
      *
      * @return
      */
-    @GetMapping("/information-init")
     R<?> getDeviceManageInit();
 
     /**

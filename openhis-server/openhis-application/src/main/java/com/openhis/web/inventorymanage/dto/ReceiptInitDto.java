@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * TODO:概括描述当前类的主要用途和注意事项
+ * 单据初始化 dto
  *
  * @author zwh
  * @date 2025-03-19

@@ -1,5 +1,7 @@
 package com.openhis.financial.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.openhis.common.enums.PaymentResult;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,5 +17,8 @@ import com.openhis.financial.service.IPaymentRecDetailService;
  */
 @Service
 public class PaymentRecDetailServiceImpl extends ServiceImpl<PaymentRecDetailMapper, PaymentRecDetail> implements IPaymentRecDetailService {
-
+    @Override
+    public void updateResultByPaymentId(Long id, PaymentResult paid) {
+        baseMapper.update(new PaymentRecDetail() .setResultEnum(PaymentResult.PAID.getValue()),new LambdaQueryWrapper<PaymentRecDetail>().eq(PaymentRecDetail::getReconciliationId,id));
+    }
 }

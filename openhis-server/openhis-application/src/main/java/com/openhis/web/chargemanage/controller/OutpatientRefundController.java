@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import com.core.common.core.domain.R;
 import com.openhis.web.chargemanage.appservice.IOutpatientRefundAppService;
 import com.openhis.web.chargemanage.dto.EncounterPatientPageParam;
+import com.openhis.web.chargemanage.dto.RefundItemParam;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,30 +58,62 @@ public class OutpatientRefundController {
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-        return R.ok(outpatientRefundAppService.getBilledEncounterPatientPage(encounterPatientPageParam, searchKey,
-            pageNo, pageSize, request));
+        return outpatientRefundAppService.getBilledEncounterPatientPage(encounterPatientPageParam, searchKey, pageNo,
+            pageSize, request);
     }
 
     /**
-     * 根据就诊id查询患者的账单
+     * 根据就诊id查询患者的账单（申请退费列表）
      *
      * @param encounterId 就诊id
      * @return 患者账单列表
      */
     @GetMapping(value = "/patient-payment")
     public R<?> getEncounterPatientPayment(@RequestParam Long encounterId) {
-        return R.ok(outpatientRefundAppService.getEncounterPatientPayment(encounterId));
+        return outpatientRefundAppService.getEncounterPatientPayment(encounterId);
     }
 
     /**
-     * 根据账单退费
+     * 根据账单申请退费
      *
-     * @param paymentIdList 付费id列表
+     * @param refundItemList 退费项目id列表
      * @return 操作结果
      */
     @PostMapping(value = "/refund-payment")
-    public R<?> refundPayment(@RequestBody List<Long> paymentIdList) {
-        return R.ok(outpatientRefundAppService.refundPayment(paymentIdList));
+    public R<?> refundPayment(@RequestBody List<RefundItemParam> refundItemList) {
+        return outpatientRefundAppService.refundPayment(refundItemList);
     }
 
+    /**
+     * 根据就诊id查询患者的退费账单
+     *
+     * @param encounterId 就诊id
+     * @return 退费账单列表
+     */
+    @GetMapping(value = "/patient-refund")
+    public R<?> getEncounterPatientRefund(@RequestParam Long encounterId) {
+        return outpatientRefundAppService.getEncounterPatientRefund(encounterId);
+    }
+
+    /**
+     * 根据就诊id查询患者因退费重新生成的账单
+     *
+     * @param encounterId 就诊id
+     * @return 重新生成的账单列表
+     */
+    @GetMapping(value = "/regenerate_charge")
+    public R<?> getRegenerateCharge(@RequestParam Long encounterId) {
+        return outpatientRefundAppService.getRegenerateCharge(encounterId);
+    }
+
+    /**
+     * 校验是否可以退费（耗材/药品是否已退，诊疗是否取消执行）
+     *
+     * @param chargeItemIdList 收费项目id列表
+     * @return 是否可退
+     */
+    @GetMapping(value = "/verify_refund")
+    public R<?> verifyRefundable(@RequestParam List<Long> chargeItemIdList) {
+        return outpatientRefundAppService.verifyRefundable(chargeItemIdList);
+    }
 }

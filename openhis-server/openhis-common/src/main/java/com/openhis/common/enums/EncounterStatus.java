@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 就诊状态
+ */
 @Getter
 @AllArgsConstructor
 public enum EncounterStatus implements HisEnumInterface {
@@ -18,7 +21,7 @@ public enum EncounterStatus implements HisEnumInterface {
 
     COMPLETED(5, "completed", "完成,已结算"),
 
-    CANCELLED(6, "cancelled", "已取消"),
+    CANCELLED(6, "cancelled", "退号"),
 
     DISCONTINUED(7, "discontinued", "已中断"),
 
@@ -30,4 +33,16 @@ public enum EncounterStatus implements HisEnumInterface {
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static EncounterStatus getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (EncounterStatus val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

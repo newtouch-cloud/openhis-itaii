@@ -3,12 +3,13 @@ package com.openhis.workflow.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.openhis.common.enums.EventStatus;
-import com.openhis.common.enums.SupplyType;
 import com.openhis.workflow.domain.SupplyDelivery;
 import com.openhis.workflow.domain.SupplyRequest;
 import com.openhis.workflow.mapper.SupplyDeliveryMapper;
@@ -43,14 +44,14 @@ public class SupplyDeliveryServiceImpl extends ServiceImpl<SupplyDeliveryMapper,
                 .setRequestId(supplyRequest.getId())
                 // 发放状态：已完成
                 .setStatusEnum(EventStatus.COMPLETED.getValue())
-                // 单据类型：采购入库
-                .setTypeEnum(SupplyType.PURCHASE_INVENTORY.getValue())
+                // 单据类型
+                .setTypeEnum(supplyRequest.getTypeEnum())
                 // 发放项目所在表
                 .setItemTable(supplyRequest.getItemTable())
                 // 发放物品id
                 .setItemId(supplyRequest.getItemId())
                 // 物品单位
-                .setUnitIdCode(supplyRequest.getUnitCode())
+                .setUnitCode(supplyRequest.getUnitCode())
                 // 发放数量
                 .setQuantity(supplyRequest.getItemQuantity())
                 // 批次号
@@ -76,5 +77,24 @@ public class SupplyDeliveryServiceImpl extends ServiceImpl<SupplyDeliveryMapper,
             baseMapper.insert(supplyDelivery);
         }
         return deliveryList;
+    }
+
+    /**
+     * 校验(已经审批通过的单号(发放状态是已完成),不能再重复审批通过)
+     *
+     * @param supplyReqIdList 供应申请id列表
+     */
+    @Override
+    public boolean supplyDeliveryValidation(List<Long> supplyReqIdList) {
+
+        // 根据请求id查询发放状态
+        List<SupplyDelivery> deliveryList = baseMapper
+            .selectList(new LambdaQueryWrapper<SupplyDelivery>().in(SupplyDelivery::getRequestId, supplyReqIdList));
+        if (!deliveryList.isEmpty()) {
+            List<Integer> deliveryStatusList =
+                deliveryList.stream().map(SupplyDelivery::getStatusEnum).collect(Collectors.toList());
+            return deliveryStatusList.stream().anyMatch(x -> x.equals(EventStatus.COMPLETED.getValue()));
+        }
+        return false;
     }
 }

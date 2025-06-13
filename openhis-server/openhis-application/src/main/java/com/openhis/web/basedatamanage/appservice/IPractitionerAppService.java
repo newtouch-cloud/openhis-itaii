@@ -2,7 +2,10 @@ package com.openhis.web.basedatamanage.appservice;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.core.common.core.domain.R;
+import com.openhis.web.basedatamanage.dto.SelectableOrgDto;
 import com.openhis.web.basedatamanage.dto.UserAndPractitionerDto;
+
+import java.util.List;
 
 /**
  * 参与者 应该服务类
@@ -44,5 +47,20 @@ public interface IPractitionerAppService {
      * @return 结果
      */
     R<?> delUserPractitioner(Long userId);
+
+    /**
+     * 查询可选择切换科室集合
+     * 
+     * @return 可选择切换科室集合
+     */
+    List<SelectableOrgDto> getSelectableOrgList();
+
+    /**
+     * 切换科室
+     *
+     * @param orgId 科室id
+     * @return 结果
+     */
+    R<?> switchOrg(Long orgId);
 
 }

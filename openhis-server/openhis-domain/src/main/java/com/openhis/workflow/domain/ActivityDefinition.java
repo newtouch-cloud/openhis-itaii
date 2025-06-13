@@ -76,4 +76,12 @@ public class ActivityDefinition extends HisBaseEntity {
     /** 规则id */
     private Integer ruleId;
 
+    /** 医保等级 */
+    private Integer chrgitmLv;
+
+    /** 子项json */
+    private String childrenJson;
+
+    /** 划价标记 */
+    private Integer pricingFlag;
 }

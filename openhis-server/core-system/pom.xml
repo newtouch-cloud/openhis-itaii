@@ -38,7 +38,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>42.3.1</scope>
         </dependency>
 
     </dependencies>

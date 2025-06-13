@@ -18,4 +18,11 @@ public interface IEncounterLocationService extends IService<EncounterLocation> {
      */
     void saveEncounterLocationByRegister(EncounterLocation encounterLocation);
 
+    /**
+     * 自定义插入或更新方法,根据就诊id，病区,判断是更新还是插入
+     * @param encounterLocation 实体对象
+     * @return 是否成功
+     */
+    boolean saveOrUpdateEncounterLocation(EncounterLocation encounterLocation);
+
 }

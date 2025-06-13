@@ -6,7 +6,7 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:postgresql://192.168.30.199:5432/openhis?currentSchema=public&characterEncoding=UTF-8&client_encoding=UTF-8
+        url: jdbc:postgresql://od32215110g.vicp.fun:15008/openhis?currentSchema=public&characterEncoding=UTF-8&client_encoding=UTF-8
         username: postgres
         password: root
       # 从库数据源

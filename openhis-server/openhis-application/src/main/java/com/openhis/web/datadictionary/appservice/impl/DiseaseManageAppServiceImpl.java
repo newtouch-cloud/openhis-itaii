@@ -9,21 +9,21 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.core.common.utils.AssignSeqUtil;
-import com.core.common.utils.ChineseConvertUtils;
-import com.openhis.common.enums.AssignSeqEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.core.domain.R;
+import com.core.common.utils.AssignSeqUtil;
+import com.core.common.utils.ChineseConvertUtils;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.clinical.domain.ConditionDefinition;
 import com.openhis.clinical.mapper.ConditionDefinitionMapper;
 import com.openhis.clinical.service.IConditionDefinitionService;
 import com.openhis.common.constant.PromptMsgConstant;
+import com.openhis.common.enums.AssignSeqEnum;
 import com.openhis.common.enums.ConditionDefinitionSource;
 import com.openhis.common.enums.PublicationStatus;
 import com.openhis.common.enums.Whether;
@@ -101,6 +101,10 @@ public class DiseaseManageAppServiceImpl implements IDiseaseManageAppService {
             e.setYbMatchFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbMatchFlag()));
             // 状态
             e.setStatusEnum_enumText(EnumUtils.getInfoByValue(PublicationStatus.class, e.getStatusEnum()));
+            // 所属分类
+            e.setSourceEnum_enumText(EnumUtils.getInfoByValue(ConditionDefinitionSource.class, e.getSourceEnum()));
+            // 医保标记
+            e.setYbFlag_enumText(EnumUtils.getInfoByValue(Whether.class, e.getYbFlag()));
         });
 
         // 返回【病种目录列表DTO】分页
@@ -155,7 +159,7 @@ public class DiseaseManageAppServiceImpl implements IDiseaseManageAppService {
         for (Long detail : ids) {
             ConditionDefinition conditionDefinition = new ConditionDefinition();
             conditionDefinition.setId(detail);
-            conditionDefinition.setStatusEnum(PublicationStatus.RETIRED.getValue());
+            conditionDefinition.setStatusEnum(PublicationStatus.ACTIVE.getValue());
             conditionDefinitionList.add(conditionDefinition);
         }
         // 更新病种信息
@@ -200,7 +204,7 @@ public class DiseaseManageAppServiceImpl implements IDiseaseManageAppService {
         conditionDefinition.setConditionCode(code);
 
         // 新增外来病种目录
-        conditionDefinition.setStatusEnum(PublicationStatus.DRAFT.getValue());
+        conditionDefinition.setStatusEnum(PublicationStatus.ACTIVE.getValue());
         // 拼音码
         conditionDefinition.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(conditionDefinition.getName()));
         // 五笔码

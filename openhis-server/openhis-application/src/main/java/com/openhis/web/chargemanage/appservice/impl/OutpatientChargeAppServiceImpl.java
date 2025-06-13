@@ -30,6 +30,7 @@ import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.chargemanage.appservice.IOutpatientChargeAppService;
 import com.openhis.web.chargemanage.dto.EncounterPatientPageDto;
 import com.openhis.web.chargemanage.dto.EncounterPatientPageParam;
+import com.openhis.web.chargemanage.dto.EncounterPatientPrescriptionDto;
 import com.openhis.web.chargemanage.dto.OutpatientInitDto;
 import com.openhis.web.chargemanage.mapper.OutpatientChargeAppMapper;
 
@@ -98,7 +99,7 @@ public class OutpatientChargeAppServiceImpl implements IOutpatientChargeAppServi
             // 收费状态枚举
             e.setStatusEnum_enumText(EnumUtils.getInfoByValue(ChargeItemStatus.class, e.getStatusEnum()));
             // 计算年龄
-            e.setAge(AgeCalculatorUtil.getAge(e.getBirthDate()));
+            e.setAge(e.getBirthDate() != null ? AgeCalculatorUtil.getAge(e.getBirthDate()) : "");
         });
         return R.ok(encounterPatientPage);
     }
@@ -110,11 +111,19 @@ public class OutpatientChargeAppServiceImpl implements IOutpatientChargeAppServi
      * @return 患者处方列表
      */
     @Override
-    public R<?> getEncounterPatientPrescription(Long encounterId) {
-        return R.ok(outpatientChargeAppMapper.selectEncounterPatientPrescription(encounterId,
-            ChargeItemContext.ACTIVITY.getValue(), ChargeItemContext.MEDICATION.getValue(),
-            ChargeItemContext.DEVICE.getValue(), ChargeItemStatus.PLANNED.getValue(),
-            ChargeItemStatus.BILLABLE.getValue(), ChargeItemStatus.BILLED.getValue()));
+    public List<EncounterPatientPrescriptionDto> getEncounterPatientPrescription(Long encounterId) {
+        List<EncounterPatientPrescriptionDto> prescriptionDtoList =
+            outpatientChargeAppMapper.selectEncounterPatientPrescription(encounterId,
+                ChargeItemContext.ACTIVITY.getValue(), ChargeItemContext.MEDICATION.getValue(),
+                ChargeItemContext.DEVICE.getValue(), ChargeItemContext.REGISTER.getValue(),
+                ChargeItemStatus.PLANNED.getValue(), ChargeItemStatus.BILLABLE.getValue(),
+                ChargeItemStatus.BILLED.getValue(), ChargeItemStatus.REFUNDING.getValue(),
+                ChargeItemStatus.REFUNDED.getValue(), ChargeItemStatus.PART_REFUND.getValue());
+        prescriptionDtoList.forEach(e -> {
+            // 收费状态枚举
+            e.setStatusEnum_enumText(EnumUtils.getInfoByValue(ChargeItemStatus.class, e.getStatusEnum()));
+        });
+        return prescriptionDtoList;
     }
 
     /**

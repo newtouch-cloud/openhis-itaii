@@ -40,13 +40,26 @@ public class EncounterDiagnosis extends HisBaseEntity {
     /** 入院疾病病情代码 */
     private Integer admDiseCondCode;
 
-    /** 特殊病种标志 */
-    private Integer spDiseFlag;
+    /** 医疗类型 */
+    private String medTypeCode;// 2025/05/23 该字段改为med_type 与医保同步
 
     /** 主诊断标记 */
     private Integer maindiseFlag;
 
     /** 最高诊断依据标记 */
     private Integer highDiseEvidFlag;
+
+    /** 诊断排序（医保文档要求数值型字符长度为2） */
+    private Integer diagSrtNo;
+
+    /**
+     * 中医证候组号
+     */
+    private String syndromeGroupNo;
+
+    /**
+     * 中医标识
+     */
+    private Integer tcmFlag;
 
 }

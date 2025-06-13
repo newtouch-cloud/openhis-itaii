@@ -1,6 +1,6 @@
 package com.openhis.administration.service.impl;
 
-import java.util.Date;
+import java.sql.Time;
 
 import org.springframework.stereotype.Service;
 
@@ -21,19 +21,33 @@ public class OrganizationLocationServiceImpl extends ServiceImpl<OrganizationLoc
     implements IOrganizationLocationService {
 
     /**
-     * 查询机构位置关系
+     * 查询药品和耗材发放的科室
      *
      * @param orgId 机构id
      * @param categoryCode 发放类型
-     * @return机构位置关系
+     * @return 药品和耗材发放的科室
      */
     @Override
     public OrganizationLocation getOrgLocByOrgIdAndCategoryCode(Long orgId, String categoryCode) {
-        OrganizationLocation organizationLocation = baseMapper
+        Time time = new Time(System.currentTimeMillis());
+        return baseMapper
             .selectOne(new LambdaQueryWrapper<OrganizationLocation>().eq(OrganizationLocation::getOrganizationId, orgId)
                 .eq(OrganizationLocation::getDistributionCategoryCode, categoryCode)
-                .lt(OrganizationLocation::getStartTime, new Date()).gt(OrganizationLocation::getEndTime, new Date()));
-        return organizationLocation;
+                .lt(OrganizationLocation::getStartTime, time).gt(OrganizationLocation::getEndTime, time));
+    }
+
+    /**
+     * 查询诊疗的执行科室
+     *
+     * @param activityDefinitionId 诊疗定义id
+     * @return 诊疗的执行科室
+     */
+    @Override
+    public OrganizationLocation getOrgLocByOrgIdAndActivityDefinitionId(Long activityDefinitionId) {
+        Time time = new Time(System.currentTimeMillis());
+        return baseMapper.selectOne(new LambdaQueryWrapper<OrganizationLocation>()
+            .eq(OrganizationLocation::getActivityDefinitionId, activityDefinitionId)
+            .lt(OrganizationLocation::getStartTime, time).gt(OrganizationLocation::getEndTime, time));
     }
 
 }

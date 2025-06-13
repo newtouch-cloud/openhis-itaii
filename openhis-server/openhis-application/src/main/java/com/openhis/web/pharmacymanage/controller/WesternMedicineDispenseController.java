@@ -1,5 +1,7 @@
 package com.openhis.web.pharmacymanage.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
 import com.openhis.web.pharmacymanage.appservice.IWesternMedicineDispenseAppService;
-import com.openhis.web.pharmacymanage.dto.EncounterInfoSearchParam;
+import com.openhis.web.pharmacymanage.dto.DispenseMedicineDto;
+import com.openhis.web.pharmacymanage.dto.EncounterInfoPageDto;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WesternMedicineDispenseController {
 
     @Autowired
-    public IWesternMedicineDispenseAppService iWesternMedicineDispenseService;
+    public IWesternMedicineDispenseAppService westernMedicineDispenseService;
 
     /**
      * 获取页面初始化信息
@@ -34,57 +37,69 @@ public class WesternMedicineDispenseController {
      */
     @GetMapping(value = "/init")
     public R<?> medicineDispenseInit() {
-        return iWesternMedicineDispenseService.init();
+        return westernMedicineDispenseService.init();
     }
 
     /**
-     * 分页查询就诊病人列表
+     * 分页查询发药病人列表
      *
-     * @param encounterInfoSearchParam 查询条件
+     * @param encounterInfoPageDto 查询条件
+     * @param searchKey 模糊查询关键字
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @param request 请求数据
-     * @return 就诊病人列表
+     * @return 发药病人列表
      */
     @GetMapping("/encounter-list")
-    public R<?> getEncounterInfoList(EncounterInfoSearchParam encounterInfoSearchParam,
+    public R<?> getEncounterInfoList(EncounterInfoPageDto encounterInfoPageDto, String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-        return iWesternMedicineDispenseService.getEncounterInfoListPage(encounterInfoSearchParam, pageNo, pageSize,
-            request);
+        return westernMedicineDispenseService.getEncounterInfoListPage(encounterInfoPageDto, searchKey, pageNo,
+            pageSize, request);
     }
 
     /**
      * 处方单查询
      *
      * @param encounterId 就诊Id
+     * @param dispenseStatus 发药id
      */
     @GetMapping("/prescription-list")
-    public R<?> getPatientInfoList(@RequestParam(value = "encounterId") Long encounterId) {
-        return iWesternMedicineDispenseService.getPrescriptionInfo(encounterId);
+    public R<?> getPatientInfoList(@RequestParam Long encounterId,
+        @RequestParam Integer dispenseStatus) {
+        return westernMedicineDispenseService.getPrescriptionInfo(encounterId,dispenseStatus);
     }
 
-    // todo：配药逻辑
+    /**
+     * 配药
+     *
+     * @param dispenseMedicineList 配药信息
+     * @return 处理结果
+     */
+    @PutMapping("/prepare")
+    public R<?> medicinePrepare(@RequestBody List<DispenseMedicineDto> dispenseMedicineList) {
+        return westernMedicineDispenseService.medicinePrepare(dispenseMedicineList);
+    }
 
     /**
      * 核对发药
      *
-     * @param prescriptionNo 处方号
+     * @param dispenseMedicineList 发药信息
+     * @return 处理结果
      */
     @PutMapping("/medicine-dispense")
-    public R<?> medicineDispense(@RequestParam(value = "prescriptionNo") String prescriptionNo) {
-        return iWesternMedicineDispenseService.medicineDispense(prescriptionNo);
+    public R<?> medicineDispense(@RequestBody List<DispenseMedicineDto> dispenseMedicineList) {
+        return westernMedicineDispenseService.medicineDispense(dispenseMedicineList);
     }
 
     /**
      * 作废
      *
-     * @param prescriptionNo 处方号
-     * @param notPerformedReasonEnum 未发药原因
+     * @param dispenseMedicineList 作废信息
+     * @return 处理结果
      */
     @PutMapping("/medicine-cancel")
-    public R<?> medicineCancel(@RequestParam(value = "prescriptionNo") String prescriptionNo,
-        @RequestParam(value = "notPerformedReasonEnum") Integer notPerformedReasonEnum) {
-        return iWesternMedicineDispenseService.medicineCancel(prescriptionNo, notPerformedReasonEnum);
+    public R<?> medicineCancel(@RequestBody List<DispenseMedicineDto> dispenseMedicineList) {
+        return westernMedicineDispenseService.medicineCancel(dispenseMedicineList);
     }
 }

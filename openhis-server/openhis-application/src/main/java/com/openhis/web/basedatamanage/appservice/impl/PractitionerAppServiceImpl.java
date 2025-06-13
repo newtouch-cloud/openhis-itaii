@@ -17,6 +17,7 @@ import com.core.common.core.domain.R;
 import com.core.common.utils.ChineseConvertUtils;
 import com.core.common.utils.MessageUtils;
 import com.core.common.utils.SecurityUtils;
+import com.core.system.service.ISysTenantService;
 import com.openhis.administration.domain.BizUser;
 import com.openhis.administration.domain.BizUserRole;
 import com.openhis.administration.domain.Practitioner;
@@ -32,6 +33,7 @@ import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.basedatamanage.appservice.IPractitionerAppService;
 import com.openhis.web.basedatamanage.dto.PractitionerOrgAndLocationDto;
 import com.openhis.web.basedatamanage.dto.PractitionerRolesDto;
+import com.openhis.web.basedatamanage.dto.SelectableOrgDto;
 import com.openhis.web.basedatamanage.dto.UserAndPractitionerDto;
 import com.openhis.web.basedatamanage.mapper.PractitionerAppAppMapper;
 
@@ -53,6 +55,9 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
     @Resource
     IPractitionerRoleService iPractitionerRoleService;
 
+    @Resource
+    ISysTenantService sysTenantService;
+
     /**
      * 新增用户及参与者
      *
@@ -64,6 +69,7 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
         String userName = userAndPractitionerDto.getUserName();
         String nickName = userAndPractitionerDto.getNickName();
         String phonenumber = userAndPractitionerDto.getPhonenumber();
+        String pharPracCertNo = userAndPractitionerDto.getPharPracCertNo(); // 职业证件编号
         String sex = userAndPractitionerDto.getSex();
         // 账号唯一性
         long count = iBizUserService.count(new LambdaQueryWrapper<BizUser>().eq(BizUser::getUserName, userName));
@@ -83,6 +89,10 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
         iBizUserService.save(bizUser);
         Long userId =
             iBizUserService.getOne(new LambdaQueryWrapper<BizUser>().eq(BizUser::getUserName, userName)).getUserId(); // 用户id
+
+        // 初始化租户绑定
+        sysTenantService.initTenantBind(userId);
+
         // 新增 sys_user_role
         List<PractitionerRolesDto> practitionerRoleDtoList = userAndPractitionerDto.getPractitionerRolesDtoList();
         BizUserRole bizUserRole;
@@ -108,6 +118,7 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
         practitioner.setOrgId(responsibilityOrgDtoList.get(0).getOrgId()); // 机构id
         practitioner.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(nickName)); // 拼音码
         practitioner.setWbStr(ChineseConvertUtils.toWBFirstLetter(nickName)); // 五笔码
+        practitioner.setPharPracCertNo(pharPracCertNo); // 职业证件编号
         iPractitionerService.save(practitioner);
         Long practitionerId = practitioner.getId();// 参与者id
         // 新增 adm_practitioner_role
@@ -138,7 +149,38 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
             practitionerRole.setPractitionerId(practitionerId); // 参与者id
             practitionerRole.setRoleCode(PractitionerRoles.LOCATION_ADMIN.getCode()); // 角色code
             practitionerRole.setLocationId(manageLocationDto.getLocationId()); // 位置id
-            practitionerRole.setOrgId(manageLocationDto.getOrgId()); // 机构id
+            iPractitionerRoleService.save(practitionerRole);
+        }
+        // 4.管理药房
+        List<PractitionerOrgAndLocationDto> manageMedicationLocationDtoList =
+            userAndPractitionerDto.getManageMedicationLocationDtoList();
+        for (PractitionerOrgAndLocationDto practitionerOrgAndLocationDto : manageMedicationLocationDtoList) {
+            practitionerRole = new PractitionerRole();
+            practitionerRole.setName(nickName); // 姓名
+            practitionerRole.setPractitionerId(practitionerId); // 参与者id
+            practitionerRole.setRoleCode(PractitionerRoles.PHARMACIST.getCode()); // 角色code
+            practitionerRole.setLocationId(practitionerOrgAndLocationDto.getLocationId()); // 位置id
+            iPractitionerRoleService.save(practitionerRole);
+        }
+        // 5.护士-管理科室集合
+        List<PractitionerOrgAndLocationDto> manageOrgDtoList = userAndPractitionerDto.getManageOrgDtoList();
+        for (PractitionerOrgAndLocationDto manageOrgDto : manageOrgDtoList) {
+            practitionerRole = new PractitionerRole();
+            practitionerRole.setName(nickName); // 姓名
+            practitionerRole.setPractitionerId(practitionerId); // 参与者id
+            practitionerRole.setRoleCode(PractitionerRoles.NURSE.getCode());// 角色code
+            practitionerRole.setOrgId(manageOrgDto.getOrgId()); // 机构id
+            iPractitionerRoleService.save(practitionerRole);
+        }
+        // 5.护士-管理病区集合
+        List<PractitionerOrgAndLocationDto> manageWardLocationDtoList =
+            userAndPractitionerDto.getManageWardLocationDtoList();
+        for (PractitionerOrgAndLocationDto manageWardLocationDto : manageWardLocationDtoList) {
+            practitionerRole = new PractitionerRole();
+            practitionerRole.setName(nickName); // 姓名
+            practitionerRole.setPractitionerId(practitionerId); // 参与者id
+            practitionerRole.setRoleCode(PractitionerRoles.NURSE.getCode()); // 角色code
+            practitionerRole.setLocationId(manageWardLocationDto.getLocationId()); // 位置id
             iPractitionerRoleService.save(practitionerRole);
         }
 
@@ -195,6 +237,26 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
                         && PractitionerRoles.LOCATION_ADMIN.getCode().equals(e.getRoleCode()))
                     .collect(Collectors.toList());
             record.setManageLocationDtoList(list4);
+            // 匹配管理药房
+            List<
+                PractitionerOrgAndLocationDto> list5 =
+                    orgAndLocationDtoList.stream()
+                        .filter(e -> e.getPractitionerId().equals(record.getPractitionerId())
+                            && PractitionerRoles.PHARMACIST.getCode().equals(e.getRoleCode()))
+                        .collect(Collectors.toList());
+            record.setManageMedicationLocationDtoList(list5);
+            // 匹配护士-管理科室
+            List<PractitionerOrgAndLocationDto> list6 = orgAndLocationDtoList.stream()
+                .filter(e -> e.getPractitionerId().equals(record.getPractitionerId())
+                    && PractitionerRoles.NURSE.getCode().equals(e.getRoleCode()) && e.getOrgId() != null)
+                .collect(Collectors.toList());
+            record.setManageOrgDtoList(list6);
+            // 匹配护士-管理病区
+            List<PractitionerOrgAndLocationDto> list7 = orgAndLocationDtoList.stream()
+                .filter(e -> e.getPractitionerId().equals(record.getPractitionerId())
+                    && PractitionerRoles.NURSE.getCode().equals(e.getRoleCode()) && e.getLocationId() != null)
+                .collect(Collectors.toList());
+            record.setManageWardLocationDtoList(list7);
         }
         return userPractitionerPage;
     }
@@ -213,6 +275,7 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
         String nickName = userAndPractitionerDto.getNickName();
         String phonenumber = userAndPractitionerDto.getPhonenumber();
         String sex = userAndPractitionerDto.getSex();
+        String pharPracCertNo = userAndPractitionerDto.getPharPracCertNo(); // 职业证件编号
         // 编辑 sys_user
         BizUser bizUser = new BizUser();
         bizUser.setNickName(nickName); // 昵称
@@ -248,6 +311,7 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
         practitioner.setOrgId(responsibilityOrgDtoList.get(0).getOrgId()); // 机构id
         practitioner.setPyStr(ChineseConvertUtils.toPinyinFirstLetter(nickName)); // 拼音码
         practitioner.setWbStr(ChineseConvertUtils.toWBFirstLetter(nickName)); // 五笔码
+        practitioner.setPharPracCertNo(pharPracCertNo);// 职业证件编号
         iPractitionerService.updateById(practitioner);
         // 先删除,再新增 adm_practitioner_role
         practitionerAppAppMapper.delPractitionerRole(practitionerId);
@@ -278,7 +342,38 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
             practitionerRole.setPractitionerId(practitionerId); // 参与者id
             practitionerRole.setRoleCode(PractitionerRoles.LOCATION_ADMIN.getCode()); // 角色code
             practitionerRole.setLocationId(manageLocationDto.getLocationId()); // 位置id
-            practitionerRole.setOrgId(manageLocationDto.getOrgId()); // 机构id
+            iPractitionerRoleService.save(practitionerRole);
+        }
+        // 4.管理药房
+        List<PractitionerOrgAndLocationDto> manageMedicationLocationDtoList =
+            userAndPractitionerDto.getManageMedicationLocationDtoList();
+        for (PractitionerOrgAndLocationDto practitionerOrgAndLocationDto : manageMedicationLocationDtoList) {
+            practitionerRole = new PractitionerRole();
+            practitionerRole.setName(nickName); // 姓名
+            practitionerRole.setPractitionerId(practitionerId); // 参与者id
+            practitionerRole.setRoleCode(PractitionerRoles.PHARMACIST.getCode()); // 角色code
+            practitionerRole.setLocationId(practitionerOrgAndLocationDto.getLocationId()); // 位置id
+            iPractitionerRoleService.save(practitionerRole);
+        }
+        // 5.护士-管理科室集合
+        List<PractitionerOrgAndLocationDto> manageOrgDtoList = userAndPractitionerDto.getManageOrgDtoList();
+        for (PractitionerOrgAndLocationDto manageOrgDto : manageOrgDtoList) {
+            practitionerRole = new PractitionerRole();
+            practitionerRole.setName(nickName); // 姓名
+            practitionerRole.setPractitionerId(practitionerId); // 参与者id
+            practitionerRole.setRoleCode(PractitionerRoles.NURSE.getCode());// 角色code
+            practitionerRole.setOrgId(manageOrgDto.getOrgId()); // 机构id
+            iPractitionerRoleService.save(practitionerRole);
+        }
+        // 5.护士-管理病区集合
+        List<PractitionerOrgAndLocationDto> manageWardLocationDtoList =
+            userAndPractitionerDto.getManageWardLocationDtoList();
+        for (PractitionerOrgAndLocationDto manageWardLocationDto : manageWardLocationDtoList) {
+            practitionerRole = new PractitionerRole();
+            practitionerRole.setName(nickName); // 姓名
+            practitionerRole.setPractitionerId(practitionerId); // 参与者id
+            practitionerRole.setRoleCode(PractitionerRoles.NURSE.getCode()); // 角色code
+            practitionerRole.setLocationId(manageWardLocationDto.getLocationId()); // 位置id
             iPractitionerRoleService.save(practitionerRole);
         }
 
@@ -306,6 +401,35 @@ public class PractitionerAppServiceImpl implements IPractitionerAppService {
             .remove(new LambdaQueryWrapper<PractitionerRole>().eq(PractitionerRole::getPractitionerId, practitionerId));
 
         return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00005, new Object[] {"人员信息"}));
+    }
+
+    /**
+     * 查询可选择切换科室集合
+     *
+     * @return 可选择切换科室集合
+     */
+    @Override
+    public List<SelectableOrgDto> getSelectableOrgList() {
+        // 参与者id
+        Long practitionerId = SecurityUtils.getLoginUser().getPractitionerId();
+        return practitionerAppAppMapper.getSelectableOrgList(practitionerId);
+    }
+
+    /**
+     * 切换科室
+     *
+     * @param orgId 科室id
+     * @return 结果
+     */
+    @Override
+    public R<?> switchOrg(Long orgId) {
+        // 参与者id
+        Long practitionerId = SecurityUtils.getLoginUser().getPractitionerId();
+        Practitioner practitioner = new Practitioner();
+        practitioner.setId(practitionerId);
+        practitioner.setOrgId(orgId);
+        iPractitionerService.updateById(practitioner);
+        return R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, new Object[] {"切换科室"}));
     }
 
 }

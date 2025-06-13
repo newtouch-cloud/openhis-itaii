@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.core.common.core.domain.entity.SysUser;
 
@@ -79,9 +80,19 @@ public class LoginUser implements UserDetails {
     private Long orgId;
 
     /**
+     * 所属医院id
+     */
+    private Long hospitalId;
+
+    /**
      * 参与者id
      */
     private Long practitionerId;
+
+    /**
+     * option JSON串
+     */
+    private JSONObject optionJson;
 
     /**
      * 用户信息

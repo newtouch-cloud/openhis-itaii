@@ -9,6 +9,7 @@ import com.core.common.utils.SecurityUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.constant.CommonConstants;
+import com.openhis.common.enums.ChargeItemContext;
 import com.openhis.common.enums.ChargeItemStatus;
 import com.openhis.common.enums.EncounterClass;
 
@@ -81,8 +82,8 @@ public class ChargeItemFormData {
      * 设置默认值
      */
     public ChargeItemFormData() {
-        this.statusEnum = ChargeItemStatus.BILLED.getValue();
-        this.contextEnum = EncounterClass.AMB.getValue();
+        this.statusEnum = ChargeItemStatus.PLANNED.getValue();
+        this.contextEnum = ChargeItemContext.REGISTER.getValue();
         this.occurrenceTime = new Date();
         this.performerId = SecurityUtils.getLoginUser().getPractitionerId();
         this.entererId = SecurityUtils.getLoginUser().getPractitionerId();

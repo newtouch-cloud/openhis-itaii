@@ -3,6 +3,7 @@ package com.openhis.web.doctorstation.dto;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import com.openhis.common.annotation.Dict;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,6 +22,12 @@ public class DiagnosisQueryDto {
      */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long conditionId;
+
+    /**
+     * 就诊诊断ID
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long encounterDiagnosisId;
 
     /**
      * 诊断定义id
@@ -48,5 +55,21 @@ public class DiagnosisQueryDto {
      */
     private Integer verificationStatusEnum;
     private String verificationStatusEnum_enumText;
+
+    /** 医保编码 */
+    private String ybNo;
+
+    /** 诊断排序（医保文档要求数值型字符长度为2） */
+    private Integer diagSrtNo;
+
+    /** 医疗类型 */
+    @Dict(dictCode = "med_type")
+    private String medTypeCode;
+    private String medTypeCode_dictText;
+
+    /**
+     * 中医证候组号
+     */
+    private String syndromeGroupNo;
 
 }

@@ -1,18 +1,17 @@
 package com.openhis.workflow.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.core.common.core.domain.model.LoginUser;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.openhis.workflow.domain.InventoryItem;
 import com.openhis.workflow.mapper.InventoryItemMapper;
 import com.openhis.workflow.service.IInventoryItemService;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 /**
  * 库存项目管理Service业务层处理
@@ -21,7 +20,8 @@ import java.util.List;
  * @date 2025-02-20
  */
 @Service
-public class InventoryItemServiceImpl extends ServiceImpl<InventoryItemMapper, InventoryItem> implements IInventoryItemService {
+public class InventoryItemServiceImpl extends ServiceImpl<InventoryItemMapper, InventoryItem>
+    implements IInventoryItemService {
 
     /**
      * 入库
@@ -44,46 +44,36 @@ public class InventoryItemServiceImpl extends ServiceImpl<InventoryItemMapper, I
      * @param id 主键
      * @param baseQuantity 常规单位库存数量
      * @param minQuantity 最小单位库存数量
-     * @param loginUser 登录用户信息
      * @param now 当前时间
      * @return 更新件数
      */
     @Override
-    public Boolean updateInventoryQuantity(Long id, BigDecimal baseQuantity,BigDecimal minQuantity, LoginUser loginUser, Date now) {
-
-        int updateCount = baseMapper.update(null,
-                new LambdaUpdateWrapper<InventoryItem>().eq(InventoryItem::getId, id)
-                        .set(InventoryItem::getUpdateTime, now)
-                        .set(InventoryItem::getUpdateBy, loginUser.getUserId())
-                        .set(InventoryItem::getBaseQuantity, baseQuantity)
-                        .set(InventoryItem::getMinQuantity, minQuantity));
-
+    public Boolean updateInventoryQuantity(Long id, BigDecimal baseQuantity, BigDecimal minQuantity, Date now) {
+        int updateCount = baseMapper.update(null, new LambdaUpdateWrapper<InventoryItem>().eq(InventoryItem::getId, id)
+            .set(InventoryItem::getUpdateTime, now).set(InventoryItem::getQuantity, minQuantity));
         return updateCount > 0;
 
     }
 
     /**
-     * 查询库房信息
+     * 查询
      *
+     * @param itemId 项目编号
      * @param lotNumber 产品批号
      * @param locationId 仓库
-     * @param locationStoreId 库位
+     * @param tenantId 租户id
+     * @return 单据详情
      */
     @Override
-    public InventoryItem selectInventoryByLotNumber(String lotNumber, Long locationId, Long locationStoreId) {
-
-        // 查询取库房信息
-        InventoryItem inventoryItem =
-                baseMapper.selectOne(new LambdaQueryWrapper<InventoryItem>()
-                        .eq(InventoryItem::getLotNumber, lotNumber)
-                        .eq(InventoryItem::getLocationId, locationId)
-                        .eq(InventoryItem::getLocationStoreId, locationStoreId));
-        if (inventoryItem == null) {
-            return null;
+    public List<InventoryItem> selectInventoryByItemId(Long itemId, String lotNumber, Long locationId,
+        Integer tenantId) {
+        LambdaQueryWrapper<InventoryItem> queryWrapper =
+            new LambdaQueryWrapper<InventoryItem>().eq(InventoryItem::getItemId, itemId)
+                .eq(InventoryItem::getLotNumber, lotNumber).eq(InventoryItem::getTenantId, tenantId);
+        if (locationId != null) {
+            queryWrapper.eq(InventoryItem::getLocationId, locationId);
         }
-
-        return inventoryItem;
-
+        // 查询取库房信息
+        return baseMapper.selectList(queryWrapper);
     }
-
 }

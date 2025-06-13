@@ -35,6 +35,12 @@ public class PatientInfoDto {
     private Long accountId;
 
     /**
+     * 患者挂号对应的科室id
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orgId;
+
+    /**
      * 患者姓名
      */
     private String patientName;
@@ -82,9 +88,18 @@ public class PatientInfoDto {
      */
     private Date registerTime;
 
+    /**
+     * 接诊时间
+     */
+    private Date receptionTime;
+
     /** 账户类型编码 */
     @Dict(dictCode = "account_code")
     private String typeCode;
     private String typeCode_dictText;
 
+    /**
+     * 费用性质
+     */
+    private String contractName;
 }

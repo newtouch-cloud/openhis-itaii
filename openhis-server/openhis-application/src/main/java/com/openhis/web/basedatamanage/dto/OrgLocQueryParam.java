@@ -18,7 +18,17 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class OrgLocQueryParam implements Serializable {
 
-    /** 活动标识 */
-    private Integer activeFlag;
+    /**
+     * 科室id
+     */
+    private Long organizationId;
+
+    /**
+     * 药房id
+     */
+    private Long defLocationId;
+
+    /** 发放类别 */
+    private String distributionCategoryCode;
 
 }

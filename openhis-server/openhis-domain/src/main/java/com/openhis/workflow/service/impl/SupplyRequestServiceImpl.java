@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.core.common.core.domain.model.LoginUser;
 import com.core.common.utils.DateUtils;
+import com.core.common.utils.SecurityUtils;
+import com.openhis.common.enums.DelFlag;
 import com.openhis.common.enums.SupplyStatus;
 import com.openhis.workflow.domain.SupplyRequest;
 import com.openhis.workflow.mapper.SupplyRequestMapper;
@@ -46,17 +47,17 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
      * 同意申请
      *
      * @param busNo 单据号
-     * @param loginUser 登录用户信息
      * @param now 当前时间
      * @return 单据详情
      */
     @Override
-    public List<SupplyRequest> agreeRequest(String busNo, LoginUser loginUser, Date now) {
+    public List<SupplyRequest> agreeRequest(String busNo, Date now) {
         // 更新单据状态
-        baseMapper.update(
-            new SupplyRequest().setApprovalTime(now).setApproverId(loginUser.getPractitionerId())
-                .setStatusEnum(SupplyStatus.AGREE.getValue()),
-            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
+        baseMapper.update(null,
+            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo)
+                .set(SupplyRequest::getApprovalTime, now)
+                .set(SupplyRequest::getApproverId, SecurityUtils.getLoginUser().getPractitionerId())
+                .set(SupplyRequest::getStatusEnum, SupplyStatus.AGREE.getValue()));
         // 返回单据详情
         return this.getSupplyByBusNo(busNo);
     }
@@ -69,9 +70,10 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
      */
     @Override
     public boolean submitApproval(String busNo) {
-        int updateCount = baseMapper.update(
-            new SupplyRequest().setApplyTime(DateUtils.getNowDate()).setStatusEnum(SupplyStatus.APPROVAL.getValue()),
-            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
+        int updateCount = baseMapper.update(null,
+            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo)
+                .set(SupplyRequest::getApplyTime, DateUtils.getNowDate())
+                .set(SupplyRequest::getStatusEnum, SupplyStatus.APPROVAL.getValue()));
         return updateCount > 0;
     }
 
@@ -83,8 +85,10 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
      */
     @Override
     public boolean withdrawApproval(String busNo) {
-        int updateCount = baseMapper.update(new SupplyRequest().setStatusEnum(SupplyStatus.WITHDRAW.getValue()),
-            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
+        int updateCount = baseMapper.update(null,
+            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo)
+                .set(SupplyRequest::getApplyTime, DateUtils.getNowDate())
+                .set(SupplyRequest::getStatusEnum, SupplyStatus.WITHDRAW.getValue()));
         return updateCount > 0;
     }
 
@@ -92,16 +96,15 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
      * 驳回申请
      *
      * @param busNo 单据号
-     * @param loginUser 登录用户信息
-     * @param now 当前时间
      */
     @Override
-    public boolean rejectRequest(String busNo, LoginUser loginUser, Date now) {
+    public boolean rejectRequest(String busNo) {
         // 更新单据状态
-        int updateCount = baseMapper.update(
-            new SupplyRequest().setApprovalTime(now).setApproverId(loginUser.getPractitionerId())
-                .setStatusEnum(SupplyStatus.REJECT.getValue()),
-            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
+        int updateCount = baseMapper.update(null,
+            new LambdaUpdateWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo)
+                .set(SupplyRequest::getApprovalTime, DateUtils.getNowDate())
+                .set(SupplyRequest::getApproverId, SecurityUtils.getLoginUser().getPractitionerId())
+                .set(SupplyRequest::getStatusEnum, SupplyStatus.REJECT.getValue()));
         return updateCount > 0;
     }
 
@@ -125,5 +128,38 @@ public class SupplyRequestServiceImpl extends ServiceImpl<SupplyRequestMapper, S
     @Override
     public List<Long> getItem(List<SupplyRequest> agreedList) {
         return agreedList.stream().map(SupplyRequest::getItemId).collect(Collectors.toList());
+    }
+
+    /**
+     * 校验(已经审批通过的单号(请求状态是同意),不能再重复编辑请求)
+     *
+     * @param busNo 单据号
+     */
+    @Override
+    public boolean supplyRequestValidation(String busNo) {
+
+        // 根据单据号查询请求状态
+        List<SupplyRequest> requestList =
+            baseMapper.selectList(new LambdaQueryWrapper<SupplyRequest>().eq(SupplyRequest::getBusNo, busNo));
+        if (!requestList.isEmpty()) {
+            for (SupplyRequest supplyRequest : requestList) {
+                if (SupplyStatus.AGREE.getValue().equals(supplyRequest.getStatusEnum())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 验证是否发生过业务
+     *
+     * @param itemId 项目id
+     * @return 校验结果
+     */
+    @Override
+    public boolean verifyAbleEdit(Long itemId) {
+        return baseMapper.exists(new LambdaQueryWrapper<SupplyRequest>().eq(SupplyRequest::getItemId, itemId)
+            .eq(SupplyRequest::getDeleteFlag, DelFlag.NO.getCode()));
     }
 }

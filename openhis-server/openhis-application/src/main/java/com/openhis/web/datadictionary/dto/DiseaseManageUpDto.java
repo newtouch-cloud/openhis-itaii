@@ -24,7 +24,7 @@ public class DiseaseManageUpDto {
     private Long id;
 
     /** 所属分类 */
-    private ConditionDefinitionSource sourceEnum;
+    private Integer sourceEnum;
 
     /** 编码 */
     private String conditionCode;

@@ -62,14 +62,29 @@ public class SupplyItemDetailDto {
     /** 供应商id */
     private Long supplierId;
 
+    /** 供应商 */
+    private String supplierName;
+
+    /** 经手人 */
+    private String practitionerName;
+
     /** 产品批号 */
     private String lotNumber;
 
     /** 追溯码 */
     private String traceNo;
 
+    /** 发票码 */
+    private String invoiceNo;
+
+    /** 项目医保码 */
+    private String ybNo;
+
     /** 单据号 */
     private String busNo;
+
+    /** 项目编号 */
+    private String itemBusNo;
 
     /** 开始时间 */
     private Date startTime;
@@ -80,7 +95,7 @@ public class SupplyItemDetailDto {
     /** 服务id */
     private Long serviceId;
 
-    /** 名称 */
+    /** 项目名称 */
     private String name;
 
     /** 拼音码 */
@@ -98,15 +113,15 @@ public class SupplyItemDetailDto {
     /** 拆零比 */
     private BigDecimal partPercent;
 
-    /** 费用定价ID */
-    private Long definitionId;
-
-    /** 原价 */
-    private BigDecimal baseAmount;
-
-    /** 定价子表主键 */
-    private Long defDetailId;
-
     /** 项目类型 */
     private String itemCategory;
+
+    /** 处方标志 */
+    private Integer rxFlag;
+
+    /** 批准文号 */
+    private String approvalNumber;
+
+    /** 生产厂商文本 */
+    private String manufacturerText;
 }

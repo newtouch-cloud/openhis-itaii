@@ -38,6 +38,7 @@
         <lombok.version>1.18.26</lombok.version>
         <mybatis-plus.version>3.5.3</mybatis-plus.version>
         <flowable.version>6.8.0</flowable.version>
+        <postgresql.version>42.2.27</postgresql.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -287,6 +288,12 @@
                 <groupId>com.googlecode.aviator</groupId>
                 <artifactId>aviator</artifactId>
                 <version>5.3.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
             </dependency>
 
         </dependencies>

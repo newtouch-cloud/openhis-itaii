@@ -51,12 +51,14 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     /**
      * 获取机构下拉列表
      *
-     * @param classEnum 机构分类
+     * @param organizationType 机构类型
+     * @param organizationClass 机构分类
      * @return 机构下拉列表
      */
     @Override
-    public List<Organization> getList(Integer classEnum) {
+    public List<Organization> getList(Integer organizationType, Integer organizationClass) {
         return baseMapper.selectList(new LambdaQueryWrapper<Organization>()
-            .select(Organization::getId, Organization::getName).eq(Organization::getClassEnum, classEnum));
+            .select(Organization::getId, Organization::getName).eq(Organization::getTypeEnum, organizationType)
+            .eq(organizationClass != null, Organization::getClassEnum, organizationClass));
     }
 }

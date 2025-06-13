@@ -11,4 +11,10 @@ import com.openhis.financial.domain.Contract;
  */
 public interface IContractService extends IService<Contract> {
 
+    /**
+     * 根据医保码找合同信息
+     * @param contractNo 医保码
+     * @return 合同实体
+     */
+    Contract getByContractNo(String contractNo);
 }

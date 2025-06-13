@@ -20,7 +20,7 @@ public class PatientInfoInitDto {
     //获取职业编码列表
     private List<PatientInfoInitDto.statusEnumOption>  occupationType;
     //获取性别列表
-    private List<PatientInfoInitDto.statusEnumOption>  administrativeGender;
+    private List<PatientInfoInitDto.statusEnumOption>  sex;
     //获取ABO血型列表
     private List<PatientInfoInitDto.statusEnumOption>  bloodTypeABO;
     //获取RH血型列表

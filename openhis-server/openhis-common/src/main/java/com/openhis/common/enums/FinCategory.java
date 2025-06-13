@@ -38,4 +38,16 @@ public enum FinCategory implements HisEnumInterface {
         }
         return null;
     }
+
+    public static FinCategory getByCode(String code) {
+        if (code == null) {
+            return null;
+        }
+        for (FinCategory val : values()) {
+            if (val.getCode().equals(code)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

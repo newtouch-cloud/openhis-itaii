@@ -23,7 +23,7 @@
                    AND EXISTS(SELECT 1
                               FROM adm_practitioner_role AS T2
                               WHERE T2.practitioner_id = T1.ID
-                                AND T2.location_id = #{locationId}
+                                AND T2.org_id = #{orgId}
                                 AND T2.ROLE_code = #{RoleCode})
              ) AS T3
             ${ew.customSqlSegment}
@@ -36,7 +36,9 @@
         WHERE delete_flag = '0'
           AND patient_id = #{patientId}
           AND service_type_id = #{serviceTypeId}
-          AND create_time > CURRENT_DATE
+          AND status_enum != #{cancelled}
+          AND create_time
+            > CURRENT_DATE
     </select>
 
     <select id="getCurrentDayEncounter" resultType="com.openhis.web.chargemanage.dto.CurrentDayEncounterDto">
@@ -53,7 +55,14 @@
                T9.gender_enum,
                T9.id_card,
                T9.status_enum,
-               T9.register_time
+               T9.register_time,
+               T9.total_price,
+               T9.account_name,
+               T9.enterer_name,
+               T9.charge_item_ids,
+               T9.payment_id,
+               T9.picture_url,
+               T9.birth_date
         from (
                  SELECT T1.tenant_id       AS tenant_id,
                         T1.id              AS encounter_id,
@@ -68,20 +77,60 @@
                         T8.gender_enum     AS gender_enum,
                         T8.id_card         AS id_card,
                         T1.status_enum     AS status_enum,
-                        T1.create_time     AS register_time
+                        T1.create_time     AS register_time,
+                        T10.total_price,
+                        T11."name"         AS account_name,
+                        T12."name"         AS enterer_name,
+                        T13.charge_item_ids,
+                        T13.id             AS payment_id,
+                        ai.picture_url     AS picture_url,
+                        T8.birth_date     AS birth_date
                  FROM adm_encounter AS T1
                           LEFT JOIN adm_organization AS T2 ON T1.organization_id = T2.ID AND T2.delete_flag = '0'
                           LEFT JOIN adm_healthcare_service AS T3 ON T1.service_type_id = T3.ID AND T3.delete_flag = '0'
-                          LEFT JOIN adm_encounter_participant AS T4
-                                    ON T1.ID = T4.encounter_id AND T4.type_code = #{participantType} AND
-                                       T4.delete_flag = '0'
+                          LEFT JOIN (
+                             SELECT *
+                             FROM (
+                                      SELECT *,
+                                             ROW_NUMBER() OVER (PARTITION BY encounter_id ORDER BY create_time ASC) AS rn
+                                      FROM adm_encounter_participant
+                                      WHERE delete_flag = '0'
+                                        AND tenant_id = 1
+                                        AND type_code = #{participantType}
+                                  ) t
+                             WHERE rn = 1
+                         ) AS T4 ON T1.ID = T4.encounter_id
                           LEFT JOIN adm_practitioner AS T5 ON T5.ID = T4.practitioner_id AND T5.delete_flag = '0'
-                          LEFT JOIN adm_account AS T6 ON T1.ID = T6.encounter_id AND T6.delete_flag = '0'
+                          LEFT JOIN adm_account AS T6
+                                    ON T1.ID = T6.encounter_id AND T6.delete_flag = '0' AND T6.encounter_flag = '1'
                           LEFT JOIN fin_contract AS T7 ON T6.contract_no = T7.bus_no AND T7.delete_flag = '0'
                           LEFT JOIN adm_patient AS T8 ON T1.patient_id = T8.ID AND T8.delete_flag = '0'
+                          LEFT JOIN adm_charge_item AS T10 ON T1.id = T10.encounter_id AND T10.delete_flag = '0'
+                          LEFT JOIN adm_account AS T11 ON T10.account_id = T11.id AND T11.delete_flag = '0'
+                          LEFT JOIN adm_practitioner AS T12 ON T12.ID = T10.enterer_id AND T12.delete_flag = '0'
+                          LEFT JOIN fin_payment_reconciliation T13
+                                    ON T10.id::TEXT = ANY(string_to_array(T13.charge_item_ids,','))
+                                        AND T13.delete_flag = '0'
+                 AND T13.status_enum = ${paymentStatus}
+                     LEFT JOIN adm_invoice AS ai
+                 ON ai.reconciliation_id = T13.id AND ai.delete_flag = '0'
                  WHERE T1.delete_flag = '0'
-                   AND T1.create_time > CURRENT_DATE) AS T9
+                   AND T1.class_enum = #{classEnum}
+--                    AND T1.create_time
+--                      > CURRENT_DATE
+                   AND T10.context_enum = #{register}
+             ) AS T9
             ${ew.customSqlSegment}
+        ORDER BY T9.register_time DESC
+    </select>
+
+    <select id="getTmpActivityList" resultType="com.openhis.web.personalization.dto.ActivityDeviceDto">
+        SELECT dev_act_id,
+               quantity
+        FROM tmp_activity_device
+        WHERE delete_flag = '0'
+          AND item_no = #{itemId}
+          AND dev_act_table = #{devActable}
     </select>
 
 </mapper>

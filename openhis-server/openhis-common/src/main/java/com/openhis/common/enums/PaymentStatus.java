@@ -14,7 +14,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum PaymentStatus {
+public enum PaymentStatus implements HisEnumInterface{
 
     /**
      * 草稿
@@ -40,6 +40,11 @@ public enum PaymentStatus {
      * 部分退款
      */
     REFUND_PART(4, "4", "部分退款"),
+
+    /**
+     * 退款中(对于账单来说依然是入账状态,为了连接charge_item使用的中间状态)  暂不使用
+     */
+    REFUNDING(5, "5", "退款中"),
 
     /**
      * 错误

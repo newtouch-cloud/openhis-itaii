@@ -46,11 +46,11 @@ public interface DoctorStationDiagnosisAppMapper {
      * 查询医生常用诊断
      *
      * @param statusEnum 状态
-     * @param userId 当前登录账号id
+     * @param practitionerId 当前参与者id
      * @return 医生常用诊断
      */
     List<ConditionDefinitionMetadata> getDoctorCommonUseList(@Param("statusEnum") Integer statusEnum,
-        @Param("userId") Long userId);
+        @Param("practitionerId") Long practitionerId);
 
     /**
      * 查询用户个人诊断

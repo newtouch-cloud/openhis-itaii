@@ -1,11 +1,14 @@
 package com.openhis.web.outpatientmanage.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.annotation.Dict;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.util.Date;
 
 /**
  * 门诊皮试记录Dto
@@ -84,5 +87,12 @@ public class OutpatientSkinTestRecordDto {
 
     /** 备注 */
     private String note;
+
+    /** 记录日期 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date recordedDate;
+
+    /** 手机号 */
+    private String phone;
 
 }

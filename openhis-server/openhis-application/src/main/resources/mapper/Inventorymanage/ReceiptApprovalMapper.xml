@@ -2,16 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.openhis.web.inventorymanage.mapper.ReceiptApprovalMapper">
 
-    <select id="selectSupplyMedDetail" resultType="com.openhis.web.inventorymanage.dto.SupplyItemDetailDto">
-        SELECT T1.id AS supply_id
+    <select id="selectSupplyDetail" resultType="com.openhis.web.inventorymanage.dto.SupplyItemDetailDto">
+        SELECT T1.id AS supply_id,
                T1.item_table,
                T1.item_id,
                T1.item_quantity,
                T1.unit_code AS item_unit,
                T1.price,
                T1.total_price,
-               T1.sell_price,
-               T1.min_sell_price,
                T1.approver_id,
                T1.source_location_id,
                T1.source_location_store_id,
@@ -20,85 +18,99 @@
                T1.supplier_id,
                T1.lot_number,
                T1.trace_no,
+               T1.invoice_no,
                T1.bus_no,
                T1.start_time,
                T1.end_time,
                T1.id AS service_id,
                T2."name",
-               T2.py_str,
-               T2.wb_str,
-               T2.unit_code,
-               T2.min_unit_code,
-               T2.category_code AS item_category,
-               T3.id AS definition_id,
-               T4.amount AS base_amount,
-               T4.id AS def_detail_id
-        FROM wor_supply_request AS T1
-            LEFT JOIN wor_supply_delivery AS T5
-                ON T1.id = T5.request_id
-            LEFT JOIN med_medication_definition AS T2
-                ON T2.id = T1.item_id
-            LEFT JOIN adm_charge_item_definition T3
-                ON T2.id = T3.instance_id
-            LEFT JOIN adm_charge_item_def_detail T4
-                 ON T3.id = T4.definition_id
-                    AND T1.unit_code = T4.condition_unit_code
-        WHERE T1.bus_no = #{busNo}
-            AND T5.status_enum = #{completed}
-            AND T1.delete_flag = '0'
-    </select>
-
-    <select id="selectSupplyDevDetail" resultType="com.openhis.web.inventorymanage.dto.SupplyItemDetailDto">
-        SELECT T1.item_table,
-               T1.item_id,
-               T1.item_quantity,
-               T1.unit_code AS item_unit,
-               T1.price,
-               T1.total_price,
-               T1.sell_price,
-               T1.min_sell_price,
-               T1.approver_id,
-               T1.source_location_id,
-               T1.source_location_store_id,
-               T1.purpose_location_id,
-               T1.purpose_location_store_id,
-               T1.supplier_id,
-               T1.lot_number,
-               T1.trace_no,
-               T1.bus_no,
-               T1.start_time,
-               T1.end_time,
-               T1.id AS service_id,
-               T2."name",
+               T2.bus_no AS item_bus_no,
                T2.py_str,
                T2.wb_str,
                T2.unit_code,
                T2.min_unit_code,
                T2.part_percent,
-               T3.id AS definition_id,
-               T4.amount AS base_amount,
-               T4.id AS applicability_id
+               T2.category_code AS item_category,
+               T2.yb_no,
+               T2.rx_flag,
+               T2.approval_number,
+               T2.manufacturer_text,
+               T6."name" AS supplier_name,
+               T7."name" AS practitioner_name
         FROM wor_supply_request AS T1
-                 LEFT JOIN wor_supply_delivery AS T5
-                           ON T1.id = T5.request_id
-                 LEFT JOIN med_medication_definition AS T2
-                           ON T2.id = T1.item_id
-                 LEFT JOIN adm_charge_item_definition T3
-                           ON T2.id = T3.instance_id
-                 LEFT JOIN adm_charge_item_def_detail T4
-                           ON T3.id = T4.definition_id
-                               AND T1.unit_code = T4.condition_unit_code
+            LEFT JOIN wor_supply_delivery AS T5
+                ON T1.id = T5.request_id
+                    AND T5.delete_flag = '0'
+            INNER JOIN med_medication_definition AS T2
+                ON T2.id = T1.item_id
+                    AND T2.delete_flag = '0'
+            LEFT JOIN adm_supplier AS T6
+                ON T1.supplier_id = T6.id
+                    AND T6.delete_flag = '0'
+            LEFT JOIN adm_practitioner AS T7
+                ON T1.practitioner_id = T7.id
+                    AND T7.delete_flag = '0'
+        WHERE T1.bus_no = #{busNo}
+            AND T5.status_enum = #{completed}
+            AND T1.delete_flag = '0'
+        UNION
+        SELECT T1.id AS supply_id,
+               T1.item_table,
+               T1.item_id,
+               T1.item_quantity,
+               T1.unit_code AS item_unit,
+               T1.price,
+               T1.total_price,
+               T1.approver_id,
+               T1.source_location_id,
+               T1.source_location_store_id,
+               T1.purpose_location_id,
+               T1.purpose_location_store_id,
+               T1.supplier_id,
+               T1.lot_number,
+               T1.trace_no,
+               T1.invoice_no,
+               T1.bus_no,
+               T1.start_time,
+               T1.end_time,
+               T1.id AS service_id,
+               T3."name",
+               T3.bus_no AS item_bus_no,
+               T3.py_str,
+               T3.wb_str,
+               T3.unit_code,
+               T3.min_unit_code,
+               T3.part_percent,
+               T3.category_code AS item_category,
+               T3.yb_no,
+               T3.rx_flag,
+               T3.approval_number,
+               T3.manufacturer_text,
+               T6."name" AS supplier_name,
+               T7."name" AS practitioner_name
+        FROM wor_supply_request AS T1
+           LEFT JOIN wor_supply_delivery AS T5
+                ON T1.id = T5.request_id
+           INNER JOIN adm_device_definition AS T3
+                ON T3.id = T1.item_id
+           LEFT JOIN adm_supplier AS T6
+                ON T1.supplier_id = T6.id
+                    AND T6.delete_flag = '0'
+           LEFT JOIN adm_practitioner AS T7
+                ON T1.practitioner_id = T7.id
+                    AND T7.delete_flag = '0'
         WHERE T1.bus_no = #{busNo}
           AND T5.status_enum = #{completed}
           AND T1.delete_flag = '0'
     </select>
+
     <select id="selectChargeDetail" resultType="com.openhis.web.inventorymanage.dto.ItemChargeDetailDto">
         SELECT T1.id AS definition_id,
                T1.instance_id,
                T1.charge_name,
                T1.price AS sell_price,
-               T2.condition_lotnumber,
-               T2.condition_unit_code,
+               T2.condition_code,
+               T2.condition_value,
                T2.amount AS unit_price,
                T3.unit_code,
                T3.min_unit_code
@@ -113,8 +125,7 @@
             </foreach>
     </select>
     <select id="selectReceiptPage" resultType="com.openhis.web.inventorymanage.dto.ReceiptPageDto">
-        SELECT T2.id,
-               T2.bus_no,
+        SELECT T2.supply_bus_no,
                T2.status_enum,
                T2.type_enum,
                T2.supplier_id,
@@ -122,11 +133,10 @@
                T2.approval_time,
                T2.applicant_id,
                T2.apply_time,
-               T2.create_time,
                T2.practitioner_id,
+               T2.trace_no,
                T2.tenant_id
-        FROM (SELECT T1.id,
-                     T1.bus_no,
+        FROM (SELECT T1.bus_no AS supply_bus_no,
                      T1.status_enum,
                      T1.type_enum,
                      T1.supplier_id,
@@ -134,13 +144,13 @@
                      T1.approval_time,
                      T1.applicant_id,
                      T1.apply_time,
-                     T1.create_time,
                      T1.practitioner_id,
+                     T1.trace_no,
                      T1.tenant_id
               FROM wor_supply_request AS T1
               WHERE T1.status_enum IN (#{approval},#{agree},#{reject})
-              GROUP BY T1.id,
-                       T1.bus_no,
+                    AND T1.delete_flag != '1'
+              GROUP BY T1.bus_no,
                        T1.status_enum,
                        T1.type_enum,
                        T1.supplier_id,
@@ -148,10 +158,10 @@
                        T1.approval_time,
                        T1.applicant_id,
                        T1.apply_time,
-                       T1.create_time,
                        T1.practitioner_id,
+                       T1.trace_no,
                        T1.tenant_id
-              ORDER BY T1.bus_no desc
+              ORDER BY T1.apply_time desc
              ) AS T2
             ${ew.customSqlSegment}
     </select>

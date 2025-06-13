@@ -51,7 +51,7 @@ public class SysLoginController {
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
-            loginBody.getUuid());
+            loginBody.getUuid(), loginBody.getTenantId());
         ajax.put(Constants.TOKEN, token);
         return ajax;
     }
@@ -74,6 +74,8 @@ public class SysLoginController {
             tokenService.refreshToken(loginUser);
         }
         AjaxResult ajax = AjaxResult.success();
+        ajax.put("optionJson", loginUser.getOptionJson());
+        ajax.put("practitionerId", String.valueOf(loginUser.getPractitionerId()));
         ajax.put("user", user);
         ajax.put("roles", roles);
         ajax.put("permissions", permissions);

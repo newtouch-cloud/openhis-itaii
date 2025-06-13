@@ -32,6 +32,9 @@ public class Invoice extends HisBaseEntity {
     /** 患者ID */
     private Long patientId;
 
+    /** 付款ID */
+    private Long reconciliationId;
+
     /** 状态 */
     private InvoiceStatus statusEnum;
 
@@ -53,17 +56,27 @@ public class Invoice extends HisBaseEntity {
     /** 付款详情 */
     private String paymentTerms;
 
-    /** 账单批次号 */
-    private String batchCode;
+    /** 发票编号 */
+    private String busNo;
 
-    /** 结算批次号 */
-    private String qrCode;
-
-    /** 图片网络路径 */
-    private String pictureNetUrl;
-
-    /** 图片路径 */
+    /** 开票员 */
+    private Long invoicingStaffId;
+    /** 电子票据代码 */
+    private String billBatchCode;
+    /** 电子票据号码 */
+    private String billNo;
+    /** 电子校验码 */
+    private String random;
+    /** 电子票据生成时间 */
+    private String billCreateTime;
+    /** 电子票据二维码图片数据 */
+    private String billQrCode;
+    /** 电子票据H5页面URL */
     private String pictureUrl;
-
-
+    /** 电子票据外网H5页面URL */
+    private String pictureNetUrl;
+    /** 微信插卡URL */
+    private String wxCardUrl;
+    /** 票据营业日期 */
+    private Date billBusDate;
 }

@@ -5,7 +5,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openhis.administration.domain.Patient;
 import com.openhis.web.patientmanage.dto.OutpatientRecordDto;
 import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
@@ -23,44 +27,24 @@ public interface PatientManageMapper extends BaseMapper<Patient> {
     /**
      * 病人信息分页查询
      *
-     * @param busNo 病人ID
-     * @param name 病人姓名
-     * @param pageSize 页面大小
-     * @param offset 跳过条数
-     * @return 分页查询
+     * @param page 分页参数
+     * @param queryWrapper 查询条件
+     * @return 病人信息列表
      */
-    List<PatientInformationDto> getPatientPage(@Param("busNo") String busNo, @Param("name") String name,
-        @Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
-
-    /**
-     * 统计病人信息总记录数的方法
-     *
-     * @param busNo 病人ID
-     * @param name 病人姓名
-     * @return 分页查询
-     */
-    long countPatients(@Param("busNo") String busNo, @Param("name") String name);
+    IPage<PatientInformationDto> getPatientPage(@Param("page") Page<PatientInformationDto> page,
+        @Param(Constants.WRAPPER) QueryWrapper<PatientInformationDto> queryWrapper);
 
     /**
      * 门诊信息分页查询
      *
-     * @param outpatientRecordSearchParam 门诊查询参数
-     * @param pageSize 页面大小
-     * @param offset 跳过条数
-     * @return 分页查询
+     * @param typeCode 参与者身份类型（枚举类ParticipantType）
+     * @param page 分页参数
+     * @param queryWrapper 查询条件
+     * @return 门诊信息列表
      */
-    List<OutpatientRecordDto> getOutpatientRecord(
-        @Param("OutpatientRecordSearchParam") OutpatientRecordSearchParam outpatientRecordSearchParam,
-        @Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
-
-    /**
-     * 统计门诊总记录数的方法
-     *
-     * @param outpatientRecordSearchParam 门诊查询参数
-     * @return 分页查询
-     */
-    long countOutpatientRecords(
-        @Param("OutpatientRecordSearchParam") OutpatientRecordSearchParam outpatientRecordSearchParam);
+    IPage<OutpatientRecordDto> getOutpatientRecord(@Param("typeCode") String typeCode,
+        @Param("page") Page<OutpatientRecordDto> page,
+        @Param(Constants.WRAPPER) QueryWrapper<OutpatientRecordDto> queryWrapper);
 
     /**
      * 获取医生名字列表

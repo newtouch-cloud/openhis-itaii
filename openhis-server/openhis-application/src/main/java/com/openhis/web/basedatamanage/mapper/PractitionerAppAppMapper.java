@@ -2,6 +2,7 @@ package com.openhis.web.basedatamanage.mapper;
 
 import java.util.List;
 
+import com.openhis.web.basedatamanage.dto.SelectableOrgDto;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -59,5 +60,13 @@ public interface PractitionerAppAppMapper {
      * @param practitionerId 参与者id
      */
     void delPractitionerRole(@Param("practitionerId") Long practitionerId);
+
+    /**
+     * 查询可选择切换科室集合
+     * 
+     * @param practitionerId 参与者id
+     * @return 可选择切换科室集合
+     */
+    List<SelectableOrgDto> getSelectableOrgList(@Param("practitionerId") Long practitionerId);
 
 }

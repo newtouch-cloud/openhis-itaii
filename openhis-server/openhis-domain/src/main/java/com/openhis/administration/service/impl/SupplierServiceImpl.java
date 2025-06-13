@@ -2,6 +2,8 @@ package com.openhis.administration.service.impl;
 
 import java.util.List;
 
+import com.openhis.common.enums.DelFlag;
+import com.openhis.common.enums.Whether;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +59,21 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier> i
     @Override
     public List<Supplier> getList() {
         return baseMapper.selectList(new LambdaQueryWrapper<Supplier>().select(Supplier::getId, Supplier::getName)
-            .eq(Supplier::getTypeEnum, SupplierType.ACTIVE.getValue()));
+            .eq(Supplier::getTypeEnum, SupplierType.ACTIVE.getValue())
+            .eq(Supplier::getDeleteFlag, DelFlag.NO.getCode()).eq(Supplier::getActiveFlag, Whether.YES.getValue()));
+    }
+
+    /**
+     * 查询供应商信息
+     *
+     * @param name 名字
+     * @param address 地址
+     * @param typeEnum 类型
+     * @return 供应商信息
+     */
+    @Override
+    public List<Supplier> getsupplierList(String name, String address, Integer typeEnum) {
+        return baseMapper.selectList(new LambdaQueryWrapper<Supplier>().eq(Supplier::getName, name)
+            .eq(Supplier::getAddress, address).eq(Supplier::getTypeEnum, typeEnum));
     }
 }

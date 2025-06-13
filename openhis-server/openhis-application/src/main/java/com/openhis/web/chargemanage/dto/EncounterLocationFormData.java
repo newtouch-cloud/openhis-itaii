@@ -27,8 +27,6 @@ public class EncounterLocationFormData {
     /**
      * 位置ID
      */
-    @NotNull(message = "位置ID不能为空")
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
 
     /** 状态枚举 */

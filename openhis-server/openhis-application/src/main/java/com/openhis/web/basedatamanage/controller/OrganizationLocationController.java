@@ -9,13 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.core.common.core.domain.R;
-import com.openhis.administration.domain.Location;
-import com.openhis.administration.service.ILocationService;
-import com.openhis.administration.service.IOrganizationService;
 import com.openhis.web.basedatamanage.appservice.IOrganizationLocationAppService;
-import com.openhis.web.basedatamanage.dto.OrgLocInitDto;
 import com.openhis.web.basedatamanage.dto.OrgLocQueryDto;
 import com.openhis.web.basedatamanage.dto.OrgLocQueryParam;
 
@@ -35,34 +30,22 @@ import lombok.extern.slf4j.Slf4j;
 public class OrganizationLocationController {
 
     @Autowired
-    private IOrganizationService organizationService;
-
-    @Autowired
-    private ILocationService locationService;
-
-    @Autowired
-    private IOrganizationLocationAppService iOrganizationLocationAppService;
+    private IOrganizationLocationAppService organizationLocationAppService;
 
     /**
      * 机构位置关系初始化
      *
+     * @return 操作结果
      */
     @GetMapping(value = "/init")
     public R<?> init() {
-
-        OrgLocInitDto initDto = new OrgLocInitDto();
-        // 设置科室列表
-        initDto.setOrganization(organizationService.list())
-            // 设置药库列表
-            .setLocation(locationService.list(new LambdaQueryWrapper<Location>().in(Location::getFormEnum, 11)));
-        return R.ok(initDto);
+        return organizationLocationAppService.organizationLocationInit();
     }
 
     /**
      * 机构位置关系分页列表
      *
      * @param orgLocQueryParam 查询字段
-     * @param searchKey 模糊查询关键字
      * @param pageNo 当前页码
      * @param pageSize 查询条数
      * @param request 请求数据
@@ -70,31 +53,30 @@ public class OrganizationLocationController {
      */
     @GetMapping(value = "/org-loc")
     public R<?> getOrgLocPage(OrgLocQueryParam orgLocQueryParam,
-        @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
-        return iOrganizationLocationAppService.getOrgLocPage(orgLocQueryParam, searchKey, pageNo, pageSize, request);
-
+        return organizationLocationAppService.getOrgLocPage(orgLocQueryParam, pageNo, pageSize, request);
     }
 
     /**
-     * 获取机构位置关系需要编辑的信息
+     * 根据类型查询药房/药库
      *
-     * @param orgLocId 机构位置关系信息
+     * @param locationForm 查询字段
+     * @return 机构位置关系分页列表
      */
-    @GetMapping("/org-loc-getById")
-    public R<?> getOrgLocById(@Validated @RequestParam Long orgLocId) {
-        return iOrganizationLocationAppService.getOrgLocById(orgLocId);
+    @GetMapping(value = "/loc-list")
+    public R<?> getLocationListByForm(@RequestParam Integer locationForm) {
+        return organizationLocationAppService.getLocationListByForm(locationForm);
     }
 
     /**
-     * 编辑机构位置关系信息
+     * 新增/编辑机构位置关系信息
      *
      * @param orgLocQueryDto 机构位置关系信息
      */
-    @PutMapping("/org-loc")
+    @PostMapping("/org-loc")
     public R<?> addOrEditOrgLoc(@Validated @RequestBody OrgLocQueryDto orgLocQueryDto) {
-        return iOrganizationLocationAppService.addOrEditOrgLoc(orgLocQueryDto);
+        return organizationLocationAppService.addOrEditOrgLoc(orgLocQueryDto);
     }
 
     /**
@@ -104,7 +86,7 @@ public class OrganizationLocationController {
      */
     @DeleteMapping("/org-loc")
     public R<?> delOrgLoc(@RequestParam Long orgLocId) {
-        return iOrganizationLocationAppService.deleteOrgLoc(orgLocId);
+        return organizationLocationAppService.deleteOrgLoc(orgLocId);
     }
 
 }

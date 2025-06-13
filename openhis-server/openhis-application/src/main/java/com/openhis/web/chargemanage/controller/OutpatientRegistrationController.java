@@ -4,20 +4,22 @@
 package com.openhis.web.chargemanage.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.validation.Valid;
+import javax.servlet.http.HttpServletRequest;
 
+import com.openhis.financial.domain.PaymentReconciliation;
+import com.openhis.web.paymentmanage.appservice.IEleInvoiceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.core.common.core.domain.R;
-import com.openhis.common.enums.LocationForm;
 import com.openhis.common.enums.PriorityLevel;
-import com.openhis.web.basedatamanage.appservice.ILocationAppService;
 import com.openhis.web.chargemanage.appservice.IOutpatientRegistrationAppService;
-import com.openhis.web.chargemanage.dto.OutpatientRegistrationAddParam;
 import com.openhis.web.chargemanage.dto.OutpatientRegistrationInitDto;
+import com.openhis.web.paymentmanage.dto.CancelRegPaymentDto;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 public class OutpatientRegistrationController {
 
     private final IOutpatientRegistrationAppService iOutpatientRegistrationAppService;
-    private final ILocationAppService iLocationAppService;
 
+    @Autowired
+    private IEleInvoiceService eleInvoiceService;
     /**
      * 基础数据初始化
      */
@@ -66,7 +69,7 @@ public class OutpatientRegistrationController {
 
     /**
      * 查询费用性质
-     * 
+     *
      * @return 费用性质
      */
     @GetMapping(value = "/contract-list")
@@ -75,29 +78,25 @@ public class OutpatientRegistrationController {
     }
 
     /**
-     * 查询就诊位置
+     * 查询就诊科室
      *
-     * @param pageNo 当前页码
-     * @param pageSize 查询条数
-     * @return 位置分页列表
+     * @return 就诊科室集合
      */
-    @GetMapping(value = "/location-tree")
-    public R<?> getLocationTree(@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-        return iLocationAppService.getLocationTree(LocationForm.ROOM.getValue(), pageNo, pageSize);
-
+    @GetMapping(value = "/org-list")
+    public R<?> getLocationTree() {
+        return R.ok(iOutpatientRegistrationAppService.getOrgMetadata());
     }
 
     /**
-     * 根据位置id筛选医生
+     * 根据科室id筛选医生
      */
     @GetMapping(value = "/practitioner-metadata")
-    public R<?> getPractitionerMetadata(@RequestParam(value = "locationId") Long locationId,
+    public R<?> getPractitionerMetadata(@RequestParam(value = "orgId") Long orgId,
         @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-        return R.ok(iOutpatientRegistrationAppService.getPractitionerMetadataByLocationId(locationId, searchKey, pageNo,
-            pageSize));
+        return R.ok(
+            iOutpatientRegistrationAppService.getPractitionerMetadataByLocationId(orgId, searchKey, pageNo, pageSize));
     }
 
     /**
@@ -113,19 +112,45 @@ public class OutpatientRegistrationController {
     }
 
     /**
-     * 保存挂号
-     *
-     * @param outpatientRegistrationAddParam 就诊表单信息
+     * 退号
+     * 
+     * @param cancelRegPaymentDto 就诊id
      * @return 结果
      */
-    @PostMapping(value = "/save")
-    public R<?> saveRegister(@Valid @RequestBody OutpatientRegistrationAddParam outpatientRegistrationAddParam) {
-        return iOutpatientRegistrationAppService.saveRegister(outpatientRegistrationAddParam);
+    @PutMapping(value = "return")
+    public R<?> returnRegister(@RequestBody CancelRegPaymentDto cancelRegPaymentDto) {
+
+        R<?> result = iOutpatientRegistrationAppService.returnRegister(cancelRegPaymentDto);
+        // 取消付款成功后，开具发票
+        if (result.getCode() == 200) {
+            PaymentReconciliation paymentRecon = null;
+            if (PaymentReconciliation.class.isAssignableFrom(result.getData().getClass())) {
+                paymentRecon = (PaymentReconciliation)result.getData();
+            }
+            R<?> eleResult = eleInvoiceService.invoiceWriteoff(paymentRecon.getRelationId(), cancelRegPaymentDto.getReason());
+            if (eleResult.getCode() != 200) {
+                // 因取消付款成功前端需要关闭弹窗，此处信息仅用于提示所以返回ok
+                return R.ok(null, " 取消付款成功，电子发票开具失败 :" + eleResult.getMsg());
+            }
+        }
+        return result;
+
+    }
+
+    /**
+     * 取消挂号
+     *
+     * @param encounterId 就诊id
+     * @return 结果
+     */
+    @PutMapping(value = "cancel")
+    public R<?> cancelRegister(@RequestParam(value = "encounterId") Long encounterId) {
+        return iOutpatientRegistrationAppService.cancelRegister(encounterId);
     }
 
     /**
      * 查询当日就诊数据
-     * 
+     *
      * @param searchKey 模糊查询关键字
      * @param pageNo 当前页
      * @param pageSize 每页多少条
@@ -134,8 +159,8 @@ public class OutpatientRegistrationController {
     @GetMapping(value = "/current-day-encounter")
     public R<?> getCurrentDayEncounter(@RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-        return R.ok(iOutpatientRegistrationAppService.getCurrentDayEncounter(searchKey, pageNo, pageSize));
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
+        return R.ok(iOutpatientRegistrationAppService.getCurrentDayEncounter(searchKey, pageNo, pageSize, request));
     }
 
 }

@@ -52,7 +52,7 @@ public class SupplyDelivery extends HisBaseEntity {
     private Long itemId;
 
     /** 计量单位 */
-    private String unitIdCode;
+    private String unitCode;
 
     /** 数量 */
     private BigDecimal quantity;
@@ -94,6 +94,6 @@ public class SupplyDelivery extends HisBaseEntity {
         // 默认发放状态：进行中
         this.statusEnum = EventStatus.IN_PROGRESS.getValue();
         // 默认发放类型：
-        this.typeEnum = SupplyType.PRODUCT_ALLOCATION.getValue();
+        this.typeEnum = SupplyType.PRODUCT_TRANSFER.getValue();
     }
 }

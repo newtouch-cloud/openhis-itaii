@@ -49,9 +49,9 @@ public class EncounterPatientPageParam {
     private String encounterBusNo;
 
     /**
-     * 开始时间
+     * 接诊时间
      */
-    private Date startTime;
+    private Date receptionTime;
 
     /**
      * 收费时间

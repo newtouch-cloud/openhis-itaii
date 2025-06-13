@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.core.common.core.domain.HisBaseEntity;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.enums.AdministrativeGender;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,6 +29,7 @@ public class Practitioner extends HisBaseEntity {
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 活动标记 */
@@ -86,5 +89,15 @@ public class Practitioner extends HisBaseEntity {
     /** 系统用户id */
     private Long userId;
 
+    /** 医生职称 */
+    private String drProfttlCode ;
 
+    /** 证件类型 */
+    private String prscDrCertCode;
+
+    /** 职业证件编号 */
+    private String pharPracCertNo;
+
+    /** 开票点编码 */
+    private String kpdCode;
 }

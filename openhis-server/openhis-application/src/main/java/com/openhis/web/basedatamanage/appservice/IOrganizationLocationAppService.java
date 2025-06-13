@@ -10,6 +10,7 @@ import com.openhis.web.basedatamanage.dto.OrgLocQueryParam;
  * Organization 应该服务类
  */
 public interface IOrganizationLocationAppService {
+
     /**
      * 查询机构位置
      *
@@ -18,16 +19,7 @@ public interface IOrganizationLocationAppService {
      * @param request 请求数据
      * @return 机构位置分页列表
      */
-    R<?> getOrgLocPage(OrgLocQueryParam orgLocQueryParam, String searchKey, Integer pageNo, Integer pageSize,
-        HttpServletRequest request);
-
-    /**
-     * 机构位置信息详情
-     *
-     * @param orgLocId 机构位置信息id
-     * @return 机构位置信息详情
-     */
-    R<?> getOrgLocById(Long orgLocId);
+    R<?> getOrgLocPage(OrgLocQueryParam orgLocQueryParam, Integer pageNo, Integer pageSize, HttpServletRequest request);
 
     /**
      * 添加/编辑机构位置信息
@@ -45,4 +37,18 @@ public interface IOrganizationLocationAppService {
      */
     R<?> deleteOrgLoc(Long orgLocId);
 
+    /**
+     * 机构位置关系初始化
+     *
+     * @return 操作结果
+     */
+    R<?> organizationLocationInit();
+
+    /**
+     * 根据类型查询药房/药库
+     *
+     * @param locationForm 查询字段
+     * @return 机构位置关系分页列表
+     */
+    R<?> getLocationListByForm(Integer locationForm);
 }

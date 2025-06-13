@@ -4,4 +4,18 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.openhis.clinical.mapper.ConditionMapper">
 
+    <delete id="deleteByEncounterId">
+        DELETE
+        FROM cli_condition
+        WHERE ID IN (SELECT condition_id FROM adm_encounter_diagnosis WHERE encounter_id = #{encounterId})
+          AND tcm_flag = 0
+    </delete>
+
+    <delete id="deleteTcmByEncounterId">
+        DELETE
+        FROM cli_condition
+        WHERE ID IN (SELECT condition_id FROM adm_encounter_diagnosis WHERE encounter_id = #{encounterId})
+          AND tcm_flag = 1
+    </delete>
+
 </mapper>

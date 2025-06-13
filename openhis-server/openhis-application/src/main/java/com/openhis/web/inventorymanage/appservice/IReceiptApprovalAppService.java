@@ -24,10 +24,9 @@ public interface IReceiptApprovalAppService {
      * 根据单据号获取供应单据及供应项相关详细信息
      *
      * @param busNo 单据号
-     * @param itemTable 供应项所在表名
      * @return 供应单据及供应项相关详细信息
      */
-    List<SupplyItemDetailDto> getSupplyItemDetail(String busNo, String itemTable);
+    List<SupplyItemDetailDto> getSupplyItemDetail(String busNo);
 
     /**
      * 获取物品的价格信息
@@ -41,19 +40,65 @@ public interface IReceiptApprovalAppService {
      * 入库单据审批通过
      *
      * @param busNo 单据号
-     * @param request 请求数据
      * @return 操作结果
      */
-    R<?> purchaseInventoryApproved(String busNo, HttpServletRequest request);
+    R<?> purchaseInventoryApproved(String busNo);
+
+    /**
+     * 商品盘点审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    R<?> productStocktakingApproved(String busNo);
+
+    /**
+     * 商品调拨审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    R<?> productTransferApproved(String busNo);
+
+    /**
+     * 采购退货审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    R<?> purchaseReturnApproved(String busNo);
+
+    /**
+     * 报损单审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    R<?> lossReportApproved(String busNo);
+
+    /**
+     * 领用出库审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    R<?> requisitionIssueApproved(String busNo);
+
+    /**
+     * 领用退库审批通过
+     *
+     * @param busNo 单据号
+     * @return 操作结果
+     */
+    R<?> returnIssueApproved(String busNo);
 
     /**
      * 审批驳回
      *
      * @param busNo 单据号
-     * @param request 请求数据
      * @return 操作结果
      */
-    R<?> reject(String busNo, HttpServletRequest request);
+    R<?> reject(String busNo);
 
     /**
      * 审批单据分页列表

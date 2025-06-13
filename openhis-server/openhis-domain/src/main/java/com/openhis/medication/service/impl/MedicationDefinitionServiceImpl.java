@@ -50,6 +50,8 @@ public class MedicationDefinitionServiceImpl extends ServiceImpl<MedicationDefin
         }
         // 新增药品目录
         int insert = medicationDefinitionMapper.insert(medicationDefinition);
+        medicationDetail.setId(medicationDefinition.getId());
+
         if (insert != 1) {
             return false;
         }
@@ -59,6 +61,5 @@ public class MedicationDefinitionServiceImpl extends ServiceImpl<MedicationDefin
         medicationDetail.setMedicationDefId(generatedId);
         return true;
     }
-
 
 }

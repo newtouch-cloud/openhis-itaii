@@ -1,5 +1,7 @@
 package com.openhis.web.outpatientmanage.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +30,6 @@ public class OutpatientSkinTestRecordController {
 
     @Autowired
     private IOutpatientSkinTestRecordService OutpatientSkinTestRecordService;
-
 
     /**
      * 门诊皮试记录初期数据
@@ -78,11 +79,12 @@ public class OutpatientSkinTestRecordController {
      */
     @GetMapping("/outpatient-record-page")
     public R<?> getSkinTestRecords(OutpatientSkinTestRecordSearchParam outpatientSkinTestRecordSearchParam,
+        @RequestParam(value = "searchKey", defaultValue = "") String searchKey,
         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest request) {
 
-        return R.ok(
-            OutpatientSkinTestRecordService.getSkinTestRecords(outpatientSkinTestRecordSearchParam, pageNo, pageSize));
+        return R.ok(OutpatientSkinTestRecordService.getSkinTestRecords(outpatientSkinTestRecordSearchParam, searchKey,
+            pageNo, pageSize, request));
     }
 
 }

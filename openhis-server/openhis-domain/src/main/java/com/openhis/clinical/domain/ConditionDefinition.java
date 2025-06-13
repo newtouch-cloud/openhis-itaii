@@ -52,6 +52,9 @@ public class ConditionDefinition extends HisBaseEntity {
     /** 医保标记 */
     private Integer ybFlag;
 
+    /** 特慢病编码（选填） */
+    private String diseaseCode;
+
     /** 医保编码 */
     private String ybNo;
 

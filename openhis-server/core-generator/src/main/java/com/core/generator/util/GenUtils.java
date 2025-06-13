@@ -49,6 +49,9 @@ public class GenUtils {
             case "doc":
                 genTable.setPackageName(GenConfig.getPackageName() + ".document");
                 break;
+            case "yb":
+                genTable.setPackageName(GenConfig.getPackageName() + ".ybcatalog");
+                break;
             default:
                 genTable.setPackageName(GenConfig.getPackageName() + ".errortable");
         }

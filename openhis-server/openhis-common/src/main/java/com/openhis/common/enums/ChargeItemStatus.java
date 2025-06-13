@@ -30,7 +30,7 @@ public enum ChargeItemStatus implements HisEnumInterface {
     /**
      * 已结算
      */
-    BILLED(5, "billed ", "已结算"),
+    BILLED(5, "billed ", "已收费"),
 
     /**
      * 错误
@@ -38,14 +38,14 @@ public enum ChargeItemStatus implements HisEnumInterface {
     ERROR(6, "entered-in-error", "错误"),
 
     /**
-     * 退费中
+     * 待退费
      */
-    REFUNDING(7, "refunding", "退费中"),
+    REFUNDING(7, "refunding", "待退费"),
 
     /**
-     * 全部退费
+     * 已退费
      */
-    REFUNDED(8, "refunded", "全部退费"),
+    REFUNDED(8, "refunded", "已退费"),
 
     /**
      * 部分退费
@@ -61,4 +61,15 @@ public enum ChargeItemStatus implements HisEnumInterface {
     private final String code;
     private final String info;
 
+    public static ChargeItemStatus getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (ChargeItemStatus val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

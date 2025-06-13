@@ -3,14 +3,16 @@
  */
 package com.openhis.web.inventorymanage.appservice.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.core.common.exception.ServiceException;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -19,6 +21,7 @@ import com.core.common.core.domain.R;
 import com.core.common.utils.AssignSeqUtil;
 import com.core.common.utils.DateUtils;
 import com.core.common.utils.MessageUtils;
+import com.core.common.utils.SecurityUtils;
 import com.core.common.utils.bean.BeanUtils;
 import com.openhis.administration.domain.Practitioner;
 import com.openhis.administration.domain.Supplier;
@@ -26,10 +29,7 @@ import com.openhis.administration.service.IPractitionerService;
 import com.openhis.administration.service.ISupplierService;
 import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.constant.PromptMsgConstant;
-import com.openhis.common.enums.AssignSeqEnum;
-import com.openhis.common.enums.SupplyCategory;
-import com.openhis.common.enums.SupplyStatus;
-import com.openhis.common.enums.SupplyType;
+import com.openhis.common.enums.*;
 import com.openhis.common.utils.EnumUtils;
 import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.inventorymanage.appservice.IPurchaseInventoryAppService;
@@ -47,19 +47,19 @@ import com.openhis.workflow.service.ISupplyRequestService;
 @Service
 public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppService {
 
-    @Autowired
+    @Resource
     private PurchaseInventoryMapper purchaseInventoryMapper;
 
-    @Autowired
+    @Resource
     private ISupplyRequestService supplyRequestService;
 
-    @Autowired
+    @Resource
     private ISupplierService supplierService;
 
-    @Autowired
+    @Resource
     private IPractitionerService practitionerService;
 
-    @Autowired
+    @Resource
     private AssignSeqUtil assignSeqUtil;
 
     /**
@@ -71,8 +71,6 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
     public R<?> purchaseInventoryInit() {
 
         PurchaseInventoryInitDto initDto = new PurchaseInventoryInitDto();
-        // 单据号
-        initDto.setBusNo(assignSeqUtil.getSeqByDay(AssignSeqEnum.PURCHASE_NUM.getPrefix(), 12));
         // 查询供应商列表
         List<Supplier> supplierList = supplierService.getList();
         // 查询经手人列表
@@ -91,10 +89,29 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
             .map(supplyStatus -> new PurchaseInventoryInitDto.supplyStatusOption(supplyStatus.getValue(),
                 supplyStatus.getInfo()))
             .collect(Collectors.toList());
+        // 单据类型
+        List<PurchaseInventoryInitDto.supplyTypeOption> supplyTypeOptions = new ArrayList<>();
+        supplyTypeOptions.add(new PurchaseInventoryInitDto.supplyTypeOption(SupplyType.PURCHASE_INVENTORY.getValue(),
+            SupplyType.PURCHASE_INVENTORY.getInfo()));
+        supplyTypeOptions.add(new PurchaseInventoryInitDto.supplyTypeOption(SupplyType.PRODUCT_RETURN.getValue(),
+            SupplyType.PRODUCT_RETURN.getInfo()));
 
         initDto.setSupplierListOptions(supplierListOptions).setPractitionerListOptions(practitionerListOptions)
-            .setSupplyStatusOptions(supplyStatusOptions);
+            .setSupplyStatusOptions(supplyStatusOptions).setSupplyTypeOptions(supplyTypeOptions);
 
+        return R.ok(initDto);
+    }
+
+    /**
+     * 单据号初始化
+     *
+     * @return 初始化信息
+     */
+    @Override
+    public R<?> purchaseNoInit() {
+        PurchaseInventoryInitDto initDto = new PurchaseInventoryInitDto();
+        // 单据号
+        initDto.setBusNo(assignSeqUtil.getSeqByDay(AssignSeqEnum.PURCHASE_NUM.getPrefix(), 10));
         return R.ok(initDto);
     }
 
@@ -120,12 +137,17 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
         QueryWrapper<InventorySearchParam> queryWrapper =
             HisQueryUtils.buildQueryWrapper(inventorySearchParam, searchKey, searchFields, request);
         // 查询入库单据分页列表
-        Page<ReceiptPageDto> inventoryReceiptPage = purchaseInventoryMapper.selectInventoryReceiptPage(
-            new Page<>(pageNo, pageSize), queryWrapper, SupplyType.PURCHASE_INVENTORY.getValue());
+        Page<ReceiptPageDto> inventoryReceiptPage =
+            purchaseInventoryMapper.selectInventoryReceiptPage(new Page<>(pageNo, pageSize), queryWrapper,
+                SupplyType.PURCHASE_INVENTORY.getValue());
 
         inventoryReceiptPage.getRecords().forEach(e -> {
             // 单据状态
             e.setStatusEnum_enumText(EnumUtils.getInfoByValue(SupplyStatus.class, e.getStatusEnum()));
+            // 仓库类型
+            e.setPurposeTypeEnum_enumText(EnumUtils.getInfoByValue(LocationForm.class, e.getPurposeTypeEnum()));
+            // 单据类型
+            e.setTypeEnum_enumText(EnumUtils.getInfoByValue(SupplyType.class, e.getTypeEnum()));
         });
         return R.ok(inventoryReceiptPage);
     }
@@ -146,46 +168,82 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
     }
 
     /**
-     * 添加/编辑入库单据
+     * 添加/编辑入库单据(批量)
      *
-     * @param purchaseInventoryDto 入库单据
+     * @param purchaseInventoryDtoList 入库单据
      * @return 操作结果
      */
     @Override
-    public R<?> addOrEditInventoryReceipt(PurchaseInventoryDto purchaseInventoryDto) {
+    public R<?> addOrEditInventoryReceipt(List<PurchaseInventoryDto> purchaseInventoryDtoList) {
 
-        // 初始化单据信息
-        SupplyRequest supplyRequest = new SupplyRequest();
-        BeanUtils.copyProperties(purchaseInventoryDto, supplyRequest);
+        // 校验(已经审批通过的单号(请求状态是同意),不能再重复编辑请求)
+        boolean validation = supplyRequestService.supplyRequestValidation(purchaseInventoryDtoList.get(0).getBusNo());
+        if(validation){
+            throw new ServiceException("请勿重复审批");
+        }
 
-        if (purchaseInventoryDto.getId() != null) {
-            // 更新单据信息
-            supplyRequestService.updateById(supplyRequest);
-        } else {
+        List<String> idList = new ArrayList<>();
+
+        // 单据号取得
+        List<String> busNoList =
+                purchaseInventoryDtoList.stream().map(PurchaseInventoryDto::getBusNo).collect(Collectors.toList());
+        // 请求数据取得
+        List<SupplyRequest> requestList = supplyRequestService.getSupplyByBusNo(busNoList.get(0));
+        if (!requestList.isEmpty()) {
+            // 请求id取得
+            List<Long> requestIdList = requestList.stream().map(SupplyRequest::getId).collect(Collectors.toList());
+            // 单据信息删除
+            supplyRequestService.removeByIds(requestIdList);
+        }
+
+        List<SupplyRequest> supplyRequestList = new ArrayList<>();
+        for (PurchaseInventoryDto purchaseInventoryDto : purchaseInventoryDtoList) {
+            // 初始化单据信息
+            SupplyRequest supplyRequest = new SupplyRequest();
+            BeanUtils.copyProperties(purchaseInventoryDto, supplyRequest);
+
             // 生成待发送的入库单据
             supplyRequest
-                // 单据分类：非库存供应
-                .setCategoryEnum(SupplyCategory.NON_STOCK.getValue())
-                // 单据类型：采购入库
-                .setTypeEnum(SupplyType.PURCHASE_INVENTORY.getValue())
-                // 申请时间
-                .setApplyTime(DateUtils.getNowDate());
-            supplyRequestService.save(supplyRequest);
+                    // id
+                    .setId(null)
+                    // 单据分类：非库存供应
+                    .setCategoryEnum(SupplyCategory.NON_STOCK.getValue())
+                    // 单据类型：采购入库
+                    .setTypeEnum(SupplyType.PURCHASE_INVENTORY.getValue())
+                    // 制单人
+                    .setApplicantId(SecurityUtils.getLoginUser().getPractitionerId())
+                    // 申请时间
+                    .setApplyTime(DateUtils.getNowDate());
+            supplyRequestList.add(supplyRequest);
+
         }
-        // 返回单据id
-        return R.ok(supplyRequest.getId(), null);
+
+        // 保存
+        supplyRequestService.saveOrUpdateBatch(supplyRequestList);
+
+        // 请求id取得
+        List<SupplyRequest> supplyRequestIdList = supplyRequestService.getSupplyByBusNo(busNoList.get(0));
+        // 返回请求id列表
+        List<Long> requestIdList =
+                supplyRequestIdList.stream().map(SupplyRequest::getId).collect(Collectors.toList());
+        for (Long list : requestIdList) {
+            idList.add(list.toString());
+        }
+
+        // 返回请求id
+        return R.ok(idList, null);
     }
 
     /**
      * 删除单据
      *
-     * @param supplyRequestId 供应请求id
+     * @param supplyRequestIds 供应请求id
      * @return 操作结果
      */
     @Override
-    public R<?> deleteReceipt(Long supplyRequestId) {
+    public R<?> deleteReceipt(List<Long> supplyRequestIds) {
         // 删除单据
-        boolean result = supplyRequestService.removeById(supplyRequestId);
+        boolean result = supplyRequestService.removeByIds(supplyRequestIds);
         return result ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, null))
             : R.fail(MessageUtils.createMessage(PromptMsgConstant.Common.M00007, null));
     }
@@ -198,6 +256,12 @@ public class PurchaseInventoryAppServiceImpl implements IPurchaseInventoryAppSer
      */
     @Override
     public R<?> submitApproval(String busNo) {
+
+        // 校验(已经审批通过的单号(请求状态是同意),不能再重复编辑请求)
+        boolean validation = supplyRequestService.supplyRequestValidation(busNo);
+        if(validation){
+            throw new ServiceException("请勿重复审批");
+        }
         // 单据提交审核
         boolean result = supplyRequestService.submitApproval(busNo);
         return result ? R.ok(null, MessageUtils.createMessage(PromptMsgConstant.Common.M00004, null))

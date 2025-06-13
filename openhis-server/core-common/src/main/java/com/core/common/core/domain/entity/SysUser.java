@@ -7,20 +7,24 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.core.common.annotation.Excel;
 import com.core.common.annotation.Excel.ColumnType;
 import com.core.common.annotation.Excel.Type;
 import com.core.common.annotation.Excels;
 import com.core.common.core.domain.BaseEntity;
 import com.core.common.xss.Xss;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
+import lombok.Data;
 
 /**
  * 用户对象 sys_user
- * 
+ *
  * @author system
  */
 @Data
@@ -79,18 +83,23 @@ public class SysUser extends BaseEntity {
     /** 部门对象 */
     @Excels({@Excel(name = "部门名称", targetAttr = "deptName", type = Type.EXPORT),
         @Excel(name = "部门负责人", targetAttr = "leader", type = Type.EXPORT)})
+    @TableField(exist = false)
     private SysDept dept;
 
     /** 角色对象 */
+    @TableField(exist = false)
     private List<SysRole> roles;
 
     /** 角色组 */
+    @TableField(exist = false)
     private Long[] roleIds;
 
     /** 岗位组 */
+    @TableField(exist = false)
     private Long[] postIds;
 
     /** 角色ID */
+    @TableField(exist = false)
     private Long roleId;
 
     /** 租户ID */
@@ -98,6 +107,18 @@ public class SysUser extends BaseEntity {
 
     /** 删除标识 */
     private String deleteFlag;
+
+    /**
+     * 科室id
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @TableField(exist = false)
+    private Long orgId;
+    /**
+     * 科室名称
+     */
+    @TableField(exist = false)
+    private String orgName;
 
     public SysUser() {
 

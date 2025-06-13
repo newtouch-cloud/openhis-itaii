@@ -22,9 +22,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class ProductTransferPageDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ProductTransferPageDto {
 
     /** ID */
     @TableId(type = IdType.ASSIGN_ID)

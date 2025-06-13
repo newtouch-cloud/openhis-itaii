@@ -39,6 +39,11 @@ public class EncounterFormData {
     private Integer ybClassEnum;
 
     /**
+     * 类别医保文本
+     */
+    private String ybClassText; // 医保接口获取
+
+    /**
      * 优先级编码
      */
     @NotNull(message = "优先级编码不能为空")

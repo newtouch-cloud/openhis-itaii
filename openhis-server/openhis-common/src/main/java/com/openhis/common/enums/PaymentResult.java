@@ -27,13 +27,13 @@ public enum PaymentResult {
     /**
      * 已退费
      */
-    refunded(-2, "已退费");
+    REFUNDED(-2, "已退费");
 
     private Integer value;
     private String description;
 
-    public static PaymentResult getByValue(String value) {
-        if (value==null) {
+    public static PaymentResult getByValue(Integer value) {
+        if (value == null) {
             return null;
         }
         for (PaymentResult val : values()) {

@@ -1,16 +1,23 @@
 package com.openhis.web.patientmanage.appservice.impl;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
-import com.core.common.core.domain.R;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.core.domain.R;
+import com.openhis.common.constant.CommonConstants;
 import com.openhis.common.enums.AdministrativeGender;
 import com.openhis.common.enums.EncounterSubjectStatus;
+import com.openhis.common.enums.ParticipantType;
 import com.openhis.common.utils.EnumUtils;
+import com.openhis.common.utils.HisQueryUtils;
 import com.openhis.web.patientmanage.appservice.IOutpatientRecordService;
 import com.openhis.web.patientmanage.dto.OutpatientRecordDto;
 import com.openhis.web.patientmanage.dto.OutpatientRecordSearchParam;
@@ -19,14 +26,14 @@ import com.openhis.web.patientmanage.mapper.PatientManageMapper;
 /**
  * 门诊记录查询 应用实现
  *
- * @author Wuser
+ * @author liuhr
  * @date 2025/3/15
  */
 @Service
 public class OutpatientRecordServiceImpl implements IOutpatientRecordService {
 
     @Resource
-    PatientManageMapper patientManageMapper;
+    private PatientManageMapper patientManageMapper;
 
     /**
      * 分页查询门诊记录
@@ -36,19 +43,20 @@ public class OutpatientRecordServiceImpl implements IOutpatientRecordService {
      * @param pageSize 每页大小（默认为10）
      * @return 分页查询
      */
-    public Page<OutpatientRecordDto> getPatient(OutpatientRecordSearchParam outpatientRecordSearchParam, Integer pageNo,
-        Integer pageSize) {
+    @Override
+    public IPage<OutpatientRecordDto> getPatient(OutpatientRecordSearchParam outpatientRecordSearchParam,
+        String searchKey, Integer pageNo, Integer pageSize, HttpServletRequest request) {
 
-        // 跳过的记录数
-        Integer offset = (pageNo - 1) * pageSize;
-        // 连表查询患者信息
-        List<OutpatientRecordDto> listOutpatientRecords =
-            patientManageMapper.getOutpatientRecord(outpatientRecordSearchParam, pageSize, offset);
-        // 查询总记录数
-        long total = patientManageMapper.countOutpatientRecords(outpatientRecordSearchParam);
-        // 创建Page对象并设置属性
-        Page<OutpatientRecordDto> outpatientRecordPage = new Page<>(pageNo, pageSize, total);
-        outpatientRecordPage.setRecords(listOutpatientRecords);
+        // 构建查询条件
+        QueryWrapper<OutpatientRecordDto> queryWrapper =
+            HisQueryUtils.buildQueryWrapper(outpatientRecordSearchParam, searchKey,
+                new HashSet<>(Arrays.asList(CommonConstants.FieldName.idCard, CommonConstants.FieldName.Name,
+                    CommonConstants.FieldName.PatientBusNo, CommonConstants.FieldName.EncounterBusNo)),
+                request);
+
+        IPage<OutpatientRecordDto> outpatientRecordPage = patientManageMapper
+            .getOutpatientRecord(ParticipantType.ADMITTER.getCode(), new Page<>(pageNo, pageSize), queryWrapper);
+
         outpatientRecordPage.getRecords().forEach(e -> {
             // 性别枚举类回显赋值
             e.setGenderEnum_enumText(EnumUtils.getInfoByValue(AdministrativeGender.class, e.getGenderEnum()));
@@ -56,6 +64,7 @@ public class OutpatientRecordServiceImpl implements IOutpatientRecordService {
             e.setSubjectStatusEnum_enumText(
                 EnumUtils.getInfoByValue(EncounterSubjectStatus.class, e.getSubjectStatusEnum()));
         });
+
         return outpatientRecordPage;
     }
 

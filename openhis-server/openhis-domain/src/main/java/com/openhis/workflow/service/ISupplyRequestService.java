@@ -25,17 +25,16 @@ public interface ISupplyRequestService extends IService<SupplyRequest> {
 
     /**
      * 同意申请
-     * 
+     *
      * @param busNo 单据号
-     * @param loginUser 登录用户信息
      * @param now 当前时间
      * @return 单据详情
      */
-    List<SupplyRequest> agreeRequest(String busNo, LoginUser loginUser, Date now);
+    List<SupplyRequest> agreeRequest(String busNo,Date now);
 
     /**
      * 提交审批
-     * 
+     *
      * @param busNo 单据号
      * @return 操作结果
      */
@@ -53,10 +52,8 @@ public interface ISupplyRequestService extends IService<SupplyRequest> {
      * 驳回申请
      *
      * @param busNo 单据号
-     * @param loginUser 登录用户信息
-     * @param now 当前时间
      */
-    boolean rejectRequest(String busNo, LoginUser loginUser, Date now);
+    boolean rejectRequest(String busNo);
 
     /**
      * 获取供应项目所在表
@@ -73,4 +70,19 @@ public interface ISupplyRequestService extends IService<SupplyRequest> {
      * @return 物品id
      */
     List<Long> getItem(List<SupplyRequest> agreedList);
+
+    /**
+     * 校验(已经审批通过的单号(请求状态是同意),不能再重复编辑请求)
+     *
+     * @param busNo 单据号
+     */
+    boolean supplyRequestValidation(String busNo);
+
+    /**
+     * 验证是否发生过业务
+     *
+     * @param itemId 项目id
+     * @return 校验结果
+     */
+    boolean verifyAbleEdit(Long itemId);
 }

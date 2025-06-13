@@ -3,7 +3,7 @@
  */
 package com.openhis.web.inventorymanage.dto;
 
-import com.openhis.web.basedatamanage.dto.LocationQueryDto;
+import com.openhis.web.basedatamanage.dto.LocationDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -27,12 +27,12 @@ public class ProductTransferInitDto {
     /**
      * 源仓库
      */
-    private List<LocationQueryDto> sourceTypeListOptions;
+    private List<LocationDto> sourceTypeListOptions;
 
     /**
      * 目的仓库
      */
-    private List<LocationQueryDto> purposeTypeListOptions;
+    private List<LocationDto> purposeTypeListOptions;
 
     /**
      * 药品类型
@@ -43,6 +43,11 @@ public class ProductTransferInitDto {
      * 审批状态
      */
     private List<ProductTransferInitDto.supplyStatusOption> supplyStatusOptions;
+
+    /**
+     * 单据类型
+     */
+    private List<ProductTransferInitDto.supplyTypeOption> supplyTypeOptions;
 
     /**
      * 药品类型
@@ -67,6 +72,20 @@ public class ProductTransferInitDto {
         private String label;
 
         public supplyStatusOption(Integer value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
+
+    /**
+     * 单据类型
+     */
+    @Data
+    public static class supplyTypeOption {
+        private Integer value;
+        private String label;
+
+        public supplyTypeOption(Integer value, String label) {
             this.value = value;
             this.label = label;
         }

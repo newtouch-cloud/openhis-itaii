@@ -27,4 +27,16 @@ public enum ApplicableScope implements HisEnumInterface {
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static ApplicableScope getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (ApplicableScope val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

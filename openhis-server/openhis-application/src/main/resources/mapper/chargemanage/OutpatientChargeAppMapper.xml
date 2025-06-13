@@ -6,7 +6,8 @@
             resultType="com.openhis.web.chargemanage.dto.EncounterPatientPageDto">
         SELECT T4.encounter_id,
                T4.encounter_bus_no,
-               T4.start_time,
+               T4.patient_id,
+               T4.reception_time,
                T4.patient_name,
                T4.patient_bus_no,
                T4.gender_enum,
@@ -18,7 +19,8 @@
         FROM (
                  SELECT T1.id AS encounter_id,
                         T1.bus_no AS encounter_bus_no,
-                        T1.start_time,
+                        T1.patient_id,
+                        T1.reception_time,
                         T1.delete_flag,
                         T1.tenant_id,
                         T2."name" AS patient_name,
@@ -32,9 +34,24 @@
                  FROM adm_encounter AS T1
                     LEFT JOIN adm_patient AS T2
                         ON T1.patient_id = T2.id
-                    LEFT JOIN adm_charge_item AS T3
+                    INNER JOIN adm_charge_item AS T3
                         ON T3.encounter_id = T1.id
+                            AND T3.delete_flag = '0'
                  WHERE T1.delete_flag = '0'
+                 GROUP BY T1.id,
+                          T1.bus_no,
+                          T1.patient_id,
+                          T1.reception_time,
+                          T1.delete_flag,
+                          T1.tenant_id,
+                          T2."name",
+                          T2.bus_no,
+                          T2.gender_enum,
+                          T2.birth_date,
+                          T2.id_card,
+                          T2.py_str,
+                          T2.wb_str,
+                          T3.status_enum
                  ORDER BY T1.bus_no DESC
              ) AS T4
         ${ew.customSqlSegment}
@@ -43,6 +60,8 @@
     <select id="selectEncounterPatientPrescription"
             resultType="com.openhis.web.chargemanage.dto.EncounterPatientPrescriptionDto">
         SELECT T1.encounter_id,
+               T1.id,
+               T1.patient_id,
                T1.context_enum,
                T1.status_enum,
                T1.requesting_org_id,
@@ -52,13 +71,21 @@
                T1.total_price,
                T1.prescription_no,
                T1.bus_no,
-               T1.enterer_id,
                T1.entered_date,
                T1.account_id,
+               T5.enterer_id,
+               T5.bill_date,
+               T6.contract_no,
+               T7.med_type_code,
+               T8.contract_name,
             CASE WHEN T1.context_enum = #{activity} THEN T2."name"
                  WHEN T1.context_enum = #{medication} THEN T3."name"
                  WHEN T1.context_enum = #{device} THEN T4."name"
             END AS item_name,
+            CASE WHEN T1.context_enum = #{activity} THEN T2.yb_no
+                 WHEN T1.context_enum = #{medication} THEN T3.yb_no
+                 WHEN T1.context_enum = #{device} THEN T4.yb_no
+            END AS yb_no,
             CASE WHEN T1.context_enum = #{activity} THEN T2.id
                  WHEN T1.context_enum = #{medication} THEN T3.id
                  WHEN T1.context_enum = #{device} THEN T4.id
@@ -67,14 +94,32 @@
             LEFT JOIN wor_activity_definition AS T2
                 ON T1.context_enum = #{activity}
                     AND T1.product_id = T2.id
+                    AND T2.delete_flag = '0'
             LEFT JOIN med_medication_definition AS T3
                 ON T1.context_enum = #{medication}
                     AND T1.product_id = T3.id
+                    AND T3.delete_flag = '0'
             LEFT JOIN adm_device_definition AS T4
                 ON T1.context_enum = #{device}
                     AND T1.product_id = T4.id
+                    AND T4.delete_flag = '0'
+            LEFT JOIN fin_payment_reconciliation AS T5
+                ON T1.id::TEXT = ANY(string_to_array(T5.charge_item_ids, ','))
+                    AND T5.delete_flag = '0'
+                    AND T5.status_enum = 1
+            LEFT JOIN adm_account AS T6
+                ON T1.account_id = T6.id
+                    AND T6.delete_flag = '0'
+            LEFT JOIN adm_encounter_diagnosis AS T7
+                ON T1.encounter_id = T7.encounter_id
+                    AND T1.condition_id = T7.condition_id
+                    AND T7.delete_flag = '0'
+            LEFT JOIN fin_contract AS T8
+                ON T6.contract_no = T8.bus_no
+                    AND T8.delete_flag = '0'
         WHERE T1.encounter_id = #{encounterId}
-            AND T1.status_enum IN (#{planned} , #{billable} , #{billed})
+            AND T1.status_enum IN (#{planned} ,#{billable} ,#{billed} ,#{refunding} ,#{refunded} ,#{partRefund})
+            AND T1.context_enum != #{register}
             AND T1.delete_flag = '0'
     </select>
 </mapper>

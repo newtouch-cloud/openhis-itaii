@@ -15,15 +15,27 @@ public enum Whether implements HisEnumInterface {
     /**
      * 否
      */
-    NO(0, "no", "否"),
+    NO(0, "0", "否"),
 
     /**
      * 是
      */
-    YES(1, "yes", "是");
+    YES(1, "1", "是");
 
     @EnumValue
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static Whether getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (Whether val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

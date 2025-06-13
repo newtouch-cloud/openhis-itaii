@@ -1,12 +1,13 @@
 package com.openhis.web.basicservice.dto;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.openhis.common.annotation.Dict;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.math.BigDecimal;
 
 /**
  * 服务管理 Dto
@@ -29,7 +30,7 @@ public class HealthcareServiceDto {
     /**
      * 提供部门ID
      */
-    @Dict(dictTable = "adm_organization",dictCode = "id",dictText = "name")
+    @Dict(dictTable = "adm_organization", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long offeredOrgId;
     private String offeredOrgId_dictText;
@@ -58,7 +59,7 @@ public class HealthcareServiceDto {
     /**
      * 地点
      */
-    @Dict(dictTable = "adm_location",dictCode = "id",dictText = "name")
+    @Dict(dictTable = "adm_location", dictCode = "id", dictText = "name")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long locationId;
     private String locationId_dictText;
@@ -104,5 +105,10 @@ public class HealthcareServiceDto {
      * 基础价格
      */
     private BigDecimal price;
+
+    /**
+     * 诊疗费
+     */
+    private BigDecimal activityPrice;
 
 }

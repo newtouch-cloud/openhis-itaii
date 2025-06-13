@@ -47,7 +47,7 @@ public class DiagnosisTreatmentDto {
     private String typeEnum_enumText;
 
     /** 使用单位 */
-    @Dict(dictCode = "rate_code")
+    @Dict(dictCode = "unit_code")
     private String permittedUnitCode;
     private String permittedUnitCode_dictText;
 
@@ -100,12 +100,12 @@ public class DiagnosisTreatmentDto {
     private String itemTypeCode_dictText;
 
     /** 医保类别 */
-    @Dict(dictCode = "yb_type")
+    @Dict(dictCode = "med_chrgitm_type")
     private String ybType;
     private String ybType_dictText;
 
-    /** 购入价 */
-    private BigDecimal purchasePrice;
+//    /** 购入价 */
+//    private BigDecimal purchasePrice;
 
     /** 零售价 */
     private BigDecimal retailPrice;
@@ -113,5 +113,14 @@ public class DiagnosisTreatmentDto {
     /** 最高零售价 */
     private BigDecimal maximumRetailPrice;
 
+    /** 医保等级 */
+    private Integer chrgitmLv;
+
+    /** 子项json */
+    private String childrenJson;
+
+    /** 划价标记 */
+    private Integer pricingFlag;
+    private String pricingFlag_enumText;
 
 }

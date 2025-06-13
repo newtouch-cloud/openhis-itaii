@@ -18,9 +18,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class PrescriptionPatientInfoDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class PrescriptionPatientInfoDto {
 
     /** 姓名 */
     private String patientName;

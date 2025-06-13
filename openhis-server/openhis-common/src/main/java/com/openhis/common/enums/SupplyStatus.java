@@ -39,7 +39,12 @@ public enum SupplyStatus implements HisEnumInterface {
     /**
      * 已撤回
      */
-    WITHDRAW(9, "5", "已撤回");
+    WITHDRAW(9, "5", "已撤回"),
+
+    /**
+     * 待审请
+     */
+    PENDING_REVIEW(10, "6", "待审请");
 
     private Integer value;
     private String code;

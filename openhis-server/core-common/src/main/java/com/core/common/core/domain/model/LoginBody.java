@@ -26,6 +26,11 @@ public class LoginBody {
      */
     private String uuid;
 
+    /**
+     * 租户ID
+     */
+    private Integer tenantId;
+
     public String getUsername() {
         return username;
     }
@@ -56,5 +61,13 @@ public class LoginBody {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
     }
 }

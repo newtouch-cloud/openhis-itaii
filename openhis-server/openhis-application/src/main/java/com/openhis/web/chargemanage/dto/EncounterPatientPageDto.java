@@ -30,6 +30,12 @@ public class EncounterPatientPageDto {
     private Long encounterId;
 
     /**
+     * 患者
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long patientId;
+
+    /**
      * 患者姓名
      */
     private String patientName;
@@ -83,9 +89,9 @@ public class EncounterPatientPageDto {
     private BigDecimal balanceAmount;
 
     /**
-     * 开始时间
+     * 接诊时间
      */
-    private Date startTime;
+    private Date receptionTime;
 
     /**
      * 年龄
@@ -99,12 +105,12 @@ public class EncounterPatientPageDto {
     /**
      * 医保总额
      */
-    private BigDecimal insurancePrice;
+    private BigDecimal insuranceAmount;
 
     /**
      * 自费总额
      */
-    private BigDecimal selfPrice;
+    private BigDecimal selfAmount;
 
     /**
      * 付款总额

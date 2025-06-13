@@ -2,6 +2,7 @@ package com.openhis.web.datadictionary.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.openhis.common.annotation.Dict;
 import com.openhis.common.enums.ConditionDefinitionSource;
 import com.openhis.common.enums.PublicationStatus;
 
@@ -22,7 +23,8 @@ public class DiseaseManageDto {
     private Long id;
 
     /** 所属分类 */
-    private ConditionDefinitionSource sourceEnum;
+    private Integer sourceEnum;
+    private String sourceEnum_enumText;
 
     /** 编码 */
     private String conditionCode;
@@ -37,13 +39,16 @@ public class DiseaseManageDto {
     private String wbStr;
 
     /** 类型 */
+    @Dict(dictCode = "condition_type_code")
     private String typeCode;
+    private String typeCode_dictText;
 
     /** 描述 */
     private String description;
 
     /** 医保标记 */
     private Integer ybFlag;
+    private String ybFlag_enumText;
 
     /** 医保编码 */
     private String ybNo;

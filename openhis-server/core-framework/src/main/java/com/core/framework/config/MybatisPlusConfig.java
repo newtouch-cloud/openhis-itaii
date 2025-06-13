@@ -92,14 +92,14 @@ public class MybatisPlusConfig {
                 "adm_device_definition", "adm_encounter", "adm_encounter_diagnosis", "adm_encounter_location",
                 "adm_encounter_participant", "adm_encounter_reason", "adm_healthcare_service", "adm_invoice",
                 "adm_location", "adm_organization", "adm_organization_location", "adm_patient",
-                "adm_patient_identifier", "sys_user", "adm_practitioner", "adm_practitioner_role", "adm_supplier",
-                "cli_condition", "cli_condition_definition", "cli_diagnosis_belong_binding", "cli_procedure",
-                "cli_procedure_performer", "doc_emr", "doc_emr_template", "doc_emr_detail", "doc_emr_dict", "fin_claim",
-                "fin_claim_response", "fin_contract", "fin_payment_notice", "fin_payment_rec_detail",
-                "fin_payment_reconciliation", "med_medication", "med_medication_definition", "med_medication_dispense",
-                "med_medication_request", "wor_activity_definition", "wor_device_dispense", "wor_device_request",
-                "wor_inventory_item", "wor_service_request", "wor_service_request_detail", "wor_supply_delivery",
-                "wor_supply_request"));
+                "adm_patient_identifier", "adm_practitioner", "adm_practitioner_role", "adm_supplier", "cli_condition",
+                "cli_condition_definition", "cli_diagnosis_belong_binding", "cli_procedure", "cli_procedure_performer",
+                "doc_emr", "doc_emr_template", "doc_emr_detail", "doc_emr_dict", "fin_claim", "fin_claim_response",
+                "fin_contract", "fin_payment_notice", "fin_payment_rec_detail", "fin_payment_reconciliation",
+                "med_medication", "med_medication_definition", "med_medication_dispense", "med_medication_request",
+                "wor_activity_definition", "wor_device_dispense", "wor_device_request", "wor_inventory_item",
+                "wor_service_request", "wor_service_request_detail", "wor_supply_delivery", "wor_supply_request",
+                "sys_operation_record"));
 
             @Override
             public boolean ignoreTable(String tableName) {
@@ -116,7 +116,23 @@ public class MybatisPlusConfig {
      * 获取当前租户 ID
      */
     private Integer getCurrentTenantId() {
-        // // 尝试从请求头中获取租户ID
+
+        // 首先尝试从线程局部变量中获取租户ID（适用于定时任务等场景）
+        Integer threadLocalTenantId = TenantContext.getCurrentTenant();
+        if (threadLocalTenantId != null) {
+            return threadLocalTenantId;
+        }
+
+        // 获取当前登录用户的租户ID（优先使用SecurityUtils中储存的LoginUser的租户ID）
+        try {
+            if (SecurityUtils.getAuthentication() != null) {
+                return SecurityUtils.getLoginUser().getTenantId();
+            }
+        } catch (Exception e) {
+            return 1; // 默认租户ID
+        }
+
+        // 尝试从请求头中获取租户ID
         ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         if (attributes != null) {
             HttpServletRequest request = attributes.getRequest();
@@ -130,10 +146,7 @@ public class MybatisPlusConfig {
                 }
             }
         }
-        // 获取当前登录用户的租户 ID
-        if (SecurityUtils.getAuthentication() != null) {
-            return SecurityUtils.getLoginUser().getTenantId();
-        }
-        return 0; // 默认租户ID
+
+        return 1; // 默认租户ID
     }
 }

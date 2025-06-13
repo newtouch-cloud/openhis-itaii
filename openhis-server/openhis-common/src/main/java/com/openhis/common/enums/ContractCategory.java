@@ -16,7 +16,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ContractCategory implements HisEnumInterface{
+public enum ContractCategory implements HisEnumInterface {
 
     /**
      * 自费
@@ -47,4 +47,16 @@ public enum ContractCategory implements HisEnumInterface{
     private final Integer value;
     private final String code;
     private final String info;
+
+    public static ContractCategory getByValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (ContractCategory val : values()) {
+            if (val.getValue().equals(value)) {
+                return val;
+            }
+        }
+        return null;
+    }
 }

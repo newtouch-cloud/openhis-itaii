@@ -45,22 +45,18 @@ public class DiagnosisTreatmentUpDto {
     private String wbStr;
 
     /** 类型 */
-    @NotNull(message = "类型不能为空")
     private Integer typeEnum;
 
     /** 使用单位 */
-    @NotBlank(message = "使用单位不能为空")
     private String permittedUnitCode;
 
     /** 医保标记 */
-    // @NotNull(message = "医保标记不能为空")
     private Integer ybFlag;
 
     /** 医保编码 */
     private String ybNo;
 
     /** 医保对码标记 */
-    // @NotNull(message = "医保对码标记不能为空")
     private Integer ybMatchFlag;
 
     /** 身体部位 */
@@ -93,7 +89,7 @@ public class DiagnosisTreatmentUpDto {
     private String itemTypeCode_dictText;
 
     /** 医保类别 */
-    @Dict(dictCode = "yb_type")
+    @Dict(dictCode = "med_chrgitm_type")
     private String ybType;
     private String ybType_dictText;
 
@@ -105,5 +101,14 @@ public class DiagnosisTreatmentUpDto {
 
     /** 最高零售价 */
     private BigDecimal maximumRetailPrice;
+
+    /** 医保等级 */
+    private Integer chrgitmLv;
+
+    /** 子项json */
+    private String childrenJson;
+
+    /** 划价标记 */
+    private Integer pricingFlag;
 
 }

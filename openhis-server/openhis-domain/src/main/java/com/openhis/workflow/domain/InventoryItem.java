@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.core.common.core.domain.HisBaseEntity;
+import com.openhis.common.enums.PublicationStatus;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +30,7 @@ public class InventoryItem extends HisBaseEntity {
     private Long id;
 
     /** 物品类别 */
-    private Integer categoryEnum;
+    private String categoryCode;
 
     /** 项目 */
     private String itemTable;
@@ -55,17 +56,11 @@ public class InventoryItem extends HisBaseEntity {
     /** 说明书 */
     private String descriptionText;
 
-    /** 常规单位 */
-    private String baseUnitCode;
-
-    /** 当前库存数量(常规单位) */
-    private BigDecimal baseQuantity;
-
     /** 最小单位 */
-    private String minUnitCode;
+    private String unitCode;
 
-    /** 当前库存数量(最小单位数量) */
-    private BigDecimal minQuantity;
+    /** 当前库存数量(最小单位) */
+    private BigDecimal quantity;
 
     /** 特征 */
     private String characteristicJson;
@@ -93,5 +88,13 @@ public class InventoryItem extends HisBaseEntity {
 
     /** 追溯码包装层级 */
     private Integer packagingLevels;
+
+    /** 采购单价（包装单位） */
+    private BigDecimal price;
+
+    public InventoryItem() {
+        // 库存状态：启用
+        this.inventoryStatusEnum = PublicationStatus.ACTIVE.getValue();
+    }
 
 }

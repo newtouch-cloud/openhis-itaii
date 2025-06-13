@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.openhis.common.enums.PublicationStatus;
 import com.openhis.workflow.domain.ActivityDefinition;
 import com.openhis.workflow.mapper.ActivityDefinitionMapper;
 import com.openhis.workflow.service.IActivityDefinitionService;
@@ -55,4 +56,16 @@ public class ActivityDefinitionServiceImpl extends ServiceImpl<ActivityDefinitio
     public boolean addYbDiagnosisTreatment(ActivityDefinition activityDefinition) {
         return false;
     }
+
+    /**
+     * 查询指定诊疗的-诊疗定义id
+     *
+     * @param activityName 诊疗名称
+     * @return 诊疗定义id
+     */
+    @Override
+    public Long getAppointActivityDefinitionId(String activityName) {
+        return baseMapper.getAppointActivityDefinitionId(activityName, PublicationStatus.ACTIVE.getValue());
+    }
+
 }

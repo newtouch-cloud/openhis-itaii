@@ -1,8 +1,8 @@
 package com.openhis.web.basicservice.dto;
 
-import lombok.Data;
-
 import javax.validation.constraints.NotBlank;
+
+import lombok.Data;
 
 /**
  * 服务项目管理表单数据
@@ -51,7 +51,7 @@ public class HealthcareServiceFormData {
     /**
      * 地点
      */
-    @NotBlank(message = "地点不能为空")
+    // @NotBlank(message = "地点不能为空")
     private Long locationId;
 
     /**
@@ -82,5 +82,7 @@ public class HealthcareServiceFormData {
     @NotBlank(message = "预约要求不能为空")
     private Integer appointmentRequiredFlag;
 
+    /** 医保编码 */
+    private String ybNo;
 
 }

@@ -5,6 +5,7 @@ package com.openhis.web.chargemanage.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -39,7 +40,7 @@ public class EncounterPatientPaymentDto {
     /** 关联账户ID */
     private Long accountId;
 
-    /** 状态 */
+    /** 支付状态 */
     private Integer statusEnum;
 
     /** 关联ID */

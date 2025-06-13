@@ -35,7 +35,7 @@ public class EncounterParticipant extends HisBaseEntity {
     private String typeCode;
 
     /** 开始时间 */
-    private Date startTiem;
+    private Date startTime;
 
     /** 结束时间 */
     private Date endTime;
