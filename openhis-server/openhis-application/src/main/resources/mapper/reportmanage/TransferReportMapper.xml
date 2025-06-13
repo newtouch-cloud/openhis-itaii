@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.reportmanage.mapper.TransferReportMapper">
+
+    <select id="selectTransferReportPage"
+            resultType="com.openhis.web.reportmanage.dto.TransferReportPageDto">
+        SELECT T6.id,
+               T6.supply_bus_no,               -- 商品调拨单据号
+               T6.name,                        -- 药品名称
+               T6.status_enum,                 -- 状态
+               T6.lot_number,                  -- 产品批号
+               T6.source_location_id,          -- 源仓库ID
+               T6.source_location_name,        -- 源仓库
+               T6.source_location_store_id,    -- 源仓位ID
+               T6.source_location_store_name,  -- 源仓位
+               T6.purpose_location_id,         -- 目的仓库ID
+               T6.purpose_location_name,       -- 目的仓库
+               T6.purpose_location_store_id,   -- 目的货位ID
+               T6.purpose_location_store_name, -- 目的货位
+               T6.item_quantity,               -- 调拨数量
+               T6.unit_code,                   -- 物品计量单位
+               T6.price,                       -- 采购单价
+               T6.total_price,                 -- 总价
+               T6.applicant_id,                -- 申请人（制单人）
+               T6.approver_id,                 -- 审核人
+               T6.create_time,                 -- 制单日期
+               T6.apply_time,                  -- 申请日期
+               T6.approval_time,               -- 审批时间（调拨日期）
+               T6.tenant_id                    -- 租户ID
+        FROM (SELECT T1.id,
+                     T1.bus_no AS supply_bus_no,               -- 商品调拨单据号
+                     T3.name,                                  -- 药品名称
+                     T1.status_enum,                           -- 状态
+                     T1.lot_number,                            -- 产品批号
+                     T1.source_location_id,                    -- 源仓库ID
+                     T4.name   AS source_location_name,        -- 源仓库
+                     T1.source_location_store_id,              -- 源仓位ID
+                     T5.name   AS source_location_store_name,  -- 源仓位
+                     T1.purpose_location_id,                   -- 目的仓库ID
+                     T9.name   AS purpose_location_name,       -- 目的仓库
+                     T1.purpose_location_store_id,             -- 目的货位ID
+                     T10.name  AS purpose_location_store_name, -- 目的货位
+                     T1.item_quantity,                         -- 调拨数量
+                     T1.unit_code,                             -- 物品计量单位
+                     T1.price,                                 -- 采购单价
+                     T1.total_price,                           -- 总价
+                     T1.applicant_id,                          -- 申请人（制单人）
+                     T1.approver_id,                           -- 审核人
+                     T1.create_time,                           -- 制单日期
+                     T1.apply_time,                            -- 申请日期
+                     T1.approval_time,                         -- 审批时间（调拨日期）
+                     T1.tenant_id                              -- 租户ID
+              FROM wor_supply_request T1
+                       INNER JOIN wor_supply_delivery AS T2
+                                  ON T2.request_id = T1.id
+                                      AND T2.status_enum = #{deliveryStatus}
+                                      AND T2.delete_flag = '0'
+                       LEFT JOIN med_medication_definition T3
+                                 ON T1.item_id = T3.id
+                                     AND T3.delete_flag = '0'
+                       LEFT JOIN adm_location T4
+                                 ON T1.source_location_id = T4.id
+                                     AND T4.delete_flag = '0'
+                       LEFT JOIN adm_location T5
+                                 ON T1.source_location_store_id = T5.id
+                                     AND T5.delete_flag = '0'
+                       LEFT JOIN adm_location T9
+                                 ON T1.purpose_location_id = T9.id
+                                     AND T9.delete_flag = '0'
+                       LEFT JOIN adm_location T10
+                                 ON T1.purpose_location_store_id = T10.id
+                                     AND T10.delete_flag = '0'
+              WHERE T1.type_enum in (#{transferReport}, #{transferBatchReport})
+                AND T1.status_enum = #{supplyStatus}
+                AND T1.item_table = #{medicationTableName}
+                AND T1.delete_flag = '0'
+              UNION
+              SELECT T1.id,
+                     T1.bus_no AS supply_bus_no,               -- 商品调拨单据号
+                     T7.name,                                  -- 器材名称
+                     T1.status_enum,                           -- 状态
+                     T1.lot_number,                            -- 产品批号
+                     T1.source_location_id,                    -- 源仓库ID
+                     T4.name   AS source_location_name,        -- 源仓库
+                     T1.source_location_store_id,              -- 源仓位ID
+                     T5.name   AS source_location_store_name,  -- 源仓位
+                     T1.purpose_location_id,                   -- 目的仓库ID
+                     T9.name   AS purpose_location_name,       -- 目的仓库
+                     T1.purpose_location_store_id,             -- 目的货位ID
+                     T10.name  AS purpose_location_store_name, -- 目的货位
+                     T1.item_quantity,                         -- 调拨数量
+                     T1.unit_code,                             -- 物品计量单位
+                     T1.price,                                 -- 采购单价
+                     T1.total_price,                           -- 总价
+                     T1.applicant_id,                          -- 申请人（制单人）
+                     T1.approver_id,                           -- 审核人
+                     T1.create_time,                           -- 制单日期
+                     T1.apply_time,                            -- 申请日期
+                     T1.approval_time,                         -- 审批时间（调拨日期）
+                     T1.tenant_id                              -- 租户ID
+              FROM wor_supply_request T1
+                       INNER JOIN wor_supply_delivery AS T2
+                                  ON T2.request_id = T1.id
+                                      AND T2.status_enum = #{deliveryStatus}
+                                      AND T2.delete_flag = '0'
+                       LEFT JOIN adm_device_definition T7
+                                 ON T1.item_id = T7.id
+                                     AND T7.delete_flag = '0'
+                       LEFT JOIN adm_location T4
+                                 ON T1.source_location_id = T4.id
+                                     AND T4.delete_flag = '0'
+                       LEFT JOIN adm_location T5
+                                 ON T1.source_location_store_id = T5.id
+                                     AND T5.delete_flag = '0'
+                       LEFT JOIN adm_location T9
+                                 ON T1.purpose_location_id = T9.id
+                                     AND T9.delete_flag = '0'
+                       LEFT JOIN adm_location T10
+                                 ON T1.purpose_location_store_id = T10.id
+                                     AND T10.delete_flag = '0'
+              WHERE T1.type_enum in (#{transferReport}, #{transferBatchReport})
+                AND T1.status_enum = #{supplyStatus}
+                AND T1.item_table = #{deviceTableName}
+                AND T1.delete_flag = '0') AS T6
+            ${ew.customSqlSegment}
+        ORDER BY T6.supply_bus_no DESC
+    </select>
+</mapper>

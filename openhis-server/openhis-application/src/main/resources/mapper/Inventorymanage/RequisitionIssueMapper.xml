@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.inventorymanage.mapper.RequisitionIssueMapper">
+    <select id="selectRequisitionDepartment" resultType="com.openhis.web.inventorymanage.dto.IssueDepartmentDto">
+        SELECT id AS location_id,--科室id
+               name,--名称
+               type_enum--科室
+        FROM adm_organization
+        WHERE type_enum = #{department}--科室类型
+          AND delete_flag = '0'
+    </select>
+    <select id="selectRequisitionIssuePage"
+            resultType="com.openhis.web.inventorymanage.dto.IssuePageDto">
+        SELECT T2.supply_bus_no,--单据号
+               T2.status_enum,--状态
+               T2.approver_id,--审批人
+               T2.approval_time,--审批时间
+               T2.applicant_id,--申请人
+               T2.create_time,             -- 制单时间
+               T2.practitioner_id,--经手人
+               T2.tenant_id,--租户ID
+               T2.purpose_location_id,--领用部门ID
+               T2.location_name --领用部门名
+        FROM (SELECT T1.bus_no AS supply_bus_no,
+                     T1.status_enum,
+                     T1.approver_id,
+                     T1.approval_time,
+                     T1.applicant_id,
+                     MIN(T1.create_time) AS create_time,
+                     T1.practitioner_id,
+                     T1.tenant_id,
+                     T1.purpose_location_id,--领用部门ID
+                     T4.name AS location_name
+              FROM wor_supply_request AS T1
+              LEFT JOIN adm_location T3
+                        ON T1.source_location_id = T3.id
+              LEFT JOIN adm_organization T4
+                        ON T1.purpose_location_id = T4.id
+              WHERE T1.type_enum = #{issueInventory}
+                AND T1.delete_flag = '0'
+              GROUP BY T1.bus_no,
+                       T1.status_enum,
+                       T1.approver_id,
+                       T1.approval_time,
+                       T1.applicant_id,
+                       T1.practitioner_id,
+                       T1.tenant_id,
+                       T1.purpose_location_id,
+                       T4.name
+              ORDER BY T1.bus_no desc
+            ) AS T2
+        ${ew.customSqlSegment}
+    </select>
+    <select id="requisitionIssueDetail" resultType="com.openhis.web.inventorymanage.dto.IssueDetailDto">
+        SELECT T1.id,
+               T1.bus_no,--单据号
+               T1.item_id,
+               T1.item_quantity,--数量
+               T1.unit_code AS measurement_unit_code,    -- 物品计量单位
+               T2.unit_code,                             -- 包装单位
+               T2.min_unit_code,                         -- 最小单位
+               T1.detail_json,--请求细节
+               T1.purpose_type_enum,--目的类型
+               #{medicine}  AS item_type,--药品类型
+               T1.apply_time,--申请时间
+               T1.lot_number,--产品批号
+               T1.trace_no,--追溯码
+               T1.invoice_no,--发票号
+               T1.start_time,--开始时间
+               T1.end_time,--结束时间
+               T13.amount AS price,--单价
+               T1.total_price,--总价
+               T2."name" AS item_name,--药品类型
+               T2.part_percent,--拆零比
+               T2."yb_no",--医保编码
+               T3.total_volume,--规格
+               T4."name" AS supplier_name,--供应商名称
+               T2.manufacturer_text AS manufacturer, -- 生产厂商
+               T10.quantity AS total_quantity, -- 当前库存总数
+               T1.source_location_id,          -- 源仓库ID
+               T1.source_location_store_id,      -- 源仓位ID
+               T1.purpose_location_id,            -- 目的仓库ID
+               T1.purpose_location_store_id,      -- 目的货位ID
+               T6."name"   AS source_location_name,        -- 源仓库
+               T7."name"   AS source_location_store_name,  -- 源仓位
+               T8."name"   AS purpose_location_name,       -- 目的仓库
+               T9."name"   AS purpose_location_store_name, -- 目的货位
+               T1.practitioner_id,       -- 经办人
+               T1.remake,                -- 备注
+               T11."name"   AS practitioner_name -- 经办人名称
+        FROM wor_supply_request T1
+            LEFT JOIN med_medication_definition T2
+                ON T1.item_id = T2.id
+            LEFT JOIN med_medication T3
+                ON T3.medication_def_id = T2.id
+            LEFT JOIN adm_supplier T4
+                ON T4.id = T1.supplier_id
+            LEFT JOIN adm_location T6
+                      ON T1.source_location_id = T6.id
+            LEFT JOIN adm_location T7
+                      ON T1.source_location_store_id  = T7.id
+            LEFT JOIN adm_organization T8
+                      ON T1.purpose_location_id = T8.id
+            LEFT JOIN adm_organization T9
+                      ON T1.purpose_location_store_id  = T9.id
+            LEFT JOIN wor_inventory_item T10
+                      ON T1.item_id = T10.item_id
+                          AND T1.source_location_id = T10.location_id
+                          AND T10.lot_number = T1.lot_number
+                          AND T10.delete_flag = '0'
+            LEFT JOIN adm_practitioner T11
+                      ON T1.practitioner_id  = T11.id
+            LEFT JOIN adm_charge_item_definition AS T12
+                      ON T12.instance_id = T10.item_id
+                          AND T12.delete_flag = '0'
+            LEFT JOIN adm_charge_item_def_detail AS T13
+                      ON T13.definition_id = T12.id
+                          AND T13.delete_flag = '0'
+                          AND T13.condition_value = T10.lot_number
+        WHERE T1.bus_no = #{busNo}
+            AND T1.item_table = #{medicationTableName}
+            AND T1.delete_flag = '0'
+        UNION
+        SELECT T1.id,
+               T1.bus_no,
+               T1.item_id,
+               T1.item_quantity,
+               T1.unit_code AS measurement_unit_code,    -- 物品计量单位
+               T2.unit_code,                             -- 包装单位
+               T2.min_unit_code,                         -- 最小单位
+               T1.detail_json,
+               T1.purpose_type_enum,
+               #{device}  AS item_type,   --耗材类型
+               T1.apply_time,
+               T1.lot_number,
+               T1.trace_no,
+               T1.invoice_no,
+               T1.start_time,
+               T1.end_time,
+               T13.amount AS price,--单价
+               T1.total_price,
+               T2."name" AS item_name,
+               T2.part_percent,
+               T2."size" AS total_volume,
+               T2."yb_no",
+               T4."name" AS supplier_name,
+               T2.manufacturer_text AS manufacturer, -- 生产厂商
+               T10.quantity AS total_quantity, -- 当前库存总数
+               T1.source_location_id,          -- 源仓库ID
+               T1.source_location_store_id,      -- 源仓位ID
+               T1.purpose_location_id,            -- 目的仓库ID
+               T1.purpose_location_store_id,      -- 目的货位ID
+               T6."name"   AS source_location_name,        -- 源仓库
+               T7."name"   AS source_location_store_name,  -- 源仓位
+               T8."name"   AS purpose_location_name,       -- 目的仓库
+               T9."name"   AS purpose_location_store_name, -- 目的货位
+               T1.practitioner_id,       -- 经办人
+               T1.remake,                -- 备注
+               T11."name"   AS practitioner_name -- 经办人名称
+        FROM wor_supply_request T1
+            LEFT JOIN adm_device_definition T2
+                ON T1.item_id = T2.id
+            LEFT JOIN adm_supplier T4
+                ON T4.id = T1.supplier_id
+            LEFT JOIN adm_location T6
+                      ON T1.source_location_id = T6.id
+            LEFT JOIN adm_location T7
+                      ON T1.source_location_store_id  = T7.id
+            LEFT JOIN adm_organization T8
+                      ON T1.purpose_location_id = T8.id
+            LEFT JOIN adm_organization T9
+                      ON T1.purpose_location_store_id  = T9.id
+            LEFT JOIN wor_inventory_item T10
+                      ON T1.item_id = T10.item_id
+                          AND T1.source_location_id = T10.location_id
+                          AND T10.lot_number = T1.lot_number
+                          AND T10.delete_flag = '0'
+            LEFT JOIN adm_practitioner T11
+                      ON T1.practitioner_id  = T11.id
+            LEFT JOIN adm_charge_item_definition AS T12
+                      ON T12.instance_id = T10.item_id
+                          AND T12.delete_flag = '0'
+            LEFT JOIN adm_charge_item_def_detail AS T13
+                      ON T13.definition_id = T12.id
+                          AND T13.delete_flag = '0'
+                          AND T13.condition_value = T10.lot_number
+        WHERE T1.bus_no = #{busNo}
+            AND T1.item_table = #{deviceTableName}
+            AND T1.delete_flag = '0'
+    </select>
+</mapper>

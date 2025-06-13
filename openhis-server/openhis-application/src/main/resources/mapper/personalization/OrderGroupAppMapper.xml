@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.personalization.mapper.OrderGroupAppMapper">
+
+    <select id="selectOrderGroup" resultType="com.openhis.web.personalization.dto.OrderGroupDto">
+    SELECT ii.id,
+           ii."name",
+           ii.type_enum,
+           ii.range_code,
+           ii.practitioner_id,
+           ii.org_id,
+           ii.group_json,
+           ii.version_no
+    FROM (
+        SELECT tog.id,
+               tog."name",
+               tog.type_enum,
+               tog.range_code,
+               tog.practitioner_id,
+               tog.org_id,
+               tog.group_json,
+               tog.version_no,
+               tog.tenant_id
+          FROM tmp_order_group AS tog
+          WHERE tog.delete_flag = '0') AS ii
+    ${ew.customSqlSegment}
+    </select>
+</mapper>

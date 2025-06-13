@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.nursestation.mapper.NurseStationPendAdmAppMapper">
+
+    <!-- 住院待入科病人信息查询-->
+    <select id="getPendAdmInfo" parameterType="java.util.Map"
+            resultType="com.openhis.web.nursestation.dto.PendingAdmissionDto">
+
+        SELECT e.id,
+               e.patient_id,
+               e.group_id,
+               e.bus_no,
+               e.status_enum,
+               e.class_enum,
+               e.yb_class_enum,
+               e.class_json,
+               e.priority_enum,
+               e.type_enum,
+               e.service_type_id,
+               e.subject_status_enum,
+               e.start_time,
+               e.end_time,
+               e.organization_id,--入院科室
+               e.display_order,
+               e.admit_source_code,
+               e.in_way_code,
+               e.first_enum,
+               p.name,
+               p.birth_date,
+               p.gender_enum,
+               p.id_card,
+               (SELECT el.location_id
+                FROM adm_encounter_location el
+                WHERE el.encounter_id = e.id
+                  AND el.status_enum = #{status}
+                  AND el.form_enum = #{wardForm}-- 4:病区
+               ) AS ward_location_id--入院病区ID
+        FROM adm_encounter e
+                 LEFT JOIN adm_patient p ON e.patient_id = p.id AND p.delete_flag = '0'
+        WHERE (
+            SELECT el.location_id
+            FROM adm_encounter_location el
+            WHERE el.encounter_id = e.id
+              AND el.form_enum = #{bedForm} -- 8:病床
+              AND el.status_enum = #{status} -- 状态是可用的
+            LIMIT 1
+            ) IS NULL
+          AND e.delete_flag = '0'
+          AND e.class_enum = #{classEnum}    --1:住院
+        ORDER BY e.create_time
+
+    </select>
+
+    <!-- 诊断病情列表-->
+    <select id="getDescriptionList" resultType="string">
+        SELECT c.description
+        FROM adm_encounter_diagnosis ed
+                 LEFT JOIN cli_condition c ON ed.condition_id = c.id
+        WHERE ed.encounter_id = #{encounterId}
+        ORDER BY ed.create_time DESC
+    </select>
+
+   </mapper>

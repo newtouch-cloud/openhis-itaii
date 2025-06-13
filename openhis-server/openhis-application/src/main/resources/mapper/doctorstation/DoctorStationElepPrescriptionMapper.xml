@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.doctorstation.mapper.DoctorStationElepPrescriptionMapper">
+    <select id="selectElepPrescriptionInfo" resultType="com.openhis.web.doctorstation.dto.ElepPrescriptionInfoDto">
+        SELECT tenant_id,
+               prescription_no,             --处方号
+               ipt_otp_no,                  --门诊号
+               department_ward,             --科室病区
+               validity_days,               --有效天数
+               status_enum,                 --状态
+               practitioner_name,           --开方医生名
+               prsc_dept_name,              --开单科室
+               MIN(prsc_time) AS prsc_time, --处方开立日期
+               med_status,                  --取药状态
+               extension_reason,            --延长原因
+               quash_reason,                --撤销原因
+               condition_name,              --诊断名
+               rx_type_code                 --处方类别
+        FROM (SELECT T1.tenant_id,
+                     T1.prescription_no,                 --处方号
+                     T1.ipt_otp_no,                      --门诊号
+                     T1.department_ward,                 --科室病区
+                     T1.validity_days,                   --有效天数
+                     T1.status_enum,                     --状态
+                     T2.name       AS practitioner_name, --开方医生名
+                     T3.name       AS prsc_dept_name,    --开单科室
+                     T1.issue_time AS prsc_time,         --处方开立日期
+                     CASE
+                         WHEN (T4.rx_used_stas_codg IN ('1', '2')) THEN T4.rx_used_stas_name
+                         ELSE '未使用'
+                         END       AS med_status,        --取药状态
+                     T1.extension_reason,                --延长原因
+                     T1.quash_reason,                    --撤销原因
+                     T6.name       AS condition_name,    --诊断名
+                     T1.rx_type_code                     --处方类别
+              FROM elep_medication_request AS T1
+                       LEFT JOIN adm_practitioner AS T2
+                                 ON T1.prescribing_dr_id = T2.id
+                                     AND T2.delete_flag = '0'
+                       LEFT JOIN adm_organization AS T3
+                                 ON T1.org_id = T3.id
+                                     AND T3.delete_flag = '0'
+                       LEFT JOIN yb_elep_medresult_info AS T4
+                                 ON T1.hi_rxno = T4.hi_rxno
+                       LEFT JOIN cli_condition AS T5
+                                 ON T1.condition_id = T5.id
+                                     AND T5.delete_flag = '0'
+                       LEFT JOIN cli_condition_definition AS T6
+                                 ON T5.definition_id = T6.id
+                                     AND T6.delete_flag = '0'
+              WHERE T1.patient_id = #{patientId}
+                AND T1.delete_flag = '0')
+        GROUP BY tenant_id,
+                 prescription_no,
+                 ipt_otp_no,
+                 department_ward,
+                 validity_days,
+                 status_enum,
+                 practitioner_name,
+                 prsc_dept_name,
+                 med_status,
+                 extension_reason,
+                 quash_reason,
+                 condition_name,
+                 rx_type_code
+        ORDER BY prsc_time DESC
+    </select>
+    <select id="selectMedicationInfo" resultType="com.openhis.web.doctorstation.dto.ElepMedicationInfoDto">
+        SELECT T1.id,
+               T2.medical_catalog_code AS medication_id,   --药品id
+               T2.registered_name      AS medication_name, --药品名
+               T2.drug_specification,                      --药品规格
+               T2.manufacturer_name,                       --生产厂家
+               T1.med_dosage,                              --药品剂量
+               T1.med_dosage_unit_code,                    --药品剂量单位
+               T1.med_frequency,                           --使用频次
+               T1.med_route,                               --途径
+               T1.quantity,                                --请求数量
+               T1.unit_code,                               --请求单位
+               T1.support_info,                            --支持用药信息
+               T1.effective_dose_start,                    --服药时间(开始)
+               T1.effective_dose_end,                      --服药时间(结束)
+               T1.dispense_interval,                       --给药间隔
+               T1.dispense_per_quantity,                   --单次发药数
+               T1.dispense_per_duration                    --每次发药供应天数
+        FROM elep_medication_request AS T1
+                 LEFT JOIN (SELECT medical_catalog_code,
+                                   registered_name,
+                                   drug_specification,
+                                   manufacturer_name,
+                                   MAX(version)
+                            FROM yb_catalog_drug_info
+                            GROUP BY  medical_catalog_code,
+                                      registered_name,
+                                      drug_specification,
+                                      manufacturer_name   ) AS T2 ON T1.medication_id = T2.medical_catalog_code
+        WHERE T1.prescription_no = #{prescriptionNo}
+          AND T1.delete_flag = '0'
+        GROUP BY T1.id,
+                 T2.medical_catalog_code,
+                 T2.registered_name,
+                 T2.drug_specification,
+                 T2.manufacturer_name,
+                 T1.med_dosage,
+                 T1.med_dosage_unit_code,
+                 T1.med_frequency,
+                 T1.med_route,
+                 T1.quantity,
+                 T1.unit_code,
+                 T1.support_info,
+                 T1.effective_dose_start,
+                 T1.effective_dose_end,
+                 T1.dispense_interval,
+                 T1.dispense_per_quantity,
+                 T1.dispense_per_duration
+    </select>
+    <select id="selectSaveInfo" resultType="com.openhis.web.doctorstation.dto.ElepPrescriptionInfoParam">
+        SELECT T7.id           AS organization_id, --医院id
+               T1.bus_no       AS ipt_otp_no,      --门诊/住院病历号
+               CASE
+                   WHEN (T1.class_enum = '2') THEN T3.name
+                   WHEN (T1.class_enum = '1') THEN T5.name
+                   ELSE NULL
+                   END         AS department_ward, --科室病区
+               T6.insutype     AS insurance_enum,  --医保类型
+               T8.definition_id AS condition_Id     --诊断id
+        FROM adm_encounter AS T1
+                 LEFT JOIN adm_encounter_diagnosis AS T2
+                           ON T2.encounter_id = T1.id
+                               AND T2.maindise_flag = '1'
+                               AND T2.delete_flag = '0'
+                 LEFT JOIN cli_condition AS T8
+                           ON T2.condition_id = T8.id
+                               AND T8.delete_flag = '0'
+                 LEFT JOIN adm_organization AS T3
+                           ON T1.organization_id = T3.id
+                               AND T3.delete_flag = '0'
+                 LEFT JOIN adm_encounter_location AS T4
+                           ON T4.encounter_id = T1.id
+                               AND T4.status_enum = '2'
+                               AND T4.delete_flag = '0'
+                 LEFT JOIN adm_location AS T5
+                           ON T5.id = T4.location_id
+                               AND T5.delete_flag = '0'
+                 LEFT JOIN yb_clinc_reg AS T6
+                           ON T6.ipt_otp_no = T1.bus_no
+                 LEFT JOIN adm_organization AS T7
+                           ON LEFT (T3.bus_no, 6) = T7.bus_no
+            AND T7.type_enum = '1'
+            AND T7.delete_flag = '0'
+        WHERE T1.id = #{encounterId}
+          AND T1.delete_flag = '0'
+        GROUP BY T7.id,
+            T1.bus_no,
+            T1.class_enum,
+            T3.name,
+            T5.name,
+            T6.insutype,
+            T8.definition_id
+    </select>
+</mapper>

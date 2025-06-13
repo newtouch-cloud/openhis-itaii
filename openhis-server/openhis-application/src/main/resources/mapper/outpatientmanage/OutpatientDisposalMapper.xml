@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.outpatientmanage.mapper.OutpatientDisposalMapper">
+    <select id="selectEncounterInfoListPage" resultType="com.openhis.web.outpatientmanage.dto.OutpatientDisposalEncounterInfoPageDto">
+        SELECT
+            tenant_id,
+            encounter_id,
+            department_name,
+            patient_name,
+            gender_enum,
+            encounter_date,
+            department_id,
+            id_card,
+            start_time
+        FROM (
+                 SELECT T1.tenant_id,
+                        T1.id AS encounter_id,
+                        T1.start_time,
+                        TO_CHAR(T1.start_time, 'YYYY-MM-DD') AS encounter_date,
+                        T1.organization_id AS department_id,
+                        T2.gender_enum,
+                        T2.name AS patient_name,
+                        T2.id_card,
+                        T3.name AS department_name
+                 FROM adm_encounter AS T1
+                          INNER JOIN adm_patient AS T2
+                                     ON T1.patient_id = T2.id
+                          LEFT JOIN adm_organization AS T3
+                                    ON T1.organization_id = T3.id
+                 GROUP BY T1.tenant_id,
+                          T1.id,
+                          T1.start_time,
+                          T1.organization_id,
+                          T2.gender_enum,
+                          T2.name,
+                          T2.id_card,
+                          T3.name
+                 ORDER BY T1.start_time desc,
+                          T1.organization_id,
+                          T1.patient_id
+             ) ${ew.customSqlSegment}
+    </select>
+    <select id="selectEncounterPatientInfo" resultType="com.openhis.web.outpatientmanage.dto.OutpatientDisposalPatientInfoDto">
+        SELECT T2.name                              AS patient_name,      --姓名
+               T2.gender_enum,                                            --性别
+               T2.birth_date,                                             --出生日期
+               T2.id_card,                                                --证件号
+               T3.name                              AS organization_name, --就诊科室
+               TO_CHAR(T1.start_time, 'YYYY-MM-DD') AS encounter_date,    --就诊日期
+               T5.name                              AS condition_name     --门诊诊断
+        FROM adm_encounter AS T1
+                 INNER JOIN adm_patient AS T2
+                            ON T1.patient_id = T2.id
+                                AND T2.delete_flag = '0'
+                 LEFT JOIN adm_organization AS T3
+                           ON T1.organization_id = T3.id
+                               AND T3.delete_flag = '0'
+                 LEFT JOIN adm_encounter_diagnosis AS T4
+                           ON T1.id = T4.encounter_id
+                               AND T4.delete_flag = '0'
+                 LEFT JOIN cli_condition_definition AS T5
+                           ON T4.condition_id = T5.id
+                               AND T5.delete_flag = '0'
+        WHERE T1.id = #{encounterId}
+          AND T1.delete_flag = '0'
+        GROUP BY T2.name,
+                 T2.gender_enum,
+                 T2.birth_date,
+                 T2.id_card,
+                 T3.name,
+                 T1.start_time,
+                 T5.name
+    </select>
+    <select id="selectEncounterActivityInfoList" resultType="com.openhis.web.outpatientmanage.dto.OutpatientDisposalTempInfoDto">
+        SELECT T1.id,
+               T1.bus_no,
+               T1.status_enum,                             --申请状态
+               #{activity}         AS type,                --类型
+               T3.id               AS activity_id,         --诊疗id
+               ''                  AS lot_number,          --产品批号
+               ''                  AS unit_code,           --单位
+               0                   AS part_percent,        --拆零比
+               0                   AS location_id,         --仓库
+               T1.group_no,                                --分组编号
+               T3.name             AS item_name,           --项目名称
+               T4.unit_price,                              --单价
+               T4.total_price,                             --总价
+               0                   AS quantity,            --数量
+               T4.quantity_value   AS frequency,           --次数
+               T4.status_enum      AS charge_status_enum,  --收费状态
+               T4.quantity_unit,                           --单位
+               T5.id               AS device_request_id,   --器材请求
+               T8.id               AS device_dispense_id,  --器材发放
+               T5.bus_no           AS device_bus_no,       --器材请求单据号
+               T6.id               AS device_id,           --耗材id
+               T5.lot_number       AS device_lot_number,   --产品批号
+               T5.unit_code        AS device_unit_code,    --单位
+               T6.part_percent     AS device_part_percent, --拆零比
+               T5.perform_location AS device_location_id,  --仓库
+               T5.group_no         AS device_group_no,     --分组编号
+               T6.name             AS device_item_name,    --项目名称
+               T7.unit_price       AS device_unit_price,   --单价
+               T7.total_price      AS device_total_price,  --总价
+               T7.quantity_value   AS device_quantity,     --数量
+               0                   AS device_frequency,    --次数
+               T7.status_enum      AS device_status_enum,  --收费状态
+               T7.quantity_unit    AS device_quantity_unit --单位
+        FROM wor_service_request AS T1
+                 INNER JOIN adm_encounter AS T2
+                            ON T1.encounter_id = T2.id
+                                AND T2.delete_flag = '0'
+                 LEFT JOIN wor_activity_definition AS T3
+                           ON T1.activity_id = T3.id
+                               AND T3.delete_flag = '0'
+                 LEFT JOIN adm_charge_item AS T4
+                           ON T4.service_id = T1.id
+                               AND T4.service_table = #{serviceTableName}
+                               AND T4.delete_flag = '0'
+                 LEFT JOIN wor_device_request AS T5
+                           ON T5.group_no = T1.group_no
+                               AND T5.encounter_id = T1.encounter_id
+                               AND T5.delete_flag = '0'
+                 LEFT JOIN adm_device_definition AS T6
+                           ON T5.device_def_id = T6.id
+                               AND T6.delete_flag = '0'
+                 LEFT JOIN adm_charge_item AS T7
+                           ON T7.service_id = T5.id
+                               AND T7.service_table = #{requestTableName}
+                               AND T7.delete_flag = '0'
+                 LEFT JOIN wor_device_dispense AS T8
+                           ON T8.device_req_id = T5.id
+                               AND T8.based_on_id IS NULL
+                               AND T8.delete_flag = '0'
+        WHERE T1.encounter_id = #{encounterId}
+          AND T1.based_on_id IS NULL
+          AND T1.delete_flag = '0'
+        UNION
+        SELECT T1.id,
+               T1.bus_no,
+               T1.status_enum,                             --申请状态
+               #{DEVICE}           AS type,                --类型
+               T3.id               AS activity_id,         --耗材id
+               T1.lot_number,                              --产品批号
+               T1.unit_code,                               --单位
+               T3.part_percent,                            --拆零比
+               T1.perform_location AS location_id,         --仓库
+               T1.group_no,                                --分组编号
+               T3.name             AS item_name,           --项目名称
+               T4.unit_price,                              --单价
+               T4.total_price,                             --总价
+               T4.quantity_value   AS quantity,            --数量
+               0                   AS frequency,           --次数
+               T4.status_enum      AS charge_status_enum,  --收费状态
+               T4.quantity_unit,                           --单位
+               0                   AS device_request_id,   --器材请求
+               0                   AS device_dispense_id,  --器材发放
+               ''                  AS device_bus_no,       --器材请求单据号
+               0                   AS device_id,           --耗材id
+               ''                  AS device_lot_number,   --产品批号
+               ''                  AS device_unit_code,    --单位
+               0                   AS device_part_percent, --拆零比
+               0                   AS device_location_id,  --仓库
+               ''                  AS device_group_no,     --分组编号
+               ''                  AS device_item_name,    --项目名称
+               0                   AS device_unit_price,   --单价
+               0                   AS device_total_price,  --总价
+               0                   AS device_quantity,     --数量
+               0                   AS device_frequency,    --次数
+               0                   AS device_status_enum,  --收费状态
+               ''                  AS device_quantity_unit --单位
+        FROM wor_device_request AS T1
+                 INNER JOIN adm_encounter AS T2
+                            ON T1.encounter_id = T2.id
+                                AND T2.delete_flag = '0'
+                 INNER JOIN adm_device_definition AS T3
+                            ON T1.device_def_id = T3.id
+                                AND T3.delete_flag = '0'
+                 LEFT JOIN adm_charge_item AS T4
+                           ON T4.service_id = T1.id
+                               AND T4.service_table = #{requestTableName}
+                               AND T4.delete_flag = '0'
+        WHERE T1.group_no IS NULL
+          AND T1.encounter_id = #{encounterId}
+          AND T1.delete_flag = '0'
+        ORDER BY type, id
+    </select>
+    <select id="selectEncounterDeviceInfoList" resultType="com.openhis.web.outpatientmanage.dto.OutpatientDisposalDeviceInfoDto">
+        SELECT T1.id               AS device_request_id,  --器材请求
+               T5.id               AS device_dispense_id, --器材发放
+               T1.bus_no,
+               T3.id               AS device_id,          --耗材id
+               T1.lot_number,                             --产品批号
+               T1.unit_code,                              --单位
+               T3.part_percent,                           --拆零比
+               T1.perform_location AS location_id,        --仓库
+               T1.group_no,                               --分组编号
+               T3.name             AS item_name,          --项目名称
+               T4.unit_price,                             --单价
+               T4.total_price,                            --总价
+               T4.quantity_value   AS quantity,           --数量
+               0                   AS frequency,          --次数
+               T4.status_enum,                            --收费状态
+               T4.quantity_unit                           --单位
+        FROM wor_device_request AS T1
+                 INNER JOIN adm_encounter AS T2
+                            ON T1.encounter_id = T2.id
+                                AND T2.delete_flag = '0'
+                 INNER JOIN adm_device_definition AS T3
+                            ON T1.device_def_id = T3.id
+                                AND T3.delete_flag = '0'
+                 LEFT JOIN adm_charge_item AS T4
+                           ON T4.service_id = T1.id
+                               AND T4.service_table = #{requestTableName}
+                               AND T4.delete_flag = '0'
+                 LEFT JOIN wor_device_dispense AS T5
+                           ON T5.device_req_id = T1.id
+                               AND T5.based_on_id IS NULL
+                               AND T5.delete_flag = '0'
+        WHERE T1.group_no = #{groupNo}
+          AND T1.encounter_id = #{encounterId}
+          AND T1.delete_flag = '0'
+        ORDER BY T3.id
+    </select>
+    <select id="selectActivityExecuteInfo" resultType="com.openhis.web.outpatientmanage.dto.OutpatientDisposalExecuteInfoDto">
+        SELECT #{type}                  AS type,
+               T1.id                    AS service_request_id,      --服务申请Id
+               T5.id                    AS device_request_id,       --器材请求Id
+               T7.id                    AS device_dispense_id,      --器材发放Id
+               T1.bus_no,                                  --服务请求编码
+               T6.id                    AS device_id,      --器材Id
+               T3.name                  AS performer_name, --执行人
+               T4.name                  AS location_name,  --执行科室
+               T6.name                  AS deviceName,     --耗材名
+               T7.dispense_quantity     AS quantity,       --耗材数
+               T1.occurrence_start_time AS occurrence_time, --执行时间
+               T7.lot_number,                               --产品批号
+               T7.unit_code,                                --单位
+               T6.part_percent,                             -- 拆零比
+               T7.location_id                               --仓库
+        FROM wor_service_request AS T1
+                 INNER JOIN adm_encounter AS T2
+                            ON T1.encounter_id = T2.id
+                                AND T2.delete_flag = '0'
+                 LEFT JOIN adm_practitioner AS T3
+                           ON T1.performer_id = T3.id
+                               AND T3.delete_flag = '0'
+                 LEFT JOIN adm_organization AS T4
+                           ON T1.location_id = T4.id
+                               AND T4.delete_flag = '0'
+                 LEFT JOIN wor_device_request AS T5
+                           ON T1.group_no = T5.group_no
+                               AND T5.delete_flag = '0'
+                 LEFT JOIN adm_device_definition AS T6
+                           ON T5.device_def_id = T6.id
+                               AND T6.delete_flag = '0'
+                 LEFT JOIN wor_device_dispense AS T7
+                           ON T7.device_req_id = T5.id
+                               AND RIGHT (T7.bus_no, 3) = RIGHT (T1.bus_no, 3)
+            AND T7.delete_flag = '0'
+        WHERE T1.activity_id = #{activityId}
+          AND LEFT (T1.bus_no
+            , 10) = #{busNo}
+          AND T1.status_enum = #{status}
+          AND T1.based_on_id IS NOT NULL
+          AND T7.based_on_id IS NOT NULL
+          AND T1.delete_flag = '0'
+        ORDER BY T1.occurrence_start_time
+    </select>
+    <select id="selectDeviceExecuteInfo" resultType="com.openhis.web.outpatientmanage.dto.OutpatientDisposalExecuteInfoDto">
+        SELECT #{type}              AS type,
+               ''                   AS service_request_id, --服务申请Id
+               T6.id                AS device_request_id,  --器材请求Id
+               T1.id                AS device_dispense_id, --器材发放Id
+               T1.bus_no,                                  --服务请求编码
+               T1.device_def_id     AS device_id,          --器材Id
+               T3.name              AS performer_name,     --执行人
+               T4.name              AS location_name,      --执行科室
+               T5.name              AS deviceName,         --耗材名
+               T1.dispense_quantity AS quantity,           --耗材数
+               T1.dispense_time     AS occurrence_time,    --执行时间
+               T1.lot_number,                              --产品批号
+               T1.unit_code,                               --单位
+               T5.part_percent,                            -- 拆零比
+               T1.location_id                              --仓库
+        FROM wor_device_dispense AS T1
+                 INNER JOIN adm_encounter AS T2
+                            ON T1.encounter_id = T2.id
+                                AND T2.delete_flag = '0'
+                 LEFT JOIN adm_practitioner AS T3
+                           ON T1.performer_id = T3.id
+                               AND T3.delete_flag = '0'
+                 LEFT JOIN adm_organization AS T4
+                           ON T1.location_id = T4.id
+                               AND T4.delete_flag = '0'
+                 LEFT JOIN adm_device_definition AS T5
+                           ON T1.device_def_id = T5.id
+                               AND T5.delete_flag = '0'
+                 LEFT JOIN wor_device_request AS T6
+                           ON T1.device_req_id = T6.id
+                               AND T6.delete_flag = '0'
+        WHERE T1.device_def_id = #{activityId}
+          AND LEFT (T1.bus_no
+            , 10) = #{busNo}
+          AND T1.status_enum = #{status}
+          AND T1.based_on_id IS NOT NULL
+          AND T1.delete_flag = '0'
+        ORDER BY T1.dispense_time
+    </select>
+    <select id="selectEncounterActivityInfo" resultType="com.openhis.web.outpatientmanage.dto.OutpatientDisposalActivityInfoDto">
+        SELECT T1.id,
+               T1.bus_no,
+               T1.status_enum,                          --申请状态
+               #{activity}       AS type,               --类型
+               T3.id             AS activity_id,        --诊疗id
+               ''                AS lot_number,         --产品批号
+               ''                AS unit_code,          --单位
+               0                 AS part_percent,       --拆零比
+               0                 AS location_id,        --仓库
+               T1.group_no,                             --分组编号
+               T3.name           AS item_name,          --项目名称
+               T4.unit_price,                           --单价
+               T4.total_price,                          --总价
+               0                 AS quantity,           --数量
+               T4.quantity_value AS frequency,          --次数
+               T4.status_enum    AS charge_status_enum, --收费状态
+               T4.quantity_unit                         --单位
+        FROM wor_service_request AS T1
+                 INNER JOIN adm_encounter AS T2
+                            ON T1.encounter_id = T2.id
+                                AND T2.delete_flag = '0'
+                 LEFT JOIN wor_activity_definition AS T3
+                           ON T1.activity_id = T3.id
+                               AND T3.delete_flag = '0'
+                 LEFT JOIN adm_charge_item AS T4
+                           ON T4.service_id = T1.id
+                               AND T4.service_table = #{serviceTableName}
+                               AND T4.delete_flag = '0'
+        WHERE T1.id = #{itemId}
+          AND T1.based_on_id IS NULL
+          AND T1.delete_flag = '0'
+    </select>
+    <select id="selectEncounterActivityDeviceInfo" resultType="com.openhis.web.outpatientmanage.dto.OutpatientDisposalActivityInfoDto">
+        SELECT T1.id,
+               T1.bus_no,
+               T1.status_enum,                            --申请状态
+               #{DEVICE}           AS type,               --类型
+               T3.id               AS activity_id,        --耗材id
+               T1.lot_number,                             --产品批号
+               T1.unit_code,                              --单位
+               T3.part_percent,                           --拆零比
+               T1.perform_location AS location_id,        --仓库
+               T1.group_no,                               --分组编号
+               T3.name             AS item_name,          --项目名称
+               T4.unit_price,                             --单价
+               T4.total_price,                            --总价
+               T4.quantity_value   AS quantity,           --数量
+               0                   AS frequency,          --次数
+               T4.status_enum      AS charge_status_enum, --收费状态
+               T4.quantity_unit                           --单位
+        FROM wor_device_request AS T1
+                 INNER JOIN adm_encounter AS T2
+                            ON T1.encounter_id = T2.id
+                                AND T2.delete_flag = '0'
+                 INNER JOIN adm_device_definition AS T3
+                            ON T1.device_def_id = T3.id
+                                AND T3.delete_flag = '0'
+                 LEFT JOIN adm_charge_item AS T4
+                           ON T4.service_id = T1.id
+                               AND T4.service_table = #{requestTableName}
+                               AND T4.delete_flag = '0'
+        WHERE T1.group_no IS NULL
+          AND T1.id = #{itemId}
+          AND T1.delete_flag = '0'
+        ORDER BY type, activity_id
+    </select>
+</mapper>

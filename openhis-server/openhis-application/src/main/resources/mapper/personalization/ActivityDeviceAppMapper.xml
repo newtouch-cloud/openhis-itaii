@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.personalization.mapper.ActivityDeviceAppMapper">
+
+    <select id="selectActivityDevicePage" resultType="com.openhis.web.personalization.dto.ActivityDeviceDto">
+        SELECT T1.id ,
+               T1.range_code ,
+               T1.type_code ,
+               T1.item_no ,
+               T1.dev_act_id ,
+               T1.quantity ,
+               T1.status_enum ,
+               T1.device_name,
+               T1.device_wb_str,
+               T1.device_py_str,
+               T1.activity_name,
+               T1.activity_py_str,
+               T1.activity_wb_str
+        FROM ( SELECT tad.id ,
+                      tad.range_code ,
+                      tad.type_code ,
+                      tad.item_no ,
+                      tad.dev_act_id ,
+                      tad.quantity ,
+                      tad.status_enum ,
+                      tad.tenant_id ,
+                      ad."name" AS device_name,
+                      ad.wb_str AS device_wb_str,
+                      ad.py_str AS device_py_str,
+                      wad."name" AS activity_name,
+                      wad.py_str AS activity_py_str,
+                      wad.wb_str AS activity_wb_str
+                  FROM tmp_activity_device AS tad
+                      LEFT JOIN adm_device_definition AS ad
+                          ON tad.dev_act_id = ad.id
+                              AND ad.delete_flag = '0'
+                      LEFT JOIN wor_activity_definition AS wad
+                          ON tad.dev_act_id = wad.id
+                              AND wad.delete_flag = '0'
+                  WHERE tad.delete_flag = '0'
+                  ) AS T1
+            ${ew.customSqlSegment}
+    </select>
+</mapper>

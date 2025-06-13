@@ -1,0 +1,6 @@
+#http.yml
+http:
+  appId: "JLNYDX2611325"
+  key: "e3d214e5b8414b583aefd287fd"
+  url: "http://clydzp.chinaebill.cn:8001/medical-web"
+  fixmedinsCode: "H22017200667"

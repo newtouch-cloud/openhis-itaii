@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.reportmanage.mapper.ChargeReportMapper">
+    <!--门诊收入明细-->
+    <select id="selectRevenueReportPage"
+            resultType="com.openhis.web.reportmanage.dto.ChargeReportPageDto">
+        SELECT T8.tenant_id,
+               T8.payment_id,
+               T8.charge_id,
+               T8.name,           --姓名
+               T8.gender_enum,    --性别
+               T8.birth_date,     --出生日期
+               T8.id_card,        --证件号
+               T8.yb_code,        --医保号
+               T8.encounter_date, --就诊日期
+               T8.bus_no,--患者院内编码/病历号
+               T8.department_id,--科室
+               T8.department_name,--科室
+               T8.clinical_name,--项目名
+               T8.clinical_no,  --项目编码
+               T8.ybNo,--医保码
+               T8.type,           --类别
+               T8.issuer_id,--开单人
+               T8.issuer_name,--开单人
+               T8.payee_id,--收款人
+               T8.payee_name,--收款人
+               T8.number,--数量
+               T8.quantity_unit,--单位
+               T8.price,--单价
+               T8.total_price,--金额
+               T8.charge_time,-- 收费时间
+               T8.total_volume,   --规格
+               T8.chrgitmLv,--医保等级
+               T8.clinical_type,   --项目类型
+               T8.encounter_id
+        FROM (SELECT DISTINCT T1.tenant_id,
+                              T1.id AS payment_id,
+                              T4.id AS charge_id,
+                              T15.name,                                                   --姓名
+                              T15.gender_enum,                                            --性别
+                              T15.birth_date,                                             --出生日期
+                              T15.id_card,                                                --证件号
+                              T16.psn_no                               AS yb_code,        --医保号
+                              TO_CHAR(T2.reception_time, 'YYYY-MM-DD') AS encounter_date, --就诊日期
+                              T2.bus_no,                                                  --患者院内编码/病历号
+                              T3.id                                    AS department_id,--科室
+                              T3.name                                  AS department_name,--科室
+                              CASE
+                                  WHEN T5.instance_table = 'adm_device_definition' THEN T11.name
+                                  WHEN T5.instance_table = 'adm_healthcare_service' THEN T12.name
+                                  WHEN T5.instance_table = 'med_medication_definition' THEN T13.name
+                                  WHEN T5.instance_table = 'wor_activity_definition' THEN T14.name
+                                  ELSE NULL
+                                  END                                  AS clinical_name,  --项目名
+                              CASE
+                                  WHEN T5.instance_table = 'adm_device_definition' THEN T11.bus_no
+                                  WHEN T5.instance_table = 'med_medication_definition' THEN T13.bus_no
+                                  WHEN T5.instance_table = 'wor_activity_definition' THEN T14.bus_no
+                                  ELSE NULL
+                                  END                                  AS clinical_no,  --项目编码
+                              CASE
+                                  WHEN T5.instance_table = 'adm_device_definition' THEN T11.yb_no
+                                  WHEN T5.instance_table = 'adm_healthcare_service' THEN T12.yb_no
+                                  WHEN T5.instance_table = 'med_medication_definition' THEN T13.yb_no
+                                  WHEN T5.instance_table = 'wor_activity_definition' THEN T14.yb_no
+                                  ELSE NULL
+                                  END                                  AS ybNo,           --医保码
+                              T5.yb_type                               AS type,           --医保类别
+                              T6.id                                    AS issuer_id,--开单人
+                              T6.name                                  AS issuer_name,--开单人
+                              T7.id                                    AS payee_id,--收款人
+                              T7.name                                  AS payee_name,--收款人
+                              T4.quantity_value                        AS number,--数量
+                              T4.quantity_unit,--单位
+                              T4.unit_price                            AS price,--单价
+                              CASE
+                                  WHEN T1.status_enum = #{refundAll} THEN -T4.total_price
+                                  ELSE T4.total_price
+                                  END AS total_price,--金额
+                              T1.bill_date                             AS charge_time,-- 收费时间
+                              CASE
+                                  WHEN T5.instance_table = 'adm_device_definition' THEN T17.device_specifications
+                                  WHEN T5.instance_table = 'med_medication_definition' THEN T18.total_volume
+                                  ELSE NULL
+                                  END                                  AS total_volume,   --规格
+                              CASE
+                                  WHEN T5.instance_table = 'adm_device_definition' THEN T11.chrgitm_lv
+                                  WHEN T5.instance_table = 'med_medication_definition' THEN T13.chrgitm_lv
+                                  WHEN T5.instance_table = 'wor_activity_definition' THEN T14.chrgitm_lv
+                                  ELSE NULL
+                                  END                                  AS chrgitmLv,--医保等级
+                              CASE
+                                  WHEN T5.instance_table = 'adm_device_definition' THEN #{device}
+                                  WHEN T5.instance_table = 'adm_healthcare_service' THEN #{register}
+                                  WHEN T5.instance_table = 'med_medication_definition' THEN #{medication}
+                                  WHEN T5.instance_table = 'wor_activity_definition' THEN #{activity}
+                                  ELSE NULL
+                                  END                                  AS clinical_type,   --项目类型
+                               T1.encounter_id
+              FROM fin_payment_reconciliation T1
+                       LEFT JOIN adm_encounter T2
+                                 ON T2.id = T1.encounter_id
+                                     AND T2.delete_flag = '0'
+                       LEFT JOIN adm_patient AS T15
+                                 ON T1.patient_id = T15.id
+                                     AND T15.delete_flag = '0'
+                       LEFT JOIN yb_clinc_reg AS T16
+                                 ON T2.bus_no = T16.ipt_otp_no
+                       LEFT JOIN adm_organization AS T3
+                                 ON T2.organization_id = T3.id
+                                     AND T3.delete_flag = '0'
+                       LEFT JOIN adm_charge_item T4
+                                 ON CONCAT(',', T1.charge_item_ids, ',') LIKE CONCAT('%,', T4.id, ',%')
+                                     AND T4.delete_flag = '0'
+                       LEFT JOIN adm_charge_item_definition T5
+                                 ON T4.definition_id = T5.id
+                                     AND T5.delete_flag = '0'
+                       LEFT JOIN adm_device_definition T11
+                                 ON T5.instance_id = T11.id
+                                     AND T5.instance_table = 'adm_device_definition'
+                                     AND T11.delete_flag = '0'
+                       LEFT JOIN adm_device T17
+                                 ON T11.id = T17.device_def_id
+                                     AND T17.delete_flag = '0'
+                       LEFT JOIN adm_healthcare_service T12
+                                 ON T5.instance_id = T12.id
+                                     AND T5.instance_table = 'adm_healthcare_service'
+                                     AND T12.delete_flag = '0'
+                       LEFT JOIN med_medication_definition T13
+                                 ON T5.instance_id = T13.id
+                                     AND T5.instance_table = 'med_medication_definition'
+                                     AND T13.delete_flag = '0'
+                       LEFT JOIN med_medication T18
+                                 ON T13.id = T18.medication_def_id
+                                     AND T18.delete_flag = '0'
+                       LEFT JOIN wor_activity_definition T14
+                                 ON T5.instance_id = T14.id
+                                     AND T5.instance_table = 'wor_activity_definition'
+                                     AND T14.delete_flag = '0'
+                       LEFT JOIN adm_practitioner T6
+                                 ON T4.enterer_id = T6.id
+                                     AND T6.delete_flag = '0'
+                       LEFT JOIN adm_practitioner T7
+                                 ON T1.enterer_id = T7.id
+                                     AND T7.delete_flag = '0'
+                        <if test="statisticsFlg == 0 or statisticsFlg == 1">
+                            INNER JOIN adm_account T19
+                            ON T4.account_id = T19.id
+                            AND T19.delete_flag = '0'
+                            INNER JOIN fin_contract T20
+                            ON T19.contract_no = T20.bus_no
+                            AND T20.yb_flag = #{statisticsFlg}
+                            AND T20.delete_flag = '0'
+                        </if>
+         <if test="statisticsFlg == 3">
+              WHERE T1.status_enum = #{refundAll}
+         </if>
+         <if test="statisticsFlg != 3">
+              WHERE T1.status_enum IN (#{success}, #{refundAll})
+         </if>
+                AND T1.delete_flag = '0'
+              ORDER BY T2.bus_no) AS T8
+            ${ew.customSqlSegment}
+    </select>
+</mapper>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.paymentmanage.mapper.PaymentMapper">
+
+    <select id="getPage" resultType="com.openhis.web.paymentmanage.dto.PaymentVO">
+        SELECT T1.id,
+               T1.status_enum,
+               T1.payment_no,
+               T1.payment_enum,
+               T1.enterer_id,
+               T1.patient_id,
+               T1.outcome_enum,
+               T1.tendered_amount,
+               T1.returned_amount,
+               T1.display_amount,
+               T1.print_count,
+               T1.bill_date,
+               T1.encounter_id,
+               T1.yb_clear_flag,
+               T1.yb_settle_ids,
+               T1.enterer_name,
+               T1.patient_name,
+               T1.invoice_id,
+               T1.bill_no as invoice_no,
+               T1.encounter_bus_no
+        FROM (SELECT t.id,
+                     t.status_enum,
+                     t.payment_no,
+                     t.payment_enum,
+                     t.enterer_id,
+                     pra.name AS enterer_name,
+                     t.patient_id,
+                     patient.name AS patient_name,
+                     t.outcome_enum,
+                     t.tendered_amount,
+                     t.returned_amount,
+                     t.display_amount,
+                     t.bill_date,
+                     t.print_count,
+                     t.encounter_id,
+                     invoice.id AS invoice_id,
+                     invoice.bill_no,
+                     t.yb_clear_flag,
+                     t.yb_settle_ids,
+                     enc.bus_no AS encounter_bus_no,
+                     t.tenant_id
+              FROM fin_payment_reconciliation t
+                       LEFT JOIN adm_patient patient ON patient.id = t.patient_id
+                       LEFT JOIN adm_practitioner pra ON pra.id = t.enterer_id
+                       LEFT JOIN adm_invoice invoice ON invoice.reconciliation_id = t.id
+                       LEFT JOIN adm_encounter enc ON enc.id = t.enterer_id
+              WHERE 1 = 1 AND t.delete_flag = '0'
+              ORDER BY t.create_time DESC) as T1
+            ${ew.customSqlSegment}
+    </select>
+    <select id="getPaymentDetailList" resultType="com.openhis.web.paymentmanage.dto.PaymentDetailDto">
+        SELECT
+            id,
+            predecessor_id,
+            target_enum,
+            account_id,
+            account_code,
+            pay_enum,
+            pay_level_enum,
+            amount,
+            return_amount,
+            charge_amount,
+            pay_trans_no,
+            pay_trans_text,
+            pay_trans_date,
+            before_balance,
+            after_balance,
+            result_enum,
+            tenant_id,
+            delete_flag,
+            create_by,
+            create_time,
+            update_by,
+            update_time
+        FROM fin_payment_rec_detail WHERE
+            predecessor_id = #{id}
+    </select>
+    <select id="getChargeItemList" resultType="com.openhis.web.paymentmanage.dto.ChargeItemDto">
+        select
+            T.id,
+            T.status_enum,
+            T.bus_no,
+            T.prescription_no,
+            T.patient_id,
+            T.context_enum,
+            T.encounter_id,
+            T.occurrence_time,
+            T.performer_id,
+            T.performing_org_id,
+            T.requesting_org_id,
+            T.cost_org_id,
+            T.quantity_value,
+            T.quantity_unit,
+            T.unit_price,
+            T.total_price,
+            T.definition_id,
+            T.def_detail_id,
+            T.base_amount,
+            T.discount_amount,
+            T.surcharge_amount,
+            T.override_reason_code,
+            T.override_reason_text,
+            T.enterer_id,
+            T.entered_date,
+            T.service_table,
+            T.service_id,
+            T.product_table,
+            T.product_id,
+            T.claim_state_enum,
+            T.print_count,
+            T.account_id,
+            T.org_id,
+            T.refund_id,
+            T.tenant_id,
+            T.delete_flag,
+            T.create_by,
+            T.create_time,
+            T.update_by,
+            T.update_time,
+            T1.type_code
+            FROM adm_charge_item AS T LEFT JOIN adm_charge_item_definition AS T1 ON T.definition_id =T1.id
+                LEFT JOIN sys_dict_type AS T2 ON T1.type_code = T2.dict_type
+            WHERE T2.dict_type = #{s} AND T.id IN (#{collect})
+    </select>
+    <select id="getChargeItems" resultType="com.openhis.web.paymentmanage.dto.ChargeItemDto">
+        select
+            T.id,
+            T.status_enum,
+            T.bus_no,
+            T.prescription_no,
+            T.patient_id,
+            T.context_enum,
+            T.encounter_id,
+            T.occurrence_time,
+            T.performer_id,
+            T.performing_org_id,
+            T.requesting_org_id,
+            T.cost_org_id,
+            T.quantity_value,
+            T.quantity_unit,
+            T.unit_price,
+            T.total_price,
+            T.definition_id,
+            T.def_detail_id,
+            T.base_amount,
+            T.discount_amount,
+            T.surcharge_amount,
+            T.override_reason_code,
+            T.override_reason_text,
+            T.enterer_id,
+            T.entered_date,
+            T.service_table,
+            T.service_id,
+            T.product_table,
+            T.product_id,
+            T.claim_state_enum,
+            T.print_count,
+            T.account_id,
+            T.org_id,
+            T.refund_id,
+            T.tenant_id,
+            T.delete_flag,
+            T.create_by,
+            T.create_time,
+            T.update_by,
+            T.update_time,
+            T1.type_code
+        FROM adm_charge_item AS T
+            LEFT JOIN adm_charge_item_definition AS T1 ON T.definition_id =T1.id
+            LEFT JOIN sys_dict_type AS T2 ON T1.type_code = T2.dict_type
+        WHERE T.id IN (#{collect})
+    </select>
+    <select id="getChargeItemListByEncounterId" resultType="com.openhis.web.paymentmanage.dto.ChargeItemDto">
+        select
+            T.id,
+            T.status_enum,
+            T.bus_no,
+            T.prescription_no,
+            T.patient_id,
+            T.context_enum,
+            T.encounter_id,
+            T.occurrence_time,
+            T.performer_id,
+            T.performing_org_id,
+            T.requesting_org_id,
+            T.cost_org_id,
+            T.quantity_value,
+            T.quantity_unit,
+            T.unit_price,
+            T.total_price,
+            T.definition_id,
+            T.def_detail_id,
+            T.base_amount,
+            T.discount_amount,
+            T.surcharge_amount,
+            T.override_reason_code,
+            T.override_reason_text,
+            T.enterer_id,
+            T.entered_date,
+            T.service_table,
+            T.service_id,
+            T.product_table,
+            T.product_id,
+            T.claim_state_enum,
+            T.print_count,
+            T.account_id,
+            T.org_id,
+            T.refund_id,
+            T.tenant_id,
+            T.delete_flag,
+            T.create_by,
+            T.create_time,
+            T.update_by,
+            T.update_time,
+            T1.type_code
+        FROM adm_charge_item AS T
+                 LEFT JOIN adm_charge_item_definition AS T1 ON T.definition_id =T1.id
+                 LEFT JOIN sys_dict_type AS T2 ON T1.type_code = T2.dict_type
+        WHERE T.encounter_id = #{encounterId}
+    </select>
+    <select id="selectDispenseQuantity" resultType="com.openhis.web.paymentmanage.dto.DispenseQuantityDto">
+        SELECT COALESCE(SUM(mmr.quantity), 0) AS minpacunt_drug_trac_cnt,
+               COALESCE(SUM(wdr.quantity), 0) AS mcs_trac_cnt
+        FROM adm_charge_item aci
+            LEFT JOIN med_medication_request mmr
+                ON aci.service_id = mmr.id
+                    AND mmr.delete_flag = '0'
+            LEFT JOIN wor_device_request wdr
+                ON aci.service_id = wdr.id
+                    AND wdr.delete_flag = '0'
+        WHERE aci.delete_flag = '0'
+            AND aci.id IN
+        <foreach collection="chargeItemIds" item="chargeItemId" open="(" separator="," close=")">
+            #{chargeItemId}
+        </foreach>
+    </select>
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.datadictionary.mapper.ItemDefinitionAppMapper">
+
+    <select id="getChargeItemInfo" resultType="com.openhis.web.datadictionary.dto.ItemDefinitionDto">
+        SELECT
+        cii.tenant_id,
+        cii.ID,
+        cii.charge_name,
+        cii.status_enum,
+        cii.org_id,
+        cii.type_code,
+        cii.yb_type,
+        cii.instance_table,
+        cii.price,
+        cii.detail_count
+        FROM
+        (SELECT
+        T1.tenant_id,
+        T1.ID,
+        T1.charge_name,
+        T1.status_enum,
+        T1.org_id,
+        T1.type_code,
+        T1.yb_type,
+        T1.instance_table,
+        T1.price,
+        COUNT ( T2.ID ) AS detail_count
+        FROM
+        adm_charge_item_definition AS T1
+        LEFT JOIN adm_charge_item_def_detail AS T2 ON T2.definition_id = T1.ID
+        AND T2.delete_flag = '0'
+        WHERE
+        T1.delete_flag = '0'
+        <if test="chargeItemContext == 1 ">
+            AND T1.instance_table = #{MED_MEDICATION_DEFINITION}
+        </if>
+        <if test="chargeItemContext == 2 ">
+            AND T1.instance_table = #{ADM_DEVICE_DEFINITION}
+        </if>
+        <if test="chargeItemContext == 3 ">
+            AND (T1.instance_table = #{WOR_ACTIVITY_DEFINITION} OR T1.instance_table = #{ADM_HEALTHCARE_SERVICE})
+        </if>
+        GROUP BY T1.tenant_id,
+                 T1.ID,
+                 T1.charge_name,
+                 T1.status_enum,
+                 T1.org_id,
+                 T1.type_code,
+                 T1.yb_type,
+                 T1.instance_table,
+                 T1.price
+            ) AS cii
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="getChargeItemInfoDetail" resultType="com.openhis.web.datadictionary.dto.ItemDefinitionDetailDto">
+        SELECT condition_code,
+               amount
+        FROM adm_charge_item_def_detail
+        WHERE delete_flag = '0'
+          AND definition_id = #{id}
+    </select>
+
+</mapper>

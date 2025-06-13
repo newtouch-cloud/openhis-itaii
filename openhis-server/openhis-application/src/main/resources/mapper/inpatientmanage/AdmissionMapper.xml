@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.inpatientmanage.mapper.AdmissionMapper">
+
+    <!-- 住院登记信息分页查询-->
+    <select id="getPage" parameterType="java.util.Map"
+            resultType="com.openhis.web.inpatientmanage.dto.AdmissionDto">
+        SELECT
+        T1.id,
+        T1.patient_id,
+        T1.group_id,
+        T1.encounter_bus_no,
+        T1.status_enum,
+        T1.class_enum,
+        T1.yb_class_enum,
+        T1.organization_id,
+        T1.in_way_code,
+        T1.admit_source_code,
+        T1.tenant_id,
+        T1.create_time,
+        T1.create_by,
+        T1.name,
+        T1.patient_bus_no,
+        T1.gender_enum,
+        T1.birth_date,
+        T1.phone,
+        T1.id_card,
+        T1.py_str,
+        T1.wb_str,
+        T1.ward_location_id
+        FROM
+        (
+        SELECT
+        e.id,
+        e.patient_id,
+        e.group_id,
+        e.bus_no as encounter_bus_no,
+        e.status_enum,
+        e.class_enum,
+        e.yb_class_enum,
+        e.organization_id,
+        e.admit_source_code,
+        e.in_way_code,
+        e.tenant_id,
+        e.create_time,
+        e.create_by,
+        p.name,
+        p.bus_no AS patient_bus_no,
+        p.gender_enum,
+        p.birth_date,
+        p.phone,
+        p.id_card,
+        p.py_str,
+        p.wb_str,
+        (SELECT el.location_id
+        FROM adm_encounter_location el
+        WHERE el.encounter_id = e.id AND el.form_enum = #{formEnum} --4:病区
+        ORDER BY el.id DESC
+        LIMIT 1) as ward_location_id--病区
+        FROM adm_encounter e
+        LEFT JOIN adm_patient p ON e.patient_id = p.id
+        <where>
+            e.delete_flag = '0'
+            AND e.class_enum = #{classEnum} --1:住院
+        </where>
+        ORDER BY e.bus_no desc
+        ) AS T1
+        ${ew.customSqlSegment}
+
+    </select>
+
+    <!-- 住院登记信息分页查询-->
+    <select id="getAdmissionOne" parameterType="java.util.Map"
+            resultType="com.openhis.web.inpatientmanage.dto.AdmissionUpDto">
+        SELECT
+        e.id,
+        e.patient_id,
+        e.group_id,
+        e.bus_no as encounter_bus_no,
+        e.status_enum,
+        e.class_enum,
+        e.yb_class_enum,
+        e.class_json,
+        e.priority_enum,
+        e.type_enum,
+        e.service_type_id,
+        e.subject_status_enum,
+        e.start_time,
+        e.end_time,
+        e.organization_id,
+        e.display_order,
+        e.admit_source_code,
+        e.in_way_code,
+        e.first_enum,
+        e.tenant_id,
+        p.name,
+        p.bus_no AS patient_bus_no,
+        p.gender_enum,
+        p.birth_date,
+        p.address,
+        p.prfs_enum,
+        p.phone,
+        p.id_card,
+        p.py_str,
+        p.wb_str,
+        p.work_company,
+        p.native_place,
+        p.country_code,
+        p.nationality_code,
+        p.link_name,
+        p.link_relation_code,
+        p.link_telcom,
+        (SELECT pra.name
+        FROM adm_encounter_participant ep
+        LEFT JOIN adm_practitioner pra ON ep.practitioner_id = pra.id
+        WHERE ep.encounter_id = e.id
+        AND ep.type_code = #{typeCode} --就诊参与者身份类型是1:接诊医生
+        ORDER BY ep.create_time DESC
+        LIMIT 1) AS doctor_name,--接诊医生
+        COALESCE((SELECT COUNT(*)
+        FROM adm_encounter e1
+        WHERE e1.patient_id = e.patient_id
+        AND e1.class_enum = #{classEnum} --住院类型
+        AND e1.status_enum = #{statusEnum} --出院,诊毕
+        ), 0) AS hospitalization_count,-- 住院次数
+        el.location_id AS ward_location_id, --病区
+        l.bus_no,
+        (SELECT COUNT(*)
+        FROM adm_location
+        WHERE bus_no LIKE l.bus_no || '%'
+        AND form_enum = #{bedForm} -- 8:病床
+        AND operational_enum = #{operational} -- 病床状态 3：占用中
+        ) || '/' ||
+        (SELECT COUNT(*)
+        FROM adm_location
+        WHERE bus_no LIKE l.bus_no || '%'
+        AND form_enum = #{bedForm} -- 8:病床
+        ) AS bed_count -- 占用中/病床总数
+        FROM adm_encounter e
+        LEFT JOIN adm_patient p ON e.patient_id = p.id
+        LEFT JOIN adm_encounter_location el ON e.id = el.encounter_id AND el.form_enum = #{wardForm}--4：病区
+        LEFT JOIN adm_location l ON l.id = el.location_id AND l.form_enum = #{wardForm}--4：病区
+        <where>
+            e.delete_flag = '0'
+            AND e.class_enum = #{classEnum}
+
+            <if test="id!= null">
+                AND e.id = #{id}
+            </if>
+
+            <if test="tenantId!= null">
+                AND e.tenant_id = #{tenantId}
+            </if>
+
+        </where>
+        ORDER BY e.bus_no desc
+
+    </select>
+
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.yb.mapper.RegMapper">
+    <resultMap id="RegMap" type="com.openhis.yb.domain.ClinicReg">
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="medicalNo" column="medical_no" jdbcType="VARCHAR"/>
+        <result property="mdtrtId" column="mdtrt_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="naty" column="naty" jdbcType="VARCHAR"/>
+        <result property="brdy" column="brdy" jdbcType="DATE"/>
+        <result property="age" column="age" jdbcType="DOUBLE"/>
+        <result property="fixmedinsCode" column="fixmedins_code" jdbcType="VARCHAR"/>
+        <result property="fixmedinsName" column="fixmedins_name" jdbcType="VARCHAR"/>
+        <result property="mdtrtareaAdmvs" column="mdtrtarea_admvs" jdbcType="VARCHAR"/>
+        <result property="insuplcAdmdvs" column="insuplc_admdvs" jdbcType="VARCHAR"/>
+        <result property="psnNo" column="psn_no" jdbcType="VARCHAR"/>
+        <result property="insutype" column="insutype" jdbcType="VARCHAR"/>
+        <result property="medType" column="med_type" jdbcType="VARCHAR"/>
+        <result property="begntime" column="begntime" jdbcType="TIMESTAMP"/>
+        <result property="mdtrtCertType" column="mdtrt_cert_type" jdbcType="VARCHAR"/>
+        <result property="mdtrtCertNo" column="mdtrt_cert_no" jdbcType="VARCHAR"/>
+        <result property="iptOtpNo" column="ipt_otp_no" jdbcType="VARCHAR"/>
+        <result property="atddrNo" column="atddr_no" jdbcType="VARCHAR"/>
+        <result property="drName" column="dr_name" jdbcType="VARCHAR"/>
+        <result property="deptCode" column="dept_code" jdbcType="VARCHAR"/>
+        <result property="deptName" column="dept_name" jdbcType="VARCHAR"/>
+        <result property="caty" column="caty" jdbcType="VARCHAR"/>
+        <result property="regFee" column="reg_fee" jdbcType="DOUBLE"/>
+        <result property="checkFee" column="check_fee" jdbcType="DOUBLE"/>
+        <result property="totalFee" column="total_fee" jdbcType="DOUBLE"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="sysOrgCode" column="sys_org_code" jdbcType="VARCHAR"/>
+        <result property="tenantId" column="tenant_id" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Reg_List">
+        id,
+        medical_no,
+        mdtrt_id,
+        NAME,
+        sex,
+        naty,
+        brdy,
+        age,
+        fixmedins_code,
+        fixmedins_name,
+        mdtrtarea_admvs,
+        insuplc_admdvs,
+        psn_no,
+        insutype,
+        med_type,
+        begntime,
+        mdtrt_cert_type,
+        mdtrt_cert_no,
+        ipt_otp_no,
+        atddr_no,
+        dr_name,
+        dept_code,
+        dept_name,
+        caty,
+        reg_fee,
+        check_fee,
+        total_fee,
+        STATUS,
+        create_by,
+        create_time,
+        sys_org_code,
+        tenant_id
+    </sql>
+    <!-- 查询挂号列表 -->
+    <select id="queryRegList" resultMap="RegMap">
+        select
+        <include refid="Reg_List"/>
+        from
+        business_clinc_reg
+        <where>
+            DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
+            <!-- 病历号 -->
+            <if test="reg.medicalNo != null and reg.medicalNo !=''">
+                and medical_no LIKE CONCAT(CONCAT('%', #{reg.medicalNo}),'%')
+            </if>
+            <!-- 姓名 -->
+            <if test="reg.name != null and reg.name !=''">
+                and name LIKE CONCAT(CONCAT('%', #{reg.name}),'%')
+            </if>
+            <!-- 状态 -->
+            <choose>
+                <when test="reg.status != null and reg.status == '0'.toString()">
+                    and status = '0'
+                </when>
+                <otherwise>
+                    and status = '1'
+                </otherwise>
+            </choose>
+        </where>
+        order by create_time desc
+    </select>
+</mapper>

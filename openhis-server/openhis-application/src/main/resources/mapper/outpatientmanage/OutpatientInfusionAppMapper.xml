@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.outpatientmanage.mapper.OutpatientInfusionAppMapper">
+
+    <!-- 门诊皮试记录相关查询-->
+    <select id="getSkinTestRecords"
+            parameterType="com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordSearchParam"
+            resultType="com.openhis.web.outpatientmanage.dto.OutpatientSkinTestRecordDto">
+        SELECT
+        T1.tenant_id,
+        T1.id,
+        T1.prescription_no,
+        T1.encounter_bus_no,
+        T1.patient_name,
+        T1.patient_bus_no,
+        T1.patient_id,
+        T1.phone,
+        T1.medication_information,
+        T1.medication_detail,
+        T1.medication_lot_number,
+        T1.medication_status_enum,
+        T1.performer_id,
+        T1.performer_check_id,
+        T1.occurrence_start_time,
+        T1.occurrence_end_time,
+        T1.clinical_status_enum,
+        T1.verification_status_enum,
+        T1.doctor_id,
+        T1.recorded_date,
+        T1.note
+        FROM
+        (
+        SELECT
+        sr.tenant_id,
+        sr.id, --服务申请管理ID
+        mr.prescription_no, --处方号
+        e.bus_no as encounter_bus_no, --就诊号
+        pt.name AS patient_name, --病人姓名
+        pt.bus_no AS patient_bus_no, --病人ID（前台显示用）
+        pt.phone,
+        sr.patient_id, --病人ID
+        ad.name AS medication_information, --药品信息
+        md.bus_no || ' ' || md.name || ' 规格：' || COALESCE(m.total_volume, '') AS medication_detail,--药品
+        m.lot_number AS medication_lot_number, --药品批次号
+        mmd.status_enum AS medication_status_enum, --药品发放状态
+        sr.performer_id, --执行护士
+        sr.performer_check_id,--核对人
+        to_char(sr.occurrence_start_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrence_start_time, --预计执行时间
+        to_char(sr.occurrence_end_time, 'YYYY-MM-DD HH24:MI:SS') AS occurrence_end_time, --预计结束时间
+        ai.clinical_status_enum, --皮试结果
+        ai.verification_status_enum, --皮试检查项目状态
+        mr.practitioner_id as doctor_id, --开单医生
+        ai.recorded_date,
+        ai.note --备注
+        FROM
+        wor_service_request sr
+        LEFT JOIN (
+            SELECT DISTINCT ON (request_id)
+            ai.id,
+            ai.request_id,
+            ai.clinical_status_enum,
+            ai.verification_status_enum,
+            ai.recorded_date,
+            ai.note
+            FROM
+            cli_allergy_intolerance ai
+            WHERE
+            ai.delete_flag = '0'
+            ORDER BY
+            ai.request_id,
+            ai.create_time DESC
+        ) ai ON ai.request_id = sr.id
+--         LEFT JOIN cli_allergy_intolerance ai ON ai.request_id = sr.id
+--             AND ai.delete_flag = '0'
+        LEFT JOIN adm_encounter e ON e.id = sr.encounter_id
+            AND e.delete_flag = '0'
+        LEFT JOIN adm_patient pt ON pt.id = sr.patient_id
+            AND pt.delete_flag = '0'
+        LEFT JOIN wor_activity_definition ad ON ad.id = sr.activity_id
+            AND ad.delete_flag = '0'
+        LEFT JOIN med_medication_request mr ON mr.encounter_id = sr.encounter_id
+            AND mr.delete_flag = '0'
+        LEFT JOIN med_medication_definition md ON md.id = mr.medication_id
+            AND md.delete_flag = '0'
+        LEFT JOIN med_medication m ON md.id = m.medication_def_id
+            AND m.delete_flag = '0'
+        LEFT JOIN med_medication_dispense mmd ON mr.id = mmd.med_req_id
+            AND mmd.delete_flag = '0'
+        <where>
+            ad.name = '皮试检查'
+            AND mr.skin_test_flag = 1
+            AND mmd.status_enum  IN (2,3,4,14)--药品发放状态:(DispenseStatus枚举类)
+            AND md.skin_test_flag = 1
+            AND sr.status_enum IN (2,3,10) --服务状态待执行(RequestStatus枚举类)
+        </where>
+        ORDER BY sr.prescription_no,e.bus_no,md.bus_no
+        ) AS T1
+        ${ew.customSqlSegment}
+
+    </select>
+    <!-- 门诊输液记录患者列表信息查询-->
+    <select id="getOutpatientInfusionPatient"
+            resultType="com.openhis.web.outpatientmanage.dto.OutpatientInfusionPatientDto">
+        SELECT T1.service_status,
+               T1.encounter_id,
+               T1.encounter_bus_no,
+               T1.birth_date,
+               T1.patient_bus_no,
+               T1.patient_id,
+               T1.patient_name,
+               T1.patient_py_str,
+               T1.patient_wb_str,
+               T1.gender_enum,
+               T1.create_time
+        FROM (
+        SELECT sr.status_enum AS service_status,
+               sr.encounter_id,
+               e.bus_no as encounter_bus_no,
+               pt.birth_date,
+               pt.bus_no AS patient_bus_no,
+               sr.patient_id,
+               pt."name" AS patient_name,
+               pt.py_str AS patient_py_str,
+               pt.wb_str AS patient_wb_str,
+               sr.tenant_id,
+               pt.gender_enum,
+               e.reception_time AS create_time
+        FROM adm_encounter e
+        LEFT JOIN wor_service_request sr
+            ON e.id = sr.encounter_id
+                AND sr.refund_service_id IS NULL
+                AND sr.delete_flag = '0'
+        LEFT JOIN adm_patient pt
+            ON pt.id = sr.patient_id
+                AND pt.delete_flag = '0'
+        LEFT JOIN wor_activity_definition ad
+            ON ad.id = sr.activity_id
+                AND ad.delete_flag = '0'
+        WHERE ad.category_code = '21'
+            AND e.delete_flag = '0'
+            AND sr.based_on_table = #{medMedicationRequest}
+            AND sr.status_enum IN (#{inProgress},#{completed},#{cancelled})
+        GROUP BY sr.status_enum,
+                 sr.encounter_id,
+                 e.bus_no,
+                 pt.birth_date,
+                 pt.bus_no,
+                 sr.patient_id,
+                 pt."name",
+                 pt.py_str,
+                 pt.wb_str,
+                 sr.tenant_id,
+                 pt.gender_enum,
+                 e.reception_time
+        ORDER BY create_time
+        ) AS T1
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectInfusionPendingRecord"
+            resultType="com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto">
+        SELECT pr.encounter_id,
+               pr.service_status,
+               pr.authored_time ,
+               pr.service_id ,
+               pr.bus_no ,
+               pr.print_count ,
+               pr.group_id ,
+               pr.execute_num,
+               pr.speed ,
+               pr.quantity ,
+               pr.skin_test_flag ,
+               pr.unit_code ,
+               pr.dose ,
+               pr.dose_unit_code ,
+               pr.method_code ,
+               pr.rate_code ,
+               pr.performer_id ,
+               pr.preparer_id ,
+               pr.dispense_status,
+               pr.medication_name,
+               pr.service_name,
+               pr.practitioner_name,
+               pr.perform_count,
+               pr.dept_name
+        FROM (
+                 SELECT ae.id AS encounter_id,
+                        ae.tenant_id,
+                        wsr.status_enum AS service_status,
+                        wsr.authored_time ,
+                        wsr.id AS service_id,
+                        wsr.bus_no ,
+                        wsr.print_count,
+                        mmr.group_id ,
+                        mmr.execute_num,
+                        mmr.speed ,
+                        mmr.quantity ,
+                        mmr.skin_test_flag ,
+                        mmr.unit_code ,
+                        mmr.dose ,
+                        mmr.dose_unit_code ,
+                        mmr.method_code ,
+                        mmr.rate_code ,
+                        mmr.performer_id ,
+                        dis.status_enum AS dispense_status,
+                        mmd."name" AS medication_name,
+                        ad."name" AS service_name,
+                        ap."name" AS practitioner_name,
+                        o."name"  AS dept_name,
+                        -- 新增子查询：查询配药人
+                        (SELECT DISTINCT mmdis.preparer_id
+                         FROM med_medication_dispense mmdis
+                         WHERE mmdis.med_req_id = mmr.id
+                           AND mmdis.delete_flag = '0'
+                        ) AS preparer_id ,
+                        -- 新增子查询：统计已执行次数
+                        (SELECT COUNT(sub_wsr.id)
+                         FROM wor_service_request sub_wsr
+                         WHERE sub_wsr.based_on_id = wsr.id
+                           AND sub_wsr.status_enum = #{completed}
+                           AND sub_wsr.delete_flag = '0'
+                        ) AS perform_count
+                 FROM adm_encounter ae
+                          LEFT JOIN wor_service_request wsr
+                                    ON ae.id = wsr.encounter_id
+                                        AND wsr.delete_flag = '0'
+                                        AND wsr.refund_service_id IS NULL
+                          LEFT JOIN med_medication_request mmr
+                                    ON mmr.group_id = wsr.group_id
+                                        AND mmr.delete_flag = '0'
+                          LEFT JOIN med_medication_dispense dis
+                                    ON dis.med_req_id = mmr.id
+                                        AND dis.delete_flag = '0'
+                          LEFT JOIN wor_activity_definition ad
+                                    ON ad.id = wsr.activity_id
+                                        AND ad.delete_flag = '0'
+                          LEFT JOIN med_medication_definition mmd
+                                    ON mmr.medication_id = mmd.id
+                                        AND mmd.delete_flag = '0'
+                          LEFT JOIN adm_practitioner ap
+                                    ON mmr.practitioner_id = ap.id
+                                        AND ap.delete_flag = '0'
+                          LEFT JOIN adm_organization o
+                                    ON o.id = wsr.org_id
+                                        AND o.delete_flag = '0'
+                 WHERE ae.id = #{encounterId}
+                   AND ad.category_code = '21'
+                   AND wsr.based_on_table = #{medMedicationRequest}
+                   AND ae.delete_flag = '0') AS pr
+            ${ew.customSqlSegment}
+        ORDER BY pr.authored_time DESC
+    </select>
+    <select id="selectInfusionPerformRecord"
+            resultType="com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto">
+    SELECT pr.service_status,
+           pr.bus_no ,
+           pr.based_on_id ,
+           pr.group_id ,
+           pr.occurrence_end_time ,
+           pr.service_id,
+           pr.tenant_id,
+           pr.service_name,
+           pr.performer_name,
+           pr.org_name
+    FROM (
+        SELECT wsr.status_enum AS service_status,
+               wsr.bus_no ,
+               wsr.based_on_id ,
+               wsr.group_id ,
+               wsr.occurrence_end_time ,
+               wsr.id AS service_id,
+               wsr.tenant_id,
+               ad."name" AS service_name,
+               ap."name" AS performer_name,
+               al."name" AS org_name
+        FROM wor_service_request wsr
+            LEFT JOIN wor_activity_definition ad
+                ON ad.id = wsr.activity_id
+                    AND ad.delete_flag = '0'
+            LEFT JOIN adm_practitioner ap
+                ON wsr.performer_id  = ap.id
+                    AND ap.delete_flag = '0'
+            LEFT JOIN adm_organization al
+                ON al.id = wsr.org_id
+        WHERE wsr.based_on_id = #{serviceReqId}
+            AND wsr.delete_flag = '0'
+        ) AS pr
+        ${ew.customSqlSegment}
+        ORDER BY pr.occurrence_end_time DESC
+    </select>
+    <select id="selectPerformInfo"
+            resultType="com.openhis.web.outpatientmanage.dto.OutpatientInfusionRecordDto">
+        SELECT wsr.id AS service_id,
+               wsr.status_enum AS service_status,
+               mmr.execute_num ,
+               dis.status_enum AS dispense_status,
+               -- 新增子查询：统计已执行次数
+               (SELECT COUNT(sub_wsr.id)
+                FROM wor_service_request sub_wsr
+                WHERE sub_wsr.based_on_id = wsr.id
+                  AND sub_wsr.status_enum = #{completed}
+                  AND sub_wsr.delete_flag = '0'
+               ) AS perform_count
+        FROM wor_service_request wsr
+            LEFT JOIN med_medication_request mmr
+                ON wsr.based_on_id = mmr.id
+                    AND mmr.delete_flag = '0'
+            LEFT JOIN med_medication_dispense dis
+                ON dis.med_req_id = mmr.id
+                    AND dis.delete_flag = '0'
+        WHERE wsr.delete_flag = '0'
+            AND wsr.id IN
+              <foreach item="serviceReqId" collection="serviceReqIdList" open="(" separator="," close=")">
+                    #{serviceReqId}
+            </foreach>
+    </select>
+
+</mapper>

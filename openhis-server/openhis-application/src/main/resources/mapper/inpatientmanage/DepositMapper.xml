@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.inpatientmanage.mapper.DepositMapper">
+
+    <!-- 住院登记信息分页查询-->
+    <select id="getPage" parameterType="java.util.Map"
+            resultType="com.openhis.web.inpatientmanage.dto.DepositDetailDto">
+        SELECT T8.patient_id,
+               T8.name,
+               T8.gender_enum,
+               T8.birth_date,
+               T8.bed_location_id,
+               T8.organization_id,
+               T8.total_price,
+               T8.deposit,
+               T8.balance_amount,
+               T8.pay_way,
+               T8.payment_enum,
+               T8.tendered_amount,
+               T8.bus_no,
+               T8.status_enum,
+               T8.after_balance,
+               T8.pay_time,
+               T8.enterer_id
+        FROM (SELECT T1.id                              AS patient_id,      --住院号
+                     T1.name,                                               --患者姓名
+                     T1.gender_enum,                                        --性别编码
+                     T1.birth_date,                                         --生日
+                     T3.location_id                     AS bed_location_id, --位置ID（床位号）
+                     T1.organization_id,                                    --机构Id（科室）
+                     COALESCE(SUM_TOTAL.total_price, 0) AS total_price,     -- 总额
+                     COALESCE(SUM_DEPOSIT.deposit, 0)   AS deposit,         -- 预交金
+                     T4.balance_amount,                                     --余额
+                     CASE T4.pay_enum
+                         WHEN '220100' THEN '微信'
+                         WHEN '220200' THEN '支付宝'
+                         WHEN '220300' THEN '银联'
+                         WHEN '220400' THEN '现金'
+                         ELSE '其他'
+                         END                            AS pay_way,         --支付方式
+                     T5.payment_enum,                                       --状态
+                     T5.tendered_amount,                                    --金额
+                     T7.bus_no,                                             --收据号
+                     T7.status_enum,                                        --票据状态
+                     T6.after_balance,                                      --可退金额
+                     T6.pay_trans_date                  AS pay_time,        --收款时间
+                     T5.enterer_id                                          --收款员
+              FROM adm_patient AS T1
+                       INNER JOIN adm_encounter AS T2
+                                  ON T2.patient_id = T1.id
+                                      AND T2.class_enum = #{classEnum}
+                       LEFT JOIN adm_encounter_location AS T3
+                                 ON T3.encounter_id = T2.id
+                                     AND T3.form_enum = #{formEnum}
+                                     AND T3.delete_flag = '0'
+                       LEFT JOIN adm_account AS T4
+                                 ON T4.patient_id = T1.id
+                                     AND T4.encounter_id = T2.id
+                                     AND T4.delete_flag = '0'
+                       LEFT JOIN fin_payment_reconciliation AS T5
+                                 ON T5.patient_id = T1.id
+                                     AND T5.encounter_id = T2.id
+                                     AND T5.delete_flag = '0'
+                       LEFT JOIN fin_payment_rec_detail AS T6
+                                 ON T6.reconciliation_id = T5.id
+                                     AND T6.delete_flag = '0'
+                       LEFT JOIN adm_invoice AS T7
+                                 ON T7.reconciliation_id = T6.reconciliation_id
+                                     AND T7.patient_id = T1.id
+                                     AND T7.delete_flag = '0'
+                       LEFT JOIN (SELECT patient_id, SUM(tendered_amount) AS total_price
+                                  FROM fin_payment_reconciliation
+                                  WHERE kind_enum = 2
+                                  GROUP BY patient_id) AS SUM_TOTAL
+                                 ON SUM_TOTAL.patient_id = T1.id
+                       LEFT JOIN (SELECT patient_id, SUM(tendered_amount) AS deposit
+                                  FROM fin_payment_reconciliation
+                                  WHERE kind_enum = 1
+                                  GROUP BY patient_id) AS SUM_DEPOSIT
+                                 ON SUM_DEPOSIT.patient_id = T1.id
+              WHERE T1.delete_flag = '0'
+              ORDER BY T6.pay_trans_date desc
+             ) AS T8
+            ${ew.customSqlSegment}
+    </select>
+
+</mapper>

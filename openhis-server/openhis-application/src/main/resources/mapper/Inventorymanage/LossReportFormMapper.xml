@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.inventorymanage.mapper.LossReportFormMapper">
+
+    <select id="selectLossReportFormPage"
+            resultType="com.openhis.web.inventorymanage.dto.LossReportFormPageDto">
+        SELECT T4.supply_bus_no,           -- 单据号
+               T4.type,                    -- 单据类型
+               T4.status_enum,             -- 单据状态
+               T4.inventory_location_name, -- 盘点仓库
+               T4.reported_loss_amount,    -- 报损金额(总价)
+               T4.applicant_id,         -- 制单人(申请人)
+               T4.approver_id,             -- 审核人
+               T4.approval_time,           -- 审核日期
+               T4.create_time,             -- 制单时间
+               T4.tenant_id                -- 租户ID
+        FROM (SELECT T1.bus_no       AS supply_bus_no,
+                     T1.type_enum    AS type,
+                     T1.status_enum,
+                     T4.name         AS inventory_location_name,
+                     T2.reported_loss_amount,
+                     T1.applicant_id,
+                     T1.approver_id,
+                     MIN(T1.create_time) AS create_time,
+                     T1.approval_time,
+                     T1.tenant_id
+              FROM wor_supply_request AS T1
+                       LEFT JOIN (SELECT T3.bus_no,
+                                         SUM(T3.total_price) AS reported_loss_amount
+                                  FROM wor_supply_request AS T3
+                                  GROUP BY T3.bus_no) AS T2
+                                 ON T1.bus_no = T2.bus_no
+                       LEFT JOIN adm_location T4
+                                 ON T1.purpose_location_id = T4.id
+              WHERE T1.type_enum = #{lossReportForm}
+                AND T1.delete_flag = '0'
+              GROUP BY T1.bus_no,
+                       T1.type_enum,
+                       T1.status_enum,
+                       T4.name,
+                       T2.reported_loss_amount,
+                       T1.applicant_id,
+                       T1.approver_id,
+                       T1.approval_time,
+                       T1.tenant_id
+              ORDER BY T1.bus_no desc
+             ) AS T4
+            ${ew.customSqlSegment}
+    </select>
+    <select id="selectDetail" resultType="com.openhis.web.inventorymanage.dto.ReceiptDetailDto">
+        SELECT T1.id,                                       --ID
+               T1.bus_no    AS supply_bus_no,               --单据号
+               T1.item_id,                                  --物品编码
+               T1.purpose_type_enum,                        --目的类型
+               T1.purpose_location_id,                      --目的仓库
+               T5."name"    AS purpose_location_name,       --目的仓库名称
+               T6."name"    AS purpose_location_store_name, --目的仓位
+               T1.occurrence_time,                          --报损时间
+               #{medicine}  AS item_type,                   --药品类型
+               T1.remake,                                   --备注
+               T2.bus_no    AS item_bus_no,                 --项目编码
+               T2."name"    AS item_name,                   --名称
+               T3.total_volume,                             --规格
+               T1.unit_code AS measurement_unit_code,       -- 物品计量单位
+               T2.unit_code,                                -- 包装单位
+               T2.min_unit_code,                            -- 最小单位
+               T2.manufacturer_text,                        --生产厂商文本
+               T4.lot_number,                               --产品批号
+               T4.quantity  AS total_quantity,              --当前库存数量
+               T1.item_quantity,                            --数量(报损数量)
+               T11.amount AS price,                         --采购单价(大单位)
+               T1.total_price,                              --总价(报损金额)
+               T1.reason_code,                              --理由类型(报损原因)
+               T1.reason,                                   --理由(报损详细)
+               T1.start_time,                               -- 开始时间
+               T1.end_time,                                 -- 结束时间
+               T1.supplier_id,                              -- 供应商id
+               T9."name"    AS supplier_name,               -- 供应商名称
+               T2.part_percent                              --拆零比
+        FROM wor_supply_request T1
+                 LEFT JOIN med_medication_definition T2
+                           ON T1.item_id = T2.id
+                               AND T2.delete_flag = '0'
+                 LEFT JOIN med_medication T3
+                           ON T3.medication_def_id = T2.id
+                               AND T3.delete_flag = '0'
+                 LEFT JOIN wor_inventory_item T4
+                           ON T1.item_id = T4.item_id
+                               AND T1.purpose_location_id = T4.location_id
+                               AND T1.lot_number = T4.lot_number
+                               AND T4.delete_flag = '0'
+                 LEFT JOIN adm_location T5
+                           ON T1.purpose_location_id = T5.id
+                               AND T5.delete_flag = '0'
+                 LEFT JOIN adm_location T6
+                           ON T1.purpose_location_store_id = T6.id
+                               AND T6.delete_flag = '0'
+                 LEFT JOIN adm_supplier T9
+                           ON T9.id = T1.supplier_id
+                 LEFT JOIN adm_charge_item_definition AS T10
+                           ON T10.instance_id = T4.item_id
+                               AND T10.delete_flag = '0'
+                 LEFT JOIN adm_charge_item_def_detail AS T11
+                           ON T11.definition_id = T10.id
+                               AND T11.delete_flag = '0'
+                               AND T11.condition_value = T4.lot_number
+        WHERE T1.bus_no = #{busNo}
+          AND T1.item_table = #{medicationTableName}
+          AND T1.delete_flag = '0'
+        UNION
+        SELECT T1.id,                                       --ID
+               T1.bus_no    AS supply_bus_no,               --单据号
+               T1.item_id,                                  --物品编码
+               T1.purpose_type_enum,                        --目的类型
+               T1.purpose_location_id,                      --目的仓库
+               T5."name"    AS purpose_location_name,       --目的仓库名称
+               T6."name"    AS purpose_location_store_name, --目的仓位
+               T1.occurrence_time,                          --报损时间
+               #{device}    AS item_type,                   --器材类型
+               T1.remake,                                   --备注
+               T7.bus_no    AS item_bus_no,                 --项目编码
+               T7."name"    AS item_name,                   --名称
+               T7."size"    AS total_volume,                --器材规格
+               T1.unit_code AS measurement_unit_code,       -- 物品计量单位
+               T7.unit_code,                                -- 包装单位
+               T7.min_unit_code,                            -- 最小单位
+               T7.manufacturer_text,                        --生产厂商文本
+               T4.lot_number,                               --产品批号
+               T4.quantity  AS total_quantity,              --当前库存数量
+               T1.item_quantity,                            --数量(报损数量)
+               T11.amount AS price,                         --采购单价(大单位)
+               T1.total_price,                              --总价(报损金额)
+               T1.reason_code,                              --理由类型(报损原因)
+               T1.reason,                                   --理由(报损详细)
+               T1.start_time,                               -- 开始时间
+               T1.end_time,                                 -- 结束时间
+               T1.supplier_id,                              -- 供应商id
+               T9."name"    AS supplier_name,               -- 供应商名称
+               T7.part_percent                              --拆零比
+        FROM wor_supply_request T1
+                 LEFT JOIN adm_device_definition T7
+                           ON T1.item_id = T7.id
+                               AND T7.delete_flag = '0'
+                 LEFT JOIN wor_inventory_item T4
+                           ON T1.item_id = T4.item_id
+                               AND T1.purpose_location_id = T4.location_id
+                               AND T1.lot_number = T4.lot_number
+                               AND T4.delete_flag = '0'
+                 LEFT JOIN adm_location T5
+                           ON T1.purpose_location_id = T5.id
+                               AND T5.delete_flag = '0'
+                 LEFT JOIN adm_location T6
+                           ON T1.purpose_location_store_id = T6.id
+                               AND T6.delete_flag = '0'
+                 LEFT JOIN adm_supplier T9
+                           ON T9.id = T1.supplier_id
+                               AND T9.delete_flag = '0'
+                 LEFT JOIN adm_charge_item_definition AS T10
+                           ON T10.instance_id = T4.item_id
+                               AND T10.delete_flag = '0'
+                 LEFT JOIN adm_charge_item_def_detail AS T11
+                           ON T11.definition_id = T10.id
+                               AND T11.delete_flag = '0'
+                               AND T11.condition_value = T4.lot_number
+        WHERE T1.bus_no = #{busNo}
+          AND T1.item_table = #{deviceTableName}
+          AND T1.delete_flag = '0'
+    </select>
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.reportmanage.mapper.RegisterReportMapper">
+
+    <select id="selectRegisterReportPage"
+            resultType="com.openhis.web.reportmanage.dto.RegisterReportPageDto">
+        SELECT T10.bus_no,          --患者院内编码/病历号
+               T10.name,            --患者姓名
+               T10.department_id,   --科室
+               T10.department_name, --科室
+               T10.clinical_name,   --项目名
+               T10.yb_no,           --医保码
+               T10.doctor_id,-- 挂号医生
+               T10.doctor_name,-- 挂号医生
+               T10.payee_name,--收款人
+               T10.number,          --数量
+               T10.price,           --单价
+               T10.quantity_unit,--单位
+               T10.total_price,     --金额
+               T10.charge_time,--收费时间
+               T10.encounter_id,
+               T10.tenant_id
+        FROM (SELECT DISTINCT T2.bus_no,                            --患者院内编码/病历号
+                              T3.name,                              --患者姓名
+                              T6.id             AS department_id,   --科室
+                              T6.name           AS department_name, --科室
+                              CASE
+                                  WHEN T5.instance_table = 'adm_device_definition' THEN T11.name
+                                  WHEN T5.instance_table = 'adm_healthcare_service' THEN T12.name
+                                  WHEN T5.instance_table = 'med_medication_definition' THEN T13.name
+                                  WHEN T5.instance_table = 'wor_activity_definition' THEN T14.name
+                                  ELSE NULL
+                                  END           AS clinical_name,   --项目名
+                              CASE
+                                  WHEN T5.instance_table = 'adm_device_definition' THEN T11.yb_no
+                                  WHEN T5.instance_table = 'adm_healthcare_service' THEN T12.yb_no
+                                  WHEN T5.instance_table = 'med_medication_definition' THEN T13.yb_no
+                                  WHEN T5.instance_table = 'wor_activity_definition' THEN T14.yb_no
+                                  ELSE NULL
+                                  END           AS yb_no,           --医保码
+                              T8.id             AS doctor_id,-- 挂号医生
+                              T8.name           AS doctor_name,-- 挂号医生
+                              T9.name           AS payee_name,--收款人
+                              T4.quantity_value AS number,          --数量
+                              T4.unit_price     AS price,           --单价
+                              T4.quantity_unit,--单位
+                              CASE
+                                  WHEN T1.status_enum = #{refundAll} THEN -T4.total_price
+                                  ELSE T4.total_price
+                                  END AS total_price,--金额
+                              T1.bill_date      AS charge_time,--收费时间
+                              T1.encounter_id,
+                              T1.tenant_id
+              FROM fin_payment_reconciliation T1
+                       INNER JOIN adm_encounter T2
+                                  ON T2.id = T1.encounter_id
+                                      AND T2.delete_flag = '0'
+                       LEFT JOIN adm_patient T3
+                                 ON T1.patient_id = T3.id
+                                     AND T3.delete_flag = '0'
+                       LEFT JOIN adm_charge_item T4
+                                 ON CONCAT(',', T1.charge_item_ids, ',') LIKE CONCAT('%,', T4.id, ',%')
+                                     AND T4.context_enum = #{contextEnum}
+                                     AND T4.delete_flag = '0'
+                       INNER JOIN adm_charge_item_definition T5
+                                  ON T4.definition_id = T5.id
+                                      AND T5.delete_flag = '0'
+                       LEFT JOIN adm_device_definition T11
+                                 ON T5.instance_id = T11.id
+                                     AND T5.instance_table = 'adm_device_definition'
+                                     AND T11.delete_flag = '0'
+                       LEFT JOIN adm_healthcare_service T12
+                                 ON T5.instance_id = T12.id
+                                     AND T5.instance_table = 'adm_healthcare_service'
+                                     AND T12.delete_flag = '0'
+                       LEFT JOIN med_medication_definition T13
+                                 ON T5.instance_id = T13.id
+                                     AND T5.instance_table = 'med_medication_definition'
+                                     AND T13.delete_flag = '0'
+                       LEFT JOIN wor_activity_definition T14
+                                 ON T5.instance_id = T14.id
+                                     AND T5.instance_table = 'wor_activity_definition'
+                                     AND T14.delete_flag = '0'
+                       LEFT JOIN adm_organization T6
+                                 ON T2.organization_id = T6.id
+                                     AND T6.delete_flag = '0'
+                       LEFT JOIN adm_encounter_participant T7
+                                 ON T1.encounter_id = T7.encounter_id
+                                     AND T7.type_code = #{typeCode}
+                                     AND T7.delete_flag = '0'
+                       LEFT JOIN adm_practitioner T8
+                                 ON T7.practitioner_id = T8.id
+                                     AND T8.delete_flag = '0'
+                       LEFT JOIN adm_practitioner T9
+                                 ON T1.enterer_id = T9.id
+                                     AND T9.delete_flag = '0'
+              WHERE T1.status_enum IN (#{success}, #{refundAll})
+                AND T1.delete_flag = '0') AS T10
+            ${ew.customSqlSegment}
+    </select>
+</mapper>

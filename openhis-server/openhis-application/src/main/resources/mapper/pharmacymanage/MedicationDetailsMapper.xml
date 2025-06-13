@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.pharmacymanage.mapper.MedicationDetailsMapper">
+    <select id="selectAmbPractitionerDetailPage"
+            resultType="com.openhis.web.pharmacymanage.dto.MedDetailedAccountPageDto">
+        select A.outpatient_no,
+               A.prescription_no,
+               A.patient_name,
+               A.practitioner_id,
+               A.practitioner_name,
+               A.medication_name,
+               A.bus_no,
+               A.dispense_no,
+               A.yb_no,
+               A.total_volume,
+               A.dispense_quantity,
+               A.dispense_price,
+               A.refund_quantity,
+               A.refund_price,
+               A.lot_number,
+               A.manufacturer_text,
+               A.supplier_name,
+               A.unit_code,
+               A.refund_unit_code,
+               A.dispense_time,
+               A.location_id,
+               A.tenant_id
+        from (
+                 WITH refund_info AS (
+                     SELECT mmr.refund_medicine_id,
+                            mmd.dispense_quantity,
+                            mmd.unit_code,
+                            aci.total_price
+                     FROM med_medication_dispense mmd
+                              LEFT JOIN med_medication_request mmr
+                                        ON mmd.med_req_id = mmr.id
+                                            AND mmr.delete_flag = '0'
+                              INNER JOIN adm_charge_item aci
+                                         ON aci.service_id = mmr.refund_medicine_id
+                                             AND aci.delete_flag = '0'
+                     WHERE mmd.status_enum = #{refunded}
+                       AND mmd.delete_flag = '0'
+                       AND mmr.refund_medicine_id IS not null
+                 )
+                 SELECT def."name"           AS medication_name,
+                        def.bus_no,
+                        def.yb_no,
+                        def.manufacturer_text,
+                        mmr.prescription_no,
+                        ae.bus_no            AS outpatient_no,
+                        pat.name             AS patient_name,
+                        mm.total_volume,
+                        mmd.unit_code,
+                        mmd.bus_no           AS dispense_no,
+                        mmd.lot_number,
+                        mmd.dispense_quantity,
+                        mmd.encounter_id,
+                        mmd.practitioner_id,
+                        mmd.dispense_time,
+                        ap.name              AS practitioner_name,
+                        mmd.location_id,
+                        aci.total_price      AS dispense_price,
+                        ri.dispense_quantity AS refund_quantity,
+                        ri.unit_code         AS refund_unit_code,
+                        ri.total_price       AS refund_price,
+                        wii.supplier_id,
+                        sup.name             AS supplier_name,
+                        mmd.tenant_id
+                 FROM med_medication_dispense mmd
+                          LEFT JOIN med_medication_request mmr
+                                    ON mmd.med_req_id = mmr.id
+                                        AND mmr.delete_flag = '0'
+                          INNER JOIN adm_charge_item aci
+                                     ON aci.service_id = mmr.id
+                                         AND aci.delete_flag = '0'
+                          LEFT JOIN med_medication_definition def
+                                    ON mmd.medication_id = def.id
+                                        AND def.delete_flag = '0'
+                          LEFT JOIN med_medication mm
+                                    ON mm.medication_def_id = def.id
+                                        AND mm.delete_flag = '0'
+                          LEFT JOIN wor_inventory_item wii
+                                    ON wii.item_id = mmd.medication_id
+                                        AND wii.lot_number = mmd.lot_number
+                                        AND wii.location_id = mmd.location_id
+                                        AND wii.delete_flag = '0'
+                          LEFT JOIN refund_info AS ri
+                                    ON ri.refund_medicine_id = mmr.id
+                          LEFT JOIN adm_location al
+                                    ON al.id = mmd.location_id
+                          LEFT JOIN adm_practitioner ap
+                                    ON ap.id = mmd.practitioner_id
+                          LEFT JOIN adm_patient pat
+                                    ON pat.id = mmd.patient_id
+                          LEFT JOIN adm_encounter ae
+                                    ON ae.id = mmd.encounter_id
+                          LEFT JOIN adm_supplier sup
+                                    ON sup.id = wii.supplier_id
+                 WHERE mmd.status_enum = #{completed}
+                   AND mmd.dispense_enum = #{amb}
+                   AND mmd.delete_flag = '0'
+             ) AS A
+            ${ew.customSqlSegment}
+        <choose>
+            <when test="dispenseEnum == 1">
+                ORDER BY A.practitioner_name, A.dispense_time DESC
+            </when>
+            <when test="dispenseEnum == 2">
+                ORDER BY A.outpatient_no, A.prescription_no
+            </when>
+        </choose>
+    </select>
+</mapper>

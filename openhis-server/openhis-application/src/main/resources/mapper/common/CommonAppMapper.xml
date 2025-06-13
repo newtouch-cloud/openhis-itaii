@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.common.mapper.CommonAppMapper">
+
+    <select id="selectInventoryItemList" resultType="com.openhis.web.common.dto.InventoryItemDto">
+        SELECT ii.tenant_id,
+               ii.item_type,
+               ii.category_code,
+               ii.part_percent,
+               ii.definition_id,
+               ii.name,
+               ii.item_bus_no,
+               ii.py_str,
+               ii.wb_str,
+               ii.yb_no,
+               ii.product_name,
+               ii.unit_code,
+               ii.min_unit_code,
+               ii.manufacturer,
+               ii.volume,
+               ii.supplier,
+               ii.item_table_name,
+               ii.lot_number,
+               ii.org_location_id,
+               ii.purchase_amount
+        FROM ( SELECT T1.tenant_id,
+                      #{medicine}         AS item_type,
+                      T1.category_code    AS category_code,
+                      T1.part_percent     AS part_percent,
+                      T1.id               AS definition_id,
+                      T1."name"           AS "name",
+                      T1.bus_no           AS item_bus_no,
+                      T1.py_str           AS py_str,
+                      T1.wb_str           AS wb_str,
+                      T1.yb_no            AS yb_no,
+                      T1.merchandise_name AS product_name,
+                      T1.unit_code        AS unit_code,
+                      T1.min_unit_code    AS min_unit_code,
+                      T1.manufacturer_text AS manufacturer,
+                      T2.total_volume     AS volume,
+                      T3."name"           AS supplier,
+                      <choose>
+                          <when test="purchaseFlag != 1">
+                              T7.item_table   AS item_table_name,
+                              T7.lot_number,
+                              T7.location_id AS org_location_id,
+                              NULL AS purchase_amount
+                          </when>
+                          <otherwise>
+                              NULL AS item_table_name,
+                              NULL AS lot_number,
+                              NULL AS org_location_id,
+                              T9.amount AS purchase_amount
+                          </otherwise>
+                      </choose>
+            FROM med_medication_definition AS T1
+                LEFT JOIN med_medication AS T2
+                    ON T2.medication_def_id = T1.ID
+                        AND T2.delete_flag = '0'
+            LEFT JOIN adm_supplier AS T3
+                ON T3.ID = T1.supply_id
+                    AND T3.delete_flag = '0'
+            <if test="purchaseFlag != 1">
+                LEFT JOIN wor_inventory_item AS T7
+                    ON T7.item_id = T1.id
+                        AND T7.delete_flag = '0'
+            </if>
+            <if test="purchaseFlag != 0">
+                LEFT JOIN adm_charge_item_definition AS T8
+                    ON T8.instance_id = T1.id
+                        AND T8.delete_flag = '0'
+                LEFT JOIN adm_charge_item_def_detail AS T9
+                    ON T9.definition_id = T8.id
+                        AND T9.delete_flag = '0'
+            </if>
+            WHERE T1.delete_flag = '0'
+                AND T2.status_enum != #{retired}
+            <if test="purchaseFlag != 1">
+                AND T7.item_id IS NOT NULL  -- 确保连接有效性
+                AND T7.item_table = #{medicationTableName}
+            </if>
+            <if test="purchaseFlag != 0">
+                AND T9.condition_code = #{purchase}
+            </if>
+        UNION ALL
+            SELECT T1.tenant_id,
+                   #{device}         AS item_type,
+                   T1.category_code  AS category_code,
+                   T1.part_percent   AS part_percent,
+                   T1.id             AS definition_id,
+                   T1."name"         AS "name",
+                   T1.bus_no         AS item_bus_no,
+                   T1.py_str         AS py_str,
+                   T1.wb_str         AS wb_str,
+                   T1.yb_no          AS yb_no,
+                   ''                AS product_name,
+                   T1.unit_code      AS unit_code,
+                   T1.min_unit_code  AS min_unit_code,
+                   T1.manufacturer_text AS manufacturer,
+                   T1."size"         AS volume,
+                   T2."name"         AS supplier,
+                   <choose>
+                       <when test="purchaseFlag != 1">
+                           T7.item_table   AS item_table_name,
+                           T7.lot_number,
+                           T7.location_id AS org_location_id,
+                           NULL AS purchase_amount
+                       </when>
+                       <otherwise>
+                           NULL AS item_table_name,
+                           NULL AS lot_number,
+                           NULL AS org_location_id,
+                           T9.amount AS purchase_amount
+                       </otherwise>
+                   </choose>
+            FROM adm_device_definition AS T1
+                 LEFT JOIN adm_supplier AS T2
+                     ON T2.ID = T1.supply_id
+                         AND T2.delete_flag = '0'
+            <if test="purchaseFlag != 1">
+                LEFT JOIN wor_inventory_item AS T7
+                     ON T7.item_id = T1.id
+                         AND T7.delete_flag = '0'
+            </if>
+            <if test="purchaseFlag != 0">
+                LEFT JOIN adm_charge_item_definition AS T8
+                ON T8.instance_id = T1.id
+                AND T8.delete_flag = '0'
+                LEFT JOIN adm_charge_item_def_detail AS T9
+                ON T9.definition_id = T8.id
+                AND T9.delete_flag = '0'
+            </if>
+            WHERE T1.delete_flag = '0'
+                AND T1.status_enum != #{retired}
+            <if test="purchaseFlag != 1">
+                AND T7.item_id IS NOT NULL  -- 确保连接有效性
+                AND T7.item_table = #{deviceTableName}
+            </if>
+            <if test="purchaseFlag != 0">
+                AND T9.condition_code = #{purchase}
+            </if>
+        ) AS ii
+    ${ew.customSqlSegment}
+    </select>
+    <select id="selectInventoryItemInfo" resultType="com.openhis.web.common.dto.LocationInventoryDto">
+        SELECT T1.item_id,
+               T1.item_table,
+               SUM(CASE WHEN T1.location_id = #{objLocationId} THEN T1.quantity ELSE 0 END) AS obj_quantity,
+               SUM(CASE WHEN T1.location_id = #{orgLocationId} THEN T1.quantity ELSE 0 END) AS org_quantity,
+               T1.unit_code,
+               T1.production_date,
+               T1.lot_number,
+               T1.expiration_date,
+               MAX(T2."name") AS location_name,
+               MAX(T3."name") AS location_store_name,
+               T5.amount AS price,
+               T1.supplier_id,
+               CASE
+                   WHEN T1.item_table = #{medicationTableName}
+                       THEN (
+                           SELECT T7.yb_no
+                           FROM med_medication_definition AS T7
+                           WHERE T1.item_id = T7.id
+                             AND T7.delete_flag = '0'
+                           )
+                   WHEN T1.item_table = #{deviceTableName}
+                       THEN (
+                           SELECT T8.yb_no
+                           FROM adm_device_definition AS T8
+                           WHERE T1.item_id = T8.id
+                             AND T8.delete_flag = '0'
+                           )
+                   ELSE null
+                   END   AS  yb_no,              --医保编码
+               CASE
+                   WHEN T1.item_table = #{medicationTableName}
+                       THEN (
+                           SELECT T7.manufacturer_text
+                           FROM med_medication_definition AS T7
+                           WHERE T1.item_id = T7.id
+                             AND T7.delete_flag = '0'
+                           )
+                   WHEN T1.item_table = #{deviceTableName}
+                       THEN (
+                           SELECT T8.manufacturer_text
+                           FROM adm_device_definition AS T8
+                           WHERE T1.item_id = T8.id
+                             AND T8.delete_flag = '0'
+                           )
+                   ELSE null
+                   END   AS  manufacturer,             --生产厂家
+               T6.name AS supplier_name
+        FROM wor_inventory_item AS T1
+            LEFT JOIN adm_location AS T2
+                ON T2.id = T1.location_id
+                    AND T2.delete_flag = '0'
+        LEFT JOIN adm_location AS T3
+            ON T3.id = T1.location_store_id
+                AND T3.delete_flag = '0'
+        LEFT JOIN adm_charge_item_definition AS T4
+            ON T4.instance_id = T1.item_id
+                AND T4.delete_flag = '0'
+        LEFT JOIN adm_charge_item_def_detail AS T5
+            ON T5.definition_id = T4.id
+                AND T5.delete_flag = '0'
+        LEFT JOIN adm_supplier AS T6
+            ON T6.id = T1.supplier_id
+                AND T6.delete_flag = '0'
+        WHERE T1.item_id = #{itemId}
+            <choose>
+                <when test="lotNumber != null">
+                    AND T1.lot_number = #{lotNumber}
+                    AND T5.condition_value = #{lotNumber}
+                </when>
+                <otherwise>
+                    AND T5.condition_code = #{purchase}
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="objLocationId != null and objLocationId != ''">
+                    AND T1.location_id IN (#{orgLocationId}, #{objLocationId})
+                </when>
+                <otherwise>
+                    AND T1.location_id = #{orgLocationId}
+                </otherwise>
+            </choose>
+        GROUP BY T1.item_id,
+                 T1.item_table,
+                 T1.unit_code,
+                 T1.production_date,
+                 T1.expiration_date,
+                 T1.lot_number,
+                 T5.amount,
+                 T1.supplier_id,
+                 T6.name
+        ORDER BY T1.lot_number DESC
+    </select>
+</mapper>

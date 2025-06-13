@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.reportmanage.mapper.OutboundReportMapper">
+
+    <select id="selectOutboundReportPage"
+            resultType="com.openhis.web.reportmanage.dto.OutboundReportPageDto">
+        select T10.supply_bus_no,                                            --单据号
+               T10.name,                                                    --药品名称
+               T10.bus_no,                                                  --编码
+               T10.lot_number,                                               --批号
+               T10.source_location_id,          -- 源仓库ID(存放仓库)
+               T10.source_location_name,        -- 源仓库(存放仓库)
+               T10.source_location_store_id,    -- 源仓位ID
+               T10.source_location_store_name,  -- 源仓位
+               T10.purpose_location_id,         -- 目的仓库ID(领用科室)
+               T10.purpose_location_name,       -- 目的仓库(领用科室)
+               T10.unit_code,                                                --计量单位
+               T10.item_quantity,                                            --数量
+               T10.purchase_price,                                           --采购单价
+               T10.price,                               --领用单价
+               T10.total_price,                          --金额
+               T10.supplier_id,                                              --供应商
+               T10.approver_id,                                              --审核人
+               T10.approval_time,                                            --审批时间
+               T10.remake,                                                   --出库原因
+               T10.tenant_id                                                 -- 租户ID
+        from (
+                 select T1.bus_no as supply_bus_no,                --单据号
+                        T3.name,      --药品名称
+                        T3.bus_no,                              --编码
+                        T1.lot_number,                           --批号
+                        T1.source_location_id,                    -- 源仓库ID
+                        T4.name   AS source_location_name,        -- 源仓库
+                        T1.source_location_store_id,              -- 源仓位ID
+                        T5.name   AS source_location_store_name,  -- 源仓位
+                        T1.purpose_location_id,                   -- 目的仓库ID
+                        T8.name   AS purpose_location_name,       -- 目的仓库(领用科室)
+                        T1.unit_code,                            --计量单位
+                        T1.item_quantity,                        --数量
+                        T7.amount         as purchase_price,     --采购单价
+                        T1.price,                               --领用单价
+                        T1.total_price,                          --金额
+                        T1.supplier_id,                          --供应商
+                        T1.approver_id,                          --审核人
+                        T1.approval_time,                        --审批时间
+                        T1.remake,                               --出库原因(备注)
+                        T1.tenant_id                             -- 租户ID
+                 from wor_supply_request as T1
+                          inner join wor_supply_delivery as T2
+                                     on T1.id = T2.request_id
+                                         and T2.status_enum = #{deliveryStatus}
+                                         and T2.delete_flag = '0'
+                          left join med_medication_definition as T3
+                                     on T1.item_id = T3.id
+                                         and T3.delete_flag = '0'
+                          left join adm_location T4
+                                    on T1.source_location_id = T4.id
+                                        and T4.delete_flag = '0'
+                          left join adm_location T5
+                                    on T1.source_location_store_id = T5.id
+                                        and T5.delete_flag = '0'
+                          left join adm_charge_item_definition as T6
+                                    on T3.id = T6.instance_id
+                                        and T6.delete_flag = '0'
+                          left join adm_charge_item_def_detail as T7
+                                    on T6.id = T7.definition_id
+                                        and T7.delete_flag = '0'
+                                        AND T7.condition_value = T1.lot_number
+                          left join adm_organization T8
+                                    on T1.purpose_location_id = T8.id
+                                        and T8.delete_flag = '0'
+                 where T1.delete_flag = '0'
+                   and T1.type_enum = #{issueInventory}
+                   and T1.status_enum = #{supplyStatus}
+                   and T1.item_table = #{medicationTableName}
+                 union
+                 select T1.bus_no as supply_bus_no,              --单据号
+                        T3.name,              --药品名称
+                        T3.bus_no,                              --编码
+                        T1.lot_number,                           --批号
+                        T1.source_location_id,                    -- 源仓库ID
+                        T4.name   AS source_location_name,        -- 源仓库
+                        T1.source_location_store_id,              -- 源仓位ID
+                        T5.name   AS source_location_store_name,  -- 源仓位
+                        T1.purpose_location_id,                   -- 目的仓库ID
+                        T8.name   AS purpose_location_name,       -- 目的仓库(领用科室)
+                        T1.unit_code,                            --计量单位
+                        T1.item_quantity,                        --数量
+                        T7.amount         as purchase_price,     --采购单价
+                        T1.price,                               --领用单价
+                        T1.total_price,                          --金额
+                        T1.supplier_id,                          --供应商
+                        T1.approver_id,                          --审核人
+                        T1.approval_time,                        --审批时间
+                        T1.remake,                               --出库原因
+                        T1.tenant_id                             -- 租户ID
+                 from wor_supply_request as T1
+                          inner join wor_supply_delivery as T2
+                                     on T1.id = T2.request_id
+                                         and T2.status_enum = #{deliveryStatus}
+                                         and T2.delete_flag = '0'
+                          inner join adm_device_definition as T3
+                                     on T1.item_id = T3.id
+                                         and T3.delete_flag = '0'
+                          left join adm_location T4
+                                    on T1.source_location_id = T4.id
+                                        and T4.delete_flag = '0'
+                          left join adm_location T5
+                                    on T1.source_location_store_id = T5.id
+                                        and T5.delete_flag = '0'
+                          left join adm_charge_item_definition as T6
+                                    on T3.id = T6.instance_id
+                                        and T6.delete_flag = '0'
+                          left join adm_charge_item_def_detail as T7
+                                    on T6.id = T7.definition_id
+                                        and T7.delete_flag = '0'
+                                        AND T7.condition_value = T1.lot_number
+                          left join adm_organization T8
+                                    on T1.purpose_location_id = T8.id
+                                        and T8.delete_flag = '0'
+                 where T1.delete_flag = '0'
+                   and T1.type_enum = #{issueInventory}
+                   and T1.status_enum = #{supplyStatus}
+                   and T1.item_table = #{deviceTableName}
+             ) as T10
+            ${ew.customSqlSegment}
+        ORDER BY T10.supply_bus_no DESC
+    </select>
+</mapper>

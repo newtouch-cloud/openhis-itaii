@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.yb.mapper.MedicalInsuranceMapper">
+
+    <select id="get3201Param" resultType="com.openhis.web.ybmanage.vo.Settlement3201VO">
+        SELECT sum(T1.tendered_amount)    AS med_fee_sum_amt,
+               sum(case when T5.pay_enum = #{ybFund} THEN T5.amount ELSE 0 END)  AS fund_pay_sum_amt,
+               sum(case when T5.pay_enum = #{zhPay} THEN T5.amount ELSE 0 END) AS acct_Pay,
+               sum(case when T5.pay_enum = #{zhGjPay} THEN T5.amount ELSE 0 END) AS acct_gj_pay,
+               count(T1.id) AS fix_med_ins_setl_cnt
+        FROM fin_payment_reconciliation T1
+                 INNER JOIN adm_encounter T4 ON T1.encounter_id = T4.id AND T4.delete_flag = '0'
+                 INNER JOIN yb_clinc_reg T2 ON T4.bus_no = T2.ipt_otp_no
+                 INNER JOIN yb_clinc_settle T3 ON T1.payment_no = T3.payment_no AND T2.mdtrt_id = T3.mdtrt_id
+                 LEFT JOIN fin_payment_rec_detail T5 ON T1.id = T5.reconciliation_id
+        WHERE t1.bill_date &gt; #{startTime}
+        AND t1.bill_date &lt; #{endTime}
+        AND T2.insutype = #{InsuType}
+        AND T4.yb_class_enum = #{clrType}
+        AND T3.clr_optins = #{admVs}
+        AND T1.tenant_id = #{tenantId}
+        GROUP BY t1.id
+    </select>
+    <select id="get3202Param" resultType="com.openhis.web.ybmanage.vo.Settlement3202VO">
+        SELECT sum(T1.tendered_amount)    AS med_fee_sum_amt,
+               sum(case when T5.pay_enum = #{ybFund} THEN T5.amount ELSE 0 END)  AS fund_pay_sum_amt,
+               sum(case when T5.pay_enum = #{zhPay} THEN T5.amount ELSE 0 END) AS acct_pay,
+               sum(case when T5.pay_enum = #{zhGjPay} THEN T5.amount ELSE 0 END) AS acct_gj_pay,
+               sum(case when T5.pay_enum = #{cash} THEN T5.amount ELSE 0 END) AS self_pay_cash,
+               sum(case when T5.pay_enum = #{cashAli} THEN T5.amount ELSE 0 END) AS self_pay_vx,
+               sum(case when T5.pay_enum = #{cashVX} THEN T5.amount ELSE 0 END) AS self_pay_ali,
+               sum(case when T5.pay_enum = #{cashUNIN} THEN T5.amount ELSE 0 END) AS self_pay_union,
+               count(T1.id) AS fix_med_ins_setl_cnt
+        FROM fin_payment_reconciliation T1
+                 INNER JOIN yb_clinc_reg T2 ON T1.encounter_id = T2.ipt_otp_no
+                 INNER JOIN yb_clinc_settle T3 ON T1.id = T3.payment_id AND T2.mdtrt_id = T3.mdtrt_id
+                 INNER JOIN adm_encounter T4 ON T1.encounter_id = T4.id AND T4.delete_flag = '0'
+                 LEFT JOIN fin_payment_rec_detail T5 ON T1.id = T5.reconciliation_id
+        WHERE t1.bill_date &gt; #{startTime}
+        AND t1.bill_date &lt; #{endTime}
+        AND T4.yb_class_enum = #{clrType}
+        AND T3.clr_optins = #{admVs}
+        AND T1.tenant_id = #{tenantId}
+        GROUP BY t1.id
+    </select>
+    <select id="get3203Param" resultType="com.openhis.web.ybmanage.vo.Financial3203VO">
+        SELECT sum(T1.tendered_amount)    AS med_fee_sum_amt,
+               sum(case when T5.pay_enum = #{ybFund} THEN T5.amount ELSE 0 END)  AS fund_pay_sum_amt,
+               sum(case when T5.pay_enum = #{zhPay} THEN T5.amount ELSE 0 END) AS acct_pay,
+               sum(case when T5.pay_enum = #{zhGjPay THEN T5.amount ELSE 0 END}) AS acct_gj_pay,
+               sum(case when T5.pay_enum = #{cash} THEN T5.amount ELSE 0 END) AS self_pay_cash,
+               sum(case when T5.pay_enum = #{cashAli} THEN T5.amount ELSE 0 END) AS self_pay_vx,
+               sum(case when T5.pay_enum = #{cashVX} THEN T5.amount ELSE 0 END) AS self_pay_ali,
+               sum(case when T5.pay_enum = #{cashUNIN} THEN T5.amount ELSE 0 END) AS self_pay_union,
+               sum(T3.medfee_sumamt) AS med_sumfee,
+               count(T3.id) AS psntime,
+               count(T1.id) AS fix_med_ins_setl_cnt
+        FROM fin_payment_reconciliation T1
+                 INNER JOIN yb_clinc_reg T2 ON T1.encounter_id = T2.ipt_otp_no
+                 INNER JOIN yb_clinc_settle T3 ON T1.id = T3.payment_id AND T2.mdtrt_id = T3.mdtrt_id
+                 INNER JOIN adm_encounter T4 ON T1.encounter_id = T4.id AND T4.delete_flag = '0'
+                 LEFT JOIN fin_payment_rec_detail T5 ON T1.id = T5.reconciliation_id
+        WHERE t1.bill_date &gt; #{startTime}
+        AND t1.bill_date &lt; #{endTime}
+        AND T4.yb_class_enum = #{clrType}
+        AND T3.clr_optins = #{admVs}
+        AND T1.tenant_id = #{tenantId}
+        GROUP BY t1.id
+    </select>
+
+    <select id="get3201ParamList" resultType="com.openhis.web.ybmanage.vo.Settlement3201DetailVO">
+        SELECT
+        T2.insutype,
+        T4.clr_optins,
+        SUM(T1.tendered_amount) AS med_fee_sum_amt,
+        SUM(case when WHEN T5.pay_enum = #{ybFund} THEN T5.amount ELSE 0 END) AS fund_pay_sum_amt,
+        SUM(case when WHEN T5.pay_enum = #{zhPay} THEN T5.amount ELSE 0 END) AS acct_pay,
+        SUM(case when WHEN T5.pay_enum = #{zhGjPay} THEN T5.amount ELSE 0 END) AS acct_gj_pay,
+        COUNT(T1.id) AS fix_med_ins_setl_cnt
+        FROM fin_payment_reconciliation T1
+        INNER JOIN yb_clinc_reg T2 ON T1.encounter_id = T2.ipt_otp_no
+        INNER JOIN yb_clinc_settle T3 ON T1.id = T3.payment_id AND T2.mdtrt_id = T3.mdtrt_id
+        INNER JOIN adm_encounter T4 ON T1.encounter_id = T4.id AND T4.delete_flag = '0'
+        LEFT JOIN fin_payment_rec_detail T5 ON T1.id = T5.reconciliation_id
+        WHERE
+        T1.bill_date &gt; #{startTime}
+        AND T1.bill_date &lt; #{endTime}
+        <if test="InsuType != null">
+            AND T2.insutype = #{InsuType}
+        </if>
+        <if test="clrType != null">
+            AND T4.yb_class_enum = #{clrType}
+        </if>
+        <if test="admVs != null">
+            AND T4.clr_optins = #{admVs}
+        </if>
+        AND T1.tenant_id = #{tenantId}
+        GROUP BY
+        T2.insutype,
+        T4.clr_optins;
+    </select>
+
+    <select id="getPaymentDecDetailUniAccountDtoListByPaymentIdList" resultType="com.openhis.yb.dto.PaymentDecDetailUniAccountDto">
+        SELECT
+            t1.id,
+            t1.predecessor_id,
+            t1.reconciliation_id,
+            t1.target_enum,
+            t1.account_id,
+            t1.account_code,
+            t1.pay_enum,
+            t1.pay_level_enum,
+            t1.amount,
+            t1.return_amount,
+            t1.charge_amount,
+            t1.pay_trans_no,
+            t1.pay_trans_text,
+            t1.pay_trans_date,
+            t1.before_balance,
+            t1.after_balance,
+            t1.result_enum,
+            t2.contract_no,
+            t5.insutype,
+            t5.med_type
+        FROM
+            fin_payment_rec_detail t1
+                LEFT JOIN adm_account t2 on t1.account_id = t2.id
+                LEFT JOIN fin_contract t3 on t2.contract_no = t3.bus_no
+                LEFT JOIN adm_encounter t4 on t2.encounter_id = t4.id
+                LEFT JOIN yb_clinc_reg t5 on t4.bus_no = t5.ipt_otp_no AND t4.delete_flag = '0'
+                LEFT JOIN fin_payment_reconciliation t6 on t6.id = t1.reconciliation_id AND t6.delete_flag = '0'
+                WHERE
+                      1=1
+                  AND t6.bill_date &gt; #{startTime}
+                  AND t6.bill_date &lt; #{endTime}
+            <if test="idList != null and idList.size() > 0">
+                 AND t1.reconciliation_id IN
+                <foreach collection="idList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+        </select>
+</mapper>

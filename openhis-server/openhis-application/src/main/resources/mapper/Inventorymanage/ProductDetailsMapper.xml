@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.inventorymanage.mapper.ProductDetailsMapper">
+
+    <select id="selectProductDetailsPage"
+            resultType="com.openhis.web.inventorymanage.dto.ProductDetailsPageDto">
+        select T6.id,                    --库存项目管理ID（停供用）
+               T6.bus_no,                --药品编码
+               T6.medicine_name,         --药品名称
+               T6.total_volume,          --规格
+               T6.chrgitm_lv,            --医保等级
+               T6.manufacturer_text,     --厂家
+               T6.lot_number,            --批次号
+               T6.category_code,         --药品类型
+               T6.item_type,             --药品类型区分
+               T6.part_percent,          --拆零比
+               T6.unit_code,             --采购单位
+               T6.quantity,              --库存（小单位）
+               T6.min_unit_code,         --库存单位
+               T6.price,                 --采购单价
+               T6.production_date,       --生产日期
+               T6.expiration_date,       --失效日期
+               T6.remaining_days,        --剩余天数
+               T6.trace_no,              --追溯码
+               T6.status_enum,           --药品状态（药品停用）
+               T6.location_id,
+               T6.location_name,         --仓库
+               T6.location_store_id,
+               T6.location_store_name,   --货位
+               T6.form_enum,             --仓库类型
+               T6.supply_id,             --供应商
+               T6.inventory_status_enum, --停供状态
+               T6.tenant_id
+        from (select T1.id,                                                                               --库存项目管理ID（停供用）
+                     T2.bus_no,                                                                           --药品编码
+                     T2."name"                                                    as medicine_name,       --药品名称
+                     T3.total_volume,                                                                     --规格
+                     T2.chrgitm_lv,                                                                       --医保等级
+                     T2.manufacturer_text,                                                                --厂家
+                     T1.lot_number,                                                                       --批次号
+                     T2.category_code,                                                                    --药品类型
+                     '0'                                                          as item_type,           --药品类型区分
+                     T2.part_percent,                                                                     --拆零比
+                     T2.unit_code,                                                                        --采购单位
+                     T1.quantity,                                                                         --库存（小单位）
+                     T2.min_unit_code,                                                                    --库存单位
+                     T1.price,                                                                            --采购单价
+                     T1.production_date,                                                                  --生产日期
+                     T1.expiration_date,                                                                  --失效日期
+                     (T1.expiration_date::date - CURRENT_DATE)                    as remaining_days,      --剩余天数
+                     T1.trace_no,                                                                         --追溯码
+                     T3.status_enum,                                                                      --药品状态（药品停用）
+                     T1.location_id,
+                     T5."name"                                                    as location_name,       --仓库
+                     T1.location_store_id,
+                     T4."name"                                                    as location_store_name, --货位
+                     T5.form_enum,                                                                        --仓库类型
+                     T2.supply_id,                                                                        --供应商
+                     T1.inventory_status_enum,                                                            --停供状态
+                     T1.tenant_id
+              from wor_inventory_item T1
+                       inner join med_medication_definition T2
+                                  on T1.item_id = T2.id
+                                      and T2.delete_flag = '0'
+                       left join med_medication T3
+                                 on T2.id = T3.medication_def_id
+                                     and T3.delete_flag = '0'
+                       left join adm_location T4
+                                 on T1.location_store_id = T4.id
+                                     and T4.delete_flag = '0'
+                       left join adm_location T5
+                                 on T1.location_id = T5.id
+                                     and T5.delete_flag = '0'
+              where T1.delete_flag = '0'
+              order by T2.bus_no ASC, --药品编码
+                       T2."name" ASC --药品名称
+             ) as T6
+        ${ew.customSqlSegment}
+        union all
+        select T7.id,                    --库存项目管理ID（停供用）
+               T7.bus_no,                --药品编码
+               T7.medicine_name,         --药品名称
+               T7.total_volume,          --规格
+               T7.chrgitm_lv,            --医保等级
+               T7.manufacturer_text,     --厂家
+               T7.lot_number,            --批次号
+               T7.category_code,         --药品类型
+               T7.item_type,             --药品类型区分
+               T7.part_percent,          --拆零比
+               T7.unit_code,             --采购单位
+               T7.quantity,              --库存（小单位）
+               T7.min_unit_code,         --库存单位
+               T7.price,                 --采购单价
+               T7.production_date,       --生产日期
+               T7.expiration_date,       --失效日期
+               T7.remaining_days,        --剩余天数
+               T7.trace_no,              --追溯码
+               T7.status_enum,           --药品状态（药品停用）
+               T7.location_id,
+               T7.location_name,         --仓库
+               T7.location_store_id,
+               T7.location_store_name,   --货位
+               T7.form_enum,             --仓库类型
+               T7.supply_id,             --供应商
+               T7.inventory_status_enum, --停供状态
+               T7.tenant_id
+        from (select T1.id,                                                                               --库存项目管理ID（停供用）
+                     T2.bus_no,                                                                           --药品编码
+                     T2."name"                                                    as medicine_name,       --药品名称
+                     T2.size                                                      as total_volume,        --规格
+                     T2.chrgitm_lv,                                                                       --医保等级
+                     T2.manufacturer_text,                                                                --厂家
+                     T1.lot_number,                                                                       --批次号
+                     T2.category_code,                                                                    --药品类型
+                     '9'                                                          as item_type,           --药品类型区分
+                     T2.part_percent,                                                                     --拆零比
+                     T2.unit_code,                                                                        --采购单位
+                     T1.quantity,                                                                         --库存（小单位）
+                     T2.min_unit_code,                                                                    --库存单位
+                     T1.price,                                                                            --采购单价
+                     T1.production_date,                                                                  --生产日期
+                     T1.expiration_date,                                                                  --失效日期
+                     (T1.expiration_date::date - CURRENT_DATE)                    as remaining_days,      --剩余天数
+                     T1.trace_no,                                                                         --追溯码
+                     T2.status_enum,                                                                      --药品状态（药品停用）
+                     T1.location_id,
+                     T5."name"                                                    as location_name,       --仓库
+                     T1.location_store_id,
+                     T4."name"                                                    as location_store_name, --货位
+                     T5.form_enum,                                                                        --仓库类型
+                     T2.supply_id,                                                                        --供应商
+                     T1.inventory_status_enum,                                                            --停供状态
+                     T1.tenant_id
+              from wor_inventory_item T1
+                       inner join adm_device_definition T2
+                                  on T1.item_id = T2.id
+                                      and T2.delete_flag = '0'
+                       left join adm_location T4
+                                 on T1.location_store_id = T4.id
+                                     and T4.delete_flag = '0'
+                       left join adm_location T5
+                                 on T1.location_id = T5.id
+                                     and T5.delete_flag = '0'
+              where T1.delete_flag = '0'
+              order by T2.bus_no ASC, --药品编码
+                       T2."name" ASC --药品名称
+             ) as T7
+            ${ew.customSqlSegment}
+    </select>
+</mapper>

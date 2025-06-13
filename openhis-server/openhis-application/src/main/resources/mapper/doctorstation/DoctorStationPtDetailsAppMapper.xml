@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.doctorstation.mapper.DoctorStationPtDetailsAppMapper">
+    <!-- 查询患者详情-->
+    <select id="getPtDetailsList" resultType="com.openhis.web.doctorstation.dto.PatientDetailsDto">
+    SELECT
+        p.name,
+        p.gender_enum,
+        p.birth_date,
+        p.phone,
+        p.address,
+        p.work_company,
+        p.nationality_code,
+        p.marital_status_enum,
+        p.id_card,
+        p.country_code,
+        p.prfs_enum,
+        p.link_name,
+        p.link_relation_code,
+        p.link_telcom,
+        e.id,
+        e.bus_no,
+        e.patient_id,
+        e.status_enum,
+        e.class_enum,
+        e.start_time,
+        e.end_time,
+        COALESCE(a.balance_amount, 0) AS balance_amount, -- 账户余额
+        a.type_code, -- 账户类型
+        (SELECT SUM(aci.total_price)
+            FROM adm_charge_item aci
+            WHERE aci.context_enum = #{contextMed} -- 1：药品
+            AND aci.encounter_id = e.id
+             --待收费，待结算，已结算
+            AND aci.status_enum IN
+            <foreach item="status" collection="statusList" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+            AND aci.delete_flag = '0'
+        ) AS total_medication_price, -- 费用：药品
+        (SELECT SUM(aci.total_price)
+            FROM adm_charge_item aci
+            WHERE aci.context_enum = #{contextDev} -- 2：耗材
+            AND aci.encounter_id = e.id
+            --待收费，待结算，已结算
+            AND aci.status_enum IN
+            <foreach item="status" collection="statusList" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+            AND aci.delete_flag = '0'
+        ) AS total_device_price, -- 费用：耗材
+        (SELECT SUM(aci.total_price)
+            FROM adm_charge_item aci
+            WHERE aci.context_enum = #{contextAct} -- 3：项目
+            --待收费，待结算，已结算
+            AND aci.status_enum IN
+                <foreach item="status" collection="statusList" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            AND aci.delete_flag = '0'
+        ) AS total_activity_price, -- 费用：项目
+        (SELECT SUM(aci.total_price)
+            FROM adm_charge_item aci
+            WHERE aci.encounter_id = e.id
+            --待收费，待结算，已结算
+            AND aci.status_enum IN
+            <foreach item="status" collection="statusList" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+            AND aci.delete_flag = '0'
+        ) AS total_price, -- 费用总计
+        CASE
+            WHEN (
+                SELECT COUNT(*)
+                FROM cli_allergy_intolerance ai
+                WHERE ai.patient_id = e.patient_id
+                AND ai.clinical_status_enum = #{clinicalStatus} -- 阳性
+            ) > 0 THEN 1
+            ELSE 0
+        END AS allergy_history_flag, -- 是否有过敏史
+        (SELECT el.location_id
+            FROM adm_encounter_location el
+            WHERE el.encounter_id = e.id
+            AND el.form_enum = #{form} -- 8：病床
+        LIMIT 1
+        ) AS bed_location_id, -- 床位ID
+        (SELECT pra.name
+        FROM adm_encounter_participant ep
+        LEFT JOIN adm_practitioner pra ON ep.practitioner_id = pra.id
+        WHERE ep.encounter_id = e.id
+        AND ep.type_code = #{typeCode} --就诊参与者身份类型是1:接诊医生
+        ORDER BY ep.create_time DESC
+        LIMIT 1) AS doctor_name--门诊医生
+        FROM adm_encounter e
+        LEFT JOIN adm_patient p ON e.patient_id = p.id AND p.delete_flag = '0'
+        LEFT JOIN adm_account a ON e.id = a.encounter_id AND a.delete_flag = '0'
+        <where>
+            e.delete_flag = '0'
+            AND e.id = #{encounterId}
+        </where>
+
+    </select>
+
+</mapper>

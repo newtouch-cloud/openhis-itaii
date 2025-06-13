@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openhis.web.reportmanage.mapper.PrintReportMapper">
+
+    <!-- 打印——处置单 -->
+    <select id="getDisposalList" resultType="com.openhis.web.reportmanage.dto.DisposalDto">
+        SELECT wsr.bus_no,                                                                   -- 服务请求编码
+               ap.name                                                  AS patient_name,     -- 患者名字
+               ap.birth_date,                                                                -- 患者出生日期
+               ap.gender_enum,                                                               -- 患者性别
+               ap.phone,                                                                     -- 患者手机号
+               ae.bus_no                                                AS encounter_bus_no, -- 门诊/住院病历号
+               aa.no                                                    AS account_no,       -- 医保/就诊卡号
+               aa.type_code                                             AS fee_type,         -- 费别
+               wad.name                                                 AS activity_name,    -- 治疗项目名
+               wsr.quantity,                                                                 -- 数量
+               wsr.unit_code,                                                                -- 单位
+               wsr.requester_id                                         AS dor_id,           -- 开方医生id
+               wsr.authored_time,                                                            -- 开具时间
+               ae.organization_id                                       AS dept_id,          -- 科室
+               COALESCE((SELECT SUM(aci.total_price)
+                         FROM adm_charge_item aci
+                                  INNER JOIN wor_service_request wsr_sub ON wsr_sub.id = aci.service_id
+                                  LEFT JOIN wor_activity_definition wad_sub ON wsr_sub.activity_id = wad_sub.id
+                         WHERE aci.service_table = 'wor_service_request'
+                           AND aci.context_enum = 3         -- 项目
+                           AND aci.status_enum IN (1, 2, 5) -- 费用状态
+                           AND wad_sub.category_code = '21' -- 治疗
+                           AND aci.encounter_id = wsr.encounter_id), 0) AS total_price       -- 处置总金额
+        FROM wor_service_request wsr
+                 LEFT JOIN adm_patient ap ON wsr.patient_id = ap.id -- 患者信息
+                 LEFT JOIN adm_account aa ON wsr.encounter_id = aa.encounter_id -- 账户信息
+                 LEFT JOIN adm_encounter_diagnosis aed
+                           ON wsr.encounter_id = aed.encounter_id AND aed.maindise_flag = 1 -- 主诊断flag
+                 LEFT JOIN cli_condition cc ON aed.condition_id = cc.id -- 病情
+                 LEFT JOIN cli_condition_definition ccd ON cc.definition_id = ccd.id -- 病情定义
+                 LEFT JOIN adm_encounter ae ON wsr.encounter_id = ae.id -- 就诊信息
+                 LEFT JOIN wor_activity_definition wad ON wsr.activity_id = wad.id -- 项目定义
+        WHERE wad.category_code = '21' -- 治疗
+          AND wsr.encounter_id = #{encounterId}
+    </select>
+
+    <!-- 打印——检验,检查申请单 -->
+    <select id="getCheckInspectionList" resultType="com.openhis.web.reportmanage.dto.CkInspAppDto">
+        SELECT wsr.bus_no,                           -- 服务请求编码
+               ap.name          AS patient_name,     -- 患者名字
+               ap.birth_date,                        -- 患者出生日期
+               ap.gender_enum,                       -- 患者性别
+               ap.phone,                             -- 患者手机号
+               ae.bus_no        AS encounter_bus_no, -- 门诊/住院病历号
+               aa.no            AS account_no,       -- 医保/就诊卡号
+               aa.type_code     AS fee_type,         -- 费别
+               wad.name         AS activity_name,    -- 治疗项目名
+               wsr.quantity,                         -- 数量
+               wsr.unit_code,                        -- 单位
+               wsr.requester_id AS dor_id,           -- 开方医生id
+               wsr.authored_time,                    -- 开具时间
+               wsr.location_id,                      -- 执行科室
+               aci.total_price  AS item_price,       -- 单项目金额
+               COALESCE((SELECT SUM(aci_sub.total_price)
+                         FROM adm_charge_item aci_sub
+                                  LEFT JOIN wor_service_request wsr_sub ON wsr_sub.id = aci_sub.service_id
+                                  LEFT JOIN wor_activity_definition wad_sub ON wsr_sub.activity_id = wad_sub.id
+                         WHERE aci_sub.service_table = 'wor_service_request'
+                           AND aci_sub.context_enum = 3                  -- 项目
+                           AND aci_sub.status_enum IN (1, 2, 5)          -- 费用状态
+                           AND wad_sub.category_code = wad.category_code -- 关联主查询的category_code
+                           AND aci_sub.encounter_id = wsr.encounter_id -- 关联主查询的encounter_id
+                        ), 0)   AS total_price       -- 项目总金额
+        FROM wor_service_request wsr
+                 LEFT JOIN adm_patient ap ON wsr.patient_id = ap.id -- 患者信息
+                 LEFT JOIN adm_account aa ON wsr.encounter_id = aa.encounter_id -- 账户信息
+                 LEFT JOIN adm_encounter ae ON wsr.encounter_id = ae.id -- 就诊信息
+                 LEFT JOIN adm_charge_item aci ON wsr.id = aci.service_id -- 费用信息
+            AND aci.service_table = 'wor_service_request'
+            AND aci.context_enum = 3 -- 项目
+            AND aci.status_enum IN (1, 2, 5) -- 费用状态
+                 LEFT JOIN wor_activity_definition wad ON wsr.activity_id = wad.id -- 项目定义
+        WHERE wad.category_code = #{categoryCode} -- 22:检验,23:检查
+          AND wsr.encounter_id = #{encounterId}
+    </select>
+
+    <!-- 打印——处方单 -->
+    <select id="getPrescriptionList" resultType="com.openhis.web.reportmanage.dto.PrescriptionPrintDto">
+
+        SELECT mmr.prescription_no,                                                          -- 处方号
+               mmr.group_id,                                                                 -- 组号
+               mmr.practitioner_id                                      AS dor_id,           -- 开方医生id
+               mmr.performer_id                                         AS phar_id,          -- 审核药师id
+               mmdef.name                                               AS med_name,         -- 药品名字
+               mm.total_volume,                                                              -- 药品规格
+               mmdef.pharmacology_category_code,                                             -- 药品性质
+               mmr.method_code,                                                              -- 用法
+               mmr.rate_code,                                                                -- 用药频次
+               mmr.dose,                                                                     -- 单次剂量
+               mmr.dose_unit_code,                                                           -- 剂量单位
+               mmr.req_authored_time,                                                        -- 开单时间
+               mmr.org_id                                               AS depart_id,        -- 所属科室
+               ae.bus_no                                                AS encounter_bus_no, -- 门诊/住院病历号
+               ap.name                                                  AS patient_name,     -- 患者名字
+               ap.birth_date,                                                                -- 患者出生日期
+               ap.gender_enum,                                                               -- 患者性别
+               ap.phone,                                                                     -- 患者手机号
+               aa.type_code,                                                                 -- 费别
+               aa.no,                                                                        -- 医保/就诊卡号
+               CASE WHEN mmr.yb_class_enum = '140104' THEN 1 ELSE 0 END AS ncds_flag,        -- 慢病(1-慢病 0-非慢病)
+               ccd.name                                                 AS diag_name,        -- 临床诊断
+               mmd.practitioner_id                                      AS check_phar_id,    -- 核对、发药药师
+               mmd.preparer_id                                          AS dis_rev_phar_id,  -- 调配药师
+               COALESCE((SELECT SUM(aci.total_price)
+                         FROM adm_charge_item aci
+                         WHERE aci.prescription_no = mmr.prescription_no
+                           AND aci.context_enum = 1
+                           AND aci.status_enum IN (1, 2, 5)
+                           AND aci.encounter_id = mmr.encounter_id
+                           AND aci.tenant_id = 1), 0)                   AS total_price,
+               (SELECT CASE
+                           WHEN EXISTS(
+                                   SELECT 1
+                                   FROM wor_service_request wsr
+                                            LEFT JOIN wor_activity_definition wad
+                                                      ON wad.id = wsr.activity_id AND wad.name = '皮试检查'
+                                            LEFT JOIN cli_allergy_intolerance cai ON cai.request_id = wsr.id
+                                   WHERE wsr.based_on_id = mmr.id
+                                     AND wsr.based_on_table = 'med_medication_request'
+                                     AND wsr.encounter_id = #{encounterId}
+                                     AND cai.clinical_status_enum = 1
+                               ) THEN 1
+                           WHEN EXISTS(
+                                   SELECT 1
+                                   FROM wor_service_request wsr
+                                            LEFT JOIN wor_activity_definition wad
+                                                      ON wad.id = wsr.activity_id AND wad.name = '皮试检查'
+                                            LEFT JOIN cli_allergy_intolerance cai ON cai.request_id = wsr.id
+                                   WHERE wsr.based_on_id = mmr.id
+                                     AND wsr.based_on_table = 'med_medication_request'
+                                     AND wsr.encounter_id = #{encounterId}
+                                     AND cai.clinical_status_enum = 2
+                               ) THEN 2
+                           ELSE 4
+                           END)                                         AS clinicalStatusEnum
+        FROM med_medication_request mmr
+                 LEFT JOIN adm_patient ap ON mmr.patient_id = ap.id
+                 LEFT JOIN adm_account aa ON mmr.encounter_id = aa.encounter_id
+                 LEFT JOIN adm_encounter_diagnosis aed ON mmr.encounter_id = aed.encounter_id AND aed.maindise_flag = 1
+                 LEFT JOIN cli_condition cc ON aed.condition_id = cc.id
+                 LEFT JOIN cli_condition_definition ccd ON cc.definition_id = ccd.id
+                 LEFT JOIN med_medication_dispense mmd ON mmr.id = mmd.med_req_id
+                 LEFT JOIN med_medication_definition mmdef ON mmr.medication_id = mmdef.id
+                 LEFT JOIN med_medication mm ON mm.medication_def_id = mmdef.id
+                 LEFT JOIN adm_encounter ae ON mmr.encounter_id = ae.id
+        WHERE mmr.prescription_no = #{prescriptionNo}
+          AND mmr.encounter_id = #{encounterId}
+    </select>
+
+    <!-- 打印——护士输液的瓶签  -->
+    <select id="getBottleLabelList" resultType="com.openhis.web.reportmanage.dto.BottleLabelDto">
+
+        SELECT
+        pt.name AS patient_name, --病人姓名
+        pt.gender_enum, --病人性别
+        pt.birth_date, --病人生日
+        md.name AS med_name, --药品名
+        m.total_volume as space,--药品规格
+        mr.bus_no, -- 药品请求编码
+        mr.rate_code, --用药频次
+        mr.method_code,--用法
+        mr.dose,--单次剂量
+        mr.dose_unit_code,--剂量单位
+        sr.performer_id, --执行护士
+        sr.occurrence_start_time --预计执行时间
+        FROM
+        wor_service_request sr
+        LEFT JOIN adm_encounter e ON e.id = sr.encounter_id
+        AND e.delete_flag = '0'
+        LEFT JOIN adm_patient pt ON pt.id = sr.patient_id
+        AND pt.delete_flag = '0'
+        LEFT JOIN wor_activity_definition ad ON ad.id = sr.activity_id
+        AND ad.delete_flag = '0'
+        LEFT JOIN med_medication_request mr ON mr.encounter_id = sr.encounter_id
+        AND mr.delete_flag = '0'
+        LEFT JOIN med_medication_definition md ON md.id = mr.medication_id
+        AND md.delete_flag = '0'
+        LEFT JOIN med_medication m ON md.id = m.medication_def_id
+        AND m.delete_flag = '0'
+        LEFT JOIN med_medication_dispense mmd ON mr.id = mmd.med_req_id
+        AND mmd.delete_flag = '0'
+
+        <where>
+            ad.name = '输液'
+            AND mr.infusion_flag = 1
+            --AND mmd.status_enum = 4--药品发放状态:状态是已发送的(DispenseStatus枚举类)
+            AND sr.id = #{serviceId}
+            AND sr.encounter_id = #{encounterId}
+            AND mr.group_id = #{groupId}
+        </where>
+        ORDER BY
+        mr.create_time desc
+
+    </select>
+    <select id="getBottleLabelBatchList" resultType="com.openhis.web.reportmanage.dto.BottleLabelDto">
+        SELECT
+        pt.name AS patient_name, -- 病人姓名
+        pt.gender_enum, -- 病人性别
+        pt.birth_date, -- 病人生日
+        md.name AS med_name, -- 药品名
+        m.total_volume as space, -- 药品规格
+        mr.bus_no, -- 药品请求编码
+        mr.rate_code, -- 用药频次
+        mr.method_code, -- 用法
+        mr.dose, -- 单次剂量
+        mr.dose_unit_code, -- 剂量单位
+        sr.performer_id, -- 执行护士
+        sr.occurrence_start_time -- 预计执行时间
+        FROM
+        wor_service_request sr
+        LEFT JOIN adm_encounter e ON e.id = sr.encounter_id
+        AND e.delete_flag = '0'
+        LEFT JOIN adm_patient pt ON pt.id = sr.patient_id
+        AND pt.delete_flag = '0'
+        LEFT JOIN wor_activity_definition ad ON ad.id = sr.activity_id
+        AND ad.delete_flag = '0'
+        LEFT JOIN med_medication_request mr ON mr.encounter_id = sr.encounter_id
+        AND mr.delete_flag = '0'
+        AND mr.id=sr.based_on_id
+        LEFT JOIN med_medication_definition md ON md.id = mr.medication_id
+        AND md.delete_flag = '0'
+        LEFT JOIN med_medication m ON md.id = m.medication_def_id
+        AND m.delete_flag = '0'
+        LEFT JOIN med_medication_dispense mmd ON mr.id = mmd.med_req_id
+        AND mmd.delete_flag = '0'
+        <where>
+            ad.name = '输液'
+            AND mr.infusion_flag = 1
+            -- AND mmd.status_enum = 4 -- 药品发放状态：状态是已发送的(DispenseStatus枚举类)
+            AND sr.id IN
+            <foreach item="serviceId" collection="serviceIds" open="(" separator="," close=")">
+                #{serviceId}
+            </foreach>
+            AND sr.encounter_id IN
+            <foreach item="encounterId" collection="encounterIds" open="(" separator="," close=")">
+                #{encounterId}
+            </foreach>
+        </where>
+        ORDER BY
+        mr.create_time DESC
+    </select>
+
+</mapper>
